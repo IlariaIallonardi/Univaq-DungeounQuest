@@ -1,6 +1,6 @@
 package service.impl;
 
-import service.StanzaServiceFactory;
+import service.StanzaFactory;
 
-public class StanzaFactory extends StanzaServiceFactory {
+public class StanzaFactory extends StanzaFactory {
 }
