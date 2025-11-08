@@ -17,4 +17,12 @@ public class Chiave extends Oggetto {
         // usa la chiave per aprire una stanza/passaggio
         return aperturaStanza();
     }
+
+    public int getIdStanzaDestinazione() {
+        return idStanzaDestinazione;
+    }
+
+    public void setIdStanzaDestinazione(int idStanzaDestinazione) {
+        this.idStanzaDestinazione = idStanzaDestinazione;
+    }
 }
