@@ -1,6 +1,6 @@
 package service.impl;
 
-import service.EventoService;
+import service.OggettoService;
 
-public interface ArmaServiceImpl extends EventoService {
+public class ArmaServiceImpl extends OggettoService {
 }

@@ -1,6 +1,6 @@
 package service.impl;
 
-import service.EventoService;
+import service.OggettoService;
 
-public interface ArmaturaServiceImpl extends EventoService {
+public class ArmaturaServiceImpl extends OggettoService {
 }

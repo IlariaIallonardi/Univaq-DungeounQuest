@@ -2,7 +2,6 @@ package service.impl;
 
 import domain.Giocatore;
 import domain.Stanza;
-import service.FileService;
 import service.GiocatoreService;
 import service.GiocoService;
 import service.TurnoService;
@@ -15,15 +14,12 @@ public class GiocoServiceImpl implements GiocoService {
     private List<Giocatore> giocatori;
     private List<Stanza> dungeon;
     private TurnoService turnoService;
-    private FileService fileService;
     private GiocatoreService giocatoreService;
 
     private int turnoCorrente = 0;
 
-
-    public GiocoServiceImpl(List<Giocatore> giocatori, FileService fileService, GiocatoreService giocatoreService, int turnoCorrente) {
+    public GiocoServiceImpl(List<Giocatore> giocatori, GiocatoreService giocatoreService, int turnoCorrente) {
         this.giocatori = giocatori;
-        this.fileService = fileService;
         this.giocatoreService = giocatoreService;
         this.turnoCorrente = turnoCorrente;
     }
@@ -56,14 +52,6 @@ public class GiocoServiceImpl implements GiocoService {
         this.turnoService = turnoService;
     }
 
-    public FileService getFileService() {
-        return fileService;
-    }
-
-    public void setFileService(FileService fileService) {
-        this.fileService = fileService;
-    }
-
     public GiocatoreService getGiocatoreService() {
         return giocatoreService;
     }
@@ -80,75 +68,74 @@ public class GiocoServiceImpl implements GiocoService {
         this.turnoCorrente = turnoCorrente;
     }
 
+    /*
+     * @Override
+     * public void inizioPartita() {
+     * 
+     * Scanner sc = new Scanner(System.in);
+     * 
+     * int numGiocatori = 0;
+     * 
+     * // Creazione giocatori
+     * while (true) {
+     * System.out.print("Quanti giocatori parteciperanno? (2-6): ");
+     * try {
+     * numGiocatori = Integer.parseInt(sc.nextLine());
+     * if (numGiocatori >= 2 && numGiocatori <= 6) {
+     * break; // numero valido, esci dal ciclo
+     * } else {
+     * System.out.println("Il numero deve essere tra 2 e 6.");
+     * }
+     * } catch (NumberFormatException e) {
+     * System.out.println("Inserisci un numero valido.");
+     * }
+     * }
+     * // Ciclo per chiedere nome e tipo personaggio
+     * for (int i = 1; i <= numGiocatori; i++) {
+     * System.out.print("Giocatore " + i + ", inserisci il tuo nome: ");
+     * String nome = sc.nextLine();
+     * 
+     * String tipo = "";
+     * while (!tipo.equalsIgnoreCase("guerriero") &&
+     * !tipo.equalsIgnoreCase("arciere") &&
+     * !tipo.equalsIgnoreCase("paladino") &&
+     * !tipo.equalsIgnoreCase("mago")) {
+     * System.out.
+     * print("Scegli il tuo personaggio (Guerriero/Arciere/Paladino/Mago): ");
+     * tipo = sc.nextLine();
+     * }
+     * 
+     * // 3Riepilogo giocatori
+     * System.out.println("\nRiepilogo giocatori:");
+     * for (Giocatore g : giocatori) {
+     * System.out.println("👤 " + g.getNomeGiocatore() +
+     * "  PV: " + g.getPuntiVita() +
+     * "  Forza: " + g.getPuntiAttacco() +
+     * "  Magia: " + g.getPuntiMana());
+     * }
+     * 
+     * }
+     * }
+     * 
+     * @Override
+     * public void finePartita() {
+     * 
+     * }
+     * 
+     * @Override
+     * public void caricaPartita() {
+     * 
+     * }
+     * 
+     * @Override
+     * public void salvaPartita() {
+     * 
+     * }
+     * 
+     * @Override
+     * public int lanciaDado() {
+     * return 0;
+     * }
+     */
 
-
-    @Override
-    public void inizioPartita() {
-
-
-            Scanner sc = new Scanner(System.in);
-
-            int numGiocatori = 0;
-
-        // Creazione giocatori
-        while (true) {
-            System.out.print("Quanti giocatori parteciperanno? (2-6): ");
-            try {
-                numGiocatori = Integer.parseInt(sc.nextLine());
-                if (numGiocatori >= 2 && numGiocatori <= 6) {
-                    break; // numero valido, esci dal ciclo
-                } else {
-                    System.out.println("Il numero deve essere tra 2 e 6.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Inserisci un numero valido.");
-            }
-        }
-        // Ciclo per chiedere nome e tipo personaggio
-        for (int i = 1; i <= numGiocatori; i++) {
-            System.out.print("Giocatore " + i + ", inserisci il tuo nome: ");
-            String nome = sc.nextLine();
-
-            String tipo = "";
-            while (!tipo.equalsIgnoreCase("guerriero") &&
-                    !tipo.equalsIgnoreCase("arciere") &&
-                    !tipo.equalsIgnoreCase("paladino") &&
-                    !tipo.equalsIgnoreCase("mago")) {
-                System.out.print("Scegli il tuo personaggio (Guerriero/Arciere/Paladino/Mago): ");
-                tipo = sc.nextLine();
-            }
-
-            // 3Riepilogo giocatori
-            System.out.println("\nRiepilogo giocatori:");
-            for (Giocatore g : giocatori) {
-                System.out.println("👤 " + g.getNomeGiocatore() +
-                        "  PV: " + g.getPuntiVita() +
-                        "  Forza: " + g.getPuntiAttacco() +
-                        "  Magia: " + g.getPuntiMana());
-            }
-
-        }}
-
-    @Override
-    public void finePartita() {
-
-    }
-
-    @Override
-    public void caricaPartita() {
-
-    }
-
-    @Override
-    public void salvaPartita() {
-
-    }
-
-    @Override
-    public int lanciaDado() {
-        return 0;
-    }
-
-
-
-    }
+}

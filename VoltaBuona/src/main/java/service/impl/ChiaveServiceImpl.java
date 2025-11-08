@@ -1,6 +1,6 @@
 package service.impl;
 
-import service.EventoService;
+import service.OggettoService;
 
-public interface ChiaveServiceImpl extends EventoService {
+public class ChiaveServiceImpl extends OggettoService {
 }
