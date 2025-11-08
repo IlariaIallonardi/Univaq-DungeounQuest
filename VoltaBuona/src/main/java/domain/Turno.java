@@ -1,6 +1,6 @@
 package domain;
 
-import it.univaq.dungeon.personaggi.Giocatore;
+import domain.Giocatore;
 
 public class Turno {
     private int id;

@@ -1,6 +1,6 @@
 package domain;
 
-import it.univaq.dungeon.oggetti.Chiave;
+import domain.Chiave;
 
 import java.util.ArrayList;
 import java.util.List;

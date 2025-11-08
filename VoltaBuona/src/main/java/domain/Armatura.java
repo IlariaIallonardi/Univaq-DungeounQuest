@@ -1,12 +1,17 @@
-package it.univaq.dungeon.oggetti;
+package domain;
 
 public class Armatura extends Oggetto {
-    public enum TipoArmatura { DEBOLE, MEDIA, FORTE }
+    public enum TipoArmatura {
+        DEBOLE, MEDIA, FORTE
+    }
+
     private TipoArmatura tipoArmatura;
     private int difesaBonus;
     private int durabilitaArmatura;
 
-    public int aumentoDifesa() { return difesaBonus; }
+    public int aumentoDifesa() {
+        return difesaBonus;
+    }
 
     public boolean miglioraDifesa() {
         // logica di equipaggiamento
@@ -14,5 +19,7 @@ public class Armatura extends Oggetto {
     }
 
     @Override
-    public boolean usare() { return false; }
+    public boolean usare() {
+        return false;
+    }
 }

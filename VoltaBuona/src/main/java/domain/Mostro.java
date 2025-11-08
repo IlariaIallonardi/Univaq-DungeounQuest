@@ -1,4 +1,4 @@
-package it.univaq.dungeon.personaggi;
+package domain;
 
 public class Mostro extends Personaggio {
     private int danno;
@@ -8,5 +8,7 @@ public class Mostro extends Personaggio {
         return danno;
     }
 
-    public int getDanno() { return danno; }
+    public int getDanno() {
+        return danno;
+    }
 }

@@ -1,6 +1,6 @@
 package domain;
 
-import it.univaq.dungeon.oggetti.Oggetto;
+import domain.Oggetto;
 
 import java.util.*;
 
@@ -26,7 +26,7 @@ public class Stanza {
         inventario.remove(o);
     }
 
-    public boolean apriConChiave(it.univaq.dungeon.oggetti.Chiave chiave) {
+    public boolean apriConChiave(domain.Chiave chiave) {
         // valida idStanzaDestinazione/chiaveRichiesta… (dipende dal design finale)
         return true;
     }

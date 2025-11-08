@@ -1,9 +1,9 @@
 package domain;
 
-import it.univaq.dungeon.personaggi.Giocatore;
-import it.univaq.dungeon.personaggi.Mostro;
-import it.univaq.dungeon.oggetti.Oggetto;
-import it.univaq.dungeon.oggetti.Chiave;
+import domain.Giocatore;
+import domain.Mostro;
+import domain.Oggetto;
+import domain.Chiave;
 
 import java.util.*;
 

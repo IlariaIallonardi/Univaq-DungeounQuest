@@ -1,4 +1,4 @@
-package it.univaq.dungeon.oggetti;
+package domain;
 
 public class Chiave extends Oggetto {
     private int idStanzaDestinazione;

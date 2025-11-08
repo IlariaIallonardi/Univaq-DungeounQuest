@@ -1,8 +1,8 @@
-package it.univaq.dungeon.personaggi;
+package domain;
 
-import it.univaq.dungeon.core.Azione;
-import it.univaq.dungeon.core.Stanza;
-import it.univaq.dungeon.oggetti.Zaino;
+import domain.Azione;
+import domain.Stanza;
+import domain.Zaino;
 
 public abstract class Giocatore extends Personaggio {
     protected Zaino zaino = new Zaino();
@@ -22,4 +22,9 @@ public abstract class Giocatore extends Personaggio {
     }
 
     protected abstract void setNome(String nome);
+
+    public int calcolaDannoBase() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'calcolaDannoBase'");
+    }
 }

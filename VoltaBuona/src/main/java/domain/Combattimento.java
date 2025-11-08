@@ -1,7 +1,7 @@
-package it.univaq.dungeon.core;
+package domain;
 
-import it.univaq.dungeon.personaggi.Giocatore;
-import it.univaq.dungeon.personaggi.Mostro;
+import domain.Giocatore;
+import domain.Mostro;
 
 public class Combattimento {
     private Giocatore giocatoreAttivo;

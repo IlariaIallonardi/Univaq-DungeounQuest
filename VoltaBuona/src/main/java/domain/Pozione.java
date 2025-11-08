@@ -1,7 +1,10 @@
-package it.univaq.dungeon.oggetti;
+package domain;
 
 public class Pozione extends Oggetto {
-    public enum Tipo { CURA, MANA }
+    public enum Tipo {
+        CURA, MANA
+    }
+
     private Tipo tipo;
     private int valorePozione;
 
