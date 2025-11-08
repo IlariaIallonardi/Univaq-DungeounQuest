@@ -1,28 +1,26 @@
 package domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Zaino {
-    private int id;
-    private int capienza;
+    private int capienza = 10;
+    private List<Oggetto> listaOggetti = new ArrayList<>();
+    private List<Effetto> effettiTemporanei = new ArrayList<>();
 
-
-    public int getId() {
-        return id;
+    public boolean aggiungi(Oggetto o) {
+        if (listaOggetti.size() >= capienza) return false;
+        return listaOggetti.add(o);
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public boolean rimuovi(Oggetto o) {
+        return listaOggetti.remove(o);
     }
 
-    public int getCapienza() {
-        return capienza;
-    }
-
-    public void setCapienza(int capienza) {
-        this.capienza = capienza;
-    }
-
-    public Zaino(int id, int capienza) {
-        this.id = id;
-        this.capienza = capienza;
+    public Oggetto prendiOggetto(String nome) {
+        return listaOggetti.stream()
+                .filter(o -> o.getNome().equalsIgnoreCase(nome))
+                .findFirst()
+                .orElse(null);
     }
 }

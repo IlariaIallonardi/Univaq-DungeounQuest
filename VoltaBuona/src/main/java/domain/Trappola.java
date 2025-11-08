@@ -1,31 +1,19 @@
 package domain;
 
-public class Trappola extends Evento{
-    private int danni;
-    private String difficoltàDissinesco;
+public class Trappola extends Oggetto {
+    private String messaggio;
+    private boolean durata; // se persiste
 
-    public Trappola(int i) {
-        super();
+    public String checkDiDisinnesco() {
+        // ritorna esito test disinnesco
+        return "Fallito";
     }
 
-    public int getDanni() {
-        return danni;
+    public boolean alterareStato() {
+        // cambia stato stanza/giocatore
+        return true;
     }
 
-    public void setDanni(int danni) {
-        this.danni = danni;
-    }
-
-    public String getDifficoltàDissinesco() {
-        return difficoltàDissinesco;
-    }
-
-    public void setDifficoltàDissinesco(String difficoltàDissinesco) {
-        this.difficoltàDissinesco = difficoltàDissinesco;
-    }
-
-    public Trappola(int danni, String difficoltàDissinesco) {
-        this.danni = danni;
-        this.difficoltàDissinesco = difficoltàDissinesco;
-    }
+    @Override
+    public boolean usare() { return false; }
 }

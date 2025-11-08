@@ -1,31 +1,21 @@
-package domain;
+package it.univaq.dungeon.oggetti;
 
-public class Pozione extends Evento{
-    private String nome;
-    private String valore;
-    private boolean consumabile;
+public class Pozione extends Oggetto {
+    public enum Tipo { CURA, MANA }
+    private Tipo tipo;
+    private int valorePozione;
 
-    public String getNome() {
-        return nome;
+    public int aumentoPuntiVita() {
+        return tipo == Tipo.CURA ? valorePozione : 0;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public int aumentoMana() {
+        return tipo == Tipo.MANA ? valorePozione : 0;
     }
 
-    public String getValore() {
-        return valore;
-    }
-
-    public void setValore(String valore) {
-        this.valore = valore;
-    }
-
-    public boolean isConsumabile() {
-        return consumabile;
-    }
-
-    public void setConsumabile(boolean consumabile) {
-        this.consumabile = consumabile;
+    @Override
+    public boolean usare() {
+        // applica effetto al personaggio
+        return true;
     }
 }

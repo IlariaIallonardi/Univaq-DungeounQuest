@@ -1,13 +1,20 @@
-package domain;
+package it.univaq.dungeon.oggetti;
 
-public class Chiave extends Evento{
-    private int[][] nome;
+public class Chiave extends Oggetto {
+    private int idStanzaDestinazione;
 
-    public int[][] getNome() {
-        return nome;
+    public boolean aperturaStanza() {
+        return idStanzaDestinazione > 0;
     }
 
-    public void setNome(int[][] nome) {
-        this.nome = nome;
+    public boolean unicaApertura() {
+        // se la chiave si consuma
+        return true;
+    }
+
+    @Override
+    public boolean usare() {
+        // usa la chiave per aprire una stanza/passaggio
+        return aperturaStanza();
     }
 }

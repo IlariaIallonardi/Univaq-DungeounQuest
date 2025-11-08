@@ -1,13 +1,14 @@
 package domain;
 
-public class Mago extends Giocatore{
-    int mana;
+import it.univaq.dungeon.core.Azione;
 
-    public int getMana() {
-        return mana;
-    }
+public class Mago extends Giocatore {
+    @Override
+    public int calcolaDannoBase() { return attacco; }
 
-    public void setMana(int mana) {
-        this.mana = mana;
-    }
+    @Override
+    public Azione scegliAzione() { return Azione.USA_OGGETTO; }
+
+    @Override
+    public void aggiornaTurno() { /* logica turno mago */ }
 }

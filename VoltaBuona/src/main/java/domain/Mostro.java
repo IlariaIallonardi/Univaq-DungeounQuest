@@ -1,25 +1,12 @@
-package domain;
+package it.univaq.dungeon.personaggi;
 
-public class Mostro {
-    private String aggressività;
-    private int puntiVita;
+public class Mostro extends Personaggio {
+    private int danno;
 
-    public Mostro(String goblin, int i) {
+    @Override
+    public int calcolaDannoBase() {
+        return danno;
     }
 
-    public String getAggressività() {
-        return aggressività;
-    }
-
-    public void setAggressività(String aggressività) {
-        this.aggressività = aggressività;
-    }
-
-    public int getPuntiVita() {
-        return puntiVita;
-    }
-
-    public void setPuntiVita(int puntiVita) {
-        this.puntiVita = puntiVita;
-    }
+    public int getDanno() { return danno; }
 }

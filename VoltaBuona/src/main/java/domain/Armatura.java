@@ -1,22 +1,18 @@
-package domain;
+package it.univaq.dungeon.oggetti;
 
-public class Armatura extends Evento{
-    private int difesa;
-    private boolean equipaggiabile;
+public class Armatura extends Oggetto {
+    public enum TipoArmatura { DEBOLE, MEDIA, FORTE }
+    private TipoArmatura tipoArmatura;
+    private int difesaBonus;
+    private int durabilitaArmatura;
 
-    public int getDifesa() {
-        return difesa;
+    public int aumentoDifesa() { return difesaBonus; }
+
+    public boolean miglioraDifesa() {
+        // logica di equipaggiamento
+        return true;
     }
 
-    public void setDifesa(int difesa) {
-        this.difesa = difesa;
-    }
-
-    public boolean isEquipaggiabile() {
-        return equipaggiabile;
-    }
-
-    public void setEquipaggiabile(boolean equipaggiabile) {
-        this.equipaggiabile = equipaggiabile;
-    }
+    @Override
+    public boolean usare() { return false; }
 }

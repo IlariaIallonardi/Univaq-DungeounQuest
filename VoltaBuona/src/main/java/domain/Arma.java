@@ -1,22 +1,16 @@
-package domain;
+package it.univaq.dungeon.oggetti;
 
-public class Arma extends Evento{
-    private int danni;
-    private boolean usabile;
+public class Arma extends Oggetto {
+    public enum Tipo { ASCIA, SPADA, PUGNALE, ARCO }
+    private Tipo tipo;
+    private int danno;
+    private int dannoBonus;
+    private int durabilitaArma;
 
-    public int getDanni() {
-        return danni;
-    }
+    public int aumentaAttacco() { return danno + dannoBonus; }
 
-    public void setDanni(int danni) {
-        this.danni = danni;
-    }
+    public boolean miglioraAttacco() { return true; }
 
-    public boolean isUsabile() {
-        return usabile;
-    }
-
-    public void setUsabile(boolean usabile) {
-        this.usabile = usabile;
-    }
+    @Override
+    public boolean usare() { return false; }
 }
