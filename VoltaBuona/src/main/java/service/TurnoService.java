@@ -9,7 +9,7 @@ import java.util.List;
 
 public class TurnoService {
 
-    private List<Giocatore> ordineTurni = new ArrayList<>();
+    private List<Giocatore> ordineTurno = new ArrayList<>();
     private int indiceCorrente = 0;
 
     public void inizializzaTurno(List<Giocatore> giocatori) {
