@@ -1,4 +1,4 @@
-package domain;
+package it.univaq.dungeon.core;
 
 import it.univaq.dungeon.personaggi.Giocatore;
 import it.univaq.dungeon.personaggi.Mostro;
