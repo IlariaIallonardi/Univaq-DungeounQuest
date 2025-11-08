@@ -1,40 +1,35 @@
-
 package domain;
 
+import it.univaq.dungeon.oggetti.Oggetto;
+
+import java.util.*;
+
 public class Stanza {
-    private boolean chiave;
-    private boolean visitata;
+    private int id;
+    private int capienza;
+    private List<Oggetto> inventario = new ArrayList<>();
+    private Map<String, Stanza> stanzaAdiacente = new HashMap<>();
+    private List<Evento> listaEventi = new ArrayList<>();
+    private boolean rebusApertura = false;
 
-    private int [][] coordinate;
-
-    public boolean isChiave() {
-        return chiave;
+    public Stanza(int id, int capienza) {
+        this.id = id;
+        this.capienza = capienza;
     }
 
-    public void setChiave(boolean chiave) {
-        this.chiave = chiave;
+    public void aggiungiOggetto(Oggetto o) {
+        if (inventario.size() < capienza)
+            inventario.add(o);
     }
 
-    public Stanza(boolean chiave, boolean visitata, int[][] coordinate) {
-        this.chiave = chiave;
-        this.visitata = visitata;
-        this.coordinate = coordinate;
+    public void rimuoviOggetto(Oggetto o) {
+        inventario.remove(o);
     }
 
-    public boolean isVisitata() {
-        return visitata;
+    public boolean apriConChiave(it.univaq.dungeon.oggetti.Chiave chiave) {
+        // valida idStanzaDestinazione/chiaveRichiesta… (dipende dal design finale)
+        return true;
     }
 
-    public void setVisitata(boolean visitata) {
-        this.visitata = visitata;
-    }
-
-    public int[][] getCoordinate() {
-        return coordinate;
-    }
-
-    public void setCoordinate(int[][] coordinate) {
-        this.coordinate = coordinate;
-    }
+    // getters/setters omessi
 }
-

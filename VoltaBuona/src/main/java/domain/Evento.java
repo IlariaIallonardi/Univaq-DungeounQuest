@@ -1,13 +1,17 @@
 package domain;
 
 public class Evento {
-    int id;
+    private int id;
+    private boolean inizioEvento;
+    private boolean fineEvento;
+    private String descrizione;
 
-    public int getId() {
-        return id;
+    public boolean attivo() {
+        return inizioEvento && !fineEvento;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public boolean èRiutilizzabile() {
+        // regola di riutilizzo
+        return false;
     }
 }

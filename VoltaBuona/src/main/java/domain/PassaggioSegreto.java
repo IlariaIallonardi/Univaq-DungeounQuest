@@ -1,14 +1,34 @@
 package domain;
 
-public class PassaggioSegreto extends Evento{
+import it.univaq.dungeon.oggetti.Chiave;
 
-    private boolean botola;
+import java.util.ArrayList;
+import java.util.List;
 
-    public boolean isBotola() {
-        return botola;
+public class PassaggioSegreto extends Evento {
+    private int id;
+    private Stanza destinazione;
+    private boolean rebusApertura;
+    private Chiave chiaveRichiesta;
+
+    public PassaggioSegreto(int id, Stanza destinazione) {
+        this.id = id;
+        this.destinazione = destinazione;
     }
 
-    public void setBotola(boolean botola) {
-        this.botola = botola;
+    public String risolviRebus() {
+        // risoluzione rebus
+        rebusApertura = true;
+        return "Rebus risolto.";
+    }
+
+    public boolean aperturaStanza() {
+        // apre se rebus o chiave soddisfatti
+        return rebusApertura || chiaveRichiesta != null;
+    }
+
+    public boolean unicaApertura() {
+        // se deve aprirsi una sola volta
+        return true;
     }
 }
