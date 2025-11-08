@@ -1,0 +1,4 @@
+1-2: Il mostro ti colpisce! Perdi 15 HP.
+3-4: Pari! Nessun danno.
+5-6: Colpisci il mostro! Nessun danno subito.
+7-8: Colpo critico! Il mostro fugge.
