@@ -31,5 +31,10 @@ public class Stanza {
         return true;
     }
 
+    public List<domain.Oggetto> getInventario() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getInventario'");
+    }
+
     // getters/setters omessi
 }
