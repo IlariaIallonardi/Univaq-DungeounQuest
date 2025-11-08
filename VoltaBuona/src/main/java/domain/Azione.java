@@ -1,4 +1,9 @@
 package domain;
 
-public interface Azione {
+public enum Azione {
+    ATTACCA,
+    USA_OGGETTO,
+    MUOVI,
+    INTERAGISCI,
+    PASSA
 }
