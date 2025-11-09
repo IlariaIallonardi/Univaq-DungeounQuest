@@ -1,16 +1,70 @@
 package domain;
 
 public abstract class Oggetto {
-    protected int id;
-    protected String nome;
-    protected String descrizione;
-    protected boolean usabile;
-    protected boolean equipaggiabile;
-    protected boolean trovato;
+    private int id;
+    private  String nome;
+    private  String descrizione;
+    private  boolean usabile;
+    private  boolean equipaggiabile;
+    private  boolean trovato;
 
-    public abstract boolean usare();
+    public Oggetto(int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
+        this.id = id;
+        this.nome = nome;
+        this.descrizione = descrizione;
+        this.usabile = usabile;
+        this.equipaggiabile = equipaggiabile;
+        this.trovato = trovato;
+    }
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getNome() {
+        return nome;
+    }
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+    public String getDescrizione() {
+        return descrizione;
+    }
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
+    public boolean isUsabile() {
+        return usabile;
+    }
+    public void setUsabile(boolean usabile) {
+        this.usabile = usabile;
+    }
+    public boolean isEquipaggiabile() {
+        return equipaggiabile;
+    }
+    public void setEquipaggiabile(boolean equipaggiabile) {
+        this.equipaggiabile = equipaggiabile;
+    }
+    public boolean isTrovato() {
+        return trovato;
+    }
+    public void setTrovato(boolean trovato) {
+        this.trovato = trovato;
+    }
+     public boolean usare(Personaggio personaggio) {
+        if (!this.usabile) {
+            throw new IllegalStateException("Questo oggetto non può essere usato");
+        }
+        
+        if (!this.trovato) {
+            throw new IllegalStateException("Questo oggetto non è stato ancora trovato");
+        }
 
-    public String getNome() { return nome; }
-    public boolean isUsabile() { return usabile; }
-    public boolean isEquipaggiabile() { return equipaggiabile; }
-}
+            // Logica specifica implementata nelle sottoclassi
+            return eseguiEffetto(personaggio);
+        }
+        
+        public abstract boolean eseguiEffetto(Personaggio personaggio);
+    }
+

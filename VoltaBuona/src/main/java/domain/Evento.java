@@ -6,6 +6,13 @@ public class Evento {
     private boolean fineEvento;
     private String descrizione;
 
+    
+    public Evento(int id, boolean inizioEvento,  boolean fineEvento) {
+        this.id = id;
+        this.inizioEvento = inizioEvento;
+        this.fineEvento = fineEvento;
+    }
+
     public boolean attivo() {
         return inizioEvento && !fineEvento;
     }
@@ -14,4 +21,38 @@ public class Evento {
         // regola di riutilizzo
         return false;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public boolean isInizioEvento() {
+        return inizioEvento;
+    }
+
+    public void setInizioEvento(boolean inizioEvento) {
+        this.inizioEvento = inizioEvento;
+    }
+
+    public boolean isFineEvento() {
+        return fineEvento;
+    }
+
+    public void setFineEvento(boolean fineEvento) {
+        this.fineEvento = fineEvento;
+    }
+
+    public String getDescrizione() {
+        return descrizione;
+    }
+
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
+  
 }

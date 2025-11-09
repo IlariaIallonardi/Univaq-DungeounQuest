@@ -1,7 +1,7 @@
 package service;
 
-import it.univaq.dungeon.core.*;
-import it.univaq.dungeon.personaggi.*;
+
+import domain.personaggi.*;
 import it.univaq.dungeon.oggetti.*;
 import java.util.*;
 

@@ -1,26 +1,9 @@
 package domain;
 
-import domain.Azione;
 
-public class Arciere extends Giocatore {
-
-    @Override
-    public int calcolaDannoBase() {
-        return attacco + 1;
+public class Arciere extends Personaggio {
+    public Arciere(int attacco, int difesa, int esperienza, int id, int livello, String nomeP, Stanza posizioneCorrente, int puntiMana, int puntiVita, String statoG, Zaino zaino) {
+        super(attacco, difesa, esperienza, id, livello, nomeP, posizioneCorrente, puntiMana, puntiVita, statoG, zaino);
     }
 
-    @Override
-    public Azione scegliAzione() {
-        return Azione.ATTACCA;
-    }
-
-    @Override
-    public void aggiornaTurno() {
-        /* logica turno arciere */ }
-
-    @Override
-    protected void setNome(String nome) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setNome'");
-    }
 }

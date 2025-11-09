@@ -2,11 +2,47 @@ package domain;
 
 public class Pozione extends Oggetto {
     public enum Tipo {
-        CURA, MANA
+        CURA, MANA,DIFESA,ATTACCO
     }
-
+    
+    private boolean durata;
     private Tipo tipo;
     private int valorePozione;
+
+    public boolean isDurata() {
+        return durata;
+    }
+
+    public void setDurata(boolean durata) {
+        this.durata = durata;
+    }
+
+    public Tipo getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Tipo tipo) {
+        this.tipo = tipo;
+    }
+
+    public int getValorePozione() {
+        return valorePozione;
+    }
+
+    public void setValorePozione(int valorePozione) {
+        this.valorePozione = valorePozione;
+    }
+
+    public Pozione(boolean durata, Tipo tipo, int valorePozione, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
+        super(id, nome, descrizione, usabile, equipaggiabile, trovato);
+        this.durata = durata;
+        this.tipo = tipo;
+        this.valorePozione = valorePozione;
+    }
+      
+    
+
+
 
     public int aumentoPuntiVita() {
         return tipo == Tipo.CURA ? valorePozione : 0;
@@ -16,9 +52,34 @@ public class Pozione extends Oggetto {
         return tipo == Tipo.MANA ? valorePozione : 0;
     }
 
+   public int aumentoDifesa(Personaggio personaggio) {
+    return personaggio.getDifesa() + valorePozione;
+}
+    public int aumentaAttacco(Personaggio personaggio) {
+    return personaggio.getAttacco() + valorePozione;
+    }
+
     @Override
-    public boolean usare() {
-        // applica effetto al personaggio
+    public boolean eseguiEffetto(Personaggio personaggio) {
+        if (personaggio == null) return false;
+
+        switch (tipo) {
+            case CURA:
+                personaggio.setPuntiVita(personaggio.getPuntiVita() + valorePozione);
+                break;
+            case MANA:
+                personaggio.setPuntiMana(personaggio.getPuntiMana() + valorePozione);
+                break;
+            case DIFESA:
+                personaggio.setDifesa(personaggio.getDifesa() + valorePozione);
+                break;
+            case ATTACCO:
+                personaggio.setAttacco(personaggio.getAttacco() + valorePozione);
+                break;
+            default:
+                return false;
+        }
         return true;
     }
+
 }

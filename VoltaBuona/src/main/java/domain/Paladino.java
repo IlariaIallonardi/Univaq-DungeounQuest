@@ -1,31 +1,7 @@
 package domain;
 
-public class Paladino extends Giocatore {
-    int mana;
-
-    public int getMana() {
-        return mana;
-    }
-
-    public void setMana(int mana) {
-        this.mana = mana;
-    }
-
-    @Override
-    public Azione scegliAzione() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'scegliAzione'");
-    }
-
-    @Override
-    public void aggiornaTurno() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'aggiornaTurno'");
-    }
-
-    @Override
-    protected void setNome(String nome) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setNome'");
+public class Paladino extends Personaggio{
+    public Paladino(int attacco, int difesa, int esperienza, int id, int livello, String nomeP, Stanza posizioneCorrente, int puntiMana, int puntiVita, String statoG, Zaino zaino) {
+        super(attacco, difesa, esperienza, id, livello, nomeP, posizioneCorrente, puntiMana, puntiVita, statoG, zaino);
     }
 }

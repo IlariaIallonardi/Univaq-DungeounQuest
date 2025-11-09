@@ -1,7 +1,7 @@
 package service;
 
-import it.univaq.dungeon.core.Gioco;
-import it.univaq.dungeon.personaggi.Giocatore;
+import domain.Gioco;
+import domain.Giocatore;
 
 import java.util.ArrayList;
 import java.util.Collections;

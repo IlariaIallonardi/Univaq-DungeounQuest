@@ -1,14 +1,13 @@
 package domain;
 
-public class Mostro extends Personaggio {
-    private int danno;
-
-    @Override
-    public int calcolaDannoBase() {
-        return danno;
+public class Mostro extends PersonaIncontrata {
+    
+    public Mostro(int danno, String messaggio, String nome) {
+        super(danno, messaggio, nome);
     }
 
-    public int getDanno() {
-        return danno;
+
+    public Boolean alterareStato(){
+        return true;
     }
 }
