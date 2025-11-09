@@ -1,30 +1,11 @@
 package service;
+import domain.Giocatore;
+import domain.Oggetto;
+import domain.Stanza;
+import domain.Zaino;
 
 public class ZainoService {
 
-    public void salvaStatoPartita() {
-        // salvataggio stato
-    }
-
-    public void inizializzaTurno() {
-    }
-
-    public Giocatore getTurnoCorrente() {
-        return new Guerriero();
-    }
-
-    public void passaProssimoTurno() {
-    }
-
-    public List<Giocatore> getOrdineTurni() {
-        return List.of(new Guerriero(), new Mago());
-    }
-
-    public void terminaTurnoCorrente(Gioco g) {
-    }
-
-    public void passaProssimoGiocatore(Gioco g) {
-    }
 
     public boolean scambiaOggetto(Stanza s, Zaino z, Oggetto o) {
         return true;
@@ -38,12 +19,7 @@ public class ZainoService {
         return true;
     }
 
-    public void collegaStanze(Stanza s, Direzione d) {
-    }
 
-    public List<Stanza> caricaStanzeDaFile(String path) {
-        return new ArrayList<>();
-    }
 
     public void salvaZaino(Zaino z, String path) {
     }
@@ -52,14 +28,6 @@ public class ZainoService {
         return new Zaino();
     }
 
-    public void popolaDungeon(Dungeon d) {
-    }
-
-    public void aggiungiEventoCasuale(Stanza s) {
-    }
-
-    public void aggiungiOggettoCasuale(Stanza s) {
-    }
 
     public boolean èPieno(Zaino z) {
         return z.getListaOggetti().size() >= 10;

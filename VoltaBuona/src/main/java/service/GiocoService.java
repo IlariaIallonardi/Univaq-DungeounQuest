@@ -3,11 +3,8 @@ package service;
 
 import java.util.List;
 
-import domain.Dungeon;
-import domain.Giocatore;
-import domain.Gioco;
-import domain.Oggetto;
-import domain.Stanza;
+import domain.*;
+
 
 public interface GiocoService {
 

@@ -1,12 +1,13 @@
 package service;
 
 
-import domain.personaggi.*;
-import it.univaq.dungeon.oggetti.*;
 import java.util.*;
+
+import domain.*;
 
 public class EventoService {
 
+    
     public Evento generaEvento() {
         return new Evento(); // logica di generazione casuale
     }
@@ -31,7 +32,7 @@ public class EventoService {
         }
     }
 
-    public String parla(Giocatore g) {
-        return "NPC: Benvenuto, " + g.getNome();
+    public String parla(Personaggio g) {
+        return "NPC: Benvenuto, " + g.getNomeP();
     }
 }

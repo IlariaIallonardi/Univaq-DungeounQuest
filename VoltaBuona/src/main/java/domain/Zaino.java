@@ -7,7 +7,7 @@ public class Zaino {
     private int id;
     private int capienza = 10;
     private List<Oggetto> listaOggetti = new ArrayList<>();
-    public Zaino(int id, int capienza) {
+    public Zaino() {
         this.id = id;
         this.capienza = capienza;
         this.listaOggetti = new ArrayList<>();
@@ -29,5 +29,29 @@ public class Zaino {
                 .filter(o -> o.getNome().equalsIgnoreCase(nome))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getCapienza() {
+        return capienza;
+    }
+
+    public void setCapienza(int capienza) {
+        this.capienza = capienza;
+    }
+
+    public List<Oggetto> getListaOggetti() {
+        return listaOggetti;
+    }
+
+    public void setListaOggetti(List<Oggetto> listaOggetti) {
+        this.listaOggetti = listaOggetti;
     }
 }

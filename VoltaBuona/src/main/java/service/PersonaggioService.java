@@ -1,22 +1,21 @@
 package service;
 
-import domain.Personaggio;
-import domain.Giocatore;
+import domain.*;
 
 //import it.univaq.dungeon.personaggi.Giocatore;
 
 public class PersonaggioService {
 
-    public Giocatore creaGiocatore(String nome, Giocatore g) {
-        g.setNome(nome);
+    public Personaggio creaPersonaggio(String nome, Personaggio g) {
+        g.setNomeP(nome);
         return g;
     }
 
-    public StatoGioco aggiornaStatoGiocatore(Giocatore g) {
+    public StatoGioco aggiornaStatoPersonaggio(Personaggio g) {
         return StatoGioco.IN_ESPLORAZIONE;
     }
 
-    public void eliminaGiocatore(Giocatore g) {
+    public void eliminaPersonaggio(Personaggio g) {
         g.setPuntiVita(0);
     }
 
@@ -29,7 +28,7 @@ public class PersonaggioService {
     }
 
     public void usaPozione(Pozione p) {
-        p.usare();
+        
     }
 
     public void indossaArmatura(Armatura a) {
@@ -41,7 +40,7 @@ public class PersonaggioService {
     }
 
     public void utilizzaChiave(Chiave c) {
-        c.usare();
+        
     }
 
     public boolean raccogliereOggetto() {
@@ -81,6 +80,7 @@ public class PersonaggioService {
     }
 
     public Personaggio attribuisciPersonaggioAComputer() {
-        return new Mostro();
+        
+        return new Giocatore(); // Assuming Giocatore is a subclass of Personaggio
     }
 }

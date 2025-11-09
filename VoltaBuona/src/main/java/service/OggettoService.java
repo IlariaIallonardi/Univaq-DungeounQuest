@@ -35,11 +35,6 @@ public class OggettoService {
     }
 
     public Oggetto creaOggetto() {
-        return new Oggetto() {
-            @Override
-            public boolean usare() {
-                return true;
-            }
-        };
-    }
+        return new Oggetto() 
+        }
 }

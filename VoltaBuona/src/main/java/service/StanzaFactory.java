@@ -1,6 +1,10 @@
-package it.univaq.dungeon.factory;
+package service;
 
-import domain.Stanza;
+import java.nio.file.Path;
+import java.util.List;
+
+import domain.Dungeon;
+import domain.*;
 
 public class StanzaFactory {
 
@@ -21,4 +25,45 @@ public class StanzaFactory {
     public Stanza creaStanzaIniziale() {
         return new Stanza(1, 15); // stanza iniziale con capienza maggiore
     }
+ public void collegaStanze(Stanza stanza, Direzione direzione) {
+        // Logica per collegare una stanza ad un'altra in una direzione specifica
+    }
+
+    public List<Stanza> caricaStanzeDaFile(Path file) {
+        // Logica per caricare stanze da un file
+        return null;
+    }
+
+    public void popolaDungeon(Dungeon dungeon) {
+        // Logica per popolare il dungeon con stanze
+    }
+
+    public void aggiungiEventoCasuale(Stanza stanza) {
+        // Logica per aggiungere un evento casuale alla stanza
+    }
+
+    public void aggiungiOggettoCasuale(Stanza stanza) {
+        // Logica per aggiungere un oggetto casuale public void collegaStanze(Stanza stanza, Direzione direzione) {
+        // Logica per collegare una stanza ad un'altra in una direzione specifica
+    }
+
+    public List<Stanza> caricaStanzeDaFile(Path file) {
+        // Logica per caricare stanze da un file
+        return null;
+    }
+
+    public void popolaDungeon(Dungeon dungeon) {
+        // Logica per popolare il dungeon con stanze
+    }
+
+    public void aggiungiEventoCasuale(Stanza stanza) {
+        // Logica per aggiungere un evento casuale alla stanza
+    }
+
+    public void aggiungiOggettoCasuale(Stanza stanza) {
+        // Logica per aggiungere un oggetto casuale alla stanza
+    } 
+    
+
+
 }

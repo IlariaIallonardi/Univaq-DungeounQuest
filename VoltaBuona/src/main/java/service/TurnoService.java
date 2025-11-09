@@ -1,11 +1,11 @@
 package service;
 
-import domain.Gioco;
-import domain.Giocatore;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import domain.Giocatore;
+import domain.Gioco;
 
 public class TurnoService {
 
@@ -13,24 +13,24 @@ public class TurnoService {
     private int indiceCorrente = 0;
 
     public void inizializzaTurno(List<Giocatore> giocatori) {
-        ordineTurni.clear();
-        ordineTurni.addAll(giocatori);
-        Collections.shuffle(ordineTurni); // ordine casuale
+        ordineTurno.clear();
+        ordineTurno.addAll(giocatori);
+        Collections.shuffle(ordineTurno); // ordine casuale
         indiceCorrente = 0;
     }
 
     public Giocatore getTurnoCorrente() {
-        return ordineTurni.isEmpty() ? null : ordineTurni.get(indiceCorrente);
+        return ordineTurno.isEmpty() ? null : ordineTurno.get(indiceCorrente);
     }
 
     public void passaProssimoTurno() {
-        if (!ordineTurni.isEmpty()) {
-            indiceCorrente = (indiceCorrente + 1) % ordineTurni.size();
+        if (!ordineTurno.isEmpty()) {
+            indiceCorrente = (indiceCorrente + 1) % ordineTurno.size();
         }
     }
 
     public List<Giocatore> getOrdineTurni() {
-        return new ArrayList<>(ordineTurni);
+        return new ArrayList<>(ordineTurno);
     }
 
     public void terminaTurnoCorrente(Gioco gioco) {
