@@ -1,10 +1,11 @@
 package service.impl;
 
+
 import domain.Mago;
 import domain.Personaggio;
-import service.GiocatoreService;
+import service.PersonaggioService;
 
-public class MagoServiceimpl extends GiocatoreService {
+public class MagoServiceimpl extends PersonaggioService {
     
     /**
      * Metodo per utilizzare la magia del mago

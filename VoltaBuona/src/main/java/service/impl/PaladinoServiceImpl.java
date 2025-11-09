@@ -1,10 +1,11 @@
 package service.impl;
 
+
 import domain.Paladino;
 import domain.Personaggio;
-import service.GiocatoreService;
+import service.PersonaggioService;
 
-public class PaladinoServiceImpl extends GiocatoreService {
+public class PaladinoServiceImpl extends PersonaggioService {
     
     /**
      * Metodo per proteggere un altro giocatore

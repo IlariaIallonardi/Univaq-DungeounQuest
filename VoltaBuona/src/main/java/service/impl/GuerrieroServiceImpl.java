@@ -1,10 +1,11 @@
 package service.impl;
 
+
 import domain.Guerriero;
 import domain.Personaggio;
-import service.GiocatoreService;
+import service.PersonaggioService;
 
-public class GuerrieroServiceImpl extends GiocatoreService {
+public class GuerrieroServiceImpl extends PersonaggioService {
     
     /**
      * Metodo per proteggere un altro giocatore usando la forza del guerriero

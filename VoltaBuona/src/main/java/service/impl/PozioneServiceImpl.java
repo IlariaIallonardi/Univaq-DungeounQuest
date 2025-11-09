@@ -1,6 +1,6 @@
 package service.impl;
 
-import service.EventoService;
+import service.OggettoService;
 
-public interface PozioneServiceImpl extends EventoService {
+public class PozioneServiceImpl extends OggettoService {
 }
