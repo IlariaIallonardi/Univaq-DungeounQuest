@@ -3,20 +3,12 @@ import domain.Oggetto;
 import domain.Stanza;
 import domain.Zaino;
 
-public class ZainoService {
+public interface ZainoService {
 
 
-    public boolean scambiaOggetto(Stanza s, Zaino z, Oggetto o) {
-        return true;
-    }
+    public boolean scambiaOggetto(Stanza s, Zaino z, Oggetto o);
 
+    public boolean èPieno(Zaino z) ;
 
-
-    public boolean èPieno(Zaino z) {
-        return z.getListaOggetti().size() >= 5;
-    }
-
-    public void svuota(Zaino z) {
-        z.getListaOggetti().clear();
-    }
+    public void svuota(Zaino z) ;
 }

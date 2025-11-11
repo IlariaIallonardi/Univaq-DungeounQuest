@@ -5,22 +5,22 @@ import domain.Stanza;
 import domain.Zaino;
 import service.ZainoService;
 
-public class ZainoServiceImpl extends  ZainoService {
+public class ZainoServiceImpl implements  ZainoService {
 
     @Override
     public void svuota(Zaino z) {
-        super.svuota(z);
+        return;
     }
 
     @Override
     public boolean èPieno(Zaino z) {
-        return super.èPieno(z);
+        return true;
     }
 
     @Override
     public boolean scambiaOggetto(Stanza s, Zaino z, Oggetto o) {
-        return super.scambiaOggetto(s, z, o);
-    }
+        return true;
+    }   
 
     @Override
     public String toString() {
