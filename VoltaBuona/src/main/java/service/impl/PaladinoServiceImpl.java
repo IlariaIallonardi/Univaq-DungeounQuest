@@ -13,7 +13,7 @@ public class PaladinoServiceImpl extends PersonaggioService {
      * @param bersaglio Il personaggio da proteggere
      * @return true se la protezione è stata applicata con successo
      */
-    public boolean protezioneGiocatore(Paladino paladino, Personaggio bersaglio) {
+    public boolean protezioneGiocatoreP(Paladino paladino, Personaggio bersaglio) {
         if (paladino == null || bersaglio == null) {
             return false;
         }
@@ -37,7 +37,7 @@ public class PaladinoServiceImpl extends PersonaggioService {
      * @param tipoMagiaSacra Il tipo di magia da utilizzare
      * @return true se la magia è stata lanciata con successo
      */
-    public boolean usareMagia(Paladino paladino, Personaggio bersaglio, TipoMagiaSacra tipoMagiaSacra) {
+    public boolean usareMagiaP(Paladino paladino, Personaggio bersaglio, TipoMagiaSacra tipoMagiaSacra) {
         if (paladino == null || bersaglio == null || tipoMagiaSacra == null) {
             return false;
         }

@@ -18,7 +18,7 @@ public class Trappola extends Evento {
         return true;
     }
 
-    public int getDanno() {
+    public int getDannoTrappola() {
         return danno;
     }
     public void setDanno(int danno) {

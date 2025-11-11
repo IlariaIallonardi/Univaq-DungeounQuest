@@ -23,40 +23,21 @@ public interface GiocoService {
      * g.setStato(StatoGioco.IN_ATTESA);
      * }
      * 
-     * public void riprendi(Gioco g) {
-     * g.setStato(StatoGioco.IN_ESPLORAZIONE);
-     * }
      * 
-     * public Oggetto creaOggetto() {
-     * return new Tesoro();
-     * }
      * 
+     *public void salvaZaino(Zaino z, String path) {
+    }
+
+    public Zaino caricaZaino(String path) {
+        return new Zaino();
+    }
+     * ????????
      * public void salvaOggettiSuFile(List<Oggetto> oggetti, String filePath) {
      * // logica di salvataggio
      * }
      * 
-     * public void posizionaOggettoInStanza(Oggetto o, Stanza s) {
-     * s.aggiungiOggetto(o);
-     * }
-     * 
-     * public List<Oggetto> getOggettiInStanza(Stanza s) {
-     * return s.getInventario();
-     * }
-     * 
-     * public List<Oggetto> oggettiDisponibili(Gioco g) {
-     * return new ArrayList<>();
-     * }
-     * 
-     * public void usaOggetto(Giocatore g, Oggetto o) {
-     * o.usare();
-     * }
-     * 
-     * public void rimuoviOggettoDaStanza() {
-     * // rimozione generica
-     * }
-     * 
-     * public Dungeon generaDungeon() {
-     * return new Dungeon();
+     * public List<Stanza> generaDungeon() {
+     * return new Stanza();
      * }
      * 
      * public void posizionaGiocatoriIniziali(Gioco g) {

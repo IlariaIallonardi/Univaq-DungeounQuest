@@ -13,7 +13,7 @@ public class GuerrieroServiceImpl extends PersonaggioService {
      * @param bersaglio Il personaggio da proteggere
      * @return true se la protezione è stata applicata con successo
      */
-    public boolean protezioneGiocatore(Guerriero guerriero, Personaggio bersaglio) {
+    public boolean protezioneGiocatoreG(Guerriero guerriero, Personaggio bersaglio) {
         if (guerriero == null || bersaglio == null) {
             return false;
         }

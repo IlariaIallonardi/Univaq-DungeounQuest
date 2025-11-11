@@ -14,7 +14,7 @@ public class MagoServiceimpl extends PersonaggioService {
      * @param tipoMagia Il tipo di magia da utilizzare
      * @return true se la magia è stata lanciata con successo
      */
-    public boolean usareMagia(Mago mago, Personaggio bersaglio, TipoMagia tipoMagia) {
+    public boolean usareMagiaM(Mago mago, Personaggio bersaglio, TipoMagia tipoMagia) {
         // Controlli di validità
         if (mago == null || bersaglio == null || tipoMagia == null) {
             return false;

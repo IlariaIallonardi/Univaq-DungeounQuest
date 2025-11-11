@@ -11,15 +11,9 @@ public class EventoService {
     public Evento generaEvento() {
         return new Evento(); // logica di generazione casuale
     }
-
-    public void rimuoviEvento(Stanza stanza, Evento evento) {
-        stanza.getListaEventi().remove(evento);
-    }
-
-    public List<Evento> getEventiAttivi(Stanza stanza) {
-        return stanza.getListaEventi().stream()
-                .filter(Evento::attivo)
-                .toList();
+    // rimuovi evento dalla stanza specificata quando non è più attivo
+    public void rimuoviEventoDaStanza(Stanza stanza, Evento evento) {
+        stanza.getListaEventiAttivi().remove(evento);
     }
 
     public void attivaEvento(Giocatore g, Evento e) {
@@ -31,8 +25,8 @@ public class EventoService {
             attivaEvento(g, e);
         }
     }
-
-    public String parla(Personaggio g) {
+       //lo implementeremo insieme agli altri eventi
+   /* public String parla(Personaggio g) {
         return "NPC: Benvenuto, " + g.getNomeP();
-    }
+    }*/
 }

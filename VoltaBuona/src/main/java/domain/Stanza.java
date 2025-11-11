@@ -67,7 +67,7 @@ public class Stanza {
         this.stanzaAdiacente = stanzaAdiacente;
     }
 
-    public List<Evento> getListaEventi() {
+    public List<Evento> getListaEventiAttivi() {
         return listaEventi;
     }
 

@@ -11,12 +11,12 @@ public class PersonaggioService {
         return g;
     }
 
-    public StatoGioco aggiornaStatoPersonaggio(Personaggio g) {
-        return StatoGioco.IN_ESPLORAZIONE;
+    public String aggiornaStatoPersonaggio(Personaggio g) {
+        return null;
     }
 
-    public void eliminaPersonaggio(Personaggio g) {
-        g.setPuntiVita(0);
+    public boolean mortePersonaggio(Personaggio g) {
+        return g.getPuntiVita() <= 0;
     }
 
     public boolean muovi(Stanza s) {
@@ -26,15 +26,17 @@ public class PersonaggioService {
     public void attacca(Mostro m) {
         m.setPuntiVita(m.getPuntiVita() - 10);
     }
-
+         
+      //idea implementativa per usare oggetti,
+      //switch case in base al tipo di oggetto
     public void usaPozione(Pozione p) {
         
     }
-
+   //metodo in Armatura nel domain
     public void indossaArmatura(Armatura a) {
         a.miglioraDifesa();
     }
-
+       //metodo in Arma nel domain
     public void utilizzaArma(Arma a) {
         a.miglioraAttacco();
     }
@@ -47,40 +49,23 @@ public class PersonaggioService {
         return true;
     }
 
-    public boolean morteGiocatore() {
-        return true;
+    
+    //metodi per gestire danni e protezioni gestiti da Mostro e trappola
+    //da implementare in base alla logica di gioco
+    public int subisciDannoDaMostro(int dannoMostro ,Personaggio g) {
+        return 0;
+    }
+    public int subisciDannoDaTrappola(int dannoTrappola ,Personaggio g) {
+        return 0;
     }
 
-    public int subisciDanno(int dannoMostro) {
-        return Math.max(0, 100 - dannoMostro);
-    }
 
-    public boolean protezioneGiocatoreG(Giocatore g) {
-        return true;
-    }
+   
 
-    public boolean protezioneGiocatoreP(Giocatore g) {
-        return true;
-    }
-
-    public boolean usareMagiaP(Mostro m) {
-        return true;
-    }
-
-    public boolean usareMagia(Mostro m) {
-        return true;
-    }
-
-    public String aggiornamentoStatoG() {
+    public String aggiornamentoStatoPersonaggio() {
         return "Stato aggiornato";
     }
 
-    public void colpireStanze(Stanza s) {
-        // interazione con stanza
-    }
-
-    public Personaggio attribuisciPersonaggioAComputer() {
-        
-        return new Giocatore(); // Assuming Giocatore is a subclass of Personaggio
-    }
+   
+    
 }
