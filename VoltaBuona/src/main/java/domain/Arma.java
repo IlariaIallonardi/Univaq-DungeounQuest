@@ -1,6 +1,6 @@
 package domain;
 
-public class Arma extends Oggetto {
+/*public class Arma extends Oggetto {
     public enum Tipo {
         ASCIA, SPADA, PUGNALE, ARCO
     }
@@ -85,4 +85,17 @@ public class Arma extends Oggetto {
     }
 
 
+}*/
+public class Arma extends Oggetto {
+
+    private int danno;
+
+    public Arma(String nome, int danno) {
+        super(nome);
+        this.danno = danno;
+    }
+
+    public int getDanno() {
+        return danno;
+    }
 }

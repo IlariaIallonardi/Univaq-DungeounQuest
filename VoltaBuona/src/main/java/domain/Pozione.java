@@ -1,6 +1,7 @@
 package domain;
 
-public class Pozione extends Oggetto {
+
+/*public class Pozione extends Oggetto {
     public enum Tipo {
         CURA, MANA,DIFESA,ATTACCO
     }
@@ -82,4 +83,17 @@ public class Pozione extends Oggetto {
         return true;
     }
 
+}*/
+public class Pozione extends Oggetto {
+
+    private int valoreCura;
+
+    public Pozione(String nome, int valoreCura) {
+        super(nome);
+        this.valoreCura = valoreCura;
+    }
+
+    public int getValoreCura() {
+        return valoreCura;
+    }
 }

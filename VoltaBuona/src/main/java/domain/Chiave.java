@@ -1,6 +1,6 @@
 package domain;
 
-public class Chiave extends Oggetto {
+/*public class Chiave extends Oggetto {
     private int idStanzaDestinazione;
 
     public Chiave(int idStanzaDestinazione, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
@@ -39,5 +39,11 @@ public class Chiave extends Oggetto {
     public boolean eseguiEffetto(Personaggio personaggio) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'eseguiEffetto'");
+    }
+}*/
+public class Chiave extends Oggetto {
+
+    public Chiave(String nome) {
+        super(nome);
     }
 }

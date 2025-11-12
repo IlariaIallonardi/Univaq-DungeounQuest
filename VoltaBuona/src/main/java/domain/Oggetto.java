@@ -1,12 +1,13 @@
 package domain;
 
-public abstract class Oggetto {
+/*public abstract class Oggetto {
+
     private int id;
-    private  String nome;
-    private  String descrizione;
-    private  boolean usabile;
-    private  boolean equipaggiabile;
-    private  boolean trovato;
+    private String nome;
+    private String descrizione;
+    private boolean usabile;
+    private boolean equipaggiabile;
+    private boolean trovato;
 
     public Oggetto(int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
         this.id = id;
@@ -16,55 +17,84 @@ public abstract class Oggetto {
         this.equipaggiabile = equipaggiabile;
         this.trovato = trovato;
     }
+
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
+
     public String getNome() {
         return nome;
     }
+
     public void setNome(String nome) {
         this.nome = nome;
     }
+
     public String getDescrizione() {
         return descrizione;
     }
+
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
     }
+
     public boolean isUsabile() {
         return usabile;
     }
+
     public void setUsabile(boolean usabile) {
         this.usabile = usabile;
     }
+
     public boolean isEquipaggiabile() {
         return equipaggiabile;
     }
+
     public void setEquipaggiabile(boolean equipaggiabile) {
         this.equipaggiabile = equipaggiabile;
     }
+
     public boolean isTrovato() {
         return trovato;
     }
+
     public void setTrovato(boolean trovato) {
         this.trovato = trovato;
     }
-     public boolean usare(Personaggio personaggio) {
+
+    public boolean usare(Personaggio personaggio) {
         if (!this.usabile) {
             throw new IllegalStateException("Questo oggetto non può essere usato");
         }
-        
+
         if (!this.trovato) {
             throw new IllegalStateException("Questo oggetto non è stato ancora trovato");
         }
 
-            // Logica specifica implementata nelle sottoclassi
-            return eseguiEffetto(personaggio);
-        }
-        
-        public abstract boolean eseguiEffetto(Personaggio personaggio);
+        // Logica specifica implementata nelle sottoclassi
+        return eseguiEffetto(personaggio);
     }
 
+    public abstract boolean eseguiEffetto(Personaggio personaggio);
+}*/
+public abstract class Oggetto {
+
+    protected String nome;
+
+    public Oggetto(String nome) {
+        this.nome = nome;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    @Override
+    public String toString() {
+        return nome;
+    }
+}

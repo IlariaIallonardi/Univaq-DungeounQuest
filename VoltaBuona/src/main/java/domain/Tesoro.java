@@ -1,11 +1,11 @@
 package domain;
 
-public class Tesoro extends Oggetto {
+/*public class Tesoro extends Oggetto {
     private Boolean trovato;
     private int valore;
 
 
-public Tesoro(int id, String nome, String descrizione, int valore, boolean usabile, boolean equipaggiabile, boolean trovato) {
+public Tesoro(String nome, String descrizione, int id, boolean usabile, boolean equipaggiabile, boolean trovato) {
     super(id, nome, descrizione, usabile, equipaggiabile, trovato);
     this.valore = valore;
     this.trovato = trovato;
@@ -43,4 +43,17 @@ public Tesoro(int id, String nome, String descrizione, int valore, boolean usabi
         return true;
     }
 
+}*/
+public class Tesoro extends Oggetto {
+
+    private int valore;
+
+    public Tesoro(String nome, int valore) {
+        super(nome);
+        this.valore = valore;
+    }
+
+    public int getValore() {
+        return valore;
+    }
 }

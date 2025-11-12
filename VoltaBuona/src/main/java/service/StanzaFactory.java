@@ -1,138 +1,83 @@
 package service;
 
-import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import domain.Arma;
+import domain.Armatura;
+import domain.Chiave;
+import domain.Evento;
+import domain.Oggetto;
+import domain.Pozione;
 import domain.Stanza;
+import domain.Tesoro;
 
 public class StanzaFactory {
 
-    /**
-     * Enum per le direzioni di collegamento tra stanze
-     */
-    public enum Direzione {
-        SOPRA("sopra"),
-        SOTTO("sotto"),
-        SINISTRA("sinistra"),
-        DESTRA("destra"),
-        DENTRO("dentro"),
-        FUORI("fuori");
+    private final Random rnd = new Random();
 
-        private final String nome;
+    public Stanza creaStanza(int id) {
+        int x = rnd.nextInt(100);
+        int y = rnd.nextInt(100);
+        int[][] coord = {{x, y}};
+        String stato = "NON_VISITATA";
 
-        Direzione(String nome) {
-            this.nome = nome;
-        }
+        List<Oggetto> oggetti = generaOggettiCasuali();
+        List<Evento> eventi = generaEventiCasuali();
+        Chiave chiave = generaChiaveCasuale();
 
-        public String getNome() {
-            return nome;
-        }
+        return new Stanza(id, coord, StatoStanza.NON_VISITATA, oggetti, eventi, chiave);
     }
 
-    /**
-     * Metodo unico per creare una stanza
-     * @param id ID della stanza
-     * @param descrizione Descrizione della stanza
-     * @param tipoStanza Tipo di stanza (VUOTA, NORMALE, SPECIALE, ecc.)
-     * @return Stanza creata
-     */
-    public Stanza creaStanza(int id, String descrizione, TipoStanza tipoStanza) {
-        Stanza stanza = new Stanza(id, new int[2][2], descrizione);
-        
-        switch (tipoStanza) {
-            case VUOTA:
-                // Stanza vuota di default
-                break;
-            case NORMALE:
-                aggiungiEventoCasuale(stanza);
-                aggiungiOggettoCasuale(stanza);
-                break;
-            case SPECIALE:
-                aggiungiEventoCasuale(stanza);
-                aggiungiOggettoCasuale(stanza);
-                aggiungiOggettoCasuale(stanza);
-                break;
-            case INIZIALE:
-                stanza.setStatoS("Iniziale");
-                break;
-            case FINALE:
-                stanza.setStatoS("Finale");
-                aggiungiOggettoCasuale(stanza);
-                break;
-            default:
-                break;
-        }
-        
-        return stanza;
-    }
+    private List<Oggetto> generaOggettiCasuali() {
+        List<Oggetto> oggetti = new ArrayList<>();
+        int n = rnd.nextInt(3); // 0–2 oggetti
 
-    /**
-     * Metodo per collegare due stanze in una determinata direzione
-     * @param stanzaSorgente La stanza di partenza
-     * @param direzione La direzione di collegamento
-     * @param stanzaDestinazione La stanza di destinazione
-     */
-    public void collegaStanze(Stanza stanzaSorgente, Direzione direzione, Stanza stanzaDestinazione) {
-        if (stanzaSorgente == null || stanzaDestinazione == null) {
-            return;
+        for (int i = 0; i < n; i++) {
+            int tipo = rnd.nextInt(5); // 5 tipi di oggetti
+
+            switch (tipo) {
+                case 0 ->
+                    oggetti.add(new Pozione("Pozione_" + rnd.nextInt(100), rnd.nextInt(20) + 10));
+                case 1 ->
+                    oggetti.add(new Arma("Spada_" + rnd.nextInt(100), rnd.nextInt(10) + 5));
+                case 2 ->
+                    oggetti.add(new Armatura("Armatura_" + rnd.nextInt(100), rnd.nextInt(5) + 1));
+                case 3 ->
+                    oggetti.add(new Chiave("Chiave_" + rnd.nextInt(10)));
+
+                case 4 ->
+                    oggetti.add(new Tesoro("Tesoro_" + rnd.nextInt(100), rnd.nextInt(200) + 50));
+            }
         }
 
-        Map<String, Stanza> adiacenti = stanzaSorgente.getStanzaAdiacente();
-        if (adiacenti == null) {
-            adiacenti = new HashMap<>();
-            stanzaSorgente.setStanzaAdiacente(adiacenti);
+        return oggetti;
+    }
+
+    private List<Evento> generaEventiCasuali() {
+        List<Evento> eventi = new ArrayList<>();
+        int n = rnd.nextInt(3);
+        String[] descrizioni = {
+            "Un rumore sinistro si avvicina...",
+            "Hai trovato un messaggio inciso nella pietra.",
+            "Una trappola scatta improvvisamente!",
+            "Appare un NPC misterioso...",
+            "Una luce magica illumina la stanza."
+        };
+        for (int i = 0; i < n; i++) {
+            eventi.add(new Evento(rnd.nextInt(1000), false, false, descrizioni[rnd.nextInt(descrizioni.length)]));
         }
-
-        // Collega nella direzione specificata
-        adiacenti.put(direzione.getNome(), stanzaDestinazione);
-
-        // Collega anche in direzione opposta automaticamente
-        Direzione direzioneOpposta = getDirezioneOpposta(direzione);
-        Map<String, Stanza> adiacentiDestinazione = stanzaDestinazione.getStanzaAdiacente();
-        if (adiacentiDestinazione == null) {
-            adiacentiDestinazione = new HashMap<>();
-            stanzaDestinazione.setStanzaAdiacente(adiacentiDestinazione);
-        }
-        adiacentiDestinazione.put(direzioneOpposta.getNome(), stanzaSorgente);
+        return eventi;
     }
 
-    /**
-     * Metodo helper per ottenere la direzione opposta
-     */
-    private Direzione getDirezioneOpposta(Direzione direzione) {
-        switch (direzione) {
-            case SOPRA:
-                return Direzione.SOTTO;
-            case SOTTO:
-                return Direzione.SOPRA;
-            case SINISTRA:
-                return Direzione.DESTRA;
-            case DESTRA:
-                return Direzione.SINISTRA;
-            case DENTRO:
-                return Direzione.FUORI;
-            case FUORI:
-                return Direzione.DENTRO;
-            default:
-                return null;
-        }
+    private Chiave generaChiaveCasuale() {
+        return (rnd.nextDouble() < 0.2) ? new Chiave("Chiave_" + rnd.nextInt(10)) : null;
+
     }
 
-    public void aggiungiEventoCasuale(Stanza stanza) {
-        // Implementazione per aggiungere evento casuale
-    }
-
-    public void aggiungiOggettoCasuale(Stanza stanza) {
-        // Implementazione per aggiungere oggetto casuale
-    }
-
-    /**
-     * Enum per i tipi di stanza
-     */
-    public enum TipoStanza {
-        VUOTA,
-        NORMALE,
-        SPECIALE,
-        INIZIALE,
-        FINALE
+    public enum StatoStanza {
+        VISITATA,
+        NON_VISITATA
     }
 }

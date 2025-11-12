@@ -1,6 +1,6 @@
 package domain;
 
-public class Armatura extends Oggetto {
+/*public class Armatura extends Oggetto {
 
     public Armatura(int difesaBonus, int durabilitaArmatura, TipoArmatura tipoArmatura, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
         super(id, nome, descrizione, usabile, equipaggiabile, trovato);
@@ -56,4 +56,18 @@ public boolean eseguiEffetto(Personaggio personaggio) {
 
 
    
+}
+ */
+public class Armatura extends Oggetto {
+
+    private int difesa;
+
+    public Armatura(String nome, int difesa) {
+        super(nome);
+        this.difesa = difesa;
+    }
+
+    public int getDifesa() {
+        return difesa;
+    }
 }

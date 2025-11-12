@@ -1,0 +1,41 @@
+
+import domain.Stanza;
+import service.GiocoService;
+import service.StanzaFactory;
+import service.StanzaFactory.StatoStanza;
+
+public class Main {
+
+    public static void main(String[] args) {
+        StanzaFactory factory = new StanzaFactory();
+        GiocoService giocoService = new GiocoService(factory);
+
+        // 1️⃣ Legge la configurazione da file
+        int[] dimensioni = giocoService.leggiConfigurazione("config.txt");
+        int righe = dimensioni[0];
+        int colonne = dimensioni[1];
+
+        // 2️⃣ Crea il dungeon
+        giocoService.creaDungeon(righe, colonne);
+        GiocoService.Coordinate start = new GiocoService.Coordinate(0, 0);
+        Stanza stanzaStart = giocoService.getDungeon().get(start);
+        if (stanzaStart != null) {
+            stanzaStart.setStatoS(StatoStanza.VISITATA);
+        }
+
+        // 3️⃣ Stampa la mappa (non spoilerata)
+        giocoService.stampaMappa(righe, colonne);
+
+        // 4️⃣ Mostra info di debug (facoltativo)
+        System.out.println(
+                "\n--- DEBUG: Stanze generate ---");
+        for (int y = 0; y < righe; y++) {
+            for (int x = 0; x < colonne; x++) {
+                GiocoService.Coordinate c = new GiocoService.Coordinate(x, y);
+                Stanza s = giocoService.getDungeon().get(c);
+                System.out.println(c + " -> " + s);
+            }
+        }
+
+    }
+}

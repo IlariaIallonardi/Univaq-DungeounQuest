@@ -1,16 +1,17 @@
 package domain;
 
 public class Evento {
+
     private int id;
     private boolean inizioEvento;
     private boolean fineEvento;
     private String descrizione;
 
-    
-    public Evento(int id, boolean inizioEvento,  boolean fineEvento) {
+    public Evento(int id, boolean inizioEvento, boolean fineEvento, String descrizione) {
         this.id = id;
         this.inizioEvento = inizioEvento;
         this.fineEvento = fineEvento;
+        this.descrizione = descrizione;
     }
 
     public boolean attivo() {
@@ -54,5 +55,4 @@ public class Evento {
         this.descrizione = descrizione;
     }
 
-  
 }

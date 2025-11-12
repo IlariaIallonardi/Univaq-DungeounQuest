@@ -5,27 +5,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import service.StanzaFactory.StatoStanza;
+
 public class Stanza {
+
     private int id;
     private int[][] coordinate;
-    private String statoS;
-    private List<Oggetto> inventario = new ArrayList<>();
+    private StatoStanza statoS; //visitata o non visitata ed è enum in GiocoService
+    private List<Oggetto> oggettiPresenti = new ArrayList<>();
     private Map<String, Stanza> stanzaAdiacente = new HashMap<>();
     private List<Evento> listaEventi = new ArrayList<>();
-    private Chiave  chiaveRichiesta;
+    private Chiave chiaveRichiesta;
 
-    
-    public Stanza(int id, int[][] coordinate, String statoS, List<Oggetto> inventario, 
-              Map<String, Stanza> stanzaAdiacente, List<Evento> listaEventi, Chiave chiaveRichiesta) {
-    this.id = id;
-    this.coordinate = coordinate;
-    this.statoS = statoS;
-    this.inventario = inventario != null ? new ArrayList<>(inventario) : new ArrayList<>();
-    this.stanzaAdiacente = stanzaAdiacente != null ? new HashMap<>(stanzaAdiacente) : new HashMap<>();
-    this.listaEventi = listaEventi != null ? new ArrayList<>(listaEventi) : new ArrayList<>();
-    this.chiaveRichiesta = chiaveRichiesta;
-}
-
+    public Stanza(int id, int[][] coordinate, StatoStanza statoS, List<Oggetto> inventario,
+            List<Evento> listaEventi, Chiave chiaveRichiesta) {
+        this.id = id;
+        this.coordinate = coordinate;
+        this.statoS = statoS;
+        this.oggettiPresenti = inventario != null ? new ArrayList<>(inventario) : new ArrayList<>();
+        this.stanzaAdiacente = (stanzaAdiacente != null) ? stanzaAdiacente : new HashMap<>();
+        this.listaEventi = listaEventi != null ? new ArrayList<>(listaEventi) : new ArrayList<>();
+        this.chiaveRichiesta = chiaveRichiesta;
+    }
 
     public int getId() {
         return id;
@@ -43,20 +44,20 @@ public class Stanza {
         this.coordinate = coordinate;
     }
 
-    public String getStatoS() {
+    public StatoStanza getStatoS() {
         return statoS;
     }
 
-    public void setStatoS(String statoS) {
+    public void setStatoS(StatoStanza statoStanza) {
         this.statoS = statoS;
     }
 
-    public List<Oggetto> getInventario() {
-        return inventario;
+    public List<Oggetto> getOggettiPresenti() {
+        return oggettiPresenti;
     }
 
-    public void setInventario(List<Oggetto> inventario) {
-        this.inventario = inventario;
+    public void setInventario(List<Oggetto> oggettoPresenti) {
+        this.oggettiPresenti = oggettiPresenti;
     }
 
     public Map<String, Stanza> getStanzaAdiacente() {
@@ -83,7 +84,7 @@ public class Stanza {
         this.chiaveRichiesta = chiaveRichiesta;
     }
 
-     public void prendiOggetto(Oggetto o) {
+    public void prendiOggetto(Oggetto o) {
     }
 
     public boolean apriConChiave(domain.Chiave chiave) {
@@ -93,4 +94,18 @@ public class Stanza {
 
     public void esploraStanza(Giocatore g) {
     }
+
+    @Override
+    public String toString() {
+        return "Stanza{id=" + id
+                + ", stato=" + statoS
+                //+ ", oggetti=" + inventario.size()
+                + ", eventi=" + listaEventi.size()
+                + ", chiave=" + (chiaveRichiesta != null) + "}";
+    }
+
+
+    /*public Map<String, Stanza> getStanzeAdiacenti() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }*/
 }
