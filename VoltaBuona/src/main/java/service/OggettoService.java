@@ -8,9 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OggettoService {
+<<<<<<< Updated upstream
      //prova github
     public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza) {
         stanza.aggiungiOggetto(oggetto);
+=======
+
+
+
+
+    ///modifica Asja
+    public void usaOggetto(Gioco gioco, Oggetto oggetto) {
+        oggetto.usare( );
+>>>>>>> Stashed changes
     }
 
     public List<Oggetto> getOggettiInStanza(Stanza stanza) {
