@@ -23,6 +23,9 @@ public class OggettoService {
         return new ArrayList<>();
     }
 
+
+
+    ///modifica Asja
     public void usaOggetto(Gioco gioco, Oggetto oggetto) {
         oggetto.usare();
     }
