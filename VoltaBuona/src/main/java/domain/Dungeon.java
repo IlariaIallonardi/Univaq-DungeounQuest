@@ -1,60 +1,74 @@
 package domain;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-
 
 import service.StanzaFactory;
 
 public class Dungeon {
-    private  int righe=0;
-    private  int colonne=0;
 
+    private int righe = 0;
+    private int colonne = 0;
 
-    private final Map<String, Stanza> stanze = new HashMap<>();
+    private final Map<String, Stanza> stanzeMappa = new HashMap<>();
 
     public Dungeon(int righe, int colonne) {
         this.righe = righe;
         this.colonne = colonne;
     }
 
-    public void creaGriglia(int righe, int colonne) {
-        int id = 1;
+    public boolean esiste(int x, int y) {
+        return x >= 0 && y >= 0 && x < colonne && y < righe;
+    }
+
+    private String key(int x, int y) {
+        return x + "," + y;
+    }
+
+    public void collegaAdiacenti() {
         for (int y = 0; y < righe; y++) {
             for (int x = 0; x < colonne; x++) {
-                stanze.put(new Coordinate(x, y), stanzaFactory.creaStanza(id++));
+
+                Stanza corrente = getStanza(x, y);
+                if (corrente == null) {
+                    continue;
+                }
+
+                if (esiste(x, y - 1)) {
+                    corrente.getStanzaAdiacente().put("NORD", getStanza(x, y - 1));
+                }
+
+                if (esiste(x, y + 1)) {
+                    corrente.getStanzaAdiacente().put("SUD", getStanza(x, y + 1));
+                }
+
+                if (esiste(x + 1, y)) {
+                    corrente.getStanzaAdiacente().put("EST", getStanza(x + 1, y));
+                }
+
+                if (esiste(x - 1, y)) {
+                    corrente.getStanzaAdiacente().put("OVEST", getStanza(x - 1, y));
+                }
             }
         }
-        collegaStanze(righe, colonne);
     }
 
-    private void collegaStanze(int righe, int colonne) {
-        for (Map.Entry<Coordinate, Stanza> e : stanze.entrySet()) {
-            Coordinate c = e.getKey();
-            Stanza s = e.getValue();
-            Stanza nord = stanze.get(new Coordinate(c.x(), c.y() - 1));
-            Stanza sud = stanze.get(new Coordinate(c.x(), c.y() + 1));
-            Stanza est  = stanze.get(new Coordinate(c.x() + 1, c.y()));
-            Stanza ovest= stanze.get(new Coordinate(c.x() - 1, c.y()));
-            if (nord != null) s.getStanzaAdiacente().put("NORD", nord);
-            if (sud != null)  s.getStanzaAdiacente().put("SUD", sud);
-            if (est != null)  s.getStanzaAdiacente().put("EST", est);
-            if (ovest != null) s.getStanzaAdiacente().put("OVEST", ovest);
+    public void setStanza(int x, int y, Stanza stanza) {  //è il metodo che costruisce la mappa.
+        if (esiste(x, y)) { //→ controlla che la posizione sia dentro la mappa
+            stanzeMappa.put(key(x, y), stanza); //key → converte le coordinate in una stringa tipo "2,3"
+            //put → salva la stanza nella mappa nella posizione indicata
         }
     }
 
-    public Stanza getStanza(int x, int y) {
-        return stanze.get(new Coordinate(x, y));
+    public Stanza getStanza(int x, int y) { //è il metodo per leggere cosa c'è in una posizione del dungeon.
+        if (!esiste(x, y)) {
+            return null;
+        }
+        return stanzeMappa.get(key(x, y));
     }
 
-    public void addStanza(int x, int y, Stanza stanza) {
-        stanze.put(new Coordinate(x, y), stanza);
-    }
-
-    public Map<Coordinate, Stanza> getStanze() {
-        return Collections.unmodifiableMap(stanze);
+    public Map<String, Stanza> getMappaStanze() {
+        return stanzeMappa;
     }
 
     public void stampaMappa(int righe, int colonne) {
@@ -62,110 +76,17 @@ public class Dungeon {
         for (int y = 0; y < righe; y++) {
             for (int x = 0; x < colonne; x++) {
                 Stanza s = getStanza(x, y);
-                if (s == null) System.out.print("   ");
-                else System.out.print(s.getStatoS() == StanzaFactory.StatoStanza.VISITATA ? " . " : " ? ");
+                if (s == null) {
+                    System.out.print("   ");
+                } else {
+                    System.out.print(s.getStatoS() == StanzaFactory.StatoStanza.VISITATA ? " . " : " ? ");
+                }
             }
             System.out.println();
         }
         System.out.println("---------------------\n");
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // prima prova grafica dungeon
 /*public class Dungeon {

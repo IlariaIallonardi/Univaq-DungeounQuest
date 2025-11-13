@@ -1,2 +1,2 @@
-righe=8
-colonne=10
+righe=5
+colonne=6

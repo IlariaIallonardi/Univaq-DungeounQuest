@@ -8,32 +8,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OggettoService {
-<<<<<<< Updated upstream
+
+    <<<<<<< Updated upstream
      //prova github
     public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza) {
         stanza.aggiungiOggetto(oggetto);
-=======
+         == == ==
+                = ///modifica Asja
 
 
-
-
-    ///modifica Asja
     public void usaOggetto(Gioco gioco, Oggetto oggetto) {
-        oggetto.usare( );
->>>>>>> Stashed changes
+        oggetto.usare();
+         >>> >>> > Stashed changes
     }
 
     public List<Oggetto> getOggettiInStanza(Stanza stanza) {
         return stanza.getInventario();
     }
-    
 
     public List<Oggetto> oggettiDisponibili(Gioco gioco) {
         // logica per raccogliere tutti gli oggetti disponibili nel dungeon
         return new ArrayList<>();
     }
-
-
 
     ///modifica Asja
     public void usaOggetto(Gioco gioco, Oggetto oggetto) {
@@ -50,5 +46,5 @@ public class OggettoService {
 
     public Oggetto creaOggetto() {
         return new Oggetto() 
-        }
+    }
 }
