@@ -44,7 +44,7 @@ public class GiocoService {
      * Crea il dungeon
      */
     public void creaDungeon(int righe, int colonne) {
-        System.out.println("🧱 Creazione del dungeon " + righe + "x" + colonne + "...");
+        System.out.println(" Creazione del dungeon " + righe + "x" + colonne + "...");
 
         int id = 1;
         for (int y = 0; y < righe; y++) {
@@ -55,7 +55,7 @@ public class GiocoService {
         }
 
         collegaStanze(righe, colonne);
-        System.out.println("✅ Dungeon creato con " + dungeon.size() + " stanze!");
+        System.out.println(" Dungeon creato con " + dungeon.size() + " stanze!");
     }
 
     /**

@@ -25,8 +25,12 @@ public class StanzaFactory {
 
         List<Oggetto> oggetti = generaOggettiCasuali();
         List<Evento> eventi = generaEventiCasuali();
-        Chiave chiave = generaChiaveCasuale();
+        
+        // ora decidiamo se la stanza richiede una chiave usando 1 (serve) o 0 (non serve)
+        int chiaveRichiestaFlag = generaRichiestaChiave(); // 0 o 1
+        Chiave chiave = (chiaveRichiestaFlag == 1) ? new Chiave("ChiaveReq_" + id) : null;
 
+       
         return new Stanza(id, coord, StatoStanza.NON_VISITATA, oggetti, eventi, chiave);
     }
 
@@ -71,9 +75,9 @@ public class StanzaFactory {
         return eventi;
     }
 
-    private Chiave generaChiaveCasuale() {
-        return (rnd.nextDouble() < 0.2) ? new Chiave("Chiave_" + rnd.nextInt(10)) : null;
-
+   // restituisce 1 se la stanza deve richiedere una chiave, 0 altrimenti
+    private int generaRichiestaChiave() {
+        return rnd.nextInt(2); // 0 o 1
     }
 
     public enum StatoStanza {
