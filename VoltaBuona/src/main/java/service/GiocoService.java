@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import domain.Stanza;
+import service.GiocoService.Coordinate;
 import service.StanzaFactory.StatoStanza;
 
 public class GiocoService {
@@ -111,7 +112,8 @@ public class GiocoService {
         return Collections.unmodifiableMap(dungeon);
     }
 
-    public static record Coordinate(int x, int y) {
-
-    }
+    // Chiave stringa
+     private String coordinateKey(int x, int y) { return x + "," + y; }
+       Map<String, Stanza> dungeon1 = new HashMap<>();
+       dungeon1.get(coordinateKey(x,y));
 }

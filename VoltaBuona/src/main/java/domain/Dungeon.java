@@ -1,8 +1,174 @@
 package domain;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+
+import service.StanzaFactory;
 
 public class Dungeon {
+    private  int righe=0;
+    private  int colonne=0;
+
+
+    private final Map<String, Stanza> stanze = new HashMap<>();
+
+    public Dungeon(int righe, int colonne) {
+        this.righe = righe;
+        this.colonne = colonne;
+    }
+
+    public void creaGriglia(int righe, int colonne) {
+        int id = 1;
+        for (int y = 0; y < righe; y++) {
+            for (int x = 0; x < colonne; x++) {
+                stanze.put(new Coordinate(x, y), stanzaFactory.creaStanza(id++));
+            }
+        }
+        collegaStanze(righe, colonne);
+    }
+
+    private void collegaStanze(int righe, int colonne) {
+        for (Map.Entry<Coordinate, Stanza> e : stanze.entrySet()) {
+            Coordinate c = e.getKey();
+            Stanza s = e.getValue();
+            Stanza nord = stanze.get(new Coordinate(c.x(), c.y() - 1));
+            Stanza sud = stanze.get(new Coordinate(c.x(), c.y() + 1));
+            Stanza est  = stanze.get(new Coordinate(c.x() + 1, c.y()));
+            Stanza ovest= stanze.get(new Coordinate(c.x() - 1, c.y()));
+            if (nord != null) s.getStanzaAdiacente().put("NORD", nord);
+            if (sud != null)  s.getStanzaAdiacente().put("SUD", sud);
+            if (est != null)  s.getStanzaAdiacente().put("EST", est);
+            if (ovest != null) s.getStanzaAdiacente().put("OVEST", ovest);
+        }
+    }
+
+    public Stanza getStanza(int x, int y) {
+        return stanze.get(new Coordinate(x, y));
+    }
+
+    public void addStanza(int x, int y, Stanza stanza) {
+        stanze.put(new Coordinate(x, y), stanza);
+    }
+
+    public Map<Coordinate, Stanza> getStanze() {
+        return Collections.unmodifiableMap(stanze);
+    }
+
+    public void stampaMappa(int righe, int colonne) {
+        System.out.println("\n--- MAPPA DUNGEON ---");
+        for (int y = 0; y < righe; y++) {
+            for (int x = 0; x < colonne; x++) {
+                Stanza s = getStanza(x, y);
+                if (s == null) System.out.print("   ");
+                else System.out.print(s.getStatoS() == StanzaFactory.StatoStanza.VISITATA ? " . " : " ? ");
+            }
+            System.out.println();
+        }
+        System.out.println("---------------------\n");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// prima prova grafica dungeon
+/*public class Dungeon {
     static final int RIGHE = 5;
     static final int COLONNE = 5;
     static String[][] eventi = new String[RIGHE][COLONNE];
@@ -115,4 +281,4 @@ public class Dungeon {
             System.out.println();
         }
     }
-}
+}*/
