@@ -1,4 +1,4 @@
-package domain;
+/*package domain;
 
 
 import java.io.BufferedReader;
@@ -79,4 +79,4 @@ public class DungeonGenerator {
     public String[][] getMappa() {
         return mappa;
     }
-}
+}*/

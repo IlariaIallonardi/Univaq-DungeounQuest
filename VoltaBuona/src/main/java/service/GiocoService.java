@@ -5,15 +5,14 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import domain.Dungeon;
-import domain.Stanza;
 
 public class GiocoService {
 
-    private final StanzaFactory stanzaFactory;
+    private final DungeonFactory dungeonFactory;
     private Dungeon dungeon;   // ✅ ora è un Dungeon, non una Map
 
-    public GiocoService(StanzaFactory stanzaFactory) {
-        this.stanzaFactory = stanzaFactory;
+    public GiocoService(DungeonFactory dungeonFactory) {
+        this.dungeonFactory = dungeonFactory;
     }
 
     public Dungeon getDungeon() {
@@ -21,21 +20,9 @@ public class GiocoService {
     }
 
     public Dungeon creaDungeon(int righe, int colonne) {
-
-        Dungeon d = new Dungeon(righe, colonne);
-
-        for (int y = 0; y < righe; y++) {
-            for (int x = 0; x < colonne; x++) {
-                Stanza stanza = stanzaFactory.creaStanza(0); // random
-                d.setStanza(x, y, stanza);
-            }
-        }
-
-        d.collegaAdiacenti();
-        this.dungeon = d;
-
-        return d;
-    }
+    this.dungeon = dungeonFactory.creaDungeon(righe, colonne);
+    return dungeon;}
+    
 
     /**
      * Legge dimensioni dal file di configurazione
