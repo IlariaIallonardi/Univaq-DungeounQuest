@@ -2,7 +2,8 @@ package service.impl;
 
 
 import domain.Mago;
-import domain.Personaggio;
+import domain.Mostro;
+import domain.PersonaIncontrata;
 import service.PersonaggioService;
 
 public class MagoServiceimpl extends PersonaggioService {
@@ -14,18 +15,60 @@ public class MagoServiceimpl extends PersonaggioService {
      * @param tipoMagia Il tipo di magia da utilizzare
      * @return true se la magia è stata lanciata con successo
      */
-    public boolean usareMagiaM(Mago mago, Personaggio bersaglio, TipoMagia tipoMagia) {
-        // Controlli di validità
-        if (mago == null || bersaglio == null || tipoMagia == null) {
+     /**
+     * Usa la magia unica del mago.
+     * Comportamento:
+     *  - la magia è unica (non ci sono tipi): consuma sia punti mana che "punti attacco"
+     *  - può colpire solo i mostri (se il bersaglio non è Mostro ritorna false)
+     *
+     * Nota: ho rimosso il parametro TipoMagia perché la magia è unica.
+     */
+    public boolean usareMagiaM(Mago mago, PersonaIncontrata bersaglio) {
+        if (mago == null || bersaglio == null) return false;
+
+        // costi fissi della magia (adatta i valori al bilanciamento)
+        final int COSTO_MANA = 10;
+        final int COSTO_ATTACCO = 5;
+
+        // verifica che il bersaglio sia un mostro
+        if (!(bersaglio instanceof Mostro)) {
             return false;
         }
+        Mostro m = (Mostro) bersaglio;
 
-        // Verifica se il mago ha abbastanza mana
-        if (mago.getPuntiMana() < tipoMagia.getCostoMana()) {
-            return false;
+        // verifica risorse del mago
+        if (mago.getPuntiMana() < COSTO_MANA) return false;
+        if (mago.getAttacco() < COSTO_ATTACCO) return false;
+
+        // consumo risorse: non so se va qui e poi non credo con questa formula matematica
+        mago.setPuntiMana(Math.max(0, mago.getPuntiMana() - COSTO_MANA));
+        mago.setAttacco(Math.max(0, mago.getAttacco() - COSTO_ATTACCO));
+
+        // calcolo danno questo lo dobbiamo decidere noi: esempio semplice basato sull'attacco residuo + livello
+        int danno = Math.max(0, mago.getAttacco() + mago.getLivello() * 2);
+
+        /*/ applica difesa del mostro se presente...stessa cosa qua dell'operazione matematica
+        int difesaMostro = 0;
+        try { difesaMostro = m.getDifesaMostro(); } catch (Exception ignored) { }
+        int dannoNetto = Math.max(0, danno - difesaMostro);
+
+        // sottrai punti vita al mostro
+        try {
+            m.setPuntiVitaMostro(m.getPuntiVitaMostro() - dannoNetto);
+        } catch (Exception ignored) { }
+
+        System.out.println(mago.getNomeP() + " lancia la magia e infligge " + dannoNetto + " al mostro " + m.getNome());
+
+        // eventuale gestione morte del mostro (se PV <= 0)
+        if (m.getPuntiVitaMostro() <= 0) {
+            System.out.println("Il mostro " + m.getNome() + " è stato sconfitto.");
+            // qui puoi aggiungere rimozione dal contesto/stanza, assegnazione XP, loot, ecc.
         }
 
-        // Applica l'effetto della magia
+        return true;
+    }*/
+
+      /*   // Applica l'effetto della magia
         switch (tipoMagia) {
             case FULMINE:
                 bersaglio.setPuntiVita(bersaglio.getPuntiVita() - 20);
@@ -56,10 +99,6 @@ public class MagoServiceimpl extends PersonaggioService {
 
         TipoMagia(int costoMana) {
             this.costoMana = costoMana;
-        }
+        } */
 
-        public int getCostoMana() {
-            return costoMana;
-        }
-    }
-}
+        

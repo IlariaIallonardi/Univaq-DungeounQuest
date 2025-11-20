@@ -25,7 +25,7 @@ public class Main {
         GiocoService giocoService = new GiocoService(dungeonFactory);
         GiocatoreService giocatoreService = new GiocatoreService();
 
-        // *** 1️⃣ LETTURA CONFIGURAZIONE ***
+        // *** 1 LETTURA CONFIGURAZIONE ***
         int[] dimensioni = giocoService.leggiConfigurazione(
                 "C:/Usersh/p/Desktop/Univaq-DungeounQuest/VoltaBuona/config.txt"
         );
@@ -33,17 +33,17 @@ public class Main {
         int righe = dimensioni[0];
         int colonne = dimensioni[1];
 
-        System.out.println("🔧 Configurazione caricata: " + righe + "x" + colonne);
+        System.out.println(" Configurazione caricata: " + righe + "x" + colonne);
 
-        // *** 2️⃣ SCELTA NUMERO GIOCATORI REALI ***
-        System.out.print("👥 Quanti giocatori reali? (1 - 4): ");
+        // *** 2 SCELTA NUMERO GIOCATORI REALI ***
+        System.out.print(" Quanti giocatori reali? (1 - 4): ");
         int numReali = scanner.nextInt();
         scanner.nextLine();
 
         List<Personaggio> giocatori = new ArrayList<>();
 
         for (int i = 1; i <= numReali; i++) {
-            System.out.print("👉 Inserisci il nome del giocatore " + i + ": ");
+            System.out.print(" Inserisci il nome del giocatore " + i + ": ");
             String nome = scanner.nextLine();
 
             // TODO: in futuro potrai far scegliere la CLASSE (mago, guerriero, ecc.)
@@ -56,27 +56,27 @@ public class Main {
             ));
         }
 
-        // *** 3️⃣ SCELTA NUMERO BOT ***
-        System.out.print("🤖 Quanti BOT vuoi aggiungere? (0 - 4): ");
+        // *** 3 SCELTA NUMERO BOT ***
+        System.out.print(" Quanti BOT vuoi aggiungere? (0 - 4): ");
         int numBot = scanner.nextInt();
 
         for (int i = 0; i < numBot; i++) {
             Personaggio bot = giocatoreService.attribuisciPersonaggioAComputer(null);
             giocatori.add(bot);
-            System.out.println("🤖 BOT creato: " + bot.getNomeP());
+            System.out.println(" BOT creato: " + bot.getNomeP());
         }
 
-        System.out.println("\n🎮 Totale personaggi in partita: " + giocatori.size());
+        System.out.println(" Totale personaggi in partita: " + giocatori.size());
 
-        // *** 4️⃣ CREAZIONE DUNGEON ***
+        // *** 4 CREAZIONE DUNGEON ***
         Dungeon dungeon = dungeonFactory.creaDungeon(righe, colonne);
-
-        // *** 5️⃣ POSIZIONA GIOCATORI NELLA STANZA INIZIALE ***
+        
+        // *** 5 POSIZIONA GIOCATORI NELLA STANZA INIZIALE ***
         Stanza stanzaStart = dungeon.getStanza(0, 0);
 
         if (stanzaStart != null) {
             stanzaStart.setStatoS(StanzaFactory.StatoStanza.VISITATA);
-            System.out.println("🚪 Posizionamento giocatori nella stanza iniziale (0,0)");
+            System.out.println(" Posizionamento giocatori nella stanza iniziale (0,0)");
 
             for (Personaggio p : giocatori) {
                 p.setPosizioneCorrente(stanzaStart);
@@ -84,13 +84,13 @@ public class Main {
             }
         }
 
-        // *** 6️⃣ STAMPA MAPPA ***
+        // *** 6 STAMPA MAPPA ***
         dungeon.stampaMappa(righe, colonne);
 
-        // *** 7️⃣ DEBUG ***
+        // *** 7 DEBUG ***
         System.out.println("\n--- DEBUG PERSONAGGI ---");
         giocatori.forEach(p -> System.out.println(" - " + p.getNomeP() + " in " + p.getPosizioneCorrente()));
 
-        System.out.println("\n🎉 Partita inizializzata correttamente!");
+        System.out.println("\n Partita inizializzata correttamente!");
     }
 }

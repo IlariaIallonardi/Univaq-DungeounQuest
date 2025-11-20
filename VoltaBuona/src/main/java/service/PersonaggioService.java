@@ -2,7 +2,7 @@ package service;
 
 import domain.*;
 
-//import it.univaq.dungeon.personaggi.Giocatore;
+
 
 public class PersonaggioService {
 
@@ -65,7 +65,7 @@ public class PersonaggioService {
     public String aggiornamentoStatoPersonaggio() {
         return "Stato aggiornato";
     }
-
+  
    
     
 }

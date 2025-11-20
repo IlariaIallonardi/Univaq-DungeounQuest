@@ -3,9 +3,6 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import domain.Giocatore;
-import domain.Mostro;
-
 public class Combattimento {
     private int id;
     private int ordineDiIniziativa;
@@ -14,7 +11,7 @@ public class Combattimento {
     private boolean inCorso;
     private int danniInflitti;
     private Giocatore vincitore;
-    private List<Effetti> effettiTemporanei;
+    private List<Effetto> effettiTemporanei;
     private Giocatore giocatoreAttivo;
 
  public Combattimento(int id, Stanza stanza) {
@@ -84,11 +81,11 @@ public class Combattimento {
         this.vincitore = vincitore;
     }
 
-    public List<Effetti> getEffettiTemporanei() {
+    public List<Effetto> getEffettiTemporanei() {
         return effettiTemporanei;
     }
 
-    public void setEffettiTemporanei(List<Effetti> effettiTemporanei) {
+    public void setEffettiTemporanei(List<Effetto> effettiTemporanei) {
         this.effettiTemporanei = effettiTemporanei;
     }
 

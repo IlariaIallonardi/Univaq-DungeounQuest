@@ -1,6 +1,7 @@
 package service.impl;
 
 
+import domain.Guerriero;
 import domain.Paladino;
 import domain.Personaggio;
 import service.PersonaggioService;
@@ -13,22 +14,26 @@ public class PaladinoServiceImpl extends PersonaggioService {
      * @param bersaglio Il personaggio da proteggere
      * @return true se la protezione è stata applicata con successo
      */
-    public boolean protezioneGiocatoreP(Paladino paladino, Personaggio bersaglio) {
-        if (paladino == null || bersaglio == null) {
+    public boolean protezioneGiocatoreG(Guerriero guerriero, Personaggio bersaglio) {
+        if (guerriero == null || bersaglio == null) {
             return false;
         }
 
-        // Verifica se il paladino ha abbastanza punti mana
-        if (paladino.getPuntiMana() < 5) {
+        // Verifica se il guerriero ha abbastanza punti vita
+        if (guerriero.getPuntiVita() < 20) {
             return false;
         }
 
-        // Applica bonus di difesa al bersaglio
-        bersaglio.setDifesa(bersaglio.getDifesa() + 10);
-        paladino.setPuntiMana(paladino.getPuntiMana() - 5);
+         // delega al dominio: solo Guerriero può applicare la protezione
+        boolean ok = guerriero.proteggi(bersaglio);
+        if (!ok) return false;
 
+        System.out.println(guerriero.getNomeP() + " protegge per un turno " + bersaglio.getNomeP());
         return true;
     }
+  
+
+       
 
     /**
      * Metodo per utilizzare la magia sacra del paladino

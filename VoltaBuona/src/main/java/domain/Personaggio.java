@@ -12,6 +12,8 @@ public abstract class Personaggio {
     private int livello;
     private  int esperienza;
     private  Stanza posizioneCorrente;
+    boolean protetto;
+    int turniProtetto;
 
     public Personaggio(int attacco, int difesa, int esperienza, int id, int livello, String nomeP, Stanza posizioneCorrente, int puntiMana, int puntiVita, String statoG, Zaino zaino) {
         this.attacco = attacco;
@@ -118,6 +120,51 @@ public abstract class Personaggio {
         this.posizioneCorrente = posizioneCorrente;
     }
 
+    /**
+     * Applica la protezione al personaggio per 1 turno.
+     * Se il personaggio è già protetto la chiamata NON rinnova/estende la protezione.
+     * package-private: solo classi nello stesso package domain possono invocarlo.
+     */
+   public void applicaProtezione() {
+        if (!this.protetto) {
+            this.protetto = true;
+            this.turniProtetto = 1;
+        }
+    }
+
+    /**
+     * Verifica se il personaggio è attualmente protetto.
+     */
+    boolean isProtetto() {
+        return this.protetto && this.turniProtetto > 0;
+    }
+
+    /**
+     * Decrementa la protezione di un turno. Chiamare dopo che un attacco è stato evitato
+     * (ossia quando la protezione ha impedito il danno) o alla fine del turno.
+     */
+   public void decrementaProtezione() {
+        if (this.turniProtetto > 0) {
+            this.turniProtetto--;
+            if (this.turniProtetto <= 0) {
+                this.protetto = false;
+                this.turniProtetto = 0;
+            }
+        }
+    }
+    /**
+     * Chiamare all'inizio del turno del personaggio.
+     * Si occupa di consumare la protezione (durata = 1) quando "tocca di nuovo" al personaggio.
+     */
+    public void onTurnStart() {
+        // se era protetto, consumiamo la protezione ora (fine dell'effetto)
+        if (isProtetto()) {
+            decrementaProtezione();
+        }
+    }
+
+
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

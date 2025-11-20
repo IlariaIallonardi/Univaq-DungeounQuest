@@ -4,11 +4,8 @@ public class Effetto {
 
     public enum TipoEffetto {
         CURA,
-        DANNO,
-        DIFESA,
-        ATTACCO,
-        VELOCITÀ,
-        INVISIBILITÀ,
+        CONGELAMENTO,
+        FURIA,
         STORDIMENTO,
         AVVELENAMENTO
     }

@@ -1,6 +1,6 @@
 package domain;
 
-/*public abstract class Oggetto {
+public abstract class Oggetto {
 
     private int id;
     private String nome;
@@ -80,8 +80,8 @@ package domain;
     }
 
     public abstract boolean eseguiEffetto(Personaggio personaggio);
-}*/
-public abstract class Oggetto {
+}
+/*public abstract class Oggetto {
 
     protected String nome;
 
@@ -97,4 +97,4 @@ public abstract class Oggetto {
     public String toString() {
         return nome;
     }
-}
+}*/

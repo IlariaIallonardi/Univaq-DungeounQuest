@@ -9,4 +9,11 @@ public class Paladino extends Personaggio {
     public Paladino(String nome) {
         this(12, 0, 0, 0, 1, "nome", null, 50, 120, "OK", null);
     }
+     public boolean proteggi(Personaggio target) {
+        if (target == null) return false;
+        // esempio di controllo: richiedi che il guerriero abbia almeno 1 PV
+        if (this.getPuntiVita() <= 0) return false;
+        target.applicaProtezione();
+        return true;
+    }
 }

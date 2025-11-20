@@ -1,7 +1,58 @@
 package domain;
 
-/*public class Arma extends Oggetto {
-    public enum Tipo {
+public class Arma extends Oggetto {
+    private int dannoBonus;
+    private int durabilitaArma;
+    private Personaggio personaggio;
+
+    public Arma(int dannoBonus, int durabilitaArma, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
+        super(id, nome, descrizione, usabile, equipaggiabile, trovato);
+        this.dannoBonus = dannoBonus;
+        this.durabilitaArma = durabilitaArma;
+    }
+    public int getDannoBonus() {
+        return dannoBonus;
+    }
+    public void setDannoBonus(int dannoBonus) {
+        this.dannoBonus = dannoBonus;
+    }
+    public int getDurabilitaArma() {
+        return durabilitaArma;
+    }
+    public void setDurabilitaArma(int durabilitaArma) {
+        this.durabilitaArma = durabilitaArma;}
+    
+
+
+
+   // non so se questo metodo va bene qui
+    @Override
+     public boolean eseguiEffetto(Personaggio personaggio) {
+        if (personaggio == null) return false;
+        // l'arma deve essere equipaggiabile e non rotta
+        if (!isEquipaggiabile() || durabilitaArma <= 0) return false;
+
+        // se già equipaggiata da un altro, opzionalmente rimuovere il bonus precedente
+        if (this.personaggio != null && this.personaggio != personaggio) {
+            // rimuove il bonus dal precedente proprietario
+            this.personaggio.setAttacco(this.personaggio.getAttacco() - this.dannoBonus);
+        }
+
+        // assegna la nuova owner e applica il bonus
+        this.personaggio = personaggio;
+        personaggio.setAttacco(personaggio.getAttacco() + this.dannoBonus);
+
+        // consumiamo un punto di durabilità all'uso/equip
+        this.durabilitaArma = Math.max(0, this.durabilitaArma - 1);
+
+        return true;
+    }
+
+
+}
+
+
+   /*  public enum Tipo {
         ASCIA, SPADA, PUGNALE, ARCO
     }
 
@@ -58,44 +109,7 @@ package domain;
     };
     
     return personaggio.getAttacco() + dannoBonus;
-}
+} */
+
 
     
-
-    @Override
-    public boolean eseguiEffetto(Personaggio personaggio) {
-        if (personaggio == null) return false;
-        // l'arma deve essere equipaggiabile e non rotta
-        if (!isEquipaggiabile() || durabilitaArma <= 0) return false;
-
-        // se già equipaggiata da un altro, opzionalmente rimuovere il bonus precedente
-        if (this.personaggio != null && this.personaggio != personaggio) {
-            // rimuove il bonus dal precedente proprietario
-            this.personaggio.setAttacco(this.personaggio.getAttacco() - this.dannoBonus);
-        }
-
-        // assegna la nuova owner e applica il bonus
-        this.personaggio = personaggio;
-        personaggio.setAttacco(personaggio.getAttacco() + this.dannoBonus);
-
-        // consumiamo un punto di durabilità all'uso/equip
-        this.durabilitaArma = Math.max(0, this.durabilitaArma - 1);
-
-        return true;
-    }
-
-
-}*/
-public class Arma extends Oggetto {
-
-    private int danno;
-
-    public Arma(String nome, int danno) {
-        super(nome);
-        this.danno = danno;
-    }
-
-    public int getDanno() {
-        return danno;
-    }
-}

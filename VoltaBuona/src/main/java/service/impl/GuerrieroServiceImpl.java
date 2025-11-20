@@ -23,39 +23,14 @@ public class GuerrieroServiceImpl extends PersonaggioService {
             return false;
         }
 
-        // Il guerriero sacrifica parte dei suoi punti vita per aumentare la difesa del bersaglio
-        int sacrificioVita = 10;
-        guerriero.setPuntiVita(guerriero.getPuntiVita() - sacrificioVita);
-        
-        // Bonus di difesa basato sulla forza del guerriero
-        int bonusDifesa = guerriero.getAttacco() / 2;
-        bersaglio.setDifesa(bersaglio.getDifesa() + bonusDifesa);
+         // delega al dominio: solo Guerriero può applicare la protezione
+        boolean ok = guerriero.proteggi(bersaglio);
+        if (!ok) return false;
 
+        System.out.println(guerriero.getNomeP() + " protegge per un turno " + bersaglio.getNomeP());
         return true;
     }
+  
 
-    /**
-     * Enum per le posizioni di combattimento del guerriero
-     */
-    public enum PosizioneCombattimento {
-        OFFENSIVA(2, -1),    // più attacco, meno difesa
-        DIFENSIVA(-1, 2),    // più difesa, meno attacco
-        BILANCIATA(1, 1);    // bonus bilanciato
-
-        private final int modificatoreAttacco;
-        private final int modificatoreDifesa;
-
-        PosizioneCombattimento(int modAttacco, int modDifesa) {
-            this.modificatoreAttacco = modAttacco;
-            this.modificatoreDifesa = modDifesa;
-        }
-
-        public int getModificatoreAttacco() {
-            return modificatoreAttacco;
-        }
-
-        public int getModificatoreDifesa() {
-            return modificatoreDifesa;
-        }
+       
     }
-}
