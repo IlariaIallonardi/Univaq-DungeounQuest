@@ -13,6 +13,7 @@ public class Stanza {
     private int[][] coordinate;
     private StatoStanza statoS; //visitata o non visitata ed è enum in GiocoService
     private List<Oggetto> oggettiPresenti = new ArrayList<>();
+    private List<Personaggio> listaPersonaggi = new ArrayList<>();
     private Map<String, Stanza> stanzaAdiacente = new HashMap<>();
     private List<Evento> listaEventi = new ArrayList<>();
     private Chiave chiaveRichiesta;
@@ -74,6 +75,14 @@ public class Stanza {
 
     public void setListaEventi(List<Evento> listaEventi) {
         this.listaEventi = listaEventi;
+    }
+
+    public List<Personaggio> getListaPersonaggi() {
+        return new ArrayList<>(listaPersonaggi);
+    }
+
+    public void setListaPersonaggi(List<Personaggio> listaPersonaggi) {
+        this.listaPersonaggi = new ArrayList<>(listaPersonaggi);
     }
 
     public Chiave getChiaveRichiesta() {
