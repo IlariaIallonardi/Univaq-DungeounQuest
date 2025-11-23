@@ -75,26 +75,11 @@ public abstract class Oggetto {
             throw new IllegalStateException("Questo oggetto non è stato ancora trovato");
         }
 
-        // Logica specifica implementata nelle sottoclassi
-        return eseguiEffetto(personaggio);
+        return true;
     }
-
+    // ogni oggetto concreto implementa il proprio effetto sul personaggio
     public abstract boolean eseguiEffetto(Personaggio personaggio);
+    
+
 }
-/*public abstract class Oggetto {
 
-    protected String nome;
-
-    public Oggetto(String nome) {
-        this.nome = nome;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    @Override
-    public String toString() {
-        return nome;
-    }
-}*/

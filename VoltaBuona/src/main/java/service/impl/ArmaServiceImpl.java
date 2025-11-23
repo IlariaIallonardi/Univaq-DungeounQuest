@@ -1,6 +1,7 @@
 package service.impl;
 
-import service.*;
+import service.OggettoService;
 
 public class ArmaServiceImpl extends  OggettoService {
+    
 }

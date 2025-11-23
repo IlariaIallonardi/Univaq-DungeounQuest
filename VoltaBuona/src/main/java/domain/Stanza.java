@@ -93,7 +93,7 @@ public class Stanza {
         this.chiaveRichiesta = chiaveRichiesta;
     }
 
-    public void prendiOggetto(Oggetto o) {
+    public void rimuoviOggetto(Oggetto o) {
     }
 
     public boolean apriConChiave(domain.Chiave chiave) {

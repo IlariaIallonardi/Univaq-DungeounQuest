@@ -3,7 +3,6 @@ package domain;
 public class Effetto {
 
     public enum TipoEffetto {
-        CURA,
         CONGELAMENTO,
         FURIA,
         STORDIMENTO,
@@ -13,13 +12,13 @@ public class Effetto {
     private TipoEffetto tipo;
     private String descrizione;
     private int durataTurni;
-    private int valore;
 
-    public Effetto(TipoEffetto tipo, String descrizione, int durataTurni, int valore) {
+
+    public Effetto(TipoEffetto tipo, String descrizione, int durataTurni) {
         this.tipo = tipo;
         this.descrizione = descrizione;
         this.durataTurni = durataTurni;
-        this.valore = valore;
+    
     }
 
     public boolean èAttivo() {
@@ -57,16 +56,9 @@ public class Effetto {
         this.durataTurni = durataTurni;
     }
 
-    public int getValore() {
-        return valore;
-    }
-
-    public void setValore(int valore) {
-        this.valore = valore;
-    }
 
     @Override
     public String toString() {
-        return tipo + " (" + descrizione + ") [" + valore + "] per " + durataTurni + " turni";
+        return tipo + " (" + descrizione + "+ " + durataTurni + " turni";
     }
 }

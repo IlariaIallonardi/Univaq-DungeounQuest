@@ -2,13 +2,15 @@ package domain;
 
 public class Arma extends Oggetto {
     private int dannoBonus;
-    private int durabilitaArma;
+    private String tipo;
+    //private int durabilitaArma;
     private Personaggio personaggio;
 
-    public Arma(int dannoBonus, int durabilitaArma, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
+    public Arma(int dannoBonus, int durabilitaArma, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato, String tipo) {
         super(id, nome, descrizione, usabile, equipaggiabile, trovato);
         this.dannoBonus = dannoBonus;
-        this.durabilitaArma = durabilitaArma;
+        this.tipo = tipo;
+      //  this.durabilitaArma = durabilitaArma;
     }
     public int getDannoBonus() {
         return dannoBonus;
@@ -16,37 +18,31 @@ public class Arma extends Oggetto {
     public void setDannoBonus(int dannoBonus) {
         this.dannoBonus = dannoBonus;
     }
-    public int getDurabilitaArma() {
+    public String getTipo() {
+        return tipo;
+    }       
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+    
+  /*   public int getDurabilitaArma() {
         return durabilitaArma;
     }
     public void setDurabilitaArma(int durabilitaArma) {
         this.durabilitaArma = durabilitaArma;}
-    
+    */
 
 
-
-   // non so se questo metodo va bene qui
     @Override
      public boolean eseguiEffetto(Personaggio personaggio) {
         if (personaggio == null) return false;
-        // l'arma deve essere equipaggiabile e non rotta
-        if (!isEquipaggiabile() || durabilitaArma <= 0) return false;
-
-        // se già equipaggiata da un altro, opzionalmente rimuovere il bonus precedente
-        if (this.personaggio != null && this.personaggio != personaggio) {
-            // rimuove il bonus dal precedente proprietario
-            this.personaggio.setAttacco(this.personaggio.getAttacco() - this.dannoBonus);
-        }
-
-        // assegna la nuova owner e applica il bonus
-        this.personaggio = personaggio;
+        // Aumenta solo il danno/attacco del personaggio
         personaggio.setAttacco(personaggio.getAttacco() + this.dannoBonus);
-
-        // consumiamo un punto di durabilità all'uso/equip
-        this.durabilitaArma = Math.max(0, this.durabilitaArma - 1);
-
         return true;
-    }
+    } 
+
+    
+
 
 
 }

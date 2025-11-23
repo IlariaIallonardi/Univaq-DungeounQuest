@@ -42,20 +42,62 @@ public class Main {
 
         List<Personaggio> giocatori = new ArrayList<>();
 
+       // ...existing code...
         for (int i = 1; i <= numReali; i++) {
             System.out.print(" Inserisci il nome del giocatore " + i + ": ");
             String nome = scanner.nextLine();
 
-            // TODO: in futuro potrai far scegliere la CLASSE (mago, guerriero, ecc.)
-            // Per ora mettiamo un guerriero human di default:
-            giocatori.add(new domain.Guerriero(
-                    100, 15, 10, 0,
-                    1, nome,
-                    null, 0, 0,
-                    "NORMALE", new domain.Zaino()
-            ));
-        }
+            // scelta della classe
+            int sceltaClasse = 0;
+            while (sceltaClasse < 1 || sceltaClasse > 4) {
+                System.out.println(" Scegli la classe per " + nome + ":");
+                System.out.println("  1) Guerriero");
+                System.out.println("  2) Mago");
+                System.out.println("  3) Arciere");
+                System.out.println("  4) Paladino");
+                System.out.print("Quale eroe vuoi essere?(1-4): ");
+                String input = scanner.nextLine().trim();
+                try {
+                    sceltaClasse = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    // accetta anche parole chiave iniziali
+                    String s = input.toLowerCase();
+                    if (s.startsWith("g")) sceltaClasse = 1;
+                    else if (s.startsWith("m")) sceltaClasse = 2;
+                    else if (s.startsWith("a")) sceltaClasse = 3;
+                    else if (s.startsWith("p")) sceltaClasse = 4;
+                    else {
+                        System.out.println(" Scelta non valida, riprova.");
+                        continue;
+                    }
+                }
+                if (sceltaClasse < 1 || sceltaClasse > 4) {
+                    System.out.println(" Scelta non valida, riprova.");
+                }
+            }
 
+            // crea l'istanza della classe scelta (adatta i costruttori se necessario)
+            domain.Personaggio p;
+            switch (sceltaClasse) {
+                case 1:
+                    p = new domain.Guerriero(nome);
+                    break;
+                case 2:
+                    p = new domain.Mago(nome);
+                    break;
+                case 3:
+                    p = new domain.Arciere(nome);
+                    break;
+                case 4:
+                    p = new domain.Paladino(nome);
+                    break;
+                default:
+                    p = new domain.Guerriero(nome);
+            }
+
+            giocatori.add(p);
+        }
+// ...existing code...
         // *** 3 SCELTA NUMERO BOT ***
         System.out.print(" Quanti BOT vuoi aggiungere? (0 - 4): ");
         int numBot = scanner.nextInt();

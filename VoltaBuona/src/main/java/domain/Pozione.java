@@ -1,9 +1,9 @@
 package domain;
 
 
-/*public class Pozione extends Oggetto {
+public class Pozione extends Oggetto {
     public enum Tipo {
-        CURA, MANA,DIFESA,ATTACCO
+        CURA, MANA
     }
     
     private boolean durata;
@@ -53,12 +53,7 @@ package domain;
         return tipo == Tipo.MANA ? valorePozione : 0;
     }
 
-   public int aumentoDifesa(Personaggio personaggio) {
-    return personaggio.getDifesa() + valorePozione;
-}
-    public int aumentaAttacco(Personaggio personaggio) {
-    return personaggio.getAttacco() + valorePozione;
-    }
+   
 
     @Override
     public boolean eseguiEffetto(Personaggio personaggio) {
@@ -71,29 +66,10 @@ package domain;
             case MANA:
                 personaggio.setPuntiMana(personaggio.getPuntiMana() + valorePozione);
                 break;
-            case DIFESA:
-                personaggio.setDifesa(personaggio.getDifesa() + valorePozione);
-                break;
-            case ATTACCO:
-                personaggio.setAttacco(personaggio.getAttacco() + valorePozione);
-                break;
             default:
                 return false;
         }
         return true;
     }
 
-}*/
-public class Pozione extends Oggetto {
-
-    private int valoreCura;
-
-    public Pozione(String nome, int valoreCura) {
-        super(nome);
-        this.valoreCura = valoreCura;
-    }
-
-    public int getValoreCura() {
-        return valoreCura;
-    }
 }

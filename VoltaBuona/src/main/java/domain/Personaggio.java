@@ -163,6 +163,27 @@ public abstract class Personaggio {
         }
     }
 
+    //formula base per calcolare danno: dobbiamo vedere se calcolarlo inquesto modo
+     public int calcolaDanno() {
+        return Math.max(0, this.attacco + this.livello * 2);
+    }
+
+     /**
+     * Applica danno al personaggio rispettando la difesa e la protezione.
+     * - Se il personaggio è protetto, il danno viene ignorato (la protezione NON viene consumata qui).
+     * - Restituisce true se il personaggio è morto (PV <= 0).
+     */
+    public boolean subisciDanno(int danno) {
+        if (danno <= 0) return false;
+        if (isProtetto()) {
+            // protezione impedisce il danno; verrà consumata in onTurnStart del personaggio
+            return false;
+        }
+
+        int dannoEffettivo = Math.max(0, danno - this.difesa);
+        this.puntiVita -= dannoEffettivo;
+        return this.puntiVita <= 0;
+    }
 
     
     @Override

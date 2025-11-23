@@ -1,6 +1,6 @@
 package domain;
 
-/*public class Armatura extends Oggetto {
+public class Armatura extends Oggetto {
 
     public Armatura(int difesaBonus, int durabilitaArmatura, TipoArmatura tipoArmatura, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
         super(id, nome, descrizione, usabile, equipaggiabile, trovato);
@@ -49,25 +49,12 @@ package domain;
 
 @Override
 public boolean eseguiEffetto(Personaggio personaggio) {
-    // Logica per applicare l'effetto dell'armatura al personaggio
+    if (personaggio == null) return false;
     int nuovaDifesa = personaggio.getDifesa() + this.difesaBonus;
     personaggio.setDifesa(nuovaDifesa);
-    return true; // Indica che l'effetto è stato applicato con successo
+    return true;
 
 
    
-}
- */
-public class Armatura extends Oggetto {
+}}
 
-    private int difesa;
-
-    public Armatura(String nome, int difesa) {
-        super(nome);
-        this.difesa = difesa;
-    }
-
-    public int getDifesa() {
-        return difesa;
-    }
-}
