@@ -17,9 +17,10 @@ public class Stanza {
     private Map<String, Stanza> stanzaAdiacente = new HashMap<>();
     private List<Evento> listaEventi = new ArrayList<>();
     private Chiave chiaveRichiesta;
+    private boolean bloccata;
 
     public Stanza(int id, int[][] coordinate, StatoStanza statoS, List<Oggetto> inventario,
-            List<Evento> listaEventi, Chiave chiaveRichiesta) {
+            List<Evento> listaEventi, Chiave chiaveRichiesta,boolean bloccata ) {
         this.id = id;
         this.coordinate = coordinate;
         this.statoS = statoS;
@@ -27,6 +28,7 @@ public class Stanza {
         this.stanzaAdiacente = (stanzaAdiacente != null) ? stanzaAdiacente : new HashMap<>();
         this.listaEventi = listaEventi != null ? new ArrayList<>(listaEventi) : new ArrayList<>();
         this.chiaveRichiesta = chiaveRichiesta;
+        this.bloccata=bloccata;
     }
 
     public int getId() {
@@ -95,14 +97,30 @@ public class Stanza {
 
     public void rimuoviOggetto(Oggetto o) {
     }
-
-    public boolean apriConChiave(domain.Chiave chiave) {
-        // valida idStanzaDestinazione/chiaveRichiesta… (dipende dal design finale)
-        return true;
+    public void aggiungiOggetto(Oggetto o) {
+        if (o != null) {
+            oggettiPresenti.add(o);
+        }
     }
 
     public void esploraStanza(Giocatore g) {
     }
+    public boolean isBloccata() {
+        return bloccata;
+    }
+    public boolean sblocca() {
+    if (!bloccata) {
+        System.out.println("La stanza è già sbloccata.");
+        return false;
+    }
+
+    bloccata = false;
+    chiaveRichiesta = null;
+
+    System.out.println(" La stanza è stata sbloccata!");
+    return true;
+}
+    
 
     @Override
     public String toString() {

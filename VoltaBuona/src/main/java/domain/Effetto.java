@@ -6,7 +6,9 @@ public class Effetto {
         CONGELAMENTO,
         FURIA,
         STORDIMENTO,
-        AVVELENAMENTO
+        AVVELENAMENTO,
+        IMMOBILIZZATO,
+        NESSUN_EFFETTO
     }
 
     private TipoEffetto tipo;

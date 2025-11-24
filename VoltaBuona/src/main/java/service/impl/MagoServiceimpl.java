@@ -46,7 +46,8 @@ public class MagoServiceimpl extends PersonaggioService {
 
         // calcolo danno questo lo dobbiamo decidere noi: esempio semplice basato sull'attacco residuo + livello
         int danno = Math.max(0, mago.getAttacco() + mago.getLivello() * 2);
-
+        return false;
+    }}
         /*/ applica difesa del mostro se presente...stessa cosa qua dell'operazione matematica
         int difesaMostro = 0;
         try { difesaMostro = m.getDifesaMostro(); } catch (Exception ignored) { }

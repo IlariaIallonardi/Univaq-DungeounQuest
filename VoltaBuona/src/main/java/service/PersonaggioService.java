@@ -1,9 +1,21 @@
 package service;
 
+import java.util.ArrayList;
 
-
-import domain.*;
-import service.impl.*;
+import domain.Arma;
+import domain.Armatura;
+import domain.Chiave;
+import domain.Effetto;
+import domain.Evento;
+import domain.Mostro;
+import domain.Oggetto;
+import domain.Personaggio;
+import domain.Pozione;
+import domain.Stanza;
+import domain.Trappola;
+import domain.Zaino;
+import service.impl.MostroServiceImpl;
+import service.impl.TrappolaServiceImpl;
 
 
 
@@ -14,10 +26,6 @@ public class PersonaggioService {
     public Personaggio creaPersonaggio(String nome, Personaggio g) {
         g.setNomeP(nome);
         return g;
-    }
-
-    public String aggiornaStatoPersonaggio(Personaggio g) {
-        return null;
     }
 
     public boolean mortePersonaggio(Personaggio g) {
@@ -82,6 +90,7 @@ public class PersonaggioService {
             boolean risultato = ((Pozione) oggetto).eseguiEffetto(personaggio);
             if (risultato) {
                 z.rimuovi(oggetto);
+                z.setCapienza(z.getCapienza() + 1);
                 System.out.println(personaggio.getNomeP() + " usa una pozione: " + ((Pozione) oggetto).getTipo());
             }
             return risultato;
@@ -96,12 +105,14 @@ public class PersonaggioService {
             ((Arma) oggetto).eseguiEffetto(personaggio);
             // decidere se rimuovere dall'inventario o mantenerla come equip
             zaino.rimuovi(oggetto);
+            zaino.setCapienza(zaino.getCapienza() + 1);
             return true;
         }
 
         // Armatura: indossa (metodo service indossaArmatura)
         if (oggetto instanceof Armatura) {
             ((Armatura) oggetto).eseguiEffetto(personaggio);
+             z.setCapienza(z.getCapienza() + 1);
             return true;
         }
 
@@ -110,6 +121,7 @@ public class PersonaggioService {
         ((Chiave) oggetto).eseguiEffetto(personaggio);
         
             z.rimuovi(oggetto);
+            z.setCapienza(z.getCapienza() + 1);
             return true;
         }
 
@@ -119,6 +131,7 @@ public class PersonaggioService {
 
 
    //incompleto finire ultima parte
+   
     public boolean raccogliereOggetto(Personaggio personaggio, Oggetto oggetto) {
         if (personaggio == null || oggetto == null) return false;
 
@@ -131,32 +144,75 @@ public class PersonaggioService {
         // verifica che l'oggetto sia nella stanza
         if (stanza.getOggettiPresenti() == null || !stanza.getOggettiPresenti().contains(oggetto)) return false;
 
-        // aggiungi allo zaino e rimuovi dalla stanza
+        // verifica lista e capienza (capienza intesa come posti disponibili)
         if (zaino.getListaOggetti() == null) return false;
-        if(zaino.getCapienza()<5){
-        zaino.getListaOggetti().add(oggetto);
-        zaino.setCapienza(zaino.getCapienza() + 1);
-        }
-        else{
-            System.out.println("Zaino pieno, non puoi raccogliere altri oggetti.");
-            //rimozione oggetto dallo zaino se è pieno e aggiunto nella stanza
 
-            return  false;
+        if (zaino.getCapienza() < 5) {
+            // spazio disponibile: aggiungi direttamente
+            zaino.getListaOggetti().add(oggetto);
+            zaino.setCapienza(zaino.getCapienza() - 1);
+            stanza.rimuoviOggetto(oggetto);
+            System.out.println(personaggio.getNomeP() + " raccoglie " + oggetto.getNome());
+            return true;
         }
+
+        // zaino pieno: mostra lista e chiedi se rimuovere qualcosa
+        System.out.println("Zaino pieno. Oggetti nello zaino:");
+        for (int i = 0; i < zaino.getListaOggetti().size(); i++) {
+            Oggetto o = zaino.getListaOggetti().get(i);
+            System.out.println((i + 1) + ") " + (o != null ? o.getNome() : "<oggetto null>"));
+        }
+
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        System.out.print("Vuoi eliminare qualcosa per fare spazio? (s/n): ");
+        String risposta = scanner.nextLine().trim().toLowerCase();
+        if (!risposta.equals("s") && !risposta.equals("y")) {
+            System.out.println("Operazione annullata. Non raccogliere l'oggetto.");
+            return false;
+        }
+
+        System.out.print("Inserisci il numero dell'oggetto da rimuovere (0 per annullare): ");
+        String line = scanner.nextLine().trim();
+        int indice;
+        try {
+            indice = Integer.parseInt(line);
+        } catch (NumberFormatException e) {
+            System.out.println("Input non valido. Operazione annullata.");
+            return false;
+        }
+        if (indice == 0) {
+            System.out.println("Operazione annullata.");
+            return false;
+        }
+        if (indice < 1 || indice > zaino.getListaOggetti().size()) {
+            System.out.println("Indice non valido. Operazione annullata.");
+            return false;
+        }
+
+        // rimuovi l'oggetto scelto dallo zaino e rimetti nella stanza
+        Oggetto rimosso = zaino.getListaOggetti().remove(indice - 1);
+        zaino.setCapienza(zaino.getCapienza() + 1);
+        // aggiungi l'oggetto rimosso nella stanza (usa il metodo disponibile)
+        stanza.aggiungiOggetto(rimosso);
+        System.out.println("Rimosso: " + (rimosso != null ? rimosso.getNome() : "<oggetto null>"));
+        // ora aggiungi il nuovo oggetto raccolto
+        zaino.getListaOggetti().add(oggetto);
+        zaino.setCapienza(zaino.getCapienza() - 1);
         stanza.rimuoviOggetto(oggetto);
 
         System.out.println(personaggio.getNomeP() + " raccoglie " + oggetto.getNome());
         return true;
     }
+
     
      /** 
      * Applica al personaggio il danno calcolato dal mostro.
      * Ritorna il danno effettivamente inflitto.
      */
-    public int subisciDannoDaMostro(Mostro m, Personaggio g) {
-        if (m == null || g == null) return 0;
-        int danno = MostroServiceImpl.calcolaDanno(m, g);
-        g.setPuntiVita(g.getPuntiVita() - danno); // aggiorna lo stato del personaggio
+    public int subisciDannoDaMostro(Mostro mostro, Personaggio personaggio) {
+        if (mostro == null || personaggio == null) return 0;
+        int danno = MostroServiceImpl.calcolaDanno(mostro, personaggio);
+        personaggio.setPuntiVita(personaggio.getPuntiVita() - danno); // aggiorna lo stato del personaggio
         return danno;
     }
 
@@ -173,11 +229,90 @@ public class PersonaggioService {
     }
 
 
+
    
 
-    public String aggiornamentoStatoPersonaggio() {
+    public String aggiornamentoStatoPersonaggio(Effetto effetto, Personaggio g) {
         return "Stato aggiornato";
     }
+
+    public void esploraStanza(Personaggio personaggio) {
+
+    if (personaggio == null) {
+        System.out.println("Errore: personaggio nullo.");
+        return;
+    }
+
+    Stanza stanza = personaggio.getPosizioneCorrente();
+    if (stanza == null) {
+        System.out.println("Errore: posizione del personaggio non valida.");
+        return;
+    }
+
+    System.out.println("🔍 " + personaggio.getNomeP() + " esplora la stanza...");
+
+    // -----------------------
+    // 1️⃣ TRAPPOLA
+    // -----------------------
+    Trappola trappola = stanza.getTrappola();
+
+    if (trappola != null) {
+        System.out.println("⚠ Hai trovato una trappola!");
+
+        // Check di disinnesco
+        boolean disinnescata = trappola.checkDiDisinnesco(personaggio);
+
+        if (!disinnescata) {
+            // Trappola si attiva
+            trappola.attiva(personaggio);
+        } else {
+            System.out.println("✔ La trappola è stata disinnescata.");
+        }
+    }
+
+    // -----------------------
+    // 2️⃣ OGGETTI
+    // -----------------------
+    if (stanza.getOggettiPresenti() != null && !stanza.getOggettiPresenti().isEmpty()) {
+        System.out.println("🎁 Oggetti presenti:");
+
+        for (Oggetto obj : stanza.getOggettiPresenti()) {
+            System.out.println(" - " + obj.getNome());
+        }
+
+        System.out.println("👉 Vuoi raccogliere gli oggetti? (per ora: raccolgo tutti)");
+
+        // esempio: raccoglie tutto
+        for (Oggetto obj : new ArrayList<>(stanza.getOggettiPresenti())) {
+            raccogliereOggetto(personaggio, obj);
+        }
+    }
+
+    // -----------------------
+    // 3️⃣ MOSTRI (placeholder)
+    // -----------------------
+    if (stanza.getListaMostri() != null && !stanza.getListaMostri().isEmpty()) {
+        System.out.println("👹 Ci sono mostri nella stanza! Inizia il combattimento!");
+        // Qui potresti attivare CombattimentoService
+    }
+
+    // -----------------------
+    // 4️⃣ EVENTI
+    // -----------------------
+    if (stanza.getListaEventi() != null && !stanza.getListaEventi().isEmpty()) {
+        System.out.println("📜 Evento nella stanza:");
+
+        for (Evento evento : stanza.getListaEventi()) {
+            System.out.println(" - " + evento.getDescrizione());
+            // puoi aggiungere logica eventoService qui
+        }
+    }
+
+    // -----------------------
+    // 5️⃣ Segna stanza visitata
+    // -----------------------
+    stanza.setStatoS(StanzaFactory.StatoStanza.VISITATA);
+}
   
    
     

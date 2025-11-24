@@ -6,7 +6,7 @@ public abstract class Personaggio {
     private  int puntiVita;
     private int puntiMana;
     private int difesa;
-    private String statoG;
+    private String statoPersonaggio;
     private Zaino zaino;
     private  int attacco;
     private int livello;
@@ -15,7 +15,7 @@ public abstract class Personaggio {
     boolean protetto;
     int turniProtetto;
 
-    public Personaggio(int attacco, int difesa, int esperienza, int id, int livello, String nomeP, Stanza posizioneCorrente, int puntiMana, int puntiVita, String statoG, Zaino zaino) {
+    public Personaggio(int attacco, int difesa, int esperienza, int id, int livello, String nomeP, Stanza posizioneCorrente, int puntiMana, int puntiVita, String statoPersonaggio, Zaino zaino) {
         this.attacco = attacco;
         this.difesa = difesa;
         this.esperienza = esperienza;
@@ -25,7 +25,7 @@ public abstract class Personaggio {
         this.posizioneCorrente = posizioneCorrente;
         this.puntiMana = puntiMana;
         this.puntiVita = puntiVita;
-        this.statoG = statoG;
+        this.statoPersonaggio = statoPersonaggio;
         this.zaino = zaino;
     }
 
@@ -72,12 +72,12 @@ public abstract class Personaggio {
         this.difesa = difesa;
     }
 
-    public String getStatoG() {
-        return statoG;
+    public String getStatoPersonaggio() {
+        return statoPersonaggio;
     }
 
-    public void setStatoG(String statoG) {
-        this.statoG = statoG;
+    public void setStatoPersonaggio(String statoPersonaggio) {
+        this.statoPersonaggio = statoPersonaggio;
     }
 
     public Zaino getZaino() {

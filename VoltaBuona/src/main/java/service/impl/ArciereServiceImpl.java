@@ -69,8 +69,8 @@ public class ArciereServiceImpl extends PersonaggioService {
         return true;
     }
 
-    private void eseguiAttacco(Arciere arciere, Mostro m) {
-    if (arciere == null || m == null) return;
+    private void eseguiAttacco(Arciere arciere, Mostro mostro) {
+    if (arciere == null || mostro == null) return;
 
     // calcolo danno base (adatta la formula al tuo bilanciamento)
     int attacco = arciere.getAttacco(); // presuppone getter
@@ -78,17 +78,17 @@ public class ArciereServiceImpl extends PersonaggioService {
     int dannoBase = Math.max(0, attacco + livello * 2);
 
     // applica difesa del mostro
-    int difesaMostro = m.getDifesaMostro(); // presuppone getter
+    int difesaMostro = mostro.getDifesaMostro(); // presuppone getter
     int dannoNetto = Math.max(0, dannoBase - difesaMostro);
 
     // sottrai punti vita al mostro
-    int nuoviPV = m.getPuntiVitaMostro() - dannoNetto; // presuppone getter
-    m.setPuntiVitaMostro(nuoviPV); // presuppone setter
+    int nuoviPV = mostro.getPuntiVitaMostro() - dannoNetto; // presuppone getter
+    mostro.setPuntiVitaMostro(nuoviPV); // presuppone setter
 
-    System.out.println(arciere.getNomeP() + " infligge " + dannoNetto + " al mostro " + m.getNome());
+    System.out.println(arciere.getNomeP() + " infligge " + dannoNetto + " al mostro " + mostro.getNome());
 
-    if (m.getPuntiVitaMostro() <= 0) {
-        System.out.println("Il mostro " + m.getNome() + " è stato sconfitto.");
+    if (mostro.getPuntiVitaMostro() <= 0) {
+        System.out.println("Il mostro " + mostro.getNome() + " è stato sconfitto.");
         // Qui puoi aggiungere rimozione dal contesto/stanza, drop oggetti, assegnazione XP, ecc.
     }
 }

@@ -54,5 +54,13 @@ public class Evento {
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
     }
+    public int getInizioEvento(){
+        return 1;
+    }
+    public int getFineEvento(){
+        return 0;
+    }
+
+
 
 }
