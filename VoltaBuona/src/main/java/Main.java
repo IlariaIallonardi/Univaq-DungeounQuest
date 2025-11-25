@@ -42,7 +42,7 @@ public class Main {
 
         List<Personaggio> giocatori = new ArrayList<>();
 
-       // ...existing code...
+        // ...existing code...
         for (int i = 1; i <= numReali; i++) {
             System.out.print(" Inserisci il nome del giocatore " + i + ": ");
             String nome = scanner.nextLine();
@@ -62,11 +62,15 @@ public class Main {
                 } catch (NumberFormatException e) {
                     // accetta anche parole chiave iniziali
                     String s = input.toLowerCase();
-                    if (s.startsWith("g")) sceltaClasse = 1;
-                    else if (s.startsWith("m")) sceltaClasse = 2;
-                    else if (s.startsWith("a")) sceltaClasse = 3;
-                    else if (s.startsWith("p")) sceltaClasse = 4;
-                    else {
+                    if (s.startsWith("g")) {
+                        sceltaClasse = 1; 
+                    }else if (s.startsWith("m")) {
+                        sceltaClasse = 2; 
+                    }else if (s.startsWith("a")) {
+                        sceltaClasse = 3; 
+                    }else if (s.startsWith("p")) {
+                        sceltaClasse = 4; 
+                    }else {
                         System.out.println(" Scelta non valida, riprova.");
                         continue;
                     }
@@ -112,7 +116,7 @@ public class Main {
 
         // *** 4 CREAZIONE DUNGEON ***
         Dungeon dungeon = dungeonFactory.creaDungeon(righe, colonne);
-        
+
         // *** 5 POSIZIONA GIOCATORI NELLA STANZA INIZIALE ***
         Stanza stanzaStart = dungeon.getStanza(0, 0);
 

@@ -15,12 +15,11 @@ public class Effetto {
     private String descrizione;
     private int durataTurni;
 
-
     public Effetto(TipoEffetto tipo, String descrizione, int durataTurni) {
         this.tipo = tipo;
         this.descrizione = descrizione;
         this.durataTurni = durataTurni;
-    
+
     }
 
     public boolean èAttivo() {
@@ -57,7 +56,6 @@ public class Effetto {
     public void setDurataTurni(int durataTurni) {
         this.durataTurni = durataTurni;
     }
-
 
     @Override
     public String toString() {

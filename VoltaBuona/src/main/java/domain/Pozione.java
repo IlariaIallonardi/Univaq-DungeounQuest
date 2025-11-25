@@ -1,11 +1,11 @@
 package domain;
 
-
 public class Pozione extends Oggetto {
+
     public enum Tipo {
-        CURA, MANA
+        CURA, MANA, ANTIDOTO
     }
-    
+
     private boolean durata;
     private Tipo tipo;
     private int valorePozione;
@@ -40,10 +40,6 @@ public class Pozione extends Oggetto {
         this.tipo = tipo;
         this.valorePozione = valorePozione;
     }
-      
-    
-
-
 
     public int aumentoPuntiVita() {
         return tipo == Tipo.CURA ? valorePozione : 0;
@@ -53,11 +49,15 @@ public class Pozione extends Oggetto {
         return tipo == Tipo.MANA ? valorePozione : 0;
     }
 
-   
+    public int antidotoVeleno() {
+        return tipo == Tipo.ANTIDOTO ? valorePozione : 0;
+    }
 
     @Override
     public boolean eseguiEffetto(Personaggio personaggio) {
-        if (personaggio == null) return false;
+        if (personaggio == null) {
+            return false;
+        }
 
         switch (tipo) {
             case CURA:
@@ -65,6 +65,12 @@ public class Pozione extends Oggetto {
                 break;
             case MANA:
                 personaggio.setPuntiMana(personaggio.getPuntiMana() + valorePozione);
+                break;
+            case ANTIDOTO:
+                personaggio.setStatoPersonaggio("NORMALE");
+                // azzera eventuali contatori (se usi turni)
+                personaggio.setTurniAvvelenato(0);
+
                 break;
             default:
                 return false;

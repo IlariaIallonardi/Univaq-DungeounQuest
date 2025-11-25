@@ -1,19 +1,23 @@
 package domain;
 
-public abstract class Personaggio {
+public class Personaggio {
+
     private int id;
-    private  String nomeP;
-    private  int puntiVita;
+    private String nomeP;
+    private int puntiVita;
     private int puntiMana;
     private int difesa;
     private String statoPersonaggio;
     private Zaino zaino;
-    private  int attacco;
+    private int attacco;
     private int livello;
-    private  int esperienza;
-    private  Stanza posizioneCorrente;
+    private int esperienza;
+    private Stanza posizioneCorrente;
     boolean protetto;
     int turniProtetto;
+    private int turniAvvelenato;
+    private int turniCongelato;
+    private int turniStordito;
 
     public Personaggio(int attacco, int difesa, int esperienza, int id, int livello, String nomeP, Stanza posizioneCorrente, int puntiMana, int puntiVita, String statoPersonaggio, Zaino zaino) {
         this.attacco = attacco;
@@ -29,9 +33,6 @@ public abstract class Personaggio {
         this.zaino = zaino;
     }
 
-
-
-    
     public int getId() {
         return id;
     }
@@ -92,7 +93,7 @@ public abstract class Personaggio {
         this.attacco = attacco;
     }
 
-     public int getAttacco() {
+    public int getAttacco() {
         return attacco;
     }
 
@@ -120,12 +121,40 @@ public abstract class Personaggio {
         this.posizioneCorrente = posizioneCorrente;
     }
 
+    public int getTurniAvvelenato() {
+        return turniAvvelenato;
+    }
+
+    public void setTurniAvvelenato(int turniAvvelenato) {
+        this.turniAvvelenato = turniAvvelenato;
+    }
+
+    public int getTurniCongelato() {
+        return turniCongelato;
+    }
+
+    public void setTurniCongelato(int turniCongelato) {
+        this.turniCongelato = turniCongelato;
+    }
+
+    public int getTurniStordito() {
+        return turniStordito;
+    }
+
+    public void setTurniStordito(int turniStordito) {
+        this.turniStordito = turniStordito;
+    }
+
+    public boolean èMorto(Personaggio personaggio) {
+        return personaggio.getPuntiVita() <= 0;
+    }
+
     /**
-     * Applica la protezione al personaggio per 1 turno.
-     * Se il personaggio è già protetto la chiamata NON rinnova/estende la protezione.
-     * package-private: solo classi nello stesso package domain possono invocarlo.
+     * Applica la protezione al personaggio per 1 turno. Se il personaggio è già
+     * protetto la chiamata NON rinnova/estende la protezione. package-private:
+     * solo classi nello stesso package domain possono invocarlo.
      */
-   public void applicaProtezione() {
+    public void applicaProtezione() {
         if (!this.protetto) {
             this.protetto = true;
             this.turniProtetto = 1;
@@ -140,10 +169,11 @@ public abstract class Personaggio {
     }
 
     /**
-     * Decrementa la protezione di un turno. Chiamare dopo che un attacco è stato evitato
-     * (ossia quando la protezione ha impedito il danno) o alla fine del turno.
+     * Decrementa la protezione di un turno. Chiamare dopo che un attacco è
+     * stato evitato (ossia quando la protezione ha impedito il danno) o alla
+     * fine del turno.
      */
-   public void decrementaProtezione() {
+    public void decrementaProtezione() {
         if (this.turniProtetto > 0) {
             this.turniProtetto--;
             if (this.turniProtetto <= 0) {
@@ -152,9 +182,10 @@ public abstract class Personaggio {
             }
         }
     }
+
     /**
-     * Chiamare all'inizio del turno del personaggio.
-     * Si occupa di consumare la protezione (durata = 1) quando "tocca di nuovo" al personaggio.
+     * Chiamare all'inizio del turno del personaggio. Si occupa di consumare la
+     * protezione (durata = 1) quando "tocca di nuovo" al personaggio.
      */
     public void onTurnStart() {
         // se era protetto, consumiamo la protezione ora (fine dell'effetto)
@@ -164,17 +195,20 @@ public abstract class Personaggio {
     }
 
     //formula base per calcolare danno: dobbiamo vedere se calcolarlo inquesto modo
-     public int calcolaDanno() {
+    public int calcolaDanno() {
         return Math.max(0, this.attacco + this.livello * 2);
     }
 
-     /**
-     * Applica danno al personaggio rispettando la difesa e la protezione.
-     * - Se il personaggio è protetto, il danno viene ignorato (la protezione NON viene consumata qui).
-     * - Restituisce true se il personaggio è morto (PV <= 0).
+    /**
+     * Applica danno al personaggio rispettando la difesa e la protezione. - Se
+     * il personaggio è protetto, il danno viene ignorato (la protezione NON
+     * viene consumata qui). - Restituisce true se il personaggio è morto (PV <=
+     * 0).
      */
     public boolean subisciDanno(int danno) {
-        if (danno <= 0) return false;
+        if (danno <= 0) {
+            return false;
+        }
         if (isProtetto()) {
             // protezione impedisce il danno; verrà consumata in onTurnStart del personaggio
             return false;
@@ -185,7 +219,6 @@ public abstract class Personaggio {
         return this.puntiVita <= 0;
     }
 
-    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -195,7 +228,7 @@ public abstract class Personaggio {
         sb.append(", puntiVita=").append(puntiVita);
         sb.append(", puntiMana=").append(puntiMana);
         sb.append(", difesa=").append(difesa);
-        sb.append(", statoG=").append(statoG);
+        sb.append(", statoPersonaggio=").append(statoPersonaggio);
         sb.append(", zaino=").append(zaino);
         sb.append(", attacco=").append(attacco);
         sb.append(", livello=").append(livello);
@@ -205,7 +238,4 @@ public abstract class Personaggio {
         return sb.toString();
     }
 
-
-
-    
 }

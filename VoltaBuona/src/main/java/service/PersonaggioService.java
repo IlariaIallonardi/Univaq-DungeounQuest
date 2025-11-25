@@ -1,12 +1,8 @@
 package service;
 
-import java.util.ArrayList;
-
 import domain.Arma;
 import domain.Armatura;
 import domain.Chiave;
-import domain.Effetto;
-import domain.Evento;
 import domain.Mostro;
 import domain.Oggetto;
 import domain.Personaggio;
@@ -15,9 +11,6 @@ import domain.Stanza;
 import domain.Trappola;
 import domain.Zaino;
 import service.impl.MostroServiceImpl;
-import service.impl.TrappolaServiceImpl;
-
-
 
 public class PersonaggioService {
 
@@ -28,62 +21,69 @@ public class PersonaggioService {
         return g;
     }
 
-    public boolean mortePersonaggio(Personaggio g) {
-        return g.getPuntiVita() <= 0;
-    }
-
-   // ...existing code...
+    // ...existing code...
     /**
-     * Il personaggio p attacca il mostro m.
-     * penso sia abbastanza giusto
-     * Ritorna il danno inflitto (0 se input non valido).
+     * Il personaggio p attacca il mostro m. penso sia abbastanza giusto Ritorna
+     * il danno inflitto (0 se input non valido).
      *
      */
     public int attacca(Personaggio p, Mostro m) {
-        if (p == null || m == null) return 0;
+        if (p == null || m == null) {
+            return 0;
+        }
 
         int att = 0;
         int dif = 0;
-        try { att = p.getAttacco(); } catch (NoSuchMethodError | NullPointerException ignored) {}
-        try { dif = m.getDifesaMostro(); } catch (NoSuchMethodError | NullPointerException ignored) {}
+        try {
+            att = p.getAttacco();
+        } catch (NoSuchMethodError | NullPointerException ignored) {
+        }
+        try {
+            dif = m.getDifesaMostro();
+        } catch (NoSuchMethodError | NullPointerException ignored) {
+        }
 
         int danno = Math.max(1, att - dif); // almeno 1 punto di danno
         try {
             m.setPuntiVitaMostro(m.getPuntiVitaMostro() - danno);
-        } catch (NoSuchMethodError | NullPointerException ignored) {}
+        } catch (NoSuchMethodError | NullPointerException ignored) {
+        }
 
-        
         try {
             if (m.getPuntiVitaMostro() <= 0) {
                 // esempio: aggiungi esperienza al personaggio se esiste il metodo
                 try {
                     int xp = 9; // se esiste
                     p.setEsperienza(p.getEsperienza() + xp);
-                    if(p.getEsperienza() >= 20){
+                    if (p.getEsperienza() >= 20) {
                         p.setLivello(p.getLivello() + 1);
-                        p.setEsperienza(0); 
+                        p.setEsperienza(0);
                     }
-                } catch (Exception ignored) {}
-            
+                } catch (Exception ignored) {
+                }
+
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         return danno;
     }
 
-         
     // 23-11-2025 dovrebbe essere giusto
-
     /**
-     * Uso generale di un oggetto:
-     * - verifica che l'oggetto sia nello zaino del personaggio,
-     * - delega l'effetto all'oggetto (Pozione) o chiama i metodi del service per equip/uso,
-     * - rimuove l'oggetto se consumato e registra l'evento.
+     * Uso generale di un oggetto: - verifica che l'oggetto sia nello zaino del
+     * personaggio, - delega l'effetto all'oggetto (Pozione) o chiama i metodi
+     * del service per equip/uso, - rimuove l'oggetto se consumato e registra
+     * l'evento.
      */
     public boolean usaOggetto(Personaggio personaggio, Oggetto oggetto) {
-        if (personaggio == null || oggetto == null) return false;
+        if (personaggio == null || oggetto == null) {
+            return false;
+        }
         Zaino z = personaggio.getZaino();
-        if (z == null || !z.getListaOggetti().contains(oggetto)) return false;
+        if (z == null || !z.getListaOggetti().contains(oggetto)) {
+            return false;
+        }
 
         // Pozione: l'oggetto applica l'effetto sul personaggio
         if (oggetto instanceof Pozione) {
@@ -112,14 +112,14 @@ public class PersonaggioService {
         // Armatura: indossa (metodo service indossaArmatura)
         if (oggetto instanceof Armatura) {
             ((Armatura) oggetto).eseguiEffetto(personaggio);
-             z.setCapienza(z.getCapienza() + 1);
+            z.setCapienza(z.getCapienza() + 1);
             return true;
         }
 
         // la chiave si deve fare.
         if (oggetto instanceof Chiave) {
-        ((Chiave) oggetto).eseguiEffetto(personaggio);
-        
+            ((Chiave) oggetto).eseguiEffetto(personaggio);
+
             z.rimuovi(oggetto);
             z.setCapienza(z.getCapienza() + 1);
             return true;
@@ -129,23 +129,31 @@ public class PersonaggioService {
         return false;
     }
 
-
-   //incompleto finire ultima parte
-   
+    //incompleto finire ultima parte
     public boolean raccogliereOggetto(Personaggio personaggio, Oggetto oggetto) {
-        if (personaggio == null || oggetto == null) return false;
+        if (personaggio == null || oggetto == null) {
+            return false;
+        }
 
         Zaino zaino = personaggio.getZaino();
-        if (zaino == null) return false;
+        if (zaino == null) {
+            return false;
+        }
 
         Stanza stanza = personaggio.getPosizioneCorrente();
-        if (stanza == null) return false;
+        if (stanza == null) {
+            return false;
+        }
 
         // verifica che l'oggetto sia nella stanza
-        if (stanza.getOggettiPresenti() == null || !stanza.getOggettiPresenti().contains(oggetto)) return false;
+        if (stanza.getOggettiPresenti() == null || !stanza.getOggettiPresenti().contains(oggetto)) {
+            return false;
+        }
 
         // verifica lista e capienza (capienza intesa come posti disponibili)
-        if (zaino.getListaOggetti() == null) return false;
+        if (zaino.getListaOggetti() == null) {
+            return false;
+        }
 
         if (zaino.getCapienza() < 5) {
             // spazio disponibile: aggiungi direttamente
@@ -204,116 +212,55 @@ public class PersonaggioService {
         return true;
     }
 
-    
-     /** 
-     * Applica al personaggio il danno calcolato dal mostro.
-     * Ritorna il danno effettivamente inflitto.
+    /**
+     * Applica al personaggio il danno calcolato dal mostro. Ritorna il danno
+     * effettivamente inflitto.
      */
     public int subisciDannoDaMostro(Mostro mostro, Personaggio personaggio) {
-        if (mostro == null || personaggio == null) return 0;
+        if (mostro == null || personaggio == null) {
+            return 0;
+        }
         int danno = MostroServiceImpl.calcolaDanno(mostro, personaggio);
         personaggio.setPuntiVita(personaggio.getPuntiVita() - danno); // aggiorna lo stato del personaggio
         return danno;
     }
 
-    
-    /** 
-     * Applica al personaggio il danno calcolato dalla trappola.
-     * Ritorna il danno effettivamente inflitto.
+    /**
+     * Applica al personaggio il danno calcolato dalla trappola. Ritorna il
+     * danno effettivamente inflitto.
      */
-    public int subisciDannoDaTrappola(int dannoTrappola ,Personaggio g) {
-        if (g == null) return 0;
-        int danno = TrappolaServiceImpl.calcolaDanno(dannoTrappola ,g);
-        g.setPuntiVita(g.getPuntiVita() - danno); // aggiorna lo stato del personaggio
-        return danno;
-    }
+    public void subisciDannoDaTrappola(Trappola trappola, Personaggio personaggio) {
+        if (trappola != null) {
+            System.out.println("Hai trovato una trappola!");
 
+            // Check di disinnesco
+            boolean disinnescata = trappola.checkDiDisinnesco(personaggio);
 
+            if (!disinnescata) {
+                // Trappola si attiva
+                trappola.attiva(personaggio);
+            } else {
+                System.out.println("La trappola è stata disinnescata.");
+            }
+        }
 
-   
-
-    public String aggiornamentoStatoPersonaggio(Effetto effetto, Personaggio g) {
-        return "Stato aggiornato";
     }
 
     public void esploraStanza(Personaggio personaggio) {
 
-    if (personaggio == null) {
-        System.out.println("Errore: personaggio nullo.");
-        return;
-    }
-
-    Stanza stanza = personaggio.getPosizioneCorrente();
-    if (stanza == null) {
-        System.out.println("Errore: posizione del personaggio non valida.");
-        return;
-    }
-
-    System.out.println("🔍 " + personaggio.getNomeP() + " esplora la stanza...");
-
-    // -----------------------
-    // 1️⃣ TRAPPOLA
-    // -----------------------
-    Trappola trappola = stanza.getTrappola();
-
-    if (trappola != null) {
-        System.out.println("⚠ Hai trovato una trappola!");
-
-        // Check di disinnesco
-        boolean disinnescata = trappola.checkDiDisinnesco(personaggio);
-
-        if (!disinnescata) {
-            // Trappola si attiva
-            trappola.attiva(personaggio);
-        } else {
-            System.out.println("✔ La trappola è stata disinnescata.");
-        }
-    }
-
-    // -----------------------
-    // 2️⃣ OGGETTI
-    // -----------------------
-    if (stanza.getOggettiPresenti() != null && !stanza.getOggettiPresenti().isEmpty()) {
-        System.out.println("🎁 Oggetti presenti:");
-
-        for (Oggetto obj : stanza.getOggettiPresenti()) {
-            System.out.println(" - " + obj.getNome());
+        if (personaggio == null) {
+            System.out.println("Errore: personaggio nullo.");
+            return;
         }
 
-        System.out.println("👉 Vuoi raccogliere gli oggetti? (per ora: raccolgo tutti)");
-
-        // esempio: raccoglie tutto
-        for (Oggetto obj : new ArrayList<>(stanza.getOggettiPresenti())) {
-            raccogliereOggetto(personaggio, obj);
+        Stanza stanza = personaggio.getPosizioneCorrente();
+        if (stanza == null) {
+            System.out.println("Errore: posizione del personaggio non valida.");
+            return;
         }
+
+        System.out.println("🔍 " + personaggio.getNomeP() + " esplora la stanza...");
+
     }
 
-    // -----------------------
-    // 3️⃣ MOSTRI (placeholder)
-    // -----------------------
-    if (stanza.getListaMostri() != null && !stanza.getListaMostri().isEmpty()) {
-        System.out.println("👹 Ci sono mostri nella stanza! Inizia il combattimento!");
-        // Qui potresti attivare CombattimentoService
-    }
-
-    // -----------------------
-    // 4️⃣ EVENTI
-    // -----------------------
-    if (stanza.getListaEventi() != null && !stanza.getListaEventi().isEmpty()) {
-        System.out.println("📜 Evento nella stanza:");
-
-        for (Evento evento : stanza.getListaEventi()) {
-            System.out.println(" - " + evento.getDescrizione());
-            // puoi aggiungere logica eventoService qui
-        }
-    }
-
-    // -----------------------
-    // 5️⃣ Segna stanza visitata
-    // -----------------------
-    stanza.setStatoS(StanzaFactory.StatoStanza.VISITATA);
-}
-  
-   
-    
 }
