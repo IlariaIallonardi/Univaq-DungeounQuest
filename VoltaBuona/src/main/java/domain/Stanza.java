@@ -18,9 +18,10 @@ public class Stanza {
     private List<Evento> listaEventi = new ArrayList<>();
     private Chiave chiaveRichiesta;
     private boolean bloccata;
+    private String nomeStanza;
 
     public Stanza(int id, int[][] coordinate, StatoStanza statoS, List<Oggetto> inventario,
-            List<Evento> listaEventi, Chiave chiaveRichiesta,boolean bloccata ) {
+            List<Evento> listaEventi, Chiave chiaveRichiesta, boolean bloccata, String nomeStanza) {
         this.id = id;
         this.coordinate = coordinate;
         this.statoS = statoS;
@@ -28,7 +29,8 @@ public class Stanza {
         this.stanzaAdiacente = (stanzaAdiacente != null) ? stanzaAdiacente : new HashMap<>();
         this.listaEventi = listaEventi != null ? new ArrayList<>(listaEventi) : new ArrayList<>();
         this.chiaveRichiesta = chiaveRichiesta;
-        this.bloccata=bloccata;
+        this.bloccata = bloccata;
+        this.nomeStanza = nomeStanza;
     }
 
     public int getId() {
@@ -95,8 +97,17 @@ public class Stanza {
         this.chiaveRichiesta = chiaveRichiesta;
     }
 
+    public String getNomeStanza() {
+        return nomeStanza;
+    }
+
+    public void setNomeStanza(String nomeStanza) {
+        this.nomeStanza = nomeStanza;
+    }
+
     public void rimuoviOggetto(Oggetto o) {
     }
+
     public void aggiungiOggetto(Oggetto o) {
         if (o != null) {
             oggettiPresenti.add(o);
@@ -105,22 +116,23 @@ public class Stanza {
 
     public void esploraStanza(Giocatore g) {
     }
+
     public boolean isBloccata() {
         return bloccata;
     }
+
     public boolean sblocca() {
-    if (!bloccata) {
-        System.out.println("La stanza è già sbloccata.");
-        return false;
+        if (!bloccata) {
+            System.out.println("La stanza è già sbloccata.");
+            return false;
+        }
+
+        bloccata = false;
+        chiaveRichiesta = null;
+
+        System.out.println(" La stanza è stata sbloccata!");
+        return true;
     }
-
-    bloccata = false;
-    chiaveRichiesta = null;
-
-    System.out.println(" La stanza è stata sbloccata!");
-    return true;
-}
-    
 
     @Override
     public String toString() {

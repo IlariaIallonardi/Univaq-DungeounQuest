@@ -1,10 +1,13 @@
 package service.impl;
 
 import domain.Giocatore;
+import domain.Personaggio;
 import domain.Stanza;
 import service.GiocatoreService;
 import service.GiocoService;
+import service.StanzaFactory;
 import service.TurnoService;
+import service.impl.TurnoServiceImpl.Direzione;
 
 import java.util.List;
 import java.util.Scanner;
@@ -66,6 +69,61 @@ public class GiocoServiceImpl implements GiocoService {
 
     public void setTurnoCorrente(int turnoCorrente) {
         this.turnoCorrente = turnoCorrente;
+    }
+
+    public boolean muovi(Personaggio personaggio, Direzione direzione) {
+        if (personaggio == null) {
+            return false;
+        }
+
+        Stanza corrente = personaggio.getPosizioneCorrente();
+        if (corrente == null) {
+            System.out.println("Il personaggio non è in nessuna stanza.");
+            return false;
+        }
+
+        // prendo la stanza adiacente nella direzione scelta
+        Stanza destinazione = null;
+
+        switch (direzione) {
+            case NORD ->
+                destinazione = corrente.getStanzaAdiacente().get("NORD");
+            case SUD ->
+                destinazione = corrente.getStanzaAdiacente().get("SUD");
+            case EST ->
+                destinazione = corrente.getStanzaAdiacente().get("EST");
+            case OVEST ->
+                destinazione = corrente.getStanzaAdiacente().get("OVEST");
+        }
+
+        // nessuna stanza in quella direzione
+        if (destinazione == null) {
+            System.out.println("Non puoi andare in quella direzione.");
+            return false;
+        }
+
+        // se hai il concetto di stanza bloccata:
+        if (destinazione.isBloccata()) {
+            System.out.println("La stanza in " + direzione + " è bloccata.");
+            return false;
+        }
+
+        // aggiorno le liste di personaggi nelle stanze
+        if (corrente.getListaPersonaggi() != null) {
+            corrente.getListaPersonaggi().remove(personaggio);
+        }
+        if (destinazione.getListaPersonaggi() != null) {
+            destinazione.getListaPersonaggi().add(personaggio);
+        }
+
+        // aggiorno la posizione del personaggio
+        personaggio.setPosizioneCorrente(destinazione);
+
+        // opzionale: segno la stanza come visitata
+        destinazione.setStatoS(StanzaFactory.StatoStanza.VISITATA);
+
+        System.out.println(personaggio.getNomeP() + " si sposta verso " + direzione + ".");
+        return true;
     }
 
     /*
@@ -137,5 +195,4 @@ public class GiocoServiceImpl implements GiocoService {
      * return 0;
      * }
      */
-
 }

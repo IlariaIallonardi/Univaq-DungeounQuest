@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import domain.Dungeon;
+import domain.Personaggio;
+import service.impl.TurnoServiceImpl.Direzione;
 
 public class GiocoService {
 
@@ -20,9 +22,9 @@ public class GiocoService {
     }
 
     public Dungeon creaDungeon(int righe, int colonne) {
-    this.dungeon = dungeonFactory.creaDungeon(righe, colonne);
-    return dungeon;}
-    
+        this.dungeon = dungeonFactory.creaDungeon(righe, colonne);
+        return dungeon;
+    }
 
     /**
      * Legge dimensioni dal file di configurazione
@@ -45,4 +47,7 @@ public class GiocoService {
         return new int[]{righe, colonne};
     }
 
+    public boolean muovi(Personaggio personaggio, Direzione direzione) {
+        return true;
+    }
 }

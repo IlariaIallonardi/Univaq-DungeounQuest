@@ -11,7 +11,6 @@ public class Trappola extends Evento {
         this.effetto = effetto;
     }
 
-    
     public int getDanno() {
         return danno;
     }
@@ -201,7 +200,7 @@ public class Trappola extends Evento {
     }
 
     //main funzionante per testare trappola
-    /* public static void main(String[] args) {
+    public static void main(String[] args) {
 
         // 1️⃣ Creazione personaggio di test
         Personaggio p = new Personaggio(0, 0, 0, 0, 0, null, null, 0, 0, null, null);
@@ -248,86 +247,9 @@ public class Trappola extends Evento {
         }
 
         System.out.println("\n=== TEST COMPLETATO ===");
-    }*/
+    }
 
-        /* 
-    public static void main(String[] args) {
-
-        // 1️⃣ Creo un personaggio di test
-        Personaggio p = new Guerriero("Arthas");
-        p.setPuntiVita(50);
-        p.setStatoPersonaggio("NORMALE");
-
-        // inizializzo a 0 gli effetti a turni
-        p.setTurniAvvelenato(0);
-        p.setTurniCongelato(0);
-        p.setTurniStordito(0);
-
-        // 2️⃣ Creo una trappola finta
-        Trappola trappola = new Trappola(
-                1,
-                true,
-                false,
-                "Trappola magica",
-                10,
-                null
-        );
-
-        // 3️⃣ Creo TurnoService
-        PersonaggioService ps = null;
-        TurnoService turnoService = new TurnoService(ps);
-
-        System.out.println("\n=== TEST TRAPPOLA ===");
-        System.out.println("🚶 Il personaggio entra nella stanza...");
-        System.out.println("Stato iniziale: " + p.getStatoPersonaggio());
-        System.out.println("HP iniziali: " + p.getPuntiVita());
-
-        // 4️⃣ Il personaggio prova a disinnescare la trappola
-        boolean disinnesco = trappola.checkDiDisinnesco(p);
-
-        if (!disinnesco) {
-            System.out.println("➡ La trappola SI ATTIVA!");
-            trappola.attiva(p);
-        }
-
-        // 5️⃣ Simuliamo più turni
-        System.out.println("=== SIMULAZIONE TURNI ===");
-
-        for (int turno = 1; turno <= 5; turno++) {
-
-            System.out.println("--- TURNO " + turno + " ---");
-
-            if (p.èMorto(p)) {
-                System.out.println("💀 Il personaggio è morto. Fine test.");
-                break;
-            }
-
-            // Azioni normali (fittizie)
-            System.out.println("Il personaggio prova a compiere azioni...");
-
-            // Fine turno → applica effetti
-            turnoService.aggiornaEffettiFineTurno(p);
-
-            System.out.println("HP attuali: " + p.getPuntiVita());
-            System.out.println("Stato attuale: " + p.getStatoPersonaggio());
-        }
-
-        // 6️⃣ Test antidoto
-        System.out.println("=== TEST POZIONE ANTIDOTO ===");
-
-        Pozione antidoto = new Pozione(disinnesco, null, 0, 0, null, null, disinnesco, disinnesco, disinnesco);
-
-        System.out.println("Usiamo l'antidoto...");
-        antidoto.eseguiEffetto(p);
-
-        System.out.println("Stato personaggio dopo antidoto: " + p.getStatoPersonaggio());
-        System.out.println("Turni avvelenato: " + p.getTurniAvvelenato());
-        System.out.println("Turni congelato: " + p.getTurniCongelato());
-        System.out.println("Turni stordito: " + p.getTurniStordito());
-    }*/
-
-    
-    // ...existing code...
+    /* 
     public static void main(String[] args) {
         // crea Personaggio con il costruttore che usi nel progetto
         Personaggio p = new Personaggio(0, 34, 0, 0, 1, "EroeTest", null, 10, 40, "NORMALE", null);
@@ -352,5 +274,5 @@ public class Trappola extends Evento {
         System.out.println();
         System.out.println("HP finali: " + p.getPuntiVita());
         System.out.println("Stato finale: " + p.getStatoPersonaggio());
-    }
+    } */
 }
