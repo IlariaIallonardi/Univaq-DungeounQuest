@@ -25,12 +25,7 @@ public class Arma extends Oggetto {
         this.tipo = tipo;
     }
     
-  /*   public int getDurabilitaArma() {
-        return durabilitaArma;
-    }
-    public void setDurabilitaArma(int durabilitaArma) {
-        this.durabilitaArma = durabilitaArma;}
-    */
+ 
 
 
     @Override
@@ -40,6 +35,76 @@ public class Arma extends Oggetto {
         personaggio.setAttacco(personaggio.getAttacco() + this.dannoBonus);
         return true;
     } 
+
+    @Override
+    public boolean usare(Personaggio personaggio) {
+        return super.usare(personaggio);
+    }
+
+    @Override
+    public void setTrovato(boolean trovato) {
+        super.setTrovato(trovato);
+    }
+
+    @Override
+    public boolean isTrovato() {
+        return super.isTrovato();
+    }
+
+    @Override
+    public void setEquipaggiabile(boolean equipaggiabile) {
+        super.setEquipaggiabile(equipaggiabile);
+    }
+
+    @Override
+    public boolean isEquipaggiabile() {
+        return super.isEquipaggiabile();
+    }
+
+    @Override
+    public void setUsabile(boolean usabile) {
+        super.setUsabile(usabile);
+    }
+
+    @Override
+    public boolean isUsabile() {
+        return super.isUsabile();
+    }
+
+    @Override
+    public void setDescrizione(String descrizione) {
+        super.setDescrizione(descrizione);
+    }
+
+    @Override
+    public String getDescrizione() {
+        return super.getDescrizione();
+    }
+
+    @Override
+    public void setNome(String nome) {
+        super.setNome(nome);
+    }
+
+    @Override
+    public String getNome() {
+        return super.getNome();
+    }
+
+    @Override
+    public void setId(int id) {
+        super.setId(id);
+    }
+
+    @Override
+    public int getId() {
+        return super.getId();
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 
     
 

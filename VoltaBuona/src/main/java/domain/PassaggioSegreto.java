@@ -6,7 +6,7 @@ public class PassaggioSegreto extends Evento {
     private boolean scoperto;
 
     public PassaggioSegreto(Stanza destinazione, boolean rebusApertura, boolean scoperto, int id, boolean inizioEvento, boolean fineEvento) {
-        super(id, inizioEvento, fineEvento);
+        super(id, inizioEvento, fineEvento, "PassaggioSegreto");
         this.destinazione = destinazione;
         this.rebusApertura = rebusApertura;
         this.scoperto = scoperto;
@@ -39,12 +39,10 @@ public class PassaggioSegreto extends Evento {
         this.scoperto = scoperto;
     }
 
-
-
-
-
     public boolean attivo() {
-       return true;
+       if (!scoperto) return false;
+        if (!èRiutilizzabile() && !isScoperto()) return false;
+        return true;
     }
 
     public boolean èRiutilizzabile() {
@@ -52,8 +50,65 @@ public class PassaggioSegreto extends Evento {
         return true;
     }
 
+    
 
+    @Override
+    public int getFineEvento() {
+        return super.getFineEvento();
+    }
 
+    @Override
+    public int getInizioEvento() {
+        return super.getInizioEvento();
+    }
+
+    @Override
+    public void setDescrizione(String descrizione) {
+        super.setDescrizione(descrizione);
+    }
+
+    @Override
+    public String getDescrizione() {
+        return super.getDescrizione();
+    }
+
+    @Override
+    public void setFineEvento(boolean fineEvento) {
+        super.setFineEvento(fineEvento);
+    }
+
+    @Override
+    public boolean isFineEvento() {
+        return super.isFineEvento();
+    }
+
+    @Override
+    public void setInizioEvento(boolean inizioEvento) {
+        super.setInizioEvento(inizioEvento);
+    }
+
+    @Override
+    public boolean isInizioEvento() {
+        return super.isInizioEvento();
+    }
+
+    @Override
+    public void setId(int id) {
+        super.setId(id);
+    }
+
+    @Override
+    public int getId() {
+        return super.getId();
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+    
+
+    
 
 
 

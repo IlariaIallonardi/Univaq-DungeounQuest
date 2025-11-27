@@ -9,7 +9,7 @@ public class Armatura extends Oggetto {
         this.tipoArmatura = tipoArmatura;
     }
 
-     public enum TipoArmatura {
+    public enum TipoArmatura {
         DEBOLE, MEDIA, FORTE
     }
 
@@ -41,11 +41,78 @@ public class Armatura extends Oggetto {
         this.durabilitaArmatura = durabilitaArmatura;
     }
 
-    
-    public int miglioraDifesa() {
-        // logica di equipaggiamento
-        return difesaBonus;
+
+
+    @Override
+    public boolean usare(Personaggio personaggio) {
+        return super.usare(personaggio);
     }
+
+    @Override
+    public void setTrovato(boolean trovato) {
+        super.setTrovato(trovato);
+    }
+
+    @Override
+    public boolean isTrovato() {
+        return super.isTrovato();
+    }
+
+    @Override
+    public void setEquipaggiabile(boolean equipaggiabile) {
+        super.setEquipaggiabile(equipaggiabile);
+    }
+
+    @Override
+    public boolean isEquipaggiabile() {
+        return super.isEquipaggiabile();
+    }
+
+    @Override
+    public void setUsabile(boolean usabile) {
+        super.setUsabile(usabile);
+    }
+
+    @Override
+    public boolean isUsabile() {
+        return super.isUsabile();
+    }
+
+    @Override
+    public void setDescrizione(String descrizione) {
+        super.setDescrizione(descrizione);
+    }
+
+    @Override
+    public String getDescrizione() {
+        return super.getDescrizione();
+    }
+
+    @Override
+    public void setNome(String nome) {
+        super.setNome(nome);
+    }
+
+    @Override
+    public String getNome() {
+        return super.getNome();
+    }
+
+    @Override
+    public void setId(int id) {
+        super.setId(id);
+    }
+
+    @Override
+    public int getId() {
+        return super.getId();
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
 
 @Override
 public boolean eseguiEffetto(Personaggio personaggio) {

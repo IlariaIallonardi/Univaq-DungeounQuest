@@ -13,8 +13,8 @@ public class Personaggio {
     private int livello;
     private int esperienza;
     private Stanza posizioneCorrente;
-    boolean protetto;
-    int turniProtetto;
+    private boolean protetto;
+    private int turniProtetto;
     private int turniAvvelenato;
     private int turniCongelato;
     private int turniStordito;
@@ -32,6 +32,7 @@ public class Personaggio {
         this.statoPersonaggio = statoPersonaggio;
         this.zaino = zaino;
     }
+
 
     public int getId() {
         return id;

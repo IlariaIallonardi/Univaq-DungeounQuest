@@ -1,8 +1,5 @@
 package domain;
 
-import service.PersonaggioService;
-import service.TurnoService;
-
 public class Trappola extends Evento {
 
     private int danno;
@@ -14,11 +11,7 @@ public class Trappola extends Evento {
         this.effetto = effetto;
     }
 
-    public String checkDiDisinnesco() {
-        // ritorna esito test disinnesco
-        return "Fallito";
-    }
-
+    
     public int getDanno() {
         return danno;
     }
@@ -256,6 +249,8 @@ public class Trappola extends Evento {
 
         System.out.println("\n=== TEST COMPLETATO ===");
     }*/
+
+        /* 
     public static void main(String[] args) {
 
         // 1️⃣ Creo un personaggio di test
@@ -329,5 +324,33 @@ public class Trappola extends Evento {
         System.out.println("Turni avvelenato: " + p.getTurniAvvelenato());
         System.out.println("Turni congelato: " + p.getTurniCongelato());
         System.out.println("Turni stordito: " + p.getTurniStordito());
+    }*/
+
+    
+    // ...existing code...
+    public static void main(String[] args) {
+        // crea Personaggio con il costruttore che usi nel progetto
+        Personaggio p = new Personaggio(0, 34, 0, 0, 1, "EroeTest", null, 10, 40, "NORMALE", null);
+
+        System.out.println("HP iniziali: " + p.getPuntiVita());
+        System.out.println("Stato iniziale: " + p.getStatoPersonaggio());
+        System.out.println();
+
+        // trappola di prova con effetto AVVELENAMENTO
+        Effetto effetto = new Effetto(Effetto.TipoEffetto.AVVELENAMENTO, "Veleno", 3);
+        Trappola tr = new Trappola(1, true, false, "Trappola di prova", 10, effetto);
+
+        // tentativo di disinnesco e possibile attivazione
+        boolean disinnescata = tr.checkDiDisinnesco(p);
+        if (!disinnescata) {
+            System.out.println("➡ La trappola SI ATTIVA!");
+            tr.attiva(p);
+        } else {
+            System.out.println("➡ Trappola disinnescata.");
+        }
+
+        System.out.println();
+        System.out.println("HP finali: " + p.getPuntiVita());
+        System.out.println("Stato finale: " + p.getStatoPersonaggio());
     }
 }
