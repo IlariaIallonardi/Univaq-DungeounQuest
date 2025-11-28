@@ -3,16 +3,11 @@ package domain;
 public class Mostro extends PersonaIncontrata {
  private int puntiVitaMostro;
  private int difesaMostro;
+ private int dannoMostro;
 
-
-
-
-    public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, int danno, String messaggio, String nome) {
-        super(id, inizioEvento, fineEvento, descrizione, danno, messaggio, nome);
-    }
 
     public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, int danno, String messaggio, String nome, int puntiVita, int puntiDifesa) {
-        super(id, inizioEvento, fineEvento, descrizione, danno, messaggio, nome);
+         super(id, false, false, "NPC: " + nome, nome);
         this.puntiVitaMostro = puntiVita;
         this.difesaMostro = puntiDifesa;
     }
@@ -37,31 +32,18 @@ public class Mostro extends PersonaIncontrata {
         return true;
     }
 
-    @Override
-    public void setDanno(int danno) {
-        super.setDanno(danno);
+    
+    public void setDannoMostro(int danno) {
+        this.dannoMostro = danno;
     }
-
-    @Override
-    public void setMessaggio(String messaggio) {
-        super.setMessaggio(messaggio);
+    public int getDannoMostro() {
+        return dannoMostro;
     }
 
     @Override
     public void setNome(String nome) {
         super.setNome(nome);
     }
-
-    @Override
-    public int getDanno() {
-        return super.getDanno();
-    }
-
-    @Override
-    public String getMessaggio() {
-        return super.getMessaggio();
-    }
-
     @Override
     public String getNome() {
         return super.getNome();

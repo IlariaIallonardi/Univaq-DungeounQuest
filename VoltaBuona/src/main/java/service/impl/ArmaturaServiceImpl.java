@@ -1,13 +1,38 @@
 package service.impl;
 
-import domain.Personaggio;
-import service.OggettoService;
+import java.util.List;
 
-public class ArmaturaServiceImpl extends  OggettoService {
+import domain.*;
+
+import service.*;
+
+public class ArmaturaServiceImpl implements   OggettoService {
+
+   @Override
+      public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza){
+        if (stanza == null || oggetto == null) return;
+        stanza.aggiungiOggetto(oggetto);}
+
 
     @Override
-     public void eseguiEffetto(Personaggio personaggio) {
-        if (personaggio == null) return;
-        // Aumenta solo il danno/attacco del personaggio
-        personaggio.setAttacco(personaggio.getAttacco() + this.dannoBonus);
+    public List<Oggetto> getOggettiInStanza(Stanza stanza){
+        return stanza.getOggettiPresenti();
+    }
+
+
+    @Override
+    public void rimuoviOggettoDaStanza(Stanza stanza, Oggetto oggetto){
+        stanza.getOggettiPresenti().remove(oggetto);
+    }
+
+    @Override
+    public void salvaOggettiSuFile(List<Oggetto> oggetti, String filePath){
+        // serializzazione da implementare (JSON, XML, ecc.)
+    }
+
+    @Override
+    public Oggetto creaOggetto(){
+        // Factory temporanea: implementare creazione specifica in base ai tipi concreti
+        return null;
+    }
 }

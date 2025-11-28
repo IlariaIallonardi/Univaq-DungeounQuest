@@ -112,7 +112,7 @@ public class Combattimento {
     }
 
     public int calcolaDannoM(Mostro m) {
-        return m.getDanno();
+        return m.getDannoMostro();
     }
 
     public String fineCombattimento() {

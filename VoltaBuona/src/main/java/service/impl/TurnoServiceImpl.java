@@ -5,16 +5,14 @@ import java.util.List;
 import java.util.Scanner;
 
 import domain.Evento;
-import domain.Guerriero;
 import domain.Oggetto;
 import domain.Personaggio;
-import domain.Pozione;
 import domain.Stanza;
-import domain.Zaino;
 import service.EventoService;
 import service.GiocoService;
 import service.PersonaggioService;
 import service.TurnoService;
+
 
 public class TurnoServiceImpl implements TurnoService {
 
@@ -62,7 +60,7 @@ public class TurnoServiceImpl implements TurnoService {
             }
         }
 
-        // 2️⃣ CONGELAMENTO: dura N turni, qui puoi gestire eventuali penalità
+        // 2 CONGELAMENTO: dura N turni, qui puoi gestire eventuali penalità
         if (personaggio.getTurniCongelato() > 0) {
             personaggio.setTurniCongelato(personaggio.getTurniCongelato() - 1);
             System.out.println("❄ " + personaggio.getNomeP() + " è ancora congelato ("
@@ -74,7 +72,7 @@ public class TurnoServiceImpl implements TurnoService {
             }
         }
 
-        // 3️⃣ STORDIMENTO: penalizza per N turni (es. non può attaccare)
+        // 3 STORDIMENTO: penalizza per N turni (es. non può attaccare)
         if (personaggio.getTurniStordito() > 0) {
             personaggio.setTurniStordito(personaggio.getTurniStordito() - 1);
             System.out.println(personaggio.getNomeP() + " è ancora stordito ("
@@ -97,7 +95,7 @@ public class TurnoServiceImpl implements TurnoService {
         Stanza stanzaCorrente = personaggio.getPosizioneCorrente();
         System.out.println("Ti trovi in: " + stanzaCorrente.getNomeStanza());
 
-        // 1️⃣ movimento opzionale
+        // 1movimento opzionale
         System.out.println("Vuoi muoverti? (s/n)");
         String risposta = scanner.nextLine().trim().toLowerCase();
 
@@ -106,7 +104,7 @@ public class TurnoServiceImpl implements TurnoService {
             stanzaCorrente = personaggio.getPosizioneCorrente();
         }
 
-        // 2️⃣ esplorazione: mostro eventi e oggetti
+        // 2 esplorazione: mostro eventi e oggetti
         List<Evento> eventi = stanzaCorrente.getListaEventiAttivi();
         List<Oggetto> oggetti = stanzaCorrente.getOggettiPresenti();
 
@@ -235,109 +233,108 @@ public class TurnoServiceImpl implements TurnoService {
         }
     }
 
-    public static void main(String[] args) {
+/* main abbastanza funzionante: problemi oerchè ci sono paramentri null
+  public static void main(String[] args) {
 
-        // =========================
-        // 1) CREO I SERVICE
-        // =========================
-        // TODO: usa i tuoi costruttori reali
-        GiocoService giocoService = new GiocoService(/* eventuali parametri */);
+    // ============================
+    // 1) INIZIALIZZO I SERVICE
+    // ============================
 
-        PersonaggioService personaggioService = new PersonaggioService(); // se è una classe concreta
-        EventoService eventoService = new EventoService();               // idem
+    GiocoService giocoService = new GiocoService(null); 
+    PersonaggioService personaggioService = new PersonaggioService(); 
+    EventoService eventoService = new EventoService();               
 
-        TurnoService turnoService = new TurnoServiceImpl(
-                giocoService,
-                personaggioService,
-                eventoService
-        );
+    TurnoService turnoService = new TurnoServiceImpl(
+            giocoService,
+            personaggioService,
+            eventoService
+    );
 
-        // =========================
-        // 2) CREO DUE STANZE DI TEST
-        // =========================
-        // TODO: adatta al tuo costruttore di Stanza
-        Stanza stanza1 = new Stanza(
-                1,
-                /* coordinate */ null,
-                "Stanza iniziale",
-                new ArrayList<>(), // lista oggetti
-                new ArrayList<>(), // lista eventi
-                null // chiaveRichiesta o simile
-        );
+    // ============================
+    // 2) CREO DUE STANZE DI TEST
+    // ============================
 
-        Stanza stanza2 = new Stanza(
-                2,
-                /* coordinate */ null,
-                "Stanza a nord",
-                new ArrayList<>(),
-                new ArrayList<>(),
-                null
-        );
+    // ⚠ ADATTATO al costruttore a 6 parametri:
+    // Stanza(int id, int[][] coordinate, String statoS,
+    //        List<Oggetto> oggettiPresenti,
+    //        List<Evento> listaEventiAttivi,
+    //        Chiave chiaveRichiesta)
 
-        // imposto le mappe delle stanze adiacenti
-        stanza1.getStanzaAdiacente().put("NORD", stanza2);
-        stanza2.getStanzaAdiacente().put("SUD", stanza1);
+    Stanza stanza1 = new Stanza(0, new int[][]{{0,1}}, null, new ArrayList<>(), new ArrayList<>(), null, false,"stanza uno");
 
-        // =========================
-        // 3) AGGIUNGO EVENTI E OGGETTI A stanza1
-        // =========================
-        // TODO: adatta ai tuoi costruttori di Evento e Oggetto/Pozione/Arma ecc.
-        Evento evento1 = new Evento(100, true, false, "Un vecchio altare misterioso");
-        stanza1.getListaEventi().add(evento1);
+    Stanza stanza2 = new Stanza(1, new int[][]{{0,2}}, null, new ArrayList<>(), new ArrayList<>(), null, false, "stanza due");
 
-        Oggetto oggetto1 = new Pozione("Pozione di cura", Pozione.Tipo.CURA, 10);
-        stanza1.getOggettiPresenti().add(oggetto1);
+    // QUI presumiamo che in Stanza tu abbia:
+    // private final Map<String, Stanza> stanzaAdiacente = new HashMap<>();
+    // e un getter: getStanzaAdiacente()
+    stanza1.getStanzaAdiacente().put("NORD", stanza2);
+    stanza2.getStanzaAdiacente().put("SUD", stanza1);
 
-        // =========================
-        // 4) CREO UN PERSONAGGIO CONCRETO
-        // =========================
-        // Personaggio è astratta → uso una sottoclasse, ad esempio Guerriero
-        // TODO: adatta al tuo costruttore di Guerriero / Mago / ecc.
-        Personaggio giocatore = new Guerriero(
-                /* id */1,
-                /* pv */ 40,
-                /* attacco */ 10,
-                /* difesa */ 5,
-                /* mana */ 10,
-                /* nome */ "Eroe",
-                /* stanza */ stanza1,
-                /* livello */ 1,
-                /* exp */ 0,
-                /* stato */ "NORMALE",
-                /* zaino */ new Zaino()
-        );
+    // ============================
+    // 3) CREO UN PERSONAGGIO CON HP VALIDI
+    // ============================
 
-        // mi assicuro che stanza1 contenga il giocatore nella sua lista
-        stanza1.getListaPersonaggi().add(giocatore);
+    Personaggio personaggio = new Guerriero(
+            1,            // id
+            40,           // punti vita
+            10,           // attacco
+            5,            // difesa
+            10,           // mana
+            "Eroe",       // nome
+            stanza1,      // posizione corrente
+            1,            // livello
+            0,            // exp
+            "NORMALE",    // stato
+            new Zaino()   // zaino
+    );
 
-        // =========================
-        // 5) LOOP DEI TURNI
-        // =========================
-        Scanner scanner = new Scanner(System.in);
+    stanza1.getListaPersonaggi().add(personaggio);
 
-        boolean continua = true;
+    // ============================
+    // 4) AGGIUNGO EVENTO E OGGETTO ALLA STANZA 1
+    // ============================
 
-        while (continua) {
+    Evento evento = new Evento(101, true, false, "Un misterioso altare antico");
+    stanza1.getListaEventiAttivi().add(evento);
 
-            if (personaggio.èMorto()) {
-                System.out.println("💀 Il personaggio è morto. Fine partita di test.");
-                break;
-            }
+    // Adatto il costruttore della pozione alla tua firma:
+    // Pozione(boolean riutilizzabile, String nome,
+    //         int valorePozione, int id,
+    //         Effetto effetto, String descrizione,
+    //         boolean inizioEvento, boolean fineEvento, boolean attivo)
 
-            // eseguo un turno completo del giocatore
-            turnoService.eseguiTurnoGiocatore(personaggio);
+    Oggetto pozione = new Pozione(false,null, 40, 0, "mana", null, false, false, false);
+    stanza1.getOggettiPresenti().add(pozione);
 
-            // eventualmente, aggiorno effetti a fine turno
-            // se hai un TurnoServiceImpl con aggiornaEffettiFineTurno, puoi chiamarlo qui
-            // ((TurnoServiceImpl) turnoService).aggiornaEffettiFineTurno(giocatore);
-            System.out.println("\nVuoi fare un altro turno? (s/n)");
-            String risposta = scanner.nextLine().trim().toLowerCase();
-            if (!risposta.equals("s")) {
-                continua = false;
-            }
+    // ============================
+    // 5) LOOP DI TURNI
+    // ============================
+
+    Scanner scanner = new Scanner(System.in);
+    boolean continua = true;
+
+    while (continua) {
+
+        System.out.println("\n========================");
+        System.out.println("   NUOVO TURNO TEST");
+        System.out.println("========================");
+
+        turnoService.eseguiTurnoGiocatore(personaggio);
+
+        if (personaggio.èMorto(personaggio)) {
+            System.out.println("💀 Il personaggio è morto. Test finito.");
+            break;
         }
 
-        System.out.println("Test TurnoServiceImpl terminato.");
+        System.out.println("\nVuoi fare un altro turno? (s/n)");
+        String risposta = scanner.nextLine().toLowerCase();
+
+        if (!risposta.equals("s")) {
+            continua = false;
+        }
     }
 
+    System.out.println("Test TurnoServiceImpl terminato.");
+} */
 }
+

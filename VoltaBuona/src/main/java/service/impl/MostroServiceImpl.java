@@ -1,10 +1,9 @@
 package service.impl;
 
-import domain.Mostro;
-import domain.Personaggio;
-import service.EventoService;
+import domain.*;
+import service.*;
 
-public class MostroServiceImpl extends EventoService {
+public class MostroServiceImpl implements  PersonaIncontrataService {
     /**
      * Calcolo del danno che il mostro 
      * infligge al personaggio.
@@ -14,5 +13,22 @@ public class MostroServiceImpl extends EventoService {
         int attaccoMostro = mostro.getDanno(); 
         int difesaPersonaggio = personaggio.getDifesa();   
         return Math.max(1, attaccoMostro - difesaPersonaggio);
+    }
+
+    @Override
+    public void rimuoviEventoDaStanza(Stanza stanza, Evento evento){
+        stanza.getListaEventiAttivi().remove(evento);
+    };
+
+    @Override
+    public void attivaEvento(Personaggio personaggio, Evento e){
+
+    };
+
+    @Override   
+    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza){   
+        for (Evento e : stanza.getListaEventiAttivi()) {
+            attivaEvento(personaggio, e);
+        }
     }
 }   

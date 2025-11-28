@@ -13,39 +13,21 @@ import domain.Pozione;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OggettoService {
+public interface OggettoService {
 
     
 
-    public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza) {
-        if (stanza == null || oggetto == null) return;
-        stanza.aggiungiOggetto(oggetto);
-    }
+    public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza);
 
 
 
-    public List<Oggetto> getOggettiInStanza(Stanza stanza) {
-        if (stanza == null) return new ArrayList<>();
-        return stanza.getInventario();
-    }
+    public List<Oggetto> getOggettiInStanza(Stanza stanza);
 
-    public List<Oggetto> oggettiDisponibili(Gioco gioco) {
-        // placeholder: raccogli tutti gli oggetti dal gioco (da implementare secondo modello Gioco)
-        return new ArrayList<>();
-    }
 
-    public void rimuoviOggettoDaStanza(Stanza stanza, Oggetto oggetto) {
-        if (stanza == null || oggetto == null) return;
-        stanza.rimuoviOggetto(oggetto);
-    }
+    public void rimuoviOggettoDaStanza(Stanza stanza, Oggetto oggetto); 
 
-    public void salvaOggettiSuFile(List<Oggetto> oggetti, String filePath) {
-        // serializzazione da implementare (JSON, XML, ecc.)
-    }
+    public void salvaOggettiSuFile(List<Oggetto> oggetti, String filePath);
 
-    public Oggetto creaOggetto() {
-        // Factory temporanea: implementare creazione specifica in base ai tipi concreti
-        return null;
-    }
+    public Oggetto creaOggetto();
 
 }
