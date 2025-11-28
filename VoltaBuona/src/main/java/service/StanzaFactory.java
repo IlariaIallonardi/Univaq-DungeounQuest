@@ -1,17 +1,8 @@
 package service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
-import domain.Arma;
-import domain.Armatura;
-import domain.Chiave;
-import domain.Evento;
-import domain.Oggetto;
-import domain.Pozione;
-import domain.Stanza;
-import domain.Tesoro;
+import domain.*;
 
 public class StanzaFactory {
 
