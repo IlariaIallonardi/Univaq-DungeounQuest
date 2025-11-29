@@ -193,7 +193,8 @@ public class TurnoServiceImpl implements TurnoService {
             return;
         }
 
-        giocoService.muovi(personaggio, direzione);
+        GiocoServiceImpl giocoServiceImpl = new GiocoServiceImpl(null, null, 0);
+        giocoServiceImpl.muovi(personaggio, direzione);
     }
 
     // 🔧 Metodo: esegue UN evento scelto

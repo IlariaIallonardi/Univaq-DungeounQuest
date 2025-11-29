@@ -143,6 +143,12 @@ public class Stanza {
                 + ", chiave=" + (chiaveRichiesta != null) + "}";
     }
 
+    public void aggiungiPersonaggio(Personaggio p) {
+        listaPersonaggi.add(p);
+    }
+    public void rimuoviPersonaggio(Personaggio p) {
+        listaPersonaggi.remove(p);}
+
 
     /*public Map<String, Stanza> getStanzeAdiacenti() {
         throw new UnsupportedOperationException("Not supported yet.");

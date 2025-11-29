@@ -1,7 +1,10 @@
 package service.impl;
 
-import domain.*;
-import service.*;
+import domain.Evento;
+import domain.Mostro;
+import domain.Personaggio;
+import domain.Stanza;
+import service.PersonaIncontrataService;
 
 public class MostroServiceImpl implements  PersonaIncontrataService {
     /**
@@ -10,7 +13,7 @@ public class MostroServiceImpl implements  PersonaIncontrataService {
      */
     public static int calcolaDanno(Mostro mostro, Personaggio personaggio) {
         if (mostro == null || personaggio == null) return 0;
-        int attaccoMostro = mostro.getDanno(); 
+        int attaccoMostro = mostro.getDannoMostro(); 
         int difesaPersonaggio = personaggio.getDifesa();   
         return Math.max(1, attaccoMostro - difesaPersonaggio);
     }

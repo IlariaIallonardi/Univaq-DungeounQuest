@@ -1,5 +1,8 @@
 package service.impl;
 
+import java.util.List;
+
+import domain.Dungeon;
 import domain.Giocatore;
 import domain.Personaggio;
 import domain.Stanza;
@@ -8,9 +11,6 @@ import service.GiocoService;
 import service.StanzaFactory;
 import service.TurnoService;
 import service.impl.TurnoServiceImpl.Direzione;
-
-import java.util.List;
-import java.util.Scanner;
 
 public class GiocoServiceImpl implements GiocoService {
 
@@ -39,9 +39,6 @@ public class GiocoServiceImpl implements GiocoService {
         this.giocatori = giocatori;
     }
 
-    public List<Stanza> getDungeon() {
-        return dungeon;
-    }
 
     public void setDungeon(List<Stanza> dungeon) {
         this.dungeon = dungeon;
@@ -125,6 +122,15 @@ public class GiocoServiceImpl implements GiocoService {
         System.out.println(personaggio.getNomeP() + " si sposta verso " + direzione + ".");
         return true;
     }
+      @Override
+      public Dungeon getDungeon(){
+        return null;
+      }
+
+    @Override
+    public Dungeon creaDungeon(int righe, int colonne){
+        return null;
+    };
 
     /*
      * @Override

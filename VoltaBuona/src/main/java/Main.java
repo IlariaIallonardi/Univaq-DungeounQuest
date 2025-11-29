@@ -1,15 +1,8 @@
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
-import domain.Dungeon;
-import domain.Personaggio;
-import domain.Stanza;
-import service.DungeonFactory;
-import service.GiocatoreService;
-import service.GiocoService;
-import service.StanzaFactory;
+import domain.*;
+import service.*;
 
 public class Main {
 

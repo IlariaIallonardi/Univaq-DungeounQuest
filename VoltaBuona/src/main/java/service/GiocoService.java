@@ -1,35 +1,21 @@
 package service;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
 import domain.Dungeon;
-import domain.Personaggio;
-import service.impl.TurnoServiceImpl.Direzione;
 
-public class GiocoService {
+public interface GiocoService {
 
-    private final DungeonFactory dungeonFactory;
-    private Dungeon dungeon;   // ✅ ora è un Dungeon, non una Map
+    
 
-    public GiocoService(DungeonFactory dungeonFactory) {
-        this.dungeonFactory = dungeonFactory;
-    }
 
-    public Dungeon getDungeon() {
-        return dungeon;
-    }
 
-    public Dungeon creaDungeon(int righe, int colonne) {
-        this.dungeon = dungeonFactory.creaDungeon(righe, colonne);
-        return dungeon;
-    }
+    public Dungeon getDungeon();
+
+    public Dungeon creaDungeon(int righe, int colonne);
 
     /**
      * Legge dimensioni dal file di configurazione
      */
-    public int[] leggiConfigurazione(String percorsoFile) {
+   /*  public int[] leggiConfigurazione(String percorsoFile) {
         int righe = 5; // default
         int colonne = 5;
         try (BufferedReader reader = new BufferedReader(new FileReader(percorsoFile))) {
@@ -49,5 +35,5 @@ public class GiocoService {
 
     public boolean muovi(Personaggio personaggio, Direzione direzione) {
         return true;
-    }
+    }*/
 }

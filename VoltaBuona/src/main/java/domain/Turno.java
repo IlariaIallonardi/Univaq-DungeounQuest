@@ -50,7 +50,7 @@ public class Turno {
 
     public void eseguiTurno() {
         if (giocatoreAttivo != null) {
-            giocatoreAttivo.setStatoG("Attivo");
+            giocatoreAttivo.setStatoPersonaggio("Attivo");
             String azioniDisponibili = scegliAzione();
             // Logica per gestire le azioni del giocatore
         }
@@ -58,13 +58,13 @@ public class Turno {
 
     public void terminaTurno() {
         if (giocatoreAttivo != null) {
-            giocatoreAttivo.setStatoG("InAttesa");
+            giocatoreAttivo.setStatoPersonaggio("InAttesa");
             prossimoGiocatore();
         }
     }
 
     public String scegliAzione() {
-        if (giocatoreAttivo == null || !"Attivo".equals(giocatoreAttivo.getStatoG())) {
+        if (giocatoreAttivo == null || !"Attivo".equals(giocatoreAttivo.getStatoPersonaggio())) {
             return "Nessuna azione disponibile";
         }
         return """
@@ -82,7 +82,7 @@ public class Turno {
 
         indiceGiocatoreAttuale = (indiceGiocatoreAttuale + 1) % giocatori.size();
         giocatoreAttivo = giocatori.get(indiceGiocatoreAttuale);
-        giocatoreAttivo.setStatoG("Attivo");
+        giocatoreAttivo.setStatoPersonaggio("Attivo");
     }
 
     // Metodi per gestire la lista dei giocatori
