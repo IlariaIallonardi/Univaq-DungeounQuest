@@ -4,12 +4,23 @@ public class Mostro extends PersonaIncontrata {
  private int puntiVitaMostro;
  private int difesaMostro;
  private int dannoMostro;
+ private String tipoMostro;
+
+   public enum TipoAttaccoMostro {
+        MORSO,
+        FURIA,
+        STORDIMENTO,
+        AVVELENAMENTO,
+        IMMOBILIZZATO,
+        NESSUN_EFFETTO
+    }
 
 
-    public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, int danno, String messaggio, String nome, int puntiVita, int puntiDifesa) {
+    public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, int danno, String messaggio, String nome, int puntiVita, int puntiDifesa, String tipoMostro) {
          super(id, false, false, "NPC: " + nome, nome);
         this.puntiVitaMostro = puntiVita;
         this.difesaMostro = puntiDifesa;
+        this.tipoMostro = tipoMostro;
     }
     
      public int getPuntiVitaMostro() {
@@ -38,6 +49,12 @@ public class Mostro extends PersonaIncontrata {
     }
     public int getDannoMostro() {
         return dannoMostro;
+    }
+    public String getTipoMostro() {
+        return tipoMostro;
+    }
+    public void setTipoMostro(String tipoMostro) {
+        this.tipoMostro = tipoMostro;
     }
 
     @Override

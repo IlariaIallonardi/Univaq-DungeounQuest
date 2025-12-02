@@ -1,29 +1,33 @@
 package domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Combattimento {
     private int id;
-    private int ordineDiIniziativa;
+    //private int ordineDiIniziativa; --> service
     private Stanza stanza;
-    private int turnoCorrenteC;
+    private int turnoCorrenteCombattimento;//durata combattimento
     private boolean inCorso;
-    private int danniInflitti;
-    private Giocatore vincitore;
-    private List<Effetto> effettiTemporanei;
-    private Giocatore giocatoreAttivo;
+    private int danniInflittiCombattimento;
+    private Object vincitore;
+    private Mostro.TipoAttaccoMostro attaccoMostro;//causati dal mostro
+    private Personaggio personaggioCoinvolto;
+    private Evento eventoMostro;
+    //private Mostro mostroCoinvolto; --> eventoMostro
 
- public Combattimento(int id, Stanza stanza) {
+    public Combattimento(Mostro.TipoAttaccoMostro attaccoMostro, int danniInflittiCombattimento, Evento eventoMostro, int id, boolean inCorso, Personaggio personaggioCoinvolto, Stanza stanza, int turnoCorrenteCombattimento, Object vincitore) {
+        this.attaccoMostro = attaccoMostro;
+        this.danniInflittiCombattimento = danniInflittiCombattimento;
+        this.eventoMostro = eventoMostro;
         this.id = id;
+        this.inCorso = inCorso;
+        this.personaggioCoinvolto = personaggioCoinvolto;
         this.stanza = stanza;
-        this.ordineDiIniziativa = 0;
-        this.turnoCorrenteC = 0;
-        this.inCorso = false;
-        this.danniInflitti = 0;
-        this.vincitore = null;
-        this.effettiTemporanei = new ArrayList<>();
+        this.turnoCorrenteCombattimento = turnoCorrenteCombattimento;
+        this.vincitore = vincitore;
     }
+
+
+
+    
 
     public int getId() {
         return id;
@@ -31,14 +35,6 @@ public class Combattimento {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getOrdineDiIniziativa() {
-        return ordineDiIniziativa;
-    }
-
-    public void setOrdineDiIniziativa(int ordineDiIniziativa) {
-        this.ordineDiIniziativa = ordineDiIniziativa;
     }
 
     public Stanza getStanza() {
@@ -49,12 +45,12 @@ public class Combattimento {
         this.stanza = stanza;
     }
 
-    public int getTurnoCorrenteC() {
-        return turnoCorrenteC;
+    public int getTurnoCorrenteCombattimento() {
+        return turnoCorrenteCombattimento;
     }
 
-    public void setTurnoCorrenteC(int turnoCorrenteC) {
-        this.turnoCorrenteC = turnoCorrenteC;
+    public void setTurnoCorrenteCombattimento(int turnoCorrenteCombattimento) {
+        this.turnoCorrenteCombattimento = turnoCorrenteCombattimento;
     }
 
     public boolean isInCorso() {
@@ -65,60 +61,50 @@ public class Combattimento {
         this.inCorso = inCorso;
     }
 
-    public int getDanniInflitti() {
-        return danniInflitti;
+    public int getDanniInflittiCombattimento() {
+        return danniInflittiCombattimento;
     }
 
-    public void setDanniInflitti(int danniInflitti) {
-        this.danniInflitti = danniInflitti;
+    public void setDanniInflittiCombattimento(int danniInflittiCombattimento) {
+        this.danniInflittiCombattimento = danniInflittiCombattimento;
     }
 
-    public Giocatore getVincitore() {
+    public Object getVincitore() {
         return vincitore;
     }
 
-    public void setVincitore(Giocatore vincitore) {
+    public void setVincitore(Object vincitore) {
         this.vincitore = vincitore;
     }
 
-    public List<Effetto> getEffettiTemporanei() {
-        return effettiTemporanei;
+    public Mostro.TipoAttaccoMostro getAttaccoMostro() {
+        return attaccoMostro;
     }
 
-    public void setEffettiTemporanei(List<Effetto> effettiTemporanei) {
-        this.effettiTemporanei = effettiTemporanei;
+    public void setAttaccoMostro(Mostro.TipoAttaccoMostro attaccoMostro) {
+        this.attaccoMostro = attaccoMostro;
     }
 
-    public Giocatore getGiocatoreAttivo() {
-        return giocatoreAttivo;
+    public Personaggio getPersonaggioCoinvolto() {
+        return personaggioCoinvolto;
     }
 
-    public void setGiocatoreAttivo(Giocatore giocatoreAttivo) {
-        this.giocatoreAttivo = giocatoreAttivo;
+    public void setPersonaggioCoinvolto(Personaggio personaggioCoinvolto) {
+        this.personaggioCoinvolto = personaggioCoinvolto;
     }
 
-    
-
-
-    public String inizioCombattimento(Giocatore g) {
-        this.giocatoreAttivo = g;
-        inCorso = true;
-        return "Combattimento avviato";
+    public Evento getEventoMostro() {
+        return eventoMostro;
     }
 
-    public int calcolaDannoG(Giocatore g) {
-        // somma attacco base + arma + effetti temporanei
-        return g.getAttacco();
+    public void setEventoMostro(Evento eventoMostro) {
+        this.eventoMostro = eventoMostro;
     }
 
-    public int calcolaDannoM(Mostro m) {
-        return m.getDannoMostro();
-    }
+ 
 
-    public String fineCombattimento() {
-        inCorso = false;
-        return "Combattimento concluso";
-    }
+  
+
 
     
 }

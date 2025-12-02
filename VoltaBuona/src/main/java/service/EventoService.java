@@ -1,10 +1,8 @@
 package service;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 import domain.Evento;
-import domain.NPC;
 import domain.Personaggio;
 import domain.Stanza;
 
