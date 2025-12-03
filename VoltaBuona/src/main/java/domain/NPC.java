@@ -10,8 +10,8 @@ public class NPC extends PersonaIncontrata {
     private List<Oggetto> oggettiDaDonare;
     private boolean haInteragito = false;
 
-    public NPC(int id, String nome, String rebus, String rispostaCorretta, List<Oggetto> oggetti) {
-        super(id, false, false, "NPC: " + nome, nome);
+    public NPC(int id, String nomePersonaIncontrata, String rebus, String rispostaCorretta, List<Oggetto> oggetti) {
+        super(id, false, false, rispostaCorretta, nomePersonaIncontrata);   
         this.rebus = rebus;
         this.rispostaCorretta = rispostaCorretta;
         this.oggettiDaDonare = (oggetti != null) ? new ArrayList<>(oggetti) : new ArrayList<>();
@@ -54,7 +54,7 @@ public class NPC extends PersonaIncontrata {
 
     /** NPC pone il rebus al giocatore */
     public String proponiRebus() {
-        return "\nNPC " + getNome() + " ti chiede: \n❓ " + rebus;
+        return "\nNPC " + getNomePersonaIncontrata() + " ti chiede: \n❓ " + rebus;
     }
 
     /** Verifica la risposta del giocatore */
@@ -77,7 +77,7 @@ public class NPC extends PersonaIncontrata {
     @Override
     public String toString() {
         return "NPC{" +
-                "nome='" + getNome() + '\'' +
+                "nome='" + getNomePersonaIncontrata() + '\'' +
                 ", rebus='" + rebus + '\'' +
                 ", doni=" + oggettiDaDonare.size() +
                 '}';

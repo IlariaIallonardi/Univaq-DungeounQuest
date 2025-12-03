@@ -10,17 +10,18 @@ public class Mostro extends PersonaIncontrata {
         MORSO,
         FURIA,
         STORDIMENTO,
-        AVVELENAMENTO,
+        AVVELENAMENTO,  
         IMMOBILIZZATO,
         NESSUN_EFFETTO
     }
 
 
-    public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, int danno, String messaggio, String nome, int puntiVita, int puntiDifesa, String tipoMostro) {
-         super(id, false, false, "NPC: " + nome, nome);
+    public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, int danno, String messaggio, String nomePersonaIncontrata, int puntiVita, int puntiDifesa, String tipoMostro) {
+         super(id, inizioEvento, fineEvento, descrizione, nomePersonaIncontrata);
         this.puntiVitaMostro = puntiVita;
         this.difesaMostro = puntiDifesa;
         this.tipoMostro = tipoMostro;
+        
     }
     
      public int getPuntiVitaMostro() {
@@ -54,16 +55,23 @@ public class Mostro extends PersonaIncontrata {
         return tipoMostro;
     }
     public void setTipoMostro(String tipoMostro) {
-        this.tipoMostro = tipoMostro;
+        this.tipoMostro = tipoMostro;                
+
+
+
+    }
+     public boolean èMortoilMostro() {
+        return this.puntiVitaMostro <= 0;
     }
 
+
     @Override
-    public void setNome(String nome) {
-        super.setNome(nome);
+    public void setNomePersonaIncontrata(String nomePersonaIncontrata) {
+        super.setNomePersonaIncontrata(nomePersonaIncontrata);
     }
     @Override
-    public String getNome() {
-        return super.getNome();
+    public String getNomePersonaIncontrata() {
+        return super.getNomePersonaIncontrata();
     }
 
     @Override
@@ -120,9 +128,14 @@ public class Mostro extends PersonaIncontrata {
 
     @Override
     public String toString() {
-        return super.toString();
+        return "Mostro{" +
+                "nome=" + getNomePersonaIncontrata() +
+                ", hp=" + puntiVitaMostro +
+                ", danno=" + dannoMostro +
+                ", difesa=" + difesaMostro +
+                ", tipoAttacco=" + tipoAttaccoMostro +
+                '}';
     }
-
     @Override
     protected Object clone() throws CloneNotSupportedException {
         return super.clone();
