@@ -5,16 +5,18 @@ import java.util.List;
 
 public class NPC extends PersonaIncontrata {
 
-    private String rebus;
+    private String rebus;// domanda posta dall'NPC
     private String rispostaCorretta;
     private List<Oggetto> oggettiDaDonare;
     private boolean haInteragito = false;
+    private String nomeNPC;
 
-    public NPC(int id, String nomePersonaIncontrata, String rebus, String rispostaCorretta, List<Oggetto> oggetti) {
-        super(id, false, false, rispostaCorretta, nomePersonaIncontrata);   
+    public NPC(int id, String tipoPersonaIncontrata, String rebus, String rispostaCorretta, List<Oggetto> oggetti, String nomeNPC) {
+        super(id, false, false, rispostaCorretta, tipoPersonaIncontrata);   
         this.rebus = rebus;
         this.rispostaCorretta = rispostaCorretta;
         this.oggettiDaDonare = (oggetti != null) ? new ArrayList<>(oggetti) : new ArrayList<>();
+        this.nomeNPC = nomeNPC;
     }
 
 
@@ -54,7 +56,7 @@ public class NPC extends PersonaIncontrata {
 
     /** NPC pone il rebus al giocatore */
     public String proponiRebus() {
-        return "\nNPC " + getNomePersonaIncontrata() + " ti chiede: \n❓ " + rebus;
+        return "\nNPC " + getTipoPersonaIncontrata() + " ti chiede: \n❓ " + rebus;
     }
 
     /** Verifica la risposta del giocatore */
@@ -74,10 +76,18 @@ public class NPC extends PersonaIncontrata {
         return oggettiDaDonare.remove(0);
     }
 
+    public String getNomeNPC() {
+        return nomeNPC;
+    }
+
+    public void setNomeNPC(String nomeNPC) {
+        this.nomeNPC = nomeNPC;
+    }
+
     @Override
     public String toString() {
         return "NPC{" +
-                "nome='" + getNomePersonaIncontrata() + '\'' +
+                "nome='" + getNomeNPC() + '\'' +
                 ", rebus='" + rebus + '\'' +
                 ", doni=" + oggettiDaDonare.size() +
                 '}';

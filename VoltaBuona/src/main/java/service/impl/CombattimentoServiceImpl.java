@@ -1,19 +1,29 @@
 package service.impl;
 
-import java.util.List;
-import java.util.Optional;
-
 import domain.Combattimento;
 import domain.Mostro;
 import domain.Personaggio;
-import domain.Stanza;
+import domain.Zaino;
 import service.CombattimentoService;
+import service.PersonaggioService;
+
+
 
 public class CombattimentoServiceImpl implements CombattimentoService {
+    private final PersonaggioService personaggioService = new PersonaggioService();
 
     @Override
-    public void applicaDanno(Combattimento combattimento, Object attaccante, Object difensore, int danno) {
-        // TODO Auto-generated method stub
+    public void applicaDanno(Combattimento combattimento, Object attaccante) {
+    if (combattimento == null || attaccante == null) {
+        return;
+    }
+    if(attaccante instanceof Mostro){
+        Personaggio personaggio = combattimento.getPersonaggioCoinvolto();
+        Mostro mostro = combattimento.getMostroCoinvolto();
+        int danno = calcolaDanno(combattimento, mostro, personaggio);
+        personaggioService.subisciDannoDaMostro(null, danno, personaggio);
+
+    }
         
     }
 
@@ -24,34 +34,32 @@ public class CombattimentoServiceImpl implements CombattimentoService {
     }
 
     @Override
-    public Combattimento creaCombattimento(int id, Stanza stanza) {
-        // TODO Auto-generated method stub
+    public Mostro getMostro(Combattimento combattimento) {
+    
+        return combattimento.getMostroCoinvolto();
+    }
+
+    @Override
+    public Personaggio getPersonaggio(Combattimento combattimento) {
+        
+        return combattimento.getPersonaggioCoinvolto();
+    }
+
+
+
+   @Override
+public Object getVincitore(Combattimento combattimento) {
+    if (combattimento == null) {
         return null;
     }
-
-    @Override
-    public boolean eseguiAzione(Combattimento combattimento, Object attore, String azioneId, Object target) {
-        // TODO Auto-generated method stub
-        return false;
+    Object vincitore = new Object();
+    if(combattimento.getMostroCoinvolto().getPuntiVitaMostro()<=0) {
+        return  vincitore = combattimento.getPersonaggioCoinvolto();
+    } else if(combattimento.getPersonaggioCoinvolto().getPuntiVita()<=0) {
+        return  vincitore =combattimento.getMostroCoinvolto();
     }
-
-    @Override
-    public List<Mostro> getMostri(Combattimento combattimento) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<Personaggio> getPersonaggi(Combattimento combattimento) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Optional<Object> getVincitore(Combattimento combattimento) {
-        // TODO Auto-generated method stub
-        return Optional.empty();
-    }
+     return vincitore;
+}
 
     @Override
     public boolean iniziaCombattimento(Combattimento combattimento) {
@@ -60,15 +68,9 @@ public class CombattimentoServiceImpl implements CombattimentoService {
     }
 
     @Override
-    public Object prossimoPartecipante(Combattimento combattimento) {
+    public void scegliAzione(Personaggio personaggio, Zaino zaino) {
         // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public boolean rimuoviPartecipante(Combattimento combattimento, Object partecipante) {
-        // TODO Auto-generated method stub
-        return false;
+        
     }
 
     @Override
@@ -82,6 +84,8 @@ public class CombattimentoServiceImpl implements CombattimentoService {
         // TODO Auto-generated method stub
         return false;
     }
+
+ 
 
     
     

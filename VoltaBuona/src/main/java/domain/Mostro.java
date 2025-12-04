@@ -4,24 +4,24 @@ public class Mostro extends PersonaIncontrata {
  private int puntiVitaMostro;
  private int difesaMostro;
  private int dannoMostro;
- private String tipoMostro;
+ private String nomeMostro;
+ private TipoAttaccoMostro tipoAttaccoMostro;
 
    public enum TipoAttaccoMostro {
         MORSO,
-        FURIA,
-        STORDIMENTO,
-        AVVELENAMENTO,  
-        IMMOBILIZZATO,
-        NESSUN_EFFETTO
+        RUGGITO_DI_FUOCO,
+        URLO_ASSORDANTE,
+        RAGNATELA_IMMOBILIZZANTE,  
+        ARTIGLI_POSSENTI
     }
 
 
-    public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, int danno, String messaggio, String nomePersonaIncontrata, int puntiVita, int puntiDifesa, String tipoMostro) {
-         super(id, inizioEvento, fineEvento, descrizione, nomePersonaIncontrata);
-        this.puntiVitaMostro = puntiVita;
-        this.difesaMostro = puntiDifesa;
-        this.tipoMostro = tipoMostro;
-        
+    public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, String tipoPersonaIncontrata, int puntiVitaMostro, int difesaMostro, String nomeMostro, TipoAttaccoMostro tipoAttaccoMostro) {
+         super(id, inizioEvento, fineEvento, descrizione, tipoPersonaIncontrata);
+        this.puntiVitaMostro = puntiVitaMostro;
+        this.difesaMostro = difesaMostro;
+        this.nomeMostro = nomeMostro;
+        this.tipoAttaccoMostro = tipoAttaccoMostro;
     }
     
      public int getPuntiVitaMostro() {
@@ -51,11 +51,11 @@ public class Mostro extends PersonaIncontrata {
     public int getDannoMostro() {
         return dannoMostro;
     }
-    public String getTipoMostro() {
-        return tipoMostro;
+    public String getNomeMostro() {
+        return nomeMostro;
     }
-    public void setTipoMostro(String tipoMostro) {
-        this.tipoMostro = tipoMostro;                
+    public void setNomeMostro(String nomeMostro) {
+        this.nomeMostro = nomeMostro;                
 
 
 
@@ -63,15 +63,21 @@ public class Mostro extends PersonaIncontrata {
      public boolean èMortoilMostro() {
         return this.puntiVitaMostro <= 0;
     }
+    public TipoAttaccoMostro getTipoAttaccoMostro() {
+        return tipoAttaccoMostro;
+    }
+    public void setTipoAttaccoMostro(TipoAttaccoMostro tipoAttaccoMostro) {
+        this.tipoAttaccoMostro = tipoAttaccoMostro;
+    }
 
 
     @Override
-    public void setNomePersonaIncontrata(String nomePersonaIncontrata) {
-        super.setNomePersonaIncontrata(nomePersonaIncontrata);
+    public void setTipoPersonaIncontrata(String tipoPersonaIncontrata) {
+        super.setTipoPersonaIncontrata(tipoPersonaIncontrata);
     }
     @Override
-    public String getNomePersonaIncontrata() {
-        return super.getNomePersonaIncontrata();
+    public String getTipoPersonaIncontrata() {
+        return super.getTipoPersonaIncontrata();
     }
 
     @Override
@@ -124,12 +130,30 @@ public class Mostro extends PersonaIncontrata {
         return super.attivo();
     }
 
+
+
+    public void attaccoDelMostro(Personaggio personaggio) {
+        Mostro mostro= this;
+         
+    if (mostro.getNomeMostro().equals("Spiritello")) {
+        tipoAttaccoMostro = TipoAttaccoMostro.MORSO;
+    } else if (mostro.getNomeMostro().equals("Drago")) {
+        tipoAttaccoMostro = TipoAttaccoMostro.RUGGITO_DI_FUOCO;
+    } else if (mostro.getNomeMostro().equals("Golem")) {
+        tipoAttaccoMostro = TipoAttaccoMostro.URLO_ASSORDANTE;
+    } else if (mostro.getNomeMostro().equals("Ragno Gigante")) {
+        tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA_IMMOBILIZZANTE;
+    } else if (mostro.getNomeMostro().equals("Troll")) {
+        tipoAttaccoMostro = TipoAttaccoMostro.ARTIGLI_POSSENTI;
+    } else {
+        tipoAttaccoMostro = null; 
+    }}
     
 
     @Override
     public String toString() {
         return "Mostro{" +
-                "nome=" + getNomePersonaIncontrata() +
+                "nome=" + getTipoPersonaIncontrata() +
                 ", hp=" + puntiVitaMostro +
                 ", danno=" + dannoMostro +
                 ", difesa=" + difesaMostro +

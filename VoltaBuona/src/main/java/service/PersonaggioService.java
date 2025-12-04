@@ -10,15 +10,14 @@ import domain.Pozione;
 import domain.Stanza;
 import domain.Trappola;
 import domain.Zaino;
-import service.impl.MostroServiceImpl;
 
 public class PersonaggioService {
-
+private final service.impl.MostroServiceImpl mostroService = new service.impl.MostroServiceImpl();
     private Personaggio personaggio;
 
-    public Personaggio creaPersonaggio(String nome, Personaggio g) {
-        g.setNomeP(nome);
-        return g;
+    public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
+        personaggio.setNomeP(nome);
+        return personaggio;
     }
 
     // ...existing code...
@@ -216,11 +215,11 @@ public class PersonaggioService {
      * Applica al personaggio il danno calcolato dal mostro. Ritorna il danno
      * effettivamente inflitto.
      */
-    public int subisciDannoDaMostro(Mostro mostro, Personaggio personaggio) {
-        if (mostro == null || personaggio == null) {
+    public int subisciDannoDaMostro(Mostro.TipoAttaccoMostro attaccoMostro,int dannoBase, Personaggio personaggio) {
+        if (attaccoMostro == null || personaggio == null) {
             return 0;
         }
-        int danno = MostroServiceImpl.calcolaDanno(mostro, personaggio);
+        int danno = mostroService.calcolaDannoPerTipo(attaccoMostro, dannoBase, personaggio);
         personaggio.setPuntiVita(personaggio.getPuntiVita() - danno); // aggiorna lo stato del personaggio
         return danno;
     }

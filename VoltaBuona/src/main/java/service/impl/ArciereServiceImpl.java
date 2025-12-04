@@ -57,7 +57,7 @@ public class ArciereServiceImpl extends PersonaggioService {
                 if (m.getPuntiVitaMostro() <= 0) continue;
                 // usare l'overload che accetta Mostro se presente
                 eseguiAttacco(arciere, m);
-                System.out.println("Arciere " + arciere.getNomeP() + " ha colpito il mostro " + m.getNomePersonaIncontrata() + " in stanza adiacente.");
+                System.out.println("Arciere " + arciere.getNomeP() + " ha colpito il mostro " + m.getTipoPersonaIncontrata() + " in stanza adiacente.");
                 return true;
             }
             // stanza occupata ma nessun bersaglio valido
@@ -85,10 +85,10 @@ public class ArciereServiceImpl extends PersonaggioService {
     int nuoviPV = mostro.getPuntiVitaMostro() - dannoNetto; // presuppone getter
     mostro.setPuntiVitaMostro(nuoviPV); // presuppone setter
 
-    System.out.println(arciere.getNomeP() + " infligge " + dannoNetto + " al mostro " + mostro.getNomePersonaIncontrata());
+    System.out.println(arciere.getNomeP() + " infligge " + dannoNetto + " al mostro " + mostro.getTipoPersonaIncontrata());
 
     if (mostro.getPuntiVitaMostro() <= 0) {
-        System.out.println("Il mostro " + mostro.getNomePersonaIncontrata() + " è stato sconfitto.");
+        System.out.println("Il mostro " + mostro.getTipoPersonaIncontrata() + " è stato sconfitto.");
         // Qui puoi aggiungere rimozione dal contesto/stanza, drop oggetti, assegnazione XP, ecc.
     }
 }

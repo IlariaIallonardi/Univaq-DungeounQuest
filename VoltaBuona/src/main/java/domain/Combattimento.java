@@ -11,9 +11,9 @@ public class Combattimento {
     private Mostro.TipoAttaccoMostro attaccoMostro;//causati dal mostro
     private Personaggio personaggioCoinvolto;
     private Evento eventoMostro;
-    //private Mostro mostroCoinvolto; --> eventoMostro
+    private Mostro mostroCoinvolto; // --> eventoMostro
 
-    public Combattimento(Mostro.TipoAttaccoMostro attaccoMostro, int danniInflittiCombattimento, Evento eventoMostro, int id, boolean inCorso, Personaggio personaggioCoinvolto, Stanza stanza, int turnoCorrenteCombattimento, Object vincitore) {
+    public Combattimento(Mostro.TipoAttaccoMostro attaccoMostro, int danniInflittiCombattimento, Evento eventoMostro, int id, boolean inCorso, Personaggio personaggioCoinvolto, Stanza stanza, int turnoCorrenteCombattimento, Object vincitore, Mostro mostroCoinvolto) {
         this.attaccoMostro = attaccoMostro;
         this.danniInflittiCombattimento = danniInflittiCombattimento;
         this.eventoMostro = eventoMostro;
@@ -23,6 +23,7 @@ public class Combattimento {
         this.stanza = stanza;
         this.turnoCorrenteCombattimento = turnoCorrenteCombattimento;
         this.vincitore = vincitore;
+        this.mostroCoinvolto = mostroCoinvolto;
     }
 
 
@@ -99,6 +100,13 @@ public class Combattimento {
 
     public void setEventoMostro(Evento eventoMostro) {
         this.eventoMostro = eventoMostro;
+    }
+    public Mostro getMostroCoinvolto() {
+        return mostroCoinvolto;
+    }
+
+    public void setMostroCoinvolto(Mostro mostroCoinvolto) {
+        this.mostroCoinvolto = mostroCoinvolto;
     }
 
  

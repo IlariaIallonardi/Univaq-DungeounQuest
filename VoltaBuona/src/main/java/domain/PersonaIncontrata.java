@@ -1,22 +1,22 @@
 package domain;
 
 public class PersonaIncontrata extends Evento {
-    private String nomePersonaIncontrata;
+    private String tipoPersonaIncontrata;
     
 
 
 
-    public PersonaIncontrata(int id, boolean inizioEvento, boolean fineEvento, String descrizione, String nomePersonaIncontrata) {
+    public PersonaIncontrata(int id, boolean inizioEvento, boolean fineEvento, String descrizione, String tipoPersonaIncontrata) {
         super(id, inizioEvento, fineEvento, descrizione);
 
-        this.nomePersonaIncontrata = nomePersonaIncontrata;
+        this.tipoPersonaIncontrata = tipoPersonaIncontrata;
     }
-    public String getNomePersonaIncontrata() {
-        return nomePersonaIncontrata;
+    public String getTipoPersonaIncontrata() {
+        return tipoPersonaIncontrata;
     }
     
-    public void setNomePersonaIncontrata(String nomePersonaIncontrata) {
-        this.nomePersonaIncontrata = nomePersonaIncontrata;
+    public void setTipoPersonaIncontrata(String tipoPersonaIncontrata) {
+        this.tipoPersonaIncontrata = tipoPersonaIncontrata;
     }
 
 

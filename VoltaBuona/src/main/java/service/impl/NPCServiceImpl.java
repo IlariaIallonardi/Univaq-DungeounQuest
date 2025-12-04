@@ -1,17 +1,13 @@
 package service.impl;
 
+import java.util.Scanner;
+
 import domain.Evento;
 import domain.NPC;
 import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
 import domain.Zaino;
-import service.EventoService;
-
-import java.util.Scanner;
-
-import javax.swing.text.StringContent;
-
 import service.PersonaIncontrataService;
 
 public class  NPCServiceImpl implements PersonaIncontrataService {
@@ -23,7 +19,7 @@ public class  NPCServiceImpl implements PersonaIncontrataService {
     public String parla(Personaggio personaggio, NPC npc) {
 
         if (npc.haInteragito()) {
-            System.out.println("\nL'NPC " + npc.getNome() + " ti ha già parlato.");
+            System.out.println("\nL'NPC " + npc.getNomeNPC() + " ti ha già parlato.");
             return null;
         }
 
