@@ -21,7 +21,7 @@ public class MostroServiceImpl implements  PersonaIncontrataService {
      * Esecuzione dell'attacco del mostro
      * sul personaggio bersaglio.
      */
-    public void attaccoDelMostro(Mostro mostro, Personaggio bersaglio) {
+    public int attaccoDelMostro(Mostro mostro, Personaggio bersaglio) {
 
 
         Mostro.TipoAttaccoMostro tipoAttacco = mostro.getTipoAttaccoMostro();
@@ -32,7 +32,8 @@ public class MostroServiceImpl implements  PersonaIncontrataService {
         System.out.println(mostro.getNomeMostro() + " usa " + tipoAttacco +
                 " infliggendo " + danno + " danni a " + bersaglio.getNomeP());
 
-        bersaglio.subisciDanno(danno);
+        int dannoApplicato = bersaglio.subisciDanno(danno);
+        return dannoApplicato;  
     }
 
     public  int calcolaDannoPerTipo(Mostro.TipoAttaccoMostro tipoAttacco, int base, Personaggio bersaglio) {

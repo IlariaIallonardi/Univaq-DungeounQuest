@@ -1,9 +1,10 @@
 package service.impl;
 
 
+import domain.Combattimento;
 import domain.Mago;
 import domain.Mostro;
-import domain.PersonaIncontrata;
+import domain.Personaggio;
 import service.PersonaggioService;
 
 public class MagoServiceimpl extends PersonaggioService {
@@ -19,26 +20,32 @@ public class MagoServiceimpl extends PersonaggioService {
      * Usa la magia unica del mago.
      * Comportamento:
      *  - la magia è unica (non ci sono tipi): consuma sia punti mana che "punti attacco"
-     *  - può colpire solo i mostri (se il bersaglio non è Mostro ritorna false)
+     *  - può colpire solo i mostri
      *
-     * Nota: ho rimosso il parametro TipoMagia perché la magia è unica.
+     * 
      */
-    public boolean usareMagiaM(Mago mago, PersonaIncontrata bersaglio) {
-        if (mago == null || bersaglio == null) return false;
+    @Override
+    public int attacca(Personaggio personaggio,Mostro bersaglio,Combattimento combattimento) {
+        
+        if (!(personaggio instanceof Mago)) {
+        return super.attacca(personaggio, bersaglio, combattimento);
+    }
 
+    Mago mago = (Mago) personaggio;
+    if (mago == null || bersaglio == null) return 0;
         // costi fissi della magia (adatta i valori al bilanciamento)
         final int COSTO_MANA = 10;
         final int COSTO_ATTACCO = 5;
 
         // verifica che il bersaglio sia un mostro
         if (!(bersaglio instanceof Mostro)) {
-            return false;
+            return 0;
         }
         Mostro m = (Mostro) bersaglio;
 
         // verifica risorse del mago
-        if (mago.getPuntiMana() < COSTO_MANA) return false;
-        if (mago.getAttacco() < COSTO_ATTACCO) return false;
+        if (mago.getPuntiMana() < COSTO_MANA) return 0;
+        if (mago.getAttacco() < COSTO_ATTACCO) return 0;
 
         // consumo risorse: non so se va qui e poi non credo con questa formula matematica
         mago.setPuntiMana(Math.max(0, mago.getPuntiMana() - COSTO_MANA));
@@ -46,7 +53,7 @@ public class MagoServiceimpl extends PersonaggioService {
 
         // calcolo danno questo lo dobbiamo decidere noi: esempio semplice basato sull'attacco residuo + livello
         int danno = Math.max(0, mago.getAttacco() + mago.getLivello() * 2);
-        return false;
+        return danno;
     }}
         /*/ applica difesa del mostro se presente...stessa cosa qua dell'operazione matematica
         int difesaMostro = 0;

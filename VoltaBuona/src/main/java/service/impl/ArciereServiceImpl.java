@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import domain.Arciere;
+import domain.Combattimento;
 import domain.Evento;
 import domain.Mostro;
+import domain.Personaggio;
 import domain.Stanza;
 import service.PersonaggioService;
 
@@ -56,7 +58,7 @@ public class ArciereServiceImpl extends PersonaggioService {
                 Mostro m = (Mostro) target;
                 if (m.getPuntiVitaMostro() <= 0) continue;
                 // usare l'overload che accetta Mostro se presente
-                eseguiAttacco(arciere, m);
+                attacca(arciere, m, null);
                 System.out.println("Arciere " + arciere.getNomeP() + " ha colpito il mostro " + m.getTipoPersonaIncontrata() + " in stanza adiacente.");
                 return true;
             }
@@ -68,10 +70,15 @@ public class ArciereServiceImpl extends PersonaggioService {
         System.out.println("Arciere " + arciere.getNomeP() + " spara in una stanza adiacente vuota.");
         return true;
     }
+    @Override
+    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
+    if (!(personaggio instanceof Arciere)) {
+        return super.attacca(personaggio, mostro, combattimento);
+    }
 
-    private void eseguiAttacco(Arciere arciere, Mostro mostro) {
-    if (arciere == null || mostro == null) return;
-
+    Arciere arciere = (Arciere) personaggio;
+    if (arciere == null || mostro == null) return 0;
+        
     // calcolo danno base (adatta la formula al tuo bilanciamento)
     int attacco = arciere.getAttacco(); // presuppone getter
     int livello = arciere.getLivello(); // presuppone getter
@@ -91,5 +98,6 @@ public class ArciereServiceImpl extends PersonaggioService {
         System.out.println("Il mostro " + mostro.getTipoPersonaIncontrata() + " è stato sconfitto.");
         // Qui puoi aggiungere rimozione dal contesto/stanza, drop oggetti, assegnazione XP, ecc.
     }
+    return dannoNetto;
 }
 }

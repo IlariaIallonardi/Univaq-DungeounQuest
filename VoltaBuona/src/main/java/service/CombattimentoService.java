@@ -24,8 +24,7 @@ Object getVincitore(Combattimento combattimento);
     void scegliAzione(Personaggio personaggio,Zaino zaino);
 
     // danno / risoluzione
-    int calcolaDanno(Combattimento combattimento, Object attaccante , Object difensore);
-    void applicaDanno(Combattimento combattimento, Object attaccante);
+    int applicaECalcolaDanno(Combattimento combattimento, Object attaccante);
    
     
 }

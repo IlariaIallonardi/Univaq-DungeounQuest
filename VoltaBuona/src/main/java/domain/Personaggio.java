@@ -206,18 +206,18 @@ public class Personaggio {
      * viene consumata qui). - Restituisce true se il personaggio è morto (PV <=
      * 0).
      */
-    public boolean subisciDanno(int danno) {
+    public int subisciDanno(int danno) {
         if (danno <= 0) {
-            return false;
+            return 0;
         }
         if (isProtetto()) {
             // protezione impedisce il danno; verrà consumata in onTurnStart del personaggio
-            return false;
+            return 0;
         }
 
         int dannoEffettivo = Math.max(0, danno - this.difesa);
         this.puntiVita -= dannoEffettivo;
-        return this.puntiVita <= 0;
+        return dannoEffettivo;
     }
 
     @Override

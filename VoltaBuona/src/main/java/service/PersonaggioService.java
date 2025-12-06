@@ -3,6 +3,7 @@ package service;
 import domain.Arma;
 import domain.Armatura;
 import domain.Chiave;
+import domain.Combattimento;
 import domain.Mostro;
 import domain.Oggetto;
 import domain.Personaggio;
@@ -26,47 +27,17 @@ private final service.impl.MostroServiceImpl mostroService = new service.impl.Mo
      * il danno inflitto (0 se input non valido).
      *
      */
-    public int attacca(Personaggio p, Mostro m) {
-        if (p == null || m == null) {
-            return 0;
-        }
-
-        int att = 0;
-        int dif = 0;
-        try {
-            att = p.getAttacco();
-        } catch (NoSuchMethodError | NullPointerException ignored) {
-        }
-        try {
-            dif = m.getDifesaMostro();
-        } catch (NoSuchMethodError | NullPointerException ignored) {
-        }
-
-        int danno = Math.max(1, att - dif); // almeno 1 punto di danno
-        try {
-            m.setPuntiVitaMostro(m.getPuntiVitaMostro() - danno);
-        } catch (NoSuchMethodError | NullPointerException ignored) {
-        }
-
-        try {
-            if (m.getPuntiVitaMostro() <= 0) {
-                // esempio: aggiungi esperienza al personaggio se esiste il metodo
-                try {
-                    int xp = 9; // se esiste
-                    p.setEsperienza(p.getEsperienza() + xp);
-                    if (p.getEsperienza() >= 20) {
-                        p.setLivello(p.getLivello() + 1);
-                        p.setEsperienza(0);
-                    }
-                } catch (Exception ignored) {
-                }
-
-            }
-        } catch (Exception ignored) {
-        }
-
-        return danno;
+   public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
+    int base = Math.max(1, personaggio.getAttacco() - mostro.getDifesaMostro());
+    // esempio: +2 se è il turno di iniziativa del personaggio
+    if (combattimento != null && combattimento.getPersonaggioCoinvolto() == personaggio && combattimento.getTurnoCorrenteCombattimento() == personaggio.getId()) {
+        base += 2;
     }
+    mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - base);
+    // esempio: notificare evento
+    if (combattimento != null) { /* combattimento.logEvento(...); */ }
+    return base;
+}
 
     // 23-11-2025 dovrebbe essere giusto
     /**

@@ -1,7 +1,9 @@
 package service.impl;
 
 
+import domain.Combattimento;
 import domain.Guerriero;
+import domain.Mostro;
 import domain.Personaggio;
 import service.PersonaggioService;
 
@@ -30,7 +32,18 @@ public class GuerrieroServiceImpl extends PersonaggioService {
         System.out.println(guerriero.getNomeP() + " protegge per un turno " + bersaglio.getNomeP());
         return true;
     }
-  
+
+    @Override
+    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento){
+         if (!(personaggio instanceof Guerriero)) {
+        return super.attacca(personaggio, mostro, combattimento);
+    }
+
+    Guerriero guerriero = (Guerriero) personaggio;
+    if (guerriero == null || mostro == null) return 0;
+    return 0;
+    }
+
 
        
     }
