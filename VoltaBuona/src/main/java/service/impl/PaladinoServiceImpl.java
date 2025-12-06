@@ -4,12 +4,14 @@ package service.impl;
 import domain.Combattimento;
 import domain.Guerriero;
 import domain.Mostro;
+import domain.Oggetto;
 import domain.Paladino;
 import domain.Personaggio;
+import domain.Trappola;
 import service.PersonaggioService;
 
 
-public class PaladinoServiceImpl extends PersonaggioService {
+public class PaladinoServiceImpl implements  PersonaggioService {
     
     /**
      * Metodo per proteggere un altro giocatore
@@ -48,7 +50,8 @@ public class PaladinoServiceImpl extends PersonaggioService {
    @Override
 public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
     if (!(personaggio instanceof Paladino)) {
-        return super.attacca(personaggio, mostro, combattimento);
+        return 1;
+
     }
     Paladino paladino = (Paladino) personaggio;
     if (paladino == null || mostro == null) return 0;
@@ -132,6 +135,36 @@ private TipoMagiaSacra scegliMagiaPerPaladino(Paladino paladino, Mostro mostro, 
     // fallback
     return TipoMagiaSacra.AVVELENAMENTO;
 }
+
+    @Override
+    public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean usaOggetto(Personaggio personaggio, Oggetto oggetto) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean raccogliereOggetto(Personaggio personaggio, Oggetto oggetto) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int subisciDannoDaMostro(Mostro.TipoAttaccoMostro attaccoMostro, int dannoBase, Personaggio personaggio) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void subisciDannoDaTrappola(Trappola trappola, Personaggio personaggio) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void esploraStanza(Personaggio personaggio) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     // Enum per i tipi di magia sacra disponibili
     public enum TipoMagiaSacra {
         RUBAVITA(8),
@@ -149,5 +182,7 @@ private TipoMagiaSacra scegliMagiaPerPaladino(Paladino paladino, Mostro mostro, 
         public int getCostoMana() {
             return costoMana;
         }
+
+
     }
 }

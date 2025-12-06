@@ -1,19 +1,31 @@
 package service;
 
-import domain.Arma;
-import domain.Armatura;
-import domain.Chiave;
+
 import domain.Combattimento;
 import domain.Mostro;
 import domain.Oggetto;
 import domain.Personaggio;
-import domain.Pozione;
-import domain.Stanza;
 import domain.Trappola;
-import domain.Zaino;
 
-public class PersonaggioService {
-private final service.impl.MostroServiceImpl mostroService = new service.impl.MostroServiceImpl();
+
+public interface  PersonaggioService {
+
+
+     Personaggio creaPersonaggio(String nome, Personaggio personaggio);
+    int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento);
+    boolean usaOggetto(Personaggio personaggio, Oggetto oggetto);
+    boolean raccogliereOggetto(Personaggio personaggio, Oggetto oggetto);
+    int subisciDannoDaMostro(Mostro.TipoAttaccoMostro attaccoMostro, int dannoBase, Personaggio personaggio);
+    void subisciDannoDaTrappola(Trappola trappola, Personaggio personaggio);
+    void esploraStanza(Personaggio personaggio);
+
+
+/*private final service.impl.MostroServiceImpl mostroService = new service.impl.MostroServiceImpl();
+private final service.impl.ArciereServiceImpl arciereService = new service.impl.ArciereServiceImpl();
+private final service.impl.GuerrieroServiceImpl guerrieroService = new service.impl.GuerrieroServiceImpl();
+private final service.impl.MagoServiceimpl magoService = new service.impl.MagoServiceimpl();
+private final service.impl.PaladinoServiceImpl paladinoService = new service.impl.PaladinoServiceImpl();
+
     private Personaggio personaggio;
 
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
@@ -26,16 +38,32 @@ private final service.impl.MostroServiceImpl mostroService = new service.impl.Mo
      * Il personaggio p attacca il mostro m. penso sia abbastanza giusto Ritorna
      * il danno inflitto (0 se input non valido).
      *
-     */
-   public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
+     
+   // aggiungi campi nei membri della classe PersonaggioService (sopra ai metodi)
+
+public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
+    if (personaggio == null || mostro == null) {
+        return 0;
+    }
+
+    if (personaggio instanceof domain.Arciere) {
+        return arciereService.attacca((domain.Arciere) personaggio, mostro, combattimento);
+    } else if (personaggio instanceof domain.Guerriero) {
+        return guerrieroService.attacca((domain.Guerriero) personaggio, mostro, combattimento);
+    } else if (personaggio instanceof domain.Mago) {
+        return magoService.attacca((domain.Mago) personaggio, mostro, combattimento);
+    } else if (personaggio instanceof domain.Paladino) {
+        return paladinoService.attacca((domain.Paladino) personaggio, mostro, combattimento);
+    }
+
+    // fallback generico (se non è una delle classi sopra)--> questo forse lo possiamo togliere
     int base = Math.max(1, personaggio.getAttacco() - mostro.getDifesaMostro());
-    // esempio: +2 se è il turno di iniziativa del personaggio
-    if (combattimento != null && combattimento.getPersonaggioCoinvolto() == personaggio && combattimento.getTurnoCorrenteCombattimento() == personaggio.getId()) {
+    if (combattimento != null
+        && combattimento.getPersonaggioCoinvolto() == personaggio
+        && combattimento.getTurnoCorrenteCombattimento() == personaggio.getId()) {
         base += 2;
     }
     mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - base);
-    // esempio: notificare evento
-    if (combattimento != null) { /* combattimento.logEvento(...); */ }
     return base;
 }
 
@@ -45,7 +73,7 @@ private final service.impl.MostroServiceImpl mostroService = new service.impl.Mo
      * personaggio, - delega l'effetto all'oggetto (Pozione) o chiama i metodi
      * del service per equip/uso, - rimuove l'oggetto se consumato e registra
      * l'evento.
-     */
+     
     public boolean usaOggetto(Personaggio personaggio, Oggetto oggetto) {
         if (personaggio == null || oggetto == null) {
             return false;
@@ -185,7 +213,7 @@ private final service.impl.MostroServiceImpl mostroService = new service.impl.Mo
     /**
      * Applica al personaggio il danno calcolato dal mostro. Ritorna il danno
      * effettivamente inflitto.
-     */
+     
     public int subisciDannoDaMostro(Mostro.TipoAttaccoMostro attaccoMostro,int dannoBase, Personaggio personaggio) {
         if (attaccoMostro == null || personaggio == null) {
             return 0;
@@ -198,7 +226,7 @@ private final service.impl.MostroServiceImpl mostroService = new service.impl.Mo
     /**
      * Applica al personaggio il danno calcolato dalla trappola. Ritorna il
      * danno effettivamente inflitto.
-     */
+     
     public void subisciDannoDaTrappola(Trappola trappola, Personaggio personaggio) {
         if (trappola != null) {
             System.out.println("Hai trovato una trappola!");
@@ -231,6 +259,6 @@ private final service.impl.MostroServiceImpl mostroService = new service.impl.Mo
 
         System.out.println("🔍 " + personaggio.getNomeP() + " esplora la stanza...");
 
-    }
+    } */
 
 }

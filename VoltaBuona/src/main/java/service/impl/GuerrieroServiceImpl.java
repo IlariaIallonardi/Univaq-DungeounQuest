@@ -4,10 +4,12 @@ package service.impl;
 import domain.Combattimento;
 import domain.Guerriero;
 import domain.Mostro;
+import domain.Oggetto;
 import domain.Personaggio;
+import domain.Trappola;
 import service.PersonaggioService;
 
-public class GuerrieroServiceImpl extends PersonaggioService {
+public class GuerrieroServiceImpl implements  PersonaggioService {
     
     /**
      * Metodo per proteggere un altro giocatore usando la forza del guerriero
@@ -36,12 +38,42 @@ public class GuerrieroServiceImpl extends PersonaggioService {
     @Override
     public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento){
          if (!(personaggio instanceof Guerriero)) {
-        return super.attacca(personaggio, mostro, combattimento);
+        return 1;
     }
 
     Guerriero guerriero = (Guerriero) personaggio;
     if (guerriero == null || mostro == null) return 0;
     return 0;
+    }
+
+    @Override
+    public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean usaOggetto(Personaggio personaggio, Oggetto oggetto) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean raccogliereOggetto(Personaggio personaggio, Oggetto oggetto) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int subisciDannoDaMostro(Mostro.TipoAttaccoMostro attaccoMostro, int dannoBase, Personaggio personaggio) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void subisciDannoDaTrappola(Trappola trappola, Personaggio personaggio) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void esploraStanza(Personaggio personaggio) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 

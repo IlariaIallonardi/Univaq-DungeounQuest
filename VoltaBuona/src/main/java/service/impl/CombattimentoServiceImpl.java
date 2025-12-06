@@ -10,8 +10,9 @@ import service.PersonaggioService;
 
 
 public class CombattimentoServiceImpl implements CombattimentoService {
-    private final PersonaggioService personaggioService = new PersonaggioService();
-    private final MostroServiceImpl mostroService = new MostroServiceImpl();
+    private  MostroServiceImpl mostroService = new MostroServiceImpl();
+    private  PersonaggioService personaggioService;
+
 
    
     /**
@@ -128,6 +129,8 @@ public Object getVincitore(Combattimento combattimento) {
         // TODO Auto-generated method stub
         return false;
     }
+
+    
 
    
 

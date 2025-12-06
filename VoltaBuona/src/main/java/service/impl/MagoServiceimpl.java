@@ -4,10 +4,12 @@ package service.impl;
 import domain.Combattimento;
 import domain.Mago;
 import domain.Mostro;
+import domain.Oggetto;
 import domain.Personaggio;
+import domain.Trappola;
 import service.PersonaggioService;
 
-public class MagoServiceimpl extends PersonaggioService {
+public class MagoServiceimpl implements  PersonaggioService {
     
     /**
      * Metodo per utilizzare la magia del mago
@@ -28,7 +30,7 @@ public class MagoServiceimpl extends PersonaggioService {
     public int attacca(Personaggio personaggio,Mostro bersaglio,Combattimento combattimento) {
         
         if (!(personaggio instanceof Mago)) {
-        return super.attacca(personaggio, bersaglio, combattimento);
+        return 1;
     }
 
     Mago mago = (Mago) personaggio;
@@ -54,7 +56,38 @@ public class MagoServiceimpl extends PersonaggioService {
         // calcolo danno questo lo dobbiamo decidere noi: esempio semplice basato sull'attacco residuo + livello
         int danno = Math.max(0, mago.getAttacco() + mago.getLivello() * 2);
         return danno;
-    }}
+    }
+
+    @Override
+    public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean usaOggetto(Personaggio personaggio, Oggetto oggetto) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean raccogliereOggetto(Personaggio personaggio, Oggetto oggetto) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int subisciDannoDaMostro(Mostro.TipoAttaccoMostro attaccoMostro, int dannoBase, Personaggio personaggio) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void subisciDannoDaTrappola(Trappola trappola, Personaggio personaggio) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void esploraStanza(Personaggio personaggio) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+}
         /*/ applica difesa del mostro se presente...stessa cosa qua dell'operazione matematica
         int difesaMostro = 0;
         try { difesaMostro = m.getDifesaMostro(); } catch (Exception ignored) { }
