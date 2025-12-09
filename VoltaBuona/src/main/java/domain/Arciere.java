@@ -9,4 +9,7 @@ public class Arciere extends Personaggio {
     public Arciere(String nome) {
         this(14, 8, 0, 0, 1, nome, null, 30, 80, "OK", null);
     }
+
+
+    
 }

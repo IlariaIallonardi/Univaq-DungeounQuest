@@ -11,6 +11,7 @@ import domain.Stanza;
 import service.EventoService;
 import service.GiocoService;
 import service.PersonaggioService;
+import service.StanzaFactory.StatoStanza;
 import service.TurnoService;
 
 
@@ -19,7 +20,11 @@ public class TurnoServiceImpl implements TurnoService {
     private GiocoService giocoService;
     private PersonaggioService personaggioService;
     private EventoService eventoService;
+     private Stanza stanzaCorrente;
+    private List<Oggetto> oggetti= stanzaCorrente.getOggettiPresenti();
+    private List<Evento> eventi= stanzaCorrente.getListaEventiAttivi();
     private List<Personaggio> ordineTurno = new ArrayList<>();
+
 
     public TurnoServiceImpl(GiocoService giocoService,
             PersonaggioService personaggioService,
@@ -52,35 +57,35 @@ public class TurnoServiceImpl implements TurnoService {
             int dannoVeleno = 3; // puoi cambiare
             personaggio.subisciDanno(dannoVeleno);
             personaggio.setTurniAvvelenato(personaggio.getTurniAvvelenato() - 1);
-            System.out.println("Il veleno infligge " + dannoVeleno + " danni a " + personaggio.getNomeP());
+            System.out.println("Il veleno infligge " + dannoVeleno + " danni a " + personaggio.getNomePersonaggio());
 
             if (personaggio.getTurniAvvelenato() == 0 && "AVVELENATO".equalsIgnoreCase(personaggio.getStatoPersonaggio())) {
                 personaggio.setStatoPersonaggio("NORMALE");
-                System.out.println("Il veleno ha perso effetto su " + personaggio.getNomeP());
+                System.out.println("Il veleno ha perso effetto su " + personaggio.getNomePersonaggio());
             }
         }
 
         // 2 CONGELAMENTO: dura N turni, qui puoi gestire eventuali penalità
         if (personaggio.getTurniCongelato() > 0) {
             personaggio.setTurniCongelato(personaggio.getTurniCongelato() - 1);
-            System.out.println("❄ " + personaggio.getNomeP() + " è ancora congelato ("
+            System.out.println("❄ " + personaggio.getNomePersonaggio() + " è ancora congelato ("
                     + personaggio.getTurniCongelato() + " turni rimanenti)");
 
             if (personaggio.getTurniCongelato() == 0 && "CONGELATO".equalsIgnoreCase(personaggio.getStatoPersonaggio())) {
                 personaggio.setStatoPersonaggio("NORMALE");
-                System.out.println(personaggio.getNomeP() + " si è scongelato.");
+                System.out.println(personaggio.getNomePersonaggio() + " si è scongelato.");
             }
         }
 
         // 3 STORDIMENTO: penalizza per N turni (es. non può attaccare)
         if (personaggio.getTurniStordito() > 0) {
             personaggio.setTurniStordito(personaggio.getTurniStordito() - 1);
-            System.out.println(personaggio.getNomeP() + " è ancora stordito ("
+            System.out.println(personaggio.getNomePersonaggio() + " è ancora stordito ("
                     + personaggio.getTurniStordito() + " turni rimanenti)");
 
             if (personaggio.getTurniStordito() == 0 && "STORDITO".equalsIgnoreCase(personaggio.getStatoPersonaggio())) {
                 personaggio.setStatoPersonaggio("NORMALE");
-                System.out.println(personaggio.getNomeP() + " non è più stordito.");
+                System.out.println(personaggio.getNomePersonaggio() + " non è più stordito.");
             }
         }
     }
@@ -90,7 +95,7 @@ public class TurnoServiceImpl implements TurnoService {
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("\n===== TURNO DI " + personaggio.getNomeP() + " =====");
+        System.out.println("\n===== TURNO DI " + personaggio.getNomePersonaggio() + " =====");
 
         Stanza stanzaCorrente = personaggio.getPosizioneCorrente();
         System.out.println("Ti trovi in: " + stanzaCorrente.getNomeStanza());
@@ -146,16 +151,20 @@ public class TurnoServiceImpl implements TurnoService {
         switch (scelta) {
             case 1 -> {
                 if (ciSonoEventi) {
+                    mostraEventi(eventi);
                     eseguiEvento(personaggio, stanzaCorrente, eventi, scanner);
                 }
             }
             case 2 -> {
                 if (ciSonoOggetti) {
+                    mostraOggetti(oggetti);
                     raccogliUnOggetto(personaggio, stanzaCorrente, oggetti, scanner);
                 }
             }
             case 3 -> {
                 if (ciSonoEventi && ciSonoOggetti) {
+                    mostraEventi(eventi);
+                    mostraOggetti(oggetti);
                     eseguiEvento(personaggio, stanzaCorrente, eventi, scanner);
                     raccogliUnOggetto(personaggio, stanzaCorrente, oggetti, scanner);
                 }
@@ -166,8 +175,23 @@ public class TurnoServiceImpl implements TurnoService {
                 System.out.println("Scelta non valida.");
         }
 
-        System.out.println("===== FINE TURNO DI " + personaggio.getNomeP() + " =====");
+        System.out.println("===== FINE TURNO DI " + personaggio.getNomePersonaggio() + " =====");
     }
+    private void mostraEventi(List<Evento> eventi) {
+    System.out.println("\nEventi disponibili:");
+    for (int i = 0; i < eventi.size(); i++) {
+        Evento e = eventi.get(i);
+        System.out.println((i + 1) + ") " + e.getDescrizione());
+    }
+}
+
+private void mostraOggetti(List<Oggetto> oggetti) {
+    System.out.println("\nOggetti presenti nella stanza:");
+    for (int i = 0; i < oggetti.size(); i++) {
+        Oggetto o = oggetti.get(i);
+        System.out.println((i + 1) + ") " + o.getNome());
+    }
+}
 
     // 🔧 Movimento gestito tramite input
     public void gestisciMovimento(Personaggio personaggio, Scanner scanner) {
@@ -193,8 +217,8 @@ public class TurnoServiceImpl implements TurnoService {
             return;
         }
 
-        GiocoServiceImpl giocoServiceImpl = new GiocoServiceImpl(null, null, 0);
-        giocoServiceImpl.muovi(personaggio, direzione);
+      //  GiocoServiceImpl giocoServiceImpl = new GiocoServiceImpl(null, null, 0);
+      //  giocoServiceImpl.muovi(personaggio, direzione);
     }
 
     // 🔧 Metodo: esegue UN evento scelto
@@ -216,7 +240,7 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     // 🔧 Metodo: raccoglie UN oggetto scelto
-    public void raccogliUnOggetto(Personaggio p, Stanza stanza, List<Oggetto> oggetti, Scanner scanner) {
+    public void raccogliUnOggetto(Personaggio personaggio, Stanza stanza, List<Oggetto> oggetti, Scanner scanner) {
 
         System.out.println("Scegli l'oggetto da prendere:");
         int index = Integer.parseInt(scanner.nextLine()) - 1;
@@ -227,14 +251,46 @@ public class TurnoServiceImpl implements TurnoService {
         }
 
         Oggetto o = oggetti.get(index);
-        boolean ok = personaggioService.raccogliereOggetto(p, o);
+        boolean ok = personaggio.raccogliereOggetto(personaggio, o);
 
         if (!ok) {
             System.out.println("Non puoi raccogliere l'oggetto.");
         }
     }
 
-/* main abbastanza funzionante: problemi oerchè ci sono paramentri null
+
+
+
+    public void esploraStanza(Personaggio personaggio) {
+
+    Stanza stanza = personaggio.getPosizioneCorrente();
+    if (stanza == null) return;
+
+    System.out.println("\n Stanza: " + stanza.getNomeStanza());
+    
+    // Mostra oggetti visibili
+    if (!stanza.getOggettiPresenti().isEmpty()) {
+        System.out.println("Oggetti trovati:");
+        stanza.getOggettiPresenti().forEach(o -> System.out.println(" - " + o.getNome()));
+    } else {
+        System.out.println(" Nessun oggetto nella stanza.");
+    }
+
+    // Gestione eventi
+    if (!stanza.getListaEventiAttivi().isEmpty()) {
+        System.out.println(" Eventi attivi:");
+        for (Evento e : stanza.getListaEventiAttivi()) {
+            eventoService.attivaEvento(personaggio, e);
+        }
+    } else {
+        System.out.println(" La stanza è tranquilla...");
+    }
+
+    // Segna la stanza come visitata
+    stanza.setStatoS(StatoStanza.VISITATA);
+}
+
+/*  main abbastanza funzionante: problemi oerchè ci sono paramentri null
   public static void main(String[] args) {
 
     // ============================

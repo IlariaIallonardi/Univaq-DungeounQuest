@@ -36,15 +36,15 @@ public class CombattimentoServiceImpl implements CombattimentoService {
             int dannoBase = MostroServiceImpl.dannoBase(mostro, personaggio);
 
             // applica il danno tramite PersonaggioService (centrale per l'applicazione e gli effetti)
-            int dannoApplicato = personaggioService.subisciDannoDaMostro(mostro.getTipoAttaccoMostro(), dannoBase, personaggio);
+            int dannoApplicato = mostroService.attaccoDelMostro(mostro, personaggio, dannoBase);
 
-            System.out.println(mostro.getNomeMostro() + " infligge " + dannoApplicato + " danni a " + personaggio.getNomeP()
+            System.out.println(mostro.getNomeMostro() + " infligge " + dannoApplicato + " danni a " + personaggio.getNomePersonaggio()
                     + " (HP rimasti: " + personaggio.getPuntiVita() + ")");
 
             if (personaggio.getPuntiVita() <= 0) {
                 combattimento.setVincitore(mostro);
                 combattimento.setInCorso(false);
-                System.out.println(personaggio.getNomeP() + " è stato sconfitto da " + mostro.getNomeMostro());
+                System.out.println(personaggio.getNomePersonaggio() + " è stato sconfitto da " + mostro.getNomeMostro());
             }
 
             return dannoApplicato;
@@ -61,12 +61,12 @@ public class CombattimentoServiceImpl implements CombattimentoService {
         // già applica la difesa e sottrae gli HP al mostro, e ritorna il danno applicato.
         int dannoApplicato = personaggioService.attacca(personaggio, mostro, combattimento);
 
-        System.out.println(personaggio.getNomeP() + " infligge " + dannoApplicato + " danni a " + mostro.getNomeMostro()
+        System.out.println(personaggio.getNomePersonaggio() + " infligge " + dannoApplicato + " danni a " + mostro.getNomeMostro()
         + " (HP rimasti: " + mostro.getPuntiVitaMostro() + ")");
             if (mostro.getPuntiVitaMostro() <= 0) {
                 combattimento.setVincitore(personaggio);
                 combattimento.setInCorso(false);
-                System.out.println(mostro.getNomeMostro() + " è stato sconfitto da " + personaggio.getNomeP());
+                System.out.println(mostro.getNomeMostro() + " è stato sconfitto da " + personaggio.getNomePersonaggio());
                 try { personaggio.setEsperienza(personaggio.getEsperienza() + 10); } catch (Exception ignored) {}
             }
 

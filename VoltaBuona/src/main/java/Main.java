@@ -1,8 +1,14 @@
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
-import domain.*;
-import service.*;
+import domain.Dungeon;
+import domain.Personaggio;
+import domain.Stanza;
+import service.DungeonFactory;
+import service.GiocatoreService;
+import service.StanzaFactory;
 
 public class Main {
 
@@ -15,14 +21,14 @@ public class Main {
         DungeonFactory dungeonFactory = new DungeonFactory(stanzaFactory);
 
         // SERVICE PRINCIPALE
-        GiocoService giocoService = new GiocoService(dungeonFactory);
+      //  GiocoService giocoService = new GiocoServiceImpl(dungeonFactory);
         GiocatoreService giocatoreService = new GiocatoreService();
 
         // *** 1 LETTURA CONFIGURAZIONE ***
-        int[] dimensioni = giocoService.leggiConfigurazione(
-                "C:/Usersh/p/Desktop/Univaq-DungeounQuest/VoltaBuona/config.txt"
-        );
-
+     //   int[] dimensioni = giocoService.leggiConfigurazione(
+     //           "Univaq-DungeounQuest\\VoltaBuona\\config.txt"
+     //   );
+int [] dimensioni = {4, 4}; // valori di esempio
         int righe = dimensioni[0];
         int colonne = dimensioni[1];
 
@@ -102,7 +108,7 @@ public class Main {
         for (int i = 0; i < numBot; i++) {
             Personaggio bot = giocatoreService.attribuisciPersonaggioAComputer(null);
             giocatori.add(bot);
-            System.out.println(" BOT creato: " + bot.getNomeP());
+            System.out.println(" BOT creato: " + bot.getNomePersonaggio());
         }
 
         System.out.println(" Totale personaggi in partita: " + giocatori.size());
@@ -128,7 +134,7 @@ public class Main {
 
         // *** 7 DEBUG ***
         System.out.println("\n--- DEBUG PERSONAGGI ---");
-        giocatori.forEach(p -> System.out.println(" - " + p.getNomeP() + " in " + p.getPosizioneCorrente()));
+        giocatori.forEach(p -> System.out.println(" - " + p.getNomePersonaggio() + " in " + p.getPosizioneCorrente()));
 
         System.out.println("\n Partita inizializzata correttamente!");
     }

@@ -4,78 +4,116 @@ package service.impl;
 import domain.Combattimento;
 import domain.Guerriero;
 import domain.Mostro;
-import domain.Oggetto;
 import domain.Personaggio;
-import domain.Trappola;
+import domain.Stanza;
 import service.PersonaggioService;
 
 public class GuerrieroServiceImpl implements  PersonaggioService {
     
+
+
     /**
-     * Metodo per proteggere un altro giocatore usando la forza del guerriero
-     * @param guerriero Il guerriero che protegge
-     * @param bersaglio Il personaggio da proteggere
-     * @return true se la protezione è stata applicata con successo
+     * Il guerriero protegge un compagno aumentandogli la difesa
+     * per un turno (o finché non gestisci la durata altrove).
      */
-    public boolean protezioneGiocatoreG(Guerriero guerriero, Personaggio bersaglio) {
-        if (guerriero == null || bersaglio == null) {
+    public boolean proteggiCompagno(Guerriero guerriero, Personaggio alleato) {
+        if (guerriero == null || alleato == null) {
             return false;
         }
 
-        // Verifica se il guerriero ha abbastanza punti vita
-        if (guerriero.getPuntiVita() < 20) {
+        // ad esempio: il guerriero deve avere almeno un po' di vita
+        if (guerriero.getPuntiVita() <= 0) {
+            System.out.println(" Il guerriero è troppo debole per proteggere qualcuno.");
             return false;
         }
 
-         // delega al dominio: solo Guerriero può applicare la protezione
-        boolean ok = guerriero.proteggi(bersaglio);
-        if (!ok) return false;
+        // puoi gestire in Personaggio un flag tipo "protetto" o aumento difesa temporaneo
+        int bonusDifesa = 8;
+        alleato.setDifesa(alleato.getDifesa() + bonusDifesa);
+        alleato.setTurnoProtetto(alleato.getTurnoProtetto() + 1);
 
-        System.out.println(guerriero.getNomeP() + " protegge per un turno " + bersaglio.getNomeP());
+        System.out.println(" " + guerriero.getNomePersonaggio()
+                + " si para davanti e protegge " + alleato.getNomePersonaggio()
+                + " (+" + bonusDifesa + " difesa per il prossimo turno)");
+
         return true;
     }
 
     @Override
-    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento){
-         if (!(personaggio instanceof Guerriero)) {
-        return 1;
+    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
+
+        if (!(personaggio instanceof Guerriero guerriero)) {
+            System.out.println(" Solo un Guerriero può usare questo tipo di attacco fisico potenziato.");
+            return 0;
+        }
+
+        if (mostro == null) {
+            System.out.println(" Nessun bersaglio valido da colpire.");
+            return 0;
+        }
+
+        Stanza stanzaGuerriero = guerriero.getPosizioneCorrente();
+        Stanza stanzaMostro = mostro.getPosizioneCorrenteMostro();
+
+        if (stanzaGuerriero == null || stanzaMostro == null) {
+            System.out.println(" Errore di posizione: Guerriero o Mostro non sono in una stanza valida.");
+            return 0;
+        }
+
+        // Il guerriero può attaccare solo in corpo a corpo → stessa stanza
+        if (!stanzaGuerriero.equals(stanzaMostro)) {
+            System.out.println("⚠ Il Guerriero deve trovarsi nella stessa stanza del mostro per attaccare.");
+            return 0;
+        }
+
+        return attaccoFisico(guerriero, mostro);
     }
 
-    Guerriero guerriero = (Guerriero) personaggio;
-    if (guerriero == null || mostro == null) return 0;
-    return 0;
+    private int attaccoFisico(Guerriero guerriero, Mostro mostro) {
+
+        int attacco = guerriero.getAttacco()+5;
+        int livello = guerriero.getLivello();
+        int difesaMostro = mostro.getDifesaMostro();
+
+        // base: forte fisicamente
+        int dannoBase = attacco + livello * 2;
+
+        // piccola "furia": se ha pochi HP, picco di danno
+        if (guerriero.getPuntiVita() <= 10) {
+            dannoBase += 5;
+            System.out.println("😤 " + guerriero.getNomePersonaggio() + " entra in FURIA e colpisce più forte!");
+        }
+
+        int dannoNetto = Math.max(1, dannoBase - difesaMostro);
+
+        int nuoviPV = mostro.getPuntiVitaMostro() - dannoNetto;
+        mostro.setPuntiVitaMostro(nuoviPV);
+
+        System.out.println("⚔ " + guerriero.getNomePersonaggio()
+                + " sferra un potente colpo contro " + mostro.getNomeMostro()
+                + " infliggendo " + dannoNetto + " danni!");
+
+          if (mostro.getPuntiVitaMostro() <= 0) {
+            System.out.println("💀 " + mostro.getNomeMostro() + " è stato sconfitto dal Guerriero!");
+            try {
+                guerriero.setEsperienza(guerriero.getEsperienza() + 12);
+                if(guerriero.getEsperienza() >= 100) {
+                    guerriero.setLivello(guerriero.getLivello() + 1);
+                    guerriero.setEsperienza(0);
+                    System.out.println(" " + guerriero.getNomePersonaggio() + " è salito al livello " + guerriero.getLivello() + "!");
+                }
+            } catch (Exception ignored) {
+            }
+
+        }
+        return dannoNetto;
     }
 
     @Override
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    @Override
-    public boolean usaOggetto(Personaggio personaggio, Oggetto oggetto) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean raccogliereOggetto(Personaggio personaggio, Oggetto oggetto) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public int subisciDannoDaMostro(Mostro.TipoAttaccoMostro attaccoMostro, int dannoBase, Personaggio personaggio) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void subisciDannoDaTrappola(Trappola trappola, Personaggio personaggio) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void esploraStanza(Personaggio personaggio) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+}
 
 
-       
-    }
+

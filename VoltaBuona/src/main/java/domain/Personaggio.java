@@ -3,29 +3,29 @@ package domain;
 public class Personaggio {
 
     private int id;
-    private String nomeP;
+    private String nomePersonaggio;
     private int puntiVita;
     private int puntiMana;
     private int difesa;
     private String statoPersonaggio;
     private Zaino zaino;
-    private int attacco;
+    private int attacco=5;
     private int livello;
     private int esperienza;
     private Stanza posizioneCorrente;
     private boolean protetto;
-    private int turniProtetto;
+    private int turnoProtetto;
     private int turniAvvelenato;
     private int turniCongelato;
     private int turniStordito;
 
-    public Personaggio(int attacco, int difesa, int esperienza, int id, int livello, String nomeP, Stanza posizioneCorrente, int puntiMana, int puntiVita, String statoPersonaggio, Zaino zaino) {
+    public Personaggio(int attacco, int difesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, int puntiMana, int puntiVita, String statoPersonaggio, Zaino zaino) {
         this.attacco = attacco;
         this.difesa = difesa;
         this.esperienza = esperienza;
         this.id = id;
         this.livello = livello;
-        this.nomeP = nomeP;
+        this.nomePersonaggio = nomePersonaggio;
         this.posizioneCorrente = posizioneCorrente;
         this.puntiMana = puntiMana;
         this.puntiVita = puntiVita;
@@ -42,17 +42,18 @@ public class Personaggio {
         this.id = id;
     }
 
-    public String getNomeP() {
-        return nomeP;
+    public String getNomePersonaggio() {
+        return nomePersonaggio;
     }
 
-    public void setNomeP(String nomeP) {
-        this.nomeP = nomeP;
+    public void setNomePersonaggio(String nomePersonaggio) {
+        this.nomePersonaggio = nomePersonaggio;
     }
 
     public int getPuntiVita() {
         return puntiVita;
     }
+    
 
     public void setPuntiVita(int puntiVita) {
         this.puntiVita = puntiVita;
@@ -158,7 +159,7 @@ public class Personaggio {
     public void applicaProtezione() {
         if (!this.protetto) {
             this.protetto = true;
-            this.turniProtetto = 1;
+            this.turnoProtetto = 1;
         }
     }
 
@@ -166,7 +167,7 @@ public class Personaggio {
      * Verifica se il personaggio è attualmente protetto.
      */
     boolean isProtetto() {
-        return this.protetto && this.turniProtetto > 0;
+        return this.protetto && this.turnoProtetto > 0;
     }
 
     /**
@@ -175,11 +176,11 @@ public class Personaggio {
      * fine del turno.
      */
     public void decrementaProtezione() {
-        if (this.turniProtetto > 0) {
-            this.turniProtetto--;
-            if (this.turniProtetto <= 0) {
+        if (this.turnoProtetto > 0) {
+            this.turnoProtetto--;
+            if (this.turnoProtetto <= 0) {
                 this.protetto = false;
-                this.turniProtetto = 0;
+                this.turnoProtetto = 0;
             }
         }
     }
@@ -195,10 +196,7 @@ public class Personaggio {
         }
     }
 
-    //formula base per calcolare danno: dobbiamo vedere se calcolarlo inquesto modo
-    public int calcolaDanno() {
-        return Math.max(0, this.attacco + this.livello * 2);
-    }
+
 
     /**
      * Applica danno al personaggio rispettando la difesa e la protezione. - Se
@@ -220,12 +218,150 @@ public class Personaggio {
         return dannoEffettivo;
     }
 
+     public boolean usaOggetto(Personaggio personaggio, Oggetto oggetto) {
+        if (personaggio == null || oggetto == null) {
+            return false;
+        }
+        Zaino z = personaggio.getZaino();
+        if (z == null || !z.getListaOggetti().contains(oggetto)) {
+            return false;
+        }
+
+        // Pozione: l'oggetto applica l'effetto sul personaggio
+        if (oggetto instanceof Pozione) {
+            boolean risultato = ((Pozione) oggetto).eseguiEffetto(personaggio);
+            if (risultato) {
+                z.rimuovi(oggetto);
+                z.setCapienza(z.getCapienza() + 1);
+                System.out.println(personaggio.getNomePersonaggio() + " usa una pozione: " + ((Pozione) oggetto).getTipo());
+            }
+            return risultato;
+        }
+
+        // Arma: equipaggia / usa (metodo service usa Oggetto)
+        if (oggetto instanceof Arma) {
+            Zaino zaino = personaggio.getZaino();
+            if (zaino == null || !zaino.getListaOggetti().contains(oggetto)) {
+                return false; // L'arma non è nello zaino
+            }
+            ((Arma) oggetto).eseguiEffetto(personaggio);
+            // decidere se rimuovere dall'inventario o mantenerla come equip
+            zaino.rimuovi(oggetto);
+            zaino.setCapienza(zaino.getCapienza() + 1);
+            return true;
+        }
+
+        // Armatura: indossa (metodo service indossaArmatura)
+        if (oggetto instanceof Armatura) {
+            ((Armatura) oggetto).eseguiEffetto(personaggio);
+            z.setCapienza(z.getCapienza() + 1);
+            return true;
+        }
+
+        
+        if (oggetto instanceof Chiave) {
+            ((Chiave) oggetto).eseguiEffetto(personaggio);
+
+            z.rimuovi(oggetto);
+            z.setCapienza(z.getCapienza() + 1);
+            return true;
+        }
+
+        // oggetto non gestito:  mettere eccezione
+        return false;
+    }
+
+
+
+      public boolean raccogliereOggetto(Personaggio personaggio, Oggetto oggetto) {
+        if (personaggio == null || oggetto == null) {
+            return false;
+        }
+
+        Zaino zaino = personaggio.getZaino();
+        if (zaino == null) {
+            return false;
+        }
+
+        Stanza stanza = personaggio.getPosizioneCorrente();
+        if (stanza == null) {
+            return false;
+        }
+
+        // verifica che l'oggetto sia nella stanza
+        if (stanza.getOggettiPresenti() == null || !stanza.getOggettiPresenti().contains(oggetto)) {
+            return false;
+        }
+
+        // verifica lista e capienza (capienza intesa come posti disponibili)
+        if (zaino.getListaOggetti() == null) {
+            return false;
+        }
+
+        if (zaino.getCapienza() < 5) {
+            // spazio disponibile: aggiungi direttamente
+            zaino.getListaOggetti().add(oggetto);
+            zaino.setCapienza(zaino.getCapienza() - 1);
+            stanza.rimuoviOggetto(oggetto);
+            System.out.println(personaggio.getNomePersonaggio() + " raccoglie " + oggetto.getNome());
+            return true;
+        }
+
+        // zaino pieno: mostra lista e chiedi se rimuovere qualcosa
+        System.out.println("Zaino pieno. Oggetti nello zaino:");
+        for (int i = 0; i < zaino.getListaOggetti().size(); i++) {
+            Oggetto o = zaino.getListaOggetti().get(i);
+            System.out.println((i + 1) + ") " + (o != null ? o.getNome() : "<oggetto null>"));
+        }
+
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        System.out.print("Vuoi eliminare qualcosa per fare spazio? (s/n): ");
+        String risposta = scanner.nextLine().trim().toLowerCase();
+        if (!risposta.equals("s") && !risposta.equals("y")) {
+            System.out.println("Operazione annullata. Non raccogliere l'oggetto.");
+            return false;
+        }
+
+        System.out.print("Inserisci il numero dell'oggetto da rimuovere (0 per annullare): ");
+        String line = scanner.nextLine().trim();
+        int indice;
+        try {
+            indice = Integer.parseInt(line);
+        } catch (NumberFormatException e) {
+            System.out.println("Input non valido. Operazione annullata.");
+            return false;
+        }
+        if (indice == 0) {
+            System.out.println("Operazione annullata.");
+            return false;
+        }
+        if (indice < 1 || indice > zaino.getListaOggetti().size()) {
+            System.out.println("Indice non valido. Operazione annullata.");
+            return false;
+        }
+
+        // rimuovi l'oggetto scelto dallo zaino e rimetti nella stanza
+        Oggetto rimosso = zaino.getListaOggetti().remove(indice - 1);
+        zaino.setCapienza(zaino.getCapienza() + 1);
+        // aggiungi l'oggetto rimosso nella stanza (usa il metodo disponibile)
+        stanza.aggiungiOggetto(rimosso);
+        System.out.println("Rimosso: " + (rimosso != null ? rimosso.getNome() : "<oggetto null>"));
+        // ora aggiungi il nuovo oggetto raccolto
+        zaino.getListaOggetti().add(oggetto);
+        zaino.setCapienza(zaino.getCapienza() - 1);
+        stanza.rimuoviOggetto(oggetto);
+
+        System.out.println(personaggio.getNomePersonaggio() + " raccoglie " + oggetto.getNome());
+        return true;
+    }
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Personaggio{");
         sb.append("id=").append(id);
-        sb.append(", nomeP=").append(nomeP);
+        sb.append(", nomePersonaggio=").append(nomePersonaggio);
         sb.append(", puntiVita=").append(puntiVita);
         sb.append(", puntiMana=").append(puntiMana);
         sb.append(", difesa=").append(difesa);
@@ -237,6 +373,14 @@ public class Personaggio {
         sb.append(", posizioneCorrente=").append(posizioneCorrente);
         sb.append('}');
         return sb.toString();
+    }
+
+    public int getTurnoProtetto() {
+        return turnoProtetto;
+    }
+
+    public void setTurnoProtetto(int turnoProtetto) {
+        this.turnoProtetto = turnoProtetto;
     }
 
 }

@@ -1,11 +1,20 @@
 package domain;
 
 public class Mostro extends PersonaIncontrata {
- private int puntiVitaMostro;
- private int difesaMostro;
+ private int puntiVitaMostro=100;
+ private int difesaMostro=100;
  private int dannoMostro;
  private String nomeMostro;
  private TipoAttaccoMostro tipoAttaccoMostro;
+ private Stanza posizioneCorrenteMostro;
+
+    public Stanza getPosizioneCorrenteMostro() {
+        return posizioneCorrenteMostro;
+    }
+
+    public void setPosizioneCorrenteMostro(Stanza posizioneCorrenteMostro) {
+        this.posizioneCorrenteMostro = posizioneCorrenteMostro;
+    }
 
    public enum TipoAttaccoMostro {
         MORSO,
@@ -16,12 +25,13 @@ public class Mostro extends PersonaIncontrata {
     }
 
 
-    public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, String tipoPersonaIncontrata, int puntiVitaMostro, int difesaMostro, String nomeMostro, TipoAttaccoMostro tipoAttaccoMostro) {
+    public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, String tipoPersonaIncontrata, int puntiVitaMostro, int difesaMostro, String nomeMostro, TipoAttaccoMostro tipoAttaccoMostro,Stanza posizioneCorrenteMostro) {
          super(id, inizioEvento, fineEvento, descrizione, tipoPersonaIncontrata);
         this.puntiVitaMostro = puntiVitaMostro;
         this.difesaMostro = difesaMostro;
         this.nomeMostro = nomeMostro;
         this.tipoAttaccoMostro = tipoAttaccoMostro;
+        this.posizioneCorrenteMostro = posizioneCorrenteMostro;
     }
     
      public int getPuntiVitaMostro() {
@@ -69,6 +79,7 @@ public class Mostro extends PersonaIncontrata {
     public void setTipoAttaccoMostro(TipoAttaccoMostro tipoAttaccoMostro) {
         this.tipoAttaccoMostro = tipoAttaccoMostro;
     }
+    
 
 
     @Override

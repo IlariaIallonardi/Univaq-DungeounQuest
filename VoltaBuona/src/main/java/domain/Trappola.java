@@ -137,79 +137,21 @@ public class Trappola extends Evento {
         return false;
     }
 
-    public void attiva(Personaggio personaggio) {
 
-        Effetto.TipoEffetto effetto = tiraDado();
-
-        switch (effetto) {
-
-            case CONGELAMENTO -> {
-                personaggio.setStatoPersonaggio("Congelato");
-                personaggio.setTurniCongelato(3);
-                System.out.println(" La trappola ti ferisce leggermente! -5 HP");
-                break;
-            }
-
-            case FURIA -> {
-                personaggio.setStatoPersonaggio("Furia");
-                personaggio.subisciDanno(15);
-                System.out.println(" La trappola causa un danno grave! -15 HP");
-                break;
-            }
-
-            case AVVELENAMENTO -> {
-                personaggio.setStatoPersonaggio("AVVELENATO");
-                personaggio.setTurniAvvelenato(4);
-                System.out.println(" Sei stato avvelenato!");
-                break;
-            }
-
-            case STORDIMENTO -> {
-                personaggio.setStatoPersonaggio("STORDITO");
-                personaggio.setTurniStordito(2);
-                System.out.println(" Sei stordito!");
-                break;
-            }
-
-            case IMMOBILIZZATO -> {
-                personaggio.setStatoPersonaggio("IMMOBILIZZATO");
-                personaggio.subisciDanno(5);
-                System.out.println(" Sei immobilizzato!");
-                break;
-            }
-        }
-    }
-
-    private Effetto.TipoEffetto tiraDado() {
-        int dado = (int) (Math.random() * 6) + 1;
-
-        return switch (dado) {
-            case 1 ->
-                Effetto.TipoEffetto.CONGELAMENTO;
-            case 2 ->
-                Effetto.TipoEffetto.FURIA;
-            case 3 ->
-                Effetto.TipoEffetto.AVVELENAMENTO;
-            case 4 ->
-                Effetto.TipoEffetto.STORDIMENTO;
-            case 5 ->
-                Effetto.TipoEffetto.IMMOBILIZZATO;
-            default ->
-                Effetto.TipoEffetto.NESSUN_EFFETTO;
-        };
-    }
+   
+    
 
     //main funzionante per testare trappola
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
 
         // 1️⃣ Creazione personaggio di test
         Personaggio p = new Personaggio(0, 0, 0, 0, 0, null, null, 0, 0, null, null);
-        p.setNomeP("Eroe");
+        p.setNomePersonaggio("Eroe");
         p.setPuntiVita(40);
         p.setStatoPersonaggio("NORMALE");
 
         System.out.println("=== TEST TRAPPOLA ===");
-        System.out.println("Personaggio: " + p.getNomeP());
+        System.out.println("Personaggio: " + p.getNomePersonaggio());
         System.out.println("HP iniziali: " + p.getPuntiVita());
         System.out.println();
 
@@ -237,7 +179,7 @@ public class Trappola extends Evento {
 
             if (!disinnescata1) {
                 System.out.println("⚠ ATTIVAZIONE TRAPPOLA!");
-                t.attiva(p);
+                attiva(p);
             } else {
                 disinnescata = true;
             }

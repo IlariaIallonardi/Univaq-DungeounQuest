@@ -1,16 +1,16 @@
 package service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import domain.Arciere;
 import domain.Combattimento;
 import domain.Evento;
 import domain.Mostro;
-import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
-import domain.Trappola;
 import service.PersonaggioService;
 
 public class ArciereServiceImpl implements  PersonaggioService {
@@ -61,7 +61,7 @@ public class ArciereServiceImpl implements  PersonaggioService {
                 if (m.getPuntiVitaMostro() <= 0) continue;
                 // usare l'overload che accetta Mostro se presente
                 attacca(arciere, m, null);
-                System.out.println("Arciere " + arciere.getNomeP() + " ha colpito il mostro " + m.getTipoPersonaIncontrata() + " in stanza adiacente.");
+                System.out.println("Arciere " + arciere.getNomePersonaggio() + " ha colpito il mostro " + m.getTipoPersonaIncontrata() + " in stanza adiacente.");
                 return true;
             }
             // stanza occupata ma nessun bersaglio valido
@@ -69,67 +69,182 @@ public class ArciereServiceImpl implements  PersonaggioService {
         }
 
         // stanza vuota: l'attacco "va a vuoto" ma è comunque valido
-        System.out.println("Arciere " + arciere.getNomeP() + " spara in una stanza adiacente vuota.");
+        System.out.println("Arciere " + arciere.getNomePersonaggio() + " spara in una stanza adiacente vuota.");
         return true;
     }
-    @Override
-    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
-    if (!(personaggio instanceof Arciere)) {
+  @Override
+     public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
+
+    if (!(personaggio instanceof Arciere arciere)) {
+        System.out.println(" Solo un arciere può usare attacco a distanza!");
+        return 0;
+    }
+    if (mostro == null) return 0;
+
+    Stanza stanzaAttuale = arciere.getPosizioneCorrente();
+    Stanza stanzaMostro = mostro.getPosizioneCorrenteMostro();
+
+    if (stanzaAttuale == null || stanzaMostro == null) return 0;
+
+    // Caso semplice → mostro nella stessa stanza
+    if (stanzaAttuale.equals(stanzaMostro)) {
+        return infliggiDanno(arciere, mostro);
+    }
+
+    // 🔍 Cerco tutte le stanze adiacenti che contengono il mostro
+    Map<String, Stanza> adiacenti = stanzaAttuale.getStanzaAdiacente();
+    List<Stanza> stanzeConMostro = new ArrayList<>();
+
+    if (adiacenti != null) {
+        for (Stanza s : adiacenti.values()) {
+            if (s.getListaEventiAttivi() != null && s.getListaEventiAttivi().contains(mostro)) {
+                stanzeConMostro.add(s);
+            }
+        }
+    }
+
+    //  Mostro non raggiungibile
+    if (stanzeConMostro.isEmpty()) {
+        System.out.println("Il mostro è troppo lontano per essere colpito!");
         return 0;
     }
 
-    Arciere arciere = (Arciere) personaggio;
-    if (arciere == null || mostro == null) return 0;
-        
-    // calcolo danno base (adatta la formula al tuo bilanciamento)
-    int attacco = arciere.getAttacco(); // presuppone getter
-    int livello = arciere.getLivello(); // presuppone getter
-    int dannoBase = Math.max(0, attacco + livello * 2);
+    // 🎯 Se c’è solo una stanza → attacco automatico
+    Stanza sceltaStanza = stanzeConMostro.get(0);
 
-    // applica difesa del mostro
-    int difesaMostro = mostro.getDifesaMostro(); // presuppone getter
+    // 🗳 Se più stanze → scelta giocatore
+    if (stanzeConMostro.size() > 1) {
+        Scanner scan = new Scanner(System.in);
+        System.out.println(" Il mostro è in più stanze adiacenti! Scegli quale colpire:");
+
+        for (int i = 0; i < stanzeConMostro.size(); i++) {
+            System.out.println((i + 1) + ") " + stanzeConMostro.get(i).getNomeStanza());
+        }
+
+        int scelta = scan.nextInt() - 1;
+        if (scelta < 0 || scelta >= stanzeConMostro.size()) {
+            System.out.println(" Scelta non valida, attacco annullato!");
+            return 0;
+        }
+        sceltaStanza = stanzeConMostro.get(scelta);
+    }
+
+    System.out.println("🏹 Attacco a distanza verso " + sceltaStanza.getNomeStanza());
+    return infliggiDanno(arciere, mostro);
+   }
+
+
+
+   private int infliggiDanno(Arciere arciere, Mostro mostro) {
+    int attacco = arciere.getAttacco();
+    int livello = arciere.getLivello();
+    int difesaMostro = mostro.getDifesaMostro();
+
+    int dannoBase = attacco + livello * 2;
     int dannoNetto = Math.max(0, dannoBase - difesaMostro);
 
-    // sottrai punti vita al mostro
-    int nuoviPV = mostro.getPuntiVitaMostro() - dannoNetto; // presuppone getter
-    mostro.setPuntiVitaMostro(nuoviPV); // presuppone setter
+    mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
 
-    System.out.println(arciere.getNomeP() + " infligge " + dannoNetto + " al mostro " + mostro.getTipoPersonaIncontrata());
+    System.out.println(" " + arciere.getNomePersonaggio() +
+            " infligge " + dannoNetto +
+            " danni a " + mostro.getTipoPersonaIncontrata());
 
     if (mostro.getPuntiVitaMostro() <= 0) {
-        System.out.println("Il mostro " + mostro.getTipoPersonaIncontrata() + " è stato sconfitto.");
-        // Qui puoi aggiungere rimozione dal contesto/stanza, drop oggetti, assegnazione XP, ecc.
+        arciere.setEsperienza(arciere.getEsperienza() + 20);
+        if(arciere.getEsperienza() >= 100){
+            arciere.setLivello(arciere.getLivello() + 1);
+            arciere.setEsperienza(0);
+            System.out.println(" Complimenti! " + arciere.getNomePersonaggio() + " è salito al livello " + arciere.getLivello());
+        }
+        System.out.println(" Mostro sconfitto!");
     }
     return dannoNetto;
-}
-
+   }
     @Override
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    public boolean usaOggetto(Personaggio personaggio, Oggetto oggetto) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
-    @Override
-    public boolean raccogliereOggetto(Personaggio personaggio, Oggetto oggetto) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
-    @Override
-    public int subisciDannoDaMostro(Mostro.TipoAttaccoMostro attaccoMostro, int dannoBase, Personaggio personaggio) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+/* 
+    public static void main(String[] args) {
 
-    @Override
-    public void subisciDannoDaTrappola(Trappola trappola, Personaggio personaggio) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+        // === Service necessari ===
+        ArciereServiceImpl arciereService = new ArciereServiceImpl();
 
-    @Override
-    public void esploraStanza(Personaggio personaggio) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+        // === Creo 4 stanze in croce ===
+        Stanza stanzaCentro = new Stanza(1, null, null, new ArrayList<>(), new ArrayList<>(), null, false, "Centro");
+        Stanza stanzaNord = new Stanza(2, null, null, new ArrayList<>(), new ArrayList<>(), null, false, "Nord");
+        Stanza stanzaEst = new Stanza(3, null, null, new ArrayList<>(), new ArrayList<>(), null, false, "Est");
+        Stanza stanzaSud = new Stanza(4, null, null, new ArrayList<>(), new ArrayList<>(), null, false, "Sud");
+
+        // Collego le stanze al centro
+        stanzaCentro.getStanzaAdiacente().put("NORD", stanzaNord);
+        stanzaCentro.getStanzaAdiacente().put("EST", stanzaEst);
+        stanzaCentro.getStanzaAdiacente().put("SUD", stanzaSud);
+
+        stanzaNord.getStanzaAdiacente().put("SUD", stanzaCentro);
+        stanzaEst.getStanzaAdiacente().put("OVEST", stanzaCentro);
+        stanzaSud.getStanzaAdiacente().put("NORD", stanzaCentro);
+
+        // === Creo Arciere ===
+        Personaggio arciere = new Arciere(
+                1, 40, 12, 3, 15,
+                "Legolas", stanzaCentro,
+                1, 0, "Normale",
+                new Zaino()
+        );
+        stanzaCentro.getListaPersonaggi().add(arciere);
+
+        // === Creo 3 Mostri in posizioni diverse ===
+        Mostro mostroCentro = new Mostro(1, false, false, "Mostro al centro", "Goblin", 20, 2, "Goblin", Mostro.TipoAttaccoMostro.MORSO, stanzaCentro);
+        Mostro mostroNord = new Mostro(2, false, false, "Mostro a nord", "Orco", 30, 5, "Orco", Mostro.TipoAttaccoMostro.RUGGITO_DI_FUOCO, stanzaNord);
+        Mostro mostroEst = new Mostro(3, false, false, "Mostro a est", "Scheletro", 25, 3, "Scheletro", Mostro.TipoAttaccoMostro.URLO_ASSORDANTE, stanzaEst);
+
+        stanzaCentro.getListaEventiAttivi().add(mostroCentro);
+        stanzaNord.getListaEventiAttivi().add(mostroNord);
+        stanzaEst.getListaEventiAttivi().add(mostroEst);
+
+        // === TEST CASE ===
+
+        Scanner scanner = new Scanner(System.in);
+        boolean continua = true;
+
+        System.out.println("=== TEST ATTACCO ARCIERE ===");
+
+        while (continua) {
+
+            System.out.println("\nDove vuoi colpire?");
+            System.out.println("1) Mostro nella STESSA stanza (Goblin)");
+            System.out.println("2) Mostro a NORD (Orco)");
+            System.out.println("3) Mostro a EST (Scheletro)");
+            System.out.println("4) Forzare SCELTA tra più adiacenti");
+            System.out.println("0) Esci test");
+
+            int scelta = Integer.parseInt(scanner.nextLine());
+
+            switch (scelta) {
+                case 1 -> arciereService.attacca(arciere, mostroCentro, null);
+                case 2 -> arciereService.attacca(arciere, mostroNord, null);
+                case 3 -> arciereService.attacca(arciere, mostroEst, null);
+                case 4 -> {
+                    System.out.println("⚠ Sposto un mostro anche a Sud per attivare scelta bersaglio...");
+                    Mostro mostroSud = new Mostro(4, false, false, "Mostro a sud", "Demone", 35, 4, "Demone", Mostro.TipoAttaccoMostro.ARTIGLI_POSSENTI, stanzaSud);
+                    stanzaSud.getListaEventiAttivi().add(mostroSud);
+
+                    // ora il giocatore deve scegliere Nord o Sud
+                    arciereService.attacca(arciere, mostroSud, null);
+
+                }
+                case 0 -> continua = false;
+                default -> System.out.println("Scelta non valida!");
+            }
+        }
+
+        System.out.println("\nTest completato!");
+    } */
 }
+
+    
+  
