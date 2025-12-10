@@ -63,13 +63,17 @@ public class MostroServiceImpl implements  PersonaIncontrataService {
 
     @Override
     public void rimuoviEventoDaStanza(Stanza stanza, Evento evento){
-        stanza.getListaEventiAttivi().remove(evento);
-    };
+        if(evento== null || stanza==null) return;
+        if(evento instanceof Mostro mostro){
+            if(mostro.èMortoilMostro())
+           stanza.getListaEventiAttivi().remove(evento);
+        }
+    }
 
     @Override
     public void attivaEvento(Personaggio personaggio, Evento e){
 
-    };
+    }
 
     @Override   
     public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza){   

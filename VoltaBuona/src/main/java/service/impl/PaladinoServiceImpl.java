@@ -1,7 +1,10 @@
 package service.impl;
 
+import domain.Arma;
 import domain.Combattimento;
+import domain.Guerriero;
 import domain.Mostro;
+import domain.Oggetto;
 import domain.Paladino;
 import domain.Personaggio;
 import service.PersonaggioService;
@@ -35,7 +38,7 @@ public class PaladinoServiceImpl implements PersonaggioService {
         System.out.println(paladino.getNomePersonaggio() + " protegge per un turno " + bersaglio.getNomePersonaggio());
         return true;
     }
-
+    
     /**
      * Metodo per utilizzare la magia sacra del paladino
      *

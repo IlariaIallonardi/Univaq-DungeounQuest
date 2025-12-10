@@ -1,40 +1,43 @@
 package domain;
 
 public class Arma extends Oggetto {
-    private int dannoBonus;
-    private String tipo;
-    //private int durabilitaArma;
-    private Personaggio personaggio;
 
-    public Arma(int dannoBonus, int durabilitaArma, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato, String tipo) {
+    private int dannoBonus;
+    private TipoArma tipoArma;
+
+    public Arma(int dannoBonus, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato, TipoArma tipoArma) {
         super(id, nome, descrizione, usabile, equipaggiabile, trovato);
         this.dannoBonus = dannoBonus;
-        this.tipo = tipo;
-      //  this.durabilitaArma = durabilitaArma;
+        this.tipoArma = tipoArma;
+
     }
+
     public int getDannoBonus() {
         return dannoBonus;
     }
+
     public void setDannoBonus(int dannoBonus) {
         this.dannoBonus = dannoBonus;
     }
-    public String getTipo() {
-        return tipo;
-    }       
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+
+    public TipoArma getTipoArma() {
+        return tipoArma;
     }
-    
- 
 
+    public void setTipoArma(TipoArma tipoArma) {
+        this.tipoArma = tipoArma;
+    }
 
-    @Override
+   @Override
      public boolean eseguiEffetto(Personaggio personaggio) {
-        if (personaggio == null) return false;
-        // Aumenta solo il danno/attacco del personaggio
-        personaggio.setAttacco(personaggio.getAttacco() + this.dannoBonus);
-        return true;
-    } 
+    if (personaggio == null || tipoArma == null) {
+        return false;
+    }
+    personaggio.setAttacco(personaggio.getAttacco() + tipoArma.getDannoBonus());
+    return true;
+}
+
+
 
     @Override
     public boolean usare(Personaggio personaggio) {
@@ -106,71 +109,22 @@ public class Arma extends Oggetto {
         return super.toString();
     }
 
-    
+    public enum TipoArma {
+        FRECCIA_E_ARCO(1),
+        BACCHETTA_MAGICA(2),
+        SPADA(3),
+        BALESTRA_PESANTE(4);
 
+        private final int dannoBonus;
 
+        TipoArma(int dannoBonus) {
+            this.dannoBonus = dannoBonus;
+        }
+
+        public int getDannoBonus() {
+            return dannoBonus;
+        }
+
+    }
 
 }
-
-
-   /*  public enum Tipo {
-        ASCIA, SPADA, PUGNALE, ARCO
-    }
-
-    private Tipo tipo;
-    private int dannoBonus;
-    private int durabilitaArma;
-    private Personaggio personaggio;
-
-
-    public Tipo getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(Tipo tipo) {
-        this.tipo = tipo;
-    }
-
-    public int getDannoBonus() {
-        return dannoBonus;
-    }
-
-    public void setDannoBonus(int dannoBonus) {
-        this.dannoBonus = dannoBonus;
-    }
-
-    public int getDurabilitaArma() {
-        return durabilitaArma;
-    }
-
-    public void setDurabilitaArma(int durabilitaArma) {
-        this.durabilitaArma = durabilitaArma;
-    }
-    public Arma(Tipo tipo, int dannoBonus, int durabilitaArma, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
-        super(id, nome, descrizione, usabile, equipaggiabile, trovato);
-        this.tipo = tipo;
-        this.dannoBonus = dannoBonus;
-        this.durabilitaArma = durabilitaArma;
-    }
-
-
-
-   public int miglioraAttacco() {
-    // Controlla la durabilità dell'arma
-    if (durabilitaArma <= 0) {
-        return 0; // L'arma è rotta, nessun bonus
-    }
-    
-    // Calcola il bonus base in base al tipo di arma
-    int bonusBase = switch (tipo) {
-        case SPADA -> 10;
-        case ASCIA -> 12;
-        case PUGNALE -> 6;
-        case ARCO -> 8;
-    };
-    
-    return personaggio.getAttacco() + dannoBonus;
-} */
-
-
-    

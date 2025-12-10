@@ -1,9 +1,11 @@
 package service.impl;
 
 
+import domain.Arma;
 import domain.Combattimento;
 import domain.Guerriero;
 import domain.Mostro;
+import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
 import service.PersonaggioService;
@@ -38,6 +40,12 @@ public class GuerrieroServiceImpl implements  PersonaggioService {
 
         return true;
     }
+    
+
+
+
+   
+
 
     @Override
     public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {

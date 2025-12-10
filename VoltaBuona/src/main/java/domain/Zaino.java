@@ -18,8 +18,8 @@ public class Zaino {
         return listaOggetti.add(o);
     }
 
-    public boolean rimuovi(Oggetto o) {
-        return listaOggetti.remove(o);
+    public boolean rimuoviOggettoDaZaino(Oggetto oggetto) {
+        return listaOggetti.remove(oggetto);
     }
 
 

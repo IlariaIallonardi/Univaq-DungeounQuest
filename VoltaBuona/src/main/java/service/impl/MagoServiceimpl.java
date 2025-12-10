@@ -1,9 +1,12 @@
 package service.impl;
 
 
+import domain.Arma;
 import domain.Combattimento;
+import domain.Guerriero;
 import domain.Mago;
 import domain.Mostro;
+import domain.Oggetto;
 import domain.Personaggio;
 import service.PersonaggioService;
 
@@ -93,10 +96,16 @@ public final int COSTO_MANA = 10;
         return dannoNetto;
     }
 
+
+   
+
+
     @Override
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+
 
    
 }

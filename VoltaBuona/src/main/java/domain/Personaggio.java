@@ -9,7 +9,7 @@ public class Personaggio {
     private int difesa;
     private String statoPersonaggio;
     private Zaino zaino;
-    private int attacco=5;
+    private int attacco = 5;
     private int livello;
     private int esperienza;
     private Stanza posizioneCorrente;
@@ -18,6 +18,8 @@ public class Personaggio {
     private int turniAvvelenato;
     private int turniCongelato;
     private int turniStordito;
+    private Arma armaEquippaggiata;
+    // private Armatura armaturaEquippaggiata;
 
     public Personaggio(int attacco, int difesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, int puntiMana, int puntiVita, String statoPersonaggio, Zaino zaino) {
         this.attacco = attacco;
@@ -31,8 +33,8 @@ public class Personaggio {
         this.puntiVita = puntiVita;
         this.statoPersonaggio = statoPersonaggio;
         this.zaino = zaino;
-    }
 
+    }
 
     public int getId() {
         return id;
@@ -53,7 +55,6 @@ public class Personaggio {
     public int getPuntiVita() {
         return puntiVita;
     }
-    
 
     public void setPuntiVita(int puntiVita) {
         this.puntiVita = puntiVita;
@@ -196,8 +197,6 @@ public class Personaggio {
         }
     }
 
-
-
     /**
      * Applica danno al personaggio rispettando la difesa e la protezione. - Se
      * il personaggio è protetto, il danno viene ignorato (la protezione NON
@@ -218,12 +217,21 @@ public class Personaggio {
         return dannoEffettivo;
     }
 
-     public boolean usaOggetto(Personaggio personaggio, Oggetto oggetto) {
+
+    public Arma getArmaEquippaggiata() {
+        return armaEquippaggiata;
+    }
+
+    public boolean puoEquipaggiare(Arma.TipoArma tipo) {
+        return true;
+    }
+
+    public boolean usaOggetto(Personaggio personaggio, Oggetto oggetto) {
         if (personaggio == null || oggetto == null) {
             return false;
         }
-        Zaino z = personaggio.getZaino();
-        if (z == null || !z.getListaOggetti().contains(oggetto)) {
+        Zaino zaino = personaggio.getZaino();
+        if (zaino == null || !zaino.getListaOggetti().contains(oggetto)) {
             return false;
         }
 
@@ -231,8 +239,8 @@ public class Personaggio {
         if (oggetto instanceof Pozione) {
             boolean risultato = ((Pozione) oggetto).eseguiEffetto(personaggio);
             if (risultato) {
-                z.rimuovi(oggetto);
-                z.setCapienza(z.getCapienza() + 1);
+                zaino.rimuoviOggettoDaZaino(oggetto);
+                zaino.setCapienza(zaino.getCapienza() + 1);
                 System.out.println(personaggio.getNomePersonaggio() + " usa una pozione: " + ((Pozione) oggetto).getTipo());
             }
             return risultato;
@@ -240,30 +248,33 @@ public class Personaggio {
 
         // Arma: equipaggia / usa (metodo service usa Oggetto)
         if (oggetto instanceof Arma) {
-            Zaino zaino = personaggio.getZaino();
             if (zaino == null || !zaino.getListaOggetti().contains(oggetto)) {
                 return false; // L'arma non è nello zaino
             }
+            if (!personaggio.puoEquipaggiare(((Arma) oggetto).getTipoArma())) {
+                return false; // Il personaggio non può equipaggiare questo tipo di arma
+            }else{
             ((Arma) oggetto).eseguiEffetto(personaggio);
             // decidere se rimuovere dall'inventario o mantenerla come equip
-            zaino.rimuovi(oggetto);
+            zaino.rimuoviOggettoDaZaino(oggetto);
             zaino.setCapienza(zaino.getCapienza() + 1);
             return true;
+            }
         }
 
         // Armatura: indossa (metodo service indossaArmatura)
         if (oggetto instanceof Armatura) {
             ((Armatura) oggetto).eseguiEffetto(personaggio);
-            z.setCapienza(z.getCapienza() + 1);
+             zaino.rimuoviOggettoDaZaino(oggetto);
+            zaino.setCapienza(zaino.getCapienza() + 1);
             return true;
         }
 
-        
         if (oggetto instanceof Chiave) {
             ((Chiave) oggetto).eseguiEffetto(personaggio);
 
-            z.rimuovi(oggetto);
-            z.setCapienza(z.getCapienza() + 1);
+            zaino.rimuoviOggettoDaZaino(oggetto);
+            zaino.setCapienza(zaino.getCapienza() + 1);
             return true;
         }
 
@@ -271,9 +282,7 @@ public class Personaggio {
         return false;
     }
 
-
-
-      public boolean raccogliereOggetto(Personaggio personaggio, Oggetto oggetto) {
+    public boolean raccogliereOggetto(Personaggio personaggio, Oggetto oggetto) {
         if (personaggio == null || oggetto == null) {
             return false;
         }
@@ -354,7 +363,6 @@ public class Personaggio {
         System.out.println(personaggio.getNomePersonaggio() + " raccoglie " + oggetto.getNome());
         return true;
     }
-
 
     @Override
     public String toString() {

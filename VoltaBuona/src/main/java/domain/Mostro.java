@@ -72,6 +72,7 @@ public class Mostro extends PersonaIncontrata {
     }
      public boolean èMortoilMostro() {
         return this.puntiVitaMostro <= 0;
+        
     }
     public TipoAttaccoMostro getTipoAttaccoMostro() {
         return tipoAttaccoMostro;

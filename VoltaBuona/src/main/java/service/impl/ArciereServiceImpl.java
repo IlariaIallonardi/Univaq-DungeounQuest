@@ -9,6 +9,7 @@ import domain.Arciere;
 import domain.Combattimento;
 import domain.Evento;
 import domain.Mostro;
+import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
 import service.PersonaggioService;
@@ -165,6 +166,7 @@ public class ArciereServiceImpl implements  PersonaggioService {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    
 
 
 /* 

@@ -2,6 +2,11 @@ package domain;
 
 public class Armatura extends Oggetto {
 
+    private TipoArmatura tipoArmatura;
+    private int difesaBonus;
+    private int durabilitaArmatura;
+    private Armatura armaturaEquippaggiata;
+
     public Armatura(int difesaBonus, int durabilitaArmatura, TipoArmatura tipoArmatura, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
         super(id, nome, descrizione, usabile, equipaggiabile, trovato);
         this.difesaBonus = difesaBonus;
@@ -10,23 +15,29 @@ public class Armatura extends Oggetto {
     }
 
     public enum TipoArmatura {
-        DEBOLE, MEDIA, FORTE
-    }
+        DEBOLE(3),
+        MEDIA(5),
+        FORTE(8);
 
-    private TipoArmatura tipoArmatura;
-    private int difesaBonus;
-    private int durabilitaArmatura;
+        private final int difesaBonus;
+        private TipoArmatura tipoArmatura;
 
-    public TipoArmatura getTipoArmatura() {
-        return tipoArmatura;
+        TipoArmatura(int difesaBonus) {
+            this.difesaBonus = difesaBonus;
+        }
+
+        public int getDifesaBonus() {
+            return difesaBonus;
+        }
+
     }
 
     public void setTipoArmatura(TipoArmatura tipoArmatura) {
         this.tipoArmatura = tipoArmatura;
     }
 
-    public int getDifesaBonus() {
-        return difesaBonus;
+    public TipoArmatura getTipoArmatura() {
+        return tipoArmatura;
     }
 
     public void setDifesaBonus(int difesaBonus) {
@@ -40,8 +51,6 @@ public class Armatura extends Oggetto {
     public void setDurabilitaArmatura(int durabilitaArmatura) {
         this.durabilitaArmatura = durabilitaArmatura;
     }
-
-
 
     @Override
     public boolean usare(Personaggio personaggio) {
@@ -113,15 +122,14 @@ public class Armatura extends Oggetto {
         return super.toString();
     }
 
-
-@Override
-public boolean eseguiEffetto(Personaggio personaggio) {
-    if (personaggio == null) return false;
-    int nuovaDifesa = personaggio.getDifesa() + this.difesaBonus;
-    personaggio.setDifesa(nuovaDifesa);
+    @Override
+     public boolean eseguiEffetto(Personaggio personaggio) {
+    if (personaggio == null || tipoArmatura == null) {
+        return false;
+    }
+    personaggio.setDifesa(personaggio.getDifesa() + tipoArmatura.getDifesaBonus());
     return true;
-
-
-   
-}}
-
+}
+        
+    
+}
