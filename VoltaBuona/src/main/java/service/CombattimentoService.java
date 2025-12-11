@@ -2,11 +2,12 @@ package service;
 import domain.Combattimento;
 import domain.Mostro;
 import domain.Personaggio;
+import domain.Stanza;
 import domain.Zaino;
 public interface CombattimentoService {
 
     // lifecycle
-    boolean iniziaCombattimento(Combattimento combattimento);
+    boolean iniziaCombattimento(Personaggio personaggio, Mostro mostro, Stanza stanza);
     boolean terminaCombattimento(Combattimento combattimento);
 
     // interrogazioni

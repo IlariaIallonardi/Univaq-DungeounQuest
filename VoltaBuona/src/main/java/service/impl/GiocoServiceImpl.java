@@ -6,11 +6,11 @@ import domain.Dungeon;
 import domain.Giocatore;
 import domain.Personaggio;
 import domain.Stanza;
+import service.Direzione;
 import service.GiocatoreService;
 import service.GiocoService;
 import service.StanzaFactory;
 import service.TurnoService;
-import service.impl.TurnoServiceImpl.Direzione;
 
 public class GiocoServiceImpl implements GiocoService {
 
@@ -67,8 +67,9 @@ public class GiocoServiceImpl implements GiocoService {
     public void setTurnoCorrente(int turnoCorrente) {
         this.turnoCorrente = turnoCorrente;
     }
-
-    public boolean muovi(Personaggio personaggio, Direzione direzione) {
+    
+    @Override
+    public boolean muoviPersonaggio(Personaggio personaggio, Direzione direzione) {
         if (personaggio == null) {
             return false;
         }
@@ -119,7 +120,7 @@ public class GiocoServiceImpl implements GiocoService {
         // opzionale: segno la stanza come visitata
         destinazione.setStatoS(StanzaFactory.StatoStanza.VISITATA);
 
-        System.out.println(personaggio.getNomeP() + " si sposta verso " + direzione + ".");
+        System.out.println(personaggio.getNomePersonaggio() + " si sposta verso " + direzione + ".");
         return true;
     }
       @Override

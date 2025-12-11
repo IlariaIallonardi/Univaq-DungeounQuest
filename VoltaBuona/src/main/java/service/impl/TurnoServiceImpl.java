@@ -5,25 +5,31 @@ import java.util.List;
 import java.util.Scanner;
 
 import domain.Evento;
+import domain.Mostro;
 import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
+import domain.Zaino;
+import service.CombattimentoService;
+import service.Direzione;
 import service.EventoService;
 import service.GiocoService;
 import service.PersonaggioService;
 import service.StanzaFactory.StatoStanza;
 import service.TurnoService;
 
-
 public class TurnoServiceImpl implements TurnoService {
 
+    private  Personaggio personaggio;
     private GiocoService giocoService;
     private PersonaggioService personaggioService;
     private EventoService eventoService;
-     private Stanza stanzaCorrente;
+     private Stanza stanzaCorrente= personaggio.getPosizioneCorrente();
     private List<Oggetto> oggetti= stanzaCorrente.getOggettiPresenti();
     private List<Evento> eventi= stanzaCorrente.getListaEventiAttivi();
     private List<Personaggio> ordineTurno = new ArrayList<>();
+    private CombattimentoService combattimentoService = new CombattimentoServiceImpl();
+    
 
 
     public TurnoServiceImpl(GiocoService giocoService,
@@ -34,9 +40,7 @@ public class TurnoServiceImpl implements TurnoService {
         this.eventoService = eventoService;
     }
 
-    public enum Direzione {
-        NORD, SUD, EST, OVEST
-    }
+
 
     public TurnoServiceImpl(PersonaggioService ps) {
         this.personaggioService = ps;
@@ -137,46 +141,58 @@ public class TurnoServiceImpl implements TurnoService {
             }
         }
 
-        // 3️⃣ scelta dell'azione
+        // 3 scelta dell'azione
         System.out.println("\nCosa vuoi fare?");
         System.out.println("1) Fare un evento");
         System.out.println("2) Prendere un oggetto");
         if (ciSonoEventi && ciSonoOggetti) {
             System.out.println("3) Fare un evento E prendere un oggetto");
         }
+        System.out.println("4) usare un oggetto dallo zaino");
         System.out.println("0) Passa il turno");
 
         int scelta = Integer.parseInt(scanner.nextLine());
 
         switch (scelta) {
-            case 1 -> {
-                if (ciSonoEventi) {
+            case 1 :
+                if (ciSonoEventi) 
                     mostraEventi(eventi);
-                    eseguiEvento(personaggio, stanzaCorrente, eventi, scanner);
-                }
-            }
-            case 2 -> {
-                if (ciSonoOggetti) {
+                    eseguiEvento(personaggio, stanzaCorrente, eventi, scanner); 
+                     break;
+            case 2 :
+                if (ciSonoOggetti) 
                     mostraOggetti(oggetti);
                     raccogliUnOggetto(personaggio, stanzaCorrente, oggetti, scanner);
-                }
-            }
-            case 3 -> {
-                if (ciSonoEventi && ciSonoOggetti) {
+                        break;
+            case 3 :
+                if (ciSonoEventi && ciSonoOggetti) 
                     mostraEventi(eventi);
                     mostraOggetti(oggetti);
                     eseguiEvento(personaggio, stanzaCorrente, eventi, scanner);
                     raccogliUnOggetto(personaggio, stanzaCorrente, oggetti, scanner);
-                }
-            }
-            case 0 ->
+                    break;
+            case 4: 
+                gestisciUsoOggettoDaZaino(personaggio, scanner);
+                System.out.println("Oggetto usato dallo zaino.");
+                break;
+            case 0 :
                 System.out.println("Turno terminato.");
-            default ->
+                break;
+            default :
                 System.out.println("Scelta non valida.");
+                break;
         }
+
+        terminaTurnoCorrente(personaggio); // da  implementare
 
         System.out.println("===== FINE TURNO DI " + personaggio.getNomePersonaggio() + " =====");
     }
+
+
+
+
+
+   /// mostra gli eventi nella stanza 
     private void mostraEventi(List<Evento> eventi) {
     System.out.println("\nEventi disponibili:");
     for (int i = 0; i < eventi.size(); i++) {
@@ -184,7 +200,7 @@ public class TurnoServiceImpl implements TurnoService {
         System.out.println((i + 1) + ") " + e.getDescrizione());
     }
 }
-
+   // mostra gli oggetti nella stanza 
 private void mostraOggetti(List<Oggetto> oggetti) {
     System.out.println("\nOggetti presenti nella stanza:");
     for (int i = 0; i < oggetti.size(); i++) {
@@ -199,26 +215,21 @@ private void mostraOggetti(List<Oggetto> oggetti) {
         System.out.println("Direzioni disponibili: N, S, E, O");
         String dir = scanner.nextLine().trim().toUpperCase();
 
-        Direzione direzione = switch (dir) {
-            case "N" ->
-                Direzione.NORD;
-            case "S" ->
-                Direzione.SUD;
-            case "E" ->
-                Direzione.EST;
-            case "O" ->
-                Direzione.OVEST;
-            default ->
-                null;
-        };
+       Direzione direzione = Direzione.fromString(dir);
 
-        if (direzione == null) {
-            System.out.println("Direzione non valida.");
-            return;
+    if (direzione == null) {
+        System.out.println("Direzione non valida.");
+        return;
+    }
+
+
+      boolean mosso = giocoService.muoviPersonaggio(personaggio, direzione);
+
+        if (mosso) {
+            System.out.println("Ti sei mosso verso " + direzione);
+        } else {
+            System.out.println("Non puoi muoverti in quella direzione.");
         }
-
-      //  GiocoServiceImpl giocoServiceImpl = new GiocoServiceImpl(null, null, 0);
-      //  giocoServiceImpl.muovi(personaggio, direzione);
     }
 
     // 🔧 Metodo: esegue UN evento scelto
@@ -233,13 +244,16 @@ private void mostraOggetti(List<Oggetto> oggetti) {
         }
 
         Evento e = eventi.get(index);
+        if(e instanceof Mostro mostro){
+            System.out.println("Stai per affrontare il mostro: " + mostro.getNomeMostro());
+            gestisciUsoOggettoDaZaino(personaggio, scanner);
+            combattimentoService.iniziaCombattimento(personaggio, mostro, stanza);
+        }
         eventoService.eseguiEventiInStanza(personaggio, stanza);
-
-        // Se l’evento va eliminato dopo l’uso:
-        // eventi.remove(index);
+        eventi.remove(index);
     }
 
-    // 🔧 Metodo: raccoglie UN oggetto scelto
+    //  Metodo: raccoglie UN oggetto scelto
     public void raccogliUnOggetto(Personaggio personaggio, Stanza stanza, List<Oggetto> oggetti, Scanner scanner) {
 
         System.out.println("Scegli l'oggetto da prendere:");
@@ -259,8 +273,57 @@ private void mostraOggetti(List<Oggetto> oggetti) {
     }
 
 
+    //metodo nuovo 
+    public void gestisciUsoOggettoDaZaino(Personaggio personaggio, Scanner scanner) {
+
+    Zaino zaino = personaggio.getZaino();
+    if (zaino == null || zaino.getListaOggetti().isEmpty()) {
+        System.out.println("Lo zaino è vuoto.");
+        return;
+    }
+
+    List<Oggetto> inventario = zaino.getListaOggetti();
+
+    System.out.println("\n--- Zaino ---");
+    for (int i = 0; i < inventario.size(); i++) {
+        System.out.println((i + 1) + ") " + inventario.get(i).getNome());
+    }
+    System.out.println("0) Annulla");
+
+    System.out.print("Scegli un oggetto da usare: ");
+    int scelta;
+
+    try {
+        scelta = Integer.parseInt(scanner.nextLine());
+    } catch (NumberFormatException e) {
+        System.out.println("Input non valido.");
+        return;
+    }
+
+    if (scelta == 0) {
+        System.out.println("Hai annullato.");
+        return;
+    }
+
+    if (scelta < 1 || scelta > inventario.size()) {
+        System.out.println("Scelta non valida.");
+        return;
+    }
+
+    Oggetto oggetto = inventario.get(scelta - 1);
+
+    boolean ok = personaggio.usaOggetto(personaggio,oggetto);
+
+    if (ok) {
+        System.out.println("Hai usato: " + oggetto.getNome());
+    } else {
+        System.out.println("Non puoi usare questo oggetto.");
+    }
+}
 
 
+
+  
     public void esploraStanza(Personaggio personaggio) {
 
     Stanza stanza = personaggio.getPosizioneCorrente();
@@ -290,108 +353,6 @@ private void mostraOggetti(List<Oggetto> oggetti) {
     stanza.setStatoS(StatoStanza.VISITATA);
 }
 
-/*  main abbastanza funzionante: problemi oerchè ci sono paramentri null
-  public static void main(String[] args) {
 
-    // ============================
-    // 1) INIZIALIZZO I SERVICE
-    // ============================
-
-    GiocoService giocoService = new GiocoService(null); 
-    PersonaggioService personaggioService = new PersonaggioService(); 
-    EventoService eventoService = new EventoService();               
-
-    TurnoService turnoService = new TurnoServiceImpl(
-            giocoService,
-            personaggioService,
-            eventoService
-    );
-
-    // ============================
-    // 2) CREO DUE STANZE DI TEST
-    // ============================
-
-    // ⚠ ADATTATO al costruttore a 6 parametri:
-    // Stanza(int id, int[][] coordinate, String statoS,
-    //        List<Oggetto> oggettiPresenti,
-    //        List<Evento> listaEventiAttivi,
-    //        Chiave chiaveRichiesta)
-
-    Stanza stanza1 = new Stanza(0, new int[][]{{0,1}}, null, new ArrayList<>(), new ArrayList<>(), null, false,"stanza uno");
-
-    Stanza stanza2 = new Stanza(1, new int[][]{{0,2}}, null, new ArrayList<>(), new ArrayList<>(), null, false, "stanza due");
-
-    // QUI presumiamo che in Stanza tu abbia:
-    // private final Map<String, Stanza> stanzaAdiacente = new HashMap<>();
-    // e un getter: getStanzaAdiacente()
-    stanza1.getStanzaAdiacente().put("NORD", stanza2);
-    stanza2.getStanzaAdiacente().put("SUD", stanza1);
-
-    // ============================
-    // 3) CREO UN PERSONAGGIO CON HP VALIDI
-    // ============================
-
-    Personaggio personaggio = new Guerriero(
-            1,            // id
-            40,           // punti vita
-            10,           // attacco
-            5,            // difesa
-            10,           // mana
-            "Eroe",       // nome
-            stanza1,      // posizione corrente
-            1,            // livello
-            0,            // exp
-            "NORMALE",    // stato
-            new Zaino()   // zaino
-    );
-
-    stanza1.getListaPersonaggi().add(personaggio);
-
-    // ============================
-    // 4) AGGIUNGO EVENTO E OGGETTO ALLA STANZA 1
-    // ============================
-
-    Evento evento = new Evento(101, true, false, "Un misterioso altare antico");
-    stanza1.getListaEventiAttivi().add(evento);
-
-    // Adatto il costruttore della pozione alla tua firma:
-    // Pozione(boolean riutilizzabile, String nome,
-    //         int valorePozione, int id,
-    //         Effetto effetto, String descrizione,
-    //         boolean inizioEvento, boolean fineEvento, boolean attivo)
-
-    Oggetto pozione = new Pozione(false,null, 40, 0, "mana", null, false, false, false);
-    stanza1.getOggettiPresenti().add(pozione);
-
-    // ============================
-    // 5) LOOP DI TURNI
-    // ============================
-
-    Scanner scanner = new Scanner(System.in);
-    boolean continua = true;
-
-    while (continua) {
-
-        System.out.println("\n========================");
-        System.out.println("   NUOVO TURNO TEST");
-        System.out.println("========================");
-
-        turnoService.eseguiTurnoGiocatore(personaggio);
-
-        if (personaggio.èMorto(personaggio)) {
-            System.out.println("💀 Il personaggio è morto. Test finito.");
-            break;
-        }
-
-        System.out.println("\nVuoi fare un altro turno? (s/n)");
-        String risposta = scanner.nextLine().toLowerCase();
-
-        if (!risposta.equals("s")) {
-            continua = false;
-        }
-    }
-
-    System.out.println("Test TurnoServiceImpl terminato.");
-} */
 }
 

@@ -1,5 +1,7 @@
 package domain;
 
+import java.util.List;
+
 public class Personaggio {
 
     private int id;
@@ -389,6 +391,13 @@ public class Personaggio {
 
     public void setTurnoProtetto(int turnoProtetto) {
         this.turnoProtetto = turnoProtetto;
+    }
+
+    public void scegliEquipaggiamento(Personaggio personaggio) {
+   Zaino zaino = personaggio.getZaino();
+   List<Oggetto> oggetti = zaino.getListaOggetti();
+   
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

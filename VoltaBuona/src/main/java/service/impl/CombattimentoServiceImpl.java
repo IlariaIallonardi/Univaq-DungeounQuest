@@ -3,6 +3,7 @@ package service.impl;
 import domain.Combattimento;
 import domain.Mostro;
 import domain.Personaggio;
+import domain.Stanza;
 import domain.Zaino;
 import service.CombattimentoService;
 import service.PersonaggioService;
@@ -24,12 +25,24 @@ public class CombattimentoServiceImpl implements CombattimentoService {
         if (combattimento == null || attaccante == null) {
             return 0;
         }
+        
+        //scelta equipaggiamento personaggio
+        Personaggio personaggio= combattimento.getPersonaggioCoinvolto();
+        Mostro mostro = combattimento.getMostroCoinvolto();
+
+        
+
+
+
+
+
+
+
 
         // Attaccante = Mostro -> bersaglio = Personaggio
         // Verifichiamo che l'attaccante sia esattamente il mostro coinvolto nel combattimento
         if (combattimento.getMostroCoinvolto() != null && attaccante == combattimento.getMostroCoinvolto()) {
-            Mostro mostro = combattimento.getMostroCoinvolto();
-            Personaggio personaggio = combattimento.getPersonaggioCoinvolto();
+            
             if (mostro == null || personaggio == null) return 0;
 
             // calcola danno base evitando metodi che applicano già il danno internamente
@@ -53,8 +66,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
         // Attaccante = Personaggio -> bersaglio = Mostro
         // Verifichiamo che l'attaccante sia esattamente il personaggio coinvolto nel combattimento
         if (combattimento.getPersonaggioCoinvolto() != null && attaccante == combattimento.getPersonaggioCoinvolto()) {
-            Personaggio personaggio= combattimento.getPersonaggioCoinvolto();
-            Mostro mostro = combattimento.getMostroCoinvolto();
+           
             if (personaggio == null || mostro == null) return 0;
 
         
@@ -106,12 +118,7 @@ public Object getVincitore(Combattimento combattimento) {
      return vincitore;
 }
 
-    @Override
-    public boolean iniziaCombattimento(Combattimento combattimento) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
+   
     @Override
     public void scegliAzione(Personaggio personaggio, Zaino zaino) {
         // TODO Auto-generated method stub
@@ -128,6 +135,11 @@ public Object getVincitore(Combattimento combattimento) {
     public boolean èInCorso(Combattimento combattimento) {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    @Override
+    public boolean iniziaCombattimento(Personaggio personaggio, Mostro mostro, Stanza stanza) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     

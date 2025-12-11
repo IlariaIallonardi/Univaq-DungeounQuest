@@ -108,7 +108,7 @@ public class StanzaFactory {
         String nome = "Spada " + id;
         String descrizione = "Una spada affilata.";
         int danno = rnd.nextInt(30) + 5;
-        return new Arma(danno,0,0,"arma","arma",true,true,true,"forte");
+        return new Arma(danno, id, nome, descrizione, false, false, false, null);
     }
     private Armatura creaArmaturaCasuale() {
         int id = rnd.nextInt(1000);
