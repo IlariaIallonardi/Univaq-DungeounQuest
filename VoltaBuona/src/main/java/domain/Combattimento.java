@@ -1,6 +1,7 @@
 package domain;
 
 public class Combattimento {
+
     private int id;
     //private int ordineDiIniziativa; --> service
     private Stanza stanza;
@@ -25,10 +26,6 @@ public class Combattimento {
         this.vincitore = vincitore;
         this.mostroCoinvolto = mostroCoinvolto;
     }
-
-
-
-    
 
     public int getId() {
         return id;
@@ -101,6 +98,7 @@ public class Combattimento {
     public void setEventoMostro(Evento eventoMostro) {
         this.eventoMostro = eventoMostro;
     }
+
     public Mostro getMostroCoinvolto() {
         return mostroCoinvolto;
     }
@@ -109,10 +107,4 @@ public class Combattimento {
         this.mostroCoinvolto = mostroCoinvolto;
     }
 
- 
-
-  
-
-
-    
 }
