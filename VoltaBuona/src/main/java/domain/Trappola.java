@@ -4,11 +4,13 @@ public class Trappola extends Evento {
 
     private int danno;
     private Effetto effetto;
+    private Stanza posizioneCorrenteTrappola;
 
-    public Trappola(int id, boolean inizioEvento, boolean fineEvento, String descrizione, int danno, Effetto effetto) {
+    public Trappola(int danno, Effetto effetto, Stanza posizioneCorrenteTrappola, int id, boolean inizioEvento, boolean fineEvento, String descrizione) {
         super(id, inizioEvento, fineEvento, descrizione);
         this.danno = danno;
         this.effetto = effetto;
+        this.posizioneCorrenteTrappola = posizioneCorrenteTrappola;
     }
 
     public int getDanno() {
@@ -137,10 +139,6 @@ public class Trappola extends Evento {
         return false;
     }
 
-
-   
-    
-
     //main funzionante per testare trappola
     /*public static void main(String[] args) {
 
@@ -217,4 +215,11 @@ public class Trappola extends Evento {
         System.out.println("HP finali: " + p.getPuntiVita());
         System.out.println("Stato finale: " + p.getStatoPersonaggio());
     } */
+    public Stanza getPosizioneCorrenteTrappola() {
+        return posizioneCorrenteTrappola;
+    }
+
+    public void setPosizioneCorrenteTrappola(Stanza posizioneCorrenteTrappola) {
+        this.posizioneCorrenteTrappola = posizioneCorrenteTrappola;
+    }
 }

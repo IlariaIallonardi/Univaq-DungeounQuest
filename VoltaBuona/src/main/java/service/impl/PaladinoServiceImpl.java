@@ -1,10 +1,7 @@
 package service.impl;
 
-import domain.Arma;
 import domain.Combattimento;
-import domain.Guerriero;
 import domain.Mostro;
-import domain.Oggetto;
 import domain.Paladino;
 import domain.Personaggio;
 import service.PersonaggioService;
@@ -38,7 +35,7 @@ public class PaladinoServiceImpl implements PersonaggioService {
         System.out.println(paladino.getNomePersonaggio() + " protegge per un turno " + bersaglio.getNomePersonaggio());
         return true;
     }
-    
+
     /**
      * Metodo per utilizzare la magia sacra del paladino
      *
@@ -109,13 +106,13 @@ public class PaladinoServiceImpl implements PersonaggioService {
 
         // gestione morte / XP (semplice)
         if (mostro.getPuntiVitaMostro() <= 0) {
-        
-       paladino.setEsperienza(paladino.getEsperienza() + 20);
-        if(paladino.getEsperienza() >= 100){
-            paladino.setLivello(paladino.getLivello() + 1);
-            paladino.setEsperienza(0);
-            System.out.println(" Complimenti! " + paladino.getNomePersonaggio() + " è salito al livello " + paladino.getLivello());
-            } 
+
+            paladino.setEsperienza(paladino.getEsperienza() + 20);
+            if (paladino.getEsperienza() >= 100) {
+                paladino.setLivello(paladino.getLivello() + 1);
+                paladino.setEsperienza(0);
+                System.out.println(" Complimenti! " + paladino.getNomePersonaggio() + " è salito al livello " + paladino.getLivello());
+            }
             System.out.println(mostro.getNomeMostro() + " è stato sconfitto da " + paladino.getNomePersonaggio());
         }
 
@@ -168,4 +165,6 @@ public class PaladinoServiceImpl implements PersonaggioService {
         }
     }
 
+    public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
+    }
 }

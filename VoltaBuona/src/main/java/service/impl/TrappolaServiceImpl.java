@@ -7,29 +7,32 @@ import domain.Stanza;
 import domain.Trappola;
 import service.EventoService;
 
-
-
 /// DA VEDERE COME LA DOBBIAMO GESTIRE 
-public class TrappolaServiceImpl implements  EventoService {
+public class TrappolaServiceImpl implements EventoService {
 
-    public void subisciDannoDaTrappola(Trappola trappola, Personaggio personaggio) {
-        if (trappola != null) {
-            System.out.println("Hai trovato una trappola!");
+    @Override
+    public void attivaEvento(Personaggio personaggio, Evento e) {
+        if (e instanceof Trappola) {
+            Stanza stanza = ((Trappola) e).getPosizioneCorrenteTrappola();
+            if (e != null) {
+                System.out.println("Hai trovato una trappola!");
 
-            // Check di disinnesco
-            boolean disinnescata = trappola.checkDiDisinnesco(personaggio);
+                // Check di disinnesco
+                boolean disinnescata = ((Trappola) e).checkDiDisinnesco(personaggio);
 
-            if (!disinnescata) {
-                // Trappola si attiva
-                attiva(personaggio);
-            } else {
-                System.out.println("La trappola è stata disinnescata.");
+                if (!disinnescata) {
+                    // Trappola si attiva
+                    attiva(personaggio);
+                } else {
+                    System.out.println("La trappola è stata disinnescata.");
+
+                }
             }
+            rimuoviEventoDaStanza(stanza, e);
         }
     }
 
     public void attiva(Personaggio personaggio) {
-
         Effetto.TipoEffetto effetto = tiraDado();
 
         switch (effetto) {
@@ -72,6 +75,7 @@ public class TrappolaServiceImpl implements  EventoService {
                 break;
             }
         }
+
     }
 
     private Effetto.TipoEffetto tiraDado() {
@@ -93,25 +97,23 @@ public class TrappolaServiceImpl implements  EventoService {
         };
     }
 
-   
-    public boolean  esitoDisinnesco(Trappola trappola, Personaggio personaggio) {
+    public boolean esitoDisinnesco(Trappola trappola, Personaggio personaggio) {
         // logica per calcolare esito disinnesco
         return trappola.checkDiDisinnesco(personaggio);
-    }  
+    }
+
     @Override
-    public void rimuoviEventoDaStanza(Stanza stanza, Evento evento){
+    public void rimuoviEventoDaStanza(Stanza stanza, Evento evento) {
         stanza.getListaEventiAttivi().remove(evento);
-    };
+    }
+
+    ;
 
     @Override
-    public void attivaEvento(Personaggio personaggio, Evento e){
-
-    };
-
-    @Override   
-    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza){   
+    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza) {
         for (Evento e : stanza.getListaEventiAttivi()) {
             attivaEvento(personaggio, e);
+
         }
-    } 
+    }
 }

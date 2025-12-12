@@ -1,22 +1,17 @@
 package service.impl;
 
-
-import domain.Arma;
 import domain.Combattimento;
 import domain.Guerriero;
 import domain.Mostro;
-import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
 import service.PersonaggioService;
 
-public class GuerrieroServiceImpl implements  PersonaggioService {
-    
-
+public class GuerrieroServiceImpl implements PersonaggioService {
 
     /**
-     * Il guerriero protegge un compagno aumentandogli la difesa
-     * per un turno (o finché non gestisci la durata altrove).
+     * Il guerriero protegge un compagno aumentandogli la difesa per un turno (o
+     * finché non gestisci la durata altrove).
      */
     public boolean proteggiCompagno(Guerriero guerriero, Personaggio alleato) {
         if (guerriero == null || alleato == null) {
@@ -40,12 +35,6 @@ public class GuerrieroServiceImpl implements  PersonaggioService {
 
         return true;
     }
-    
-
-
-
-   
-
 
     @Override
     public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
@@ -79,7 +68,7 @@ public class GuerrieroServiceImpl implements  PersonaggioService {
 
     private int attaccoFisico(Guerriero guerriero, Mostro mostro) {
 
-        int attacco = guerriero.getAttacco()+5;
+        int attacco = guerriero.getAttacco() + 5;
         int livello = guerriero.getLivello();
         int difesaMostro = mostro.getDifesaMostro();
 
@@ -101,11 +90,11 @@ public class GuerrieroServiceImpl implements  PersonaggioService {
                 + " sferra un potente colpo contro " + mostro.getNomeMostro()
                 + " infliggendo " + dannoNetto + " danni!");
 
-          if (mostro.getPuntiVitaMostro() <= 0) {
+        if (mostro.getPuntiVitaMostro() <= 0) {
             System.out.println("💀 " + mostro.getNomeMostro() + " è stato sconfitto dal Guerriero!");
             try {
                 guerriero.setEsperienza(guerriero.getEsperienza() + 12);
-                if(guerriero.getEsperienza() >= 100) {
+                if (guerriero.getEsperienza() >= 100) {
                     guerriero.setLivello(guerriero.getLivello() + 1);
                     guerriero.setEsperienza(0);
                     System.out.println(" " + guerriero.getNomePersonaggio() + " è salito al livello " + guerriero.getLivello() + "!");
@@ -121,7 +110,8 @@ public class GuerrieroServiceImpl implements  PersonaggioService {
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
+    }
+
 }
-
-
-
