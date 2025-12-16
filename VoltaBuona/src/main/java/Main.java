@@ -83,6 +83,7 @@ int [] dimensioni = {4, 4}; // valori di esempio
                 System.out.print("Nome vuoto. Inserisci il nome del giocatore " + i + ": ");
                 nome = scanner.nextLine().trim();
             }
+
             int sceltaClasse = scegliClasse(scanner, nome);
             Personaggio p = creaPersonaggioDaScelta(sceltaClasse, nome);
             giocatori.add(p);
@@ -139,6 +140,12 @@ int [] dimensioni = {4, 4}; // valori di esempio
             public int attacca(Personaggio personaggio, domain.Mostro mostro, domain.Combattimento combattimento) {
                 return 0;
             }
+
+            @Override
+            public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException("Unimplemented method 'usaAbilitàSpeciale'");
+            }
         };
 
         TurnoService turnoService = new TurnoServiceImpl(new GiocoServiceImpl(), ps, new PassaggioSegretoServiceImpl());
@@ -194,19 +201,19 @@ int [] dimensioni = {4, 4}; // valori di esempio
         Personaggio p;
         switch (sceltaClasse) {
             case 1:
-                p = new Guerriero(sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, nome, null, sceltaClasse, sceltaClasse, nome, null);
+                p = new Guerriero(nome, null, sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, nome, null, false, sceltaClasse, sceltaClasse, nome, sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, null);
                 break;
             case 2:
-                p = new Mago(sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, nome, null, sceltaClasse, sceltaClasse, nome, null);
+                p = new Mago(nome, null, sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, nome, null, false, sceltaClasse, sceltaClasse, nome, sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, null);
                 break;
             case 3:
-                p = new Arciere(sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, nome, null, sceltaClasse, sceltaClasse, nome, null);
+                p = new Arciere(nome, null, sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, nome, null, false, sceltaClasse, sceltaClasse, nome, sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, null);
                 break;
             case 4:
-                p = new Paladino(sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, nome, null, sceltaClasse, sceltaClasse, nome, null);
+                p = new Paladino(nome, null, sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, nome, null, false, sceltaClasse, sceltaClasse, nome, sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, null);
                 break;
             default:
-                p = new Guerriero(sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, nome, null, sceltaClasse, sceltaClasse, nome, null);
+                p = new Guerriero(nome, null, sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, nome, null, false, sceltaClasse, sceltaClasse, nome, sceltaClasse, sceltaClasse, sceltaClasse, sceltaClasse, null);
         }
         return p;
     }

@@ -5,6 +5,8 @@ import domain.Mostro;
 import domain.Personaggio;
 import domain.Stanza;
 import service.PersonaIncontrataService;
+import service.impl.*;
+
 public class MostroServiceImpl implements  PersonaIncontrataService {
     /**
      * Calcolo del danno che il mostro 
@@ -71,14 +73,34 @@ public class MostroServiceImpl implements  PersonaIncontrataService {
     }
 
     @Override
-    public void attivaEvento(Personaggio personaggio, Evento e){
+    public boolean attivaEvento(Personaggio personaggio, Evento e){
+        if (personaggio == null || e == null) return false;
 
+        if (e instanceof Mostro mostro) {
+            Stanza stanza = mostro.getPosizioneCorrenteMostro() != null ? mostro.getPosizioneCorrenteMostro() : personaggio.getPosizioneCorrente();
+            System.out.println("Hai incontrato: " + mostro.getNomeMostro());
+
+            // Avvia il combattimento (usa il service di combattimento)
+            CombattimentoServiceImpl combattimento = new CombattimentoServiceImpl();
+            Object vincitore = combattimento.iniziaCombattimento(personaggio, mostro, stanza);
+
+            // Se il mostro è stato sconfitto, rimuovilo dalla stanza
+            if (vincitore instanceof Personaggio) {
+                System.out.println("Hai sconfitto " + mostro.getNomeMostro() + "!");
+                rimuoviEventoDaStanza(stanza, mostro);
+            }
+
+            // Il combattimento consuma il turno del giocatore
+            return true;
+        }
+        return false;
     }
 
     @Override   
     public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza){   
         for (Evento e : stanza.getListaEventiAttivi()) {
-            attivaEvento(personaggio, e);
+            boolean termina = attivaEvento(personaggio, e);
+            if (termina) return; // interrompe la catena di eventi e termina il turno
         }
     }
-}   
+}

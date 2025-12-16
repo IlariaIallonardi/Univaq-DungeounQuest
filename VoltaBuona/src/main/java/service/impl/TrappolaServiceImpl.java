@@ -7,11 +7,11 @@ import domain.Stanza;
 import domain.Trappola;
 import service.EventoService;
 
-/// DA VEDERE COME LA DOBBIAMO GESTIRE 
+
 public class TrappolaServiceImpl implements EventoService {
 
     @Override
-    public void attivaEvento(Personaggio personaggio, Evento e) {
+    public boolean attivaEvento(Personaggio personaggio, Evento e) {
         if (e instanceof Trappola) {
             Stanza stanza = ((Trappola) e).getPosizioneCorrenteTrappola();
             if (e != null) {
@@ -23,13 +23,17 @@ public class TrappolaServiceImpl implements EventoService {
                 if (!disinnescata) {
                     // Trappola si attiva
                     attiva(personaggio);
+                    rimuoviEventoDaStanza(stanza, e);
+                    // l'attivazione della trappola consuma il turno
+                    return true;
                 } else {
                     System.out.println("La trappola è stata disinnescata.");
-
+                    rimuoviEventoDaStanza(stanza, e);
+                    return false;
                 }
             }
-            rimuoviEventoDaStanza(stanza, e);
         }
+        return false;
     }
 
     public void attiva(Personaggio personaggio) {
@@ -74,6 +78,13 @@ public class TrappolaServiceImpl implements EventoService {
                 System.out.println(" Sei immobilizzato!-5 HP");
                 break;
             }
+
+            case SALTA_TURNO -> {
+                // Imposta il personaggio per saltare il prossimo turno
+                personaggio.aggiungiTurniDaSaltare(1);
+                System.out.println("Un effetto ti impedisce di agire al prossimo turno!");
+                break;
+            }
         }
 
     }
@@ -112,7 +123,8 @@ public class TrappolaServiceImpl implements EventoService {
     @Override
     public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza) {
         for (Evento e : stanza.getListaEventiAttivi()) {
-            attivaEvento(personaggio, e);
+            boolean termina = attivaEvento(personaggio, e);
+            if (termina) return;
 
         }
     }

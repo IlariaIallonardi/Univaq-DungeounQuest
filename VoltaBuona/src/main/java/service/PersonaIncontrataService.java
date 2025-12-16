@@ -9,7 +9,9 @@ public interface PersonaIncontrataService extends EventoService {
     
   public void rimuoviEventoDaStanza(Stanza stanza, Evento evento);
 
-    public void attivaEvento(Personaggio personaggio, Evento e);
+  
 
-    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza);
+  public boolean attivaEvento(Personaggio personaggio, Evento e);
+
+  public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza);
 }

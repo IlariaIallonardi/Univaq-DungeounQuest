@@ -20,6 +20,7 @@ public class Personaggio {
     private int turniAvvelenato;
     private int turniCongelato;
     private int turniStordito;
+    private int turniDaSaltare;
     private Arma armaEquippaggiata;
     // private Armatura armaturaEquippaggiata;
     private String abilitàSpeciale;
@@ -203,6 +204,33 @@ public class Personaggio {
         if (isProtetto()) {
             decrementaProtezione();
         }
+    }
+
+    /**
+     * Aggiunge N turni da saltare per questo personaggio.
+     */
+    public void aggiungiTurniDaSaltare(int n) {
+        if (n <= 0) return;
+        this.turniDaSaltare += n;
+    }
+
+    /**
+     * Restituisce quanti turni rimangono da saltare.
+     */
+    public int getTurniDaSaltare() {
+        return this.turniDaSaltare;
+    }
+
+    /**
+     * Consuma un turno di salto all'inizio del turno. Restituisce true se il
+     * turno deve essere saltato (prima del normale flusso di azione).
+     */
+    public boolean consumeSaltoTurno() {
+        if (this.turniDaSaltare > 0) {
+            this.turniDaSaltare--;
+            return true;
+        }
+        return false;
     }
 
     /**

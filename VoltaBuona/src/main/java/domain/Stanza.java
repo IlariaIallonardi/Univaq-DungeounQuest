@@ -136,11 +136,8 @@ public class Stanza {
 
     @Override
     public String toString() {
-        return "Stanza{id=" + id
-                + ", stato=" + statoS
-                //+ ", oggetti=" + inventario.size()
-                + ", eventi=" + listaEventi.size()
-                + ", chiave=" + (chiaveRichiesta != null) + "}";
+        Stanza stanza=this;
+        return stanza.getNomeStanza();
     }
 
     public void aggiungiPersonaggio(Personaggio p) {

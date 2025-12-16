@@ -7,6 +7,7 @@ import domain.NPC;
 import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
+import domain.Trappola;
 import domain.Zaino;
 import service.PersonaIncontrataService;
 
@@ -59,6 +60,7 @@ public class  NPCServiceImpl implements PersonaIncontrataService {
         System.out.println("L’NPC ti dona: " + dono.getNome());
 
         aggiungiOggettoAZaino(personaggio, dono);
+     
     }
     @Override
     public void rimuoviEventoDaStanza(Stanza stanza, Evento evento){
@@ -66,14 +68,23 @@ public class  NPCServiceImpl implements PersonaIncontrataService {
     };
 
     @Override
-    public void attivaEvento(Personaggio personaggio, Evento e){
-
+    public boolean attivaEvento(Personaggio personaggio, Evento e){
+        if (e instanceof NPC npc) {
+             Stanza stanza = ((NPC) e).getPosizioneCorrenteNPC();
+            System.out.println("Incontri un NPC: " + npc.getNomeNPC());
+            parla(personaggio, npc);
+            rimuoviEventoDaStanza(stanza, e);
+            // Interazione NPC consuma il turno
+            return true;
+        }
+        return false;
     };
 
     @Override   
     public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza){   
         for (Evento e : stanza.getListaEventiAttivi()) {
-            attivaEvento(personaggio, e);
+            boolean termina = attivaEvento(personaggio, e);
+            if (termina) return;
         }
     }
 

@@ -12,14 +12,16 @@ public class PassaggioSegretoServiceImpl implements EventoService {
     };
 
     @Override
-    public void attivaEvento(Personaggio personaggio, Evento e){
-
+    public boolean attivaEvento(Personaggio personaggio, Evento e){
+        // Default: i passaggi segreti non consumano il turno automaticamente
+        return false;
     };
 
     @Override   
     public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza){   
         for (Evento e : stanza.getListaEventiAttivi()) {
-            attivaEvento(personaggio, e);
+            boolean termina = attivaEvento(personaggio, e);
+            if (termina) return;
         }
     };
 }

@@ -8,6 +8,7 @@ public class Effetto {
         STORDIMENTO,
         AVVELENAMENTO,
         IMMOBILIZZATO,
+        SALTA_TURNO,
         NESSUN_EFFETTO
     }
 

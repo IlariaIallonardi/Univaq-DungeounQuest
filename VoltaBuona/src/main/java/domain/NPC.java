@@ -10,13 +10,15 @@ public class NPC extends PersonaIncontrata {
     private List<Oggetto> oggettiDaDonare;
     private boolean haInteragito = false;
     private String nomeNPC;
+    private Stanza posizioneCorrenteNPC;
 
-    public NPC(int id, String tipoPersonaIncontrata, String rebus, String rispostaCorretta, List<Oggetto> oggetti, String nomeNPC) {
+    public NPC(int id, String tipoPersonaIncontrata, String rebus, String rispostaCorretta, List<Oggetto> oggetti, String nomeNPC, Stanza posizioneCorrenteNPC) {
         super(id, false, false, rispostaCorretta, tipoPersonaIncontrata);   
         this.rebus = rebus;
         this.rispostaCorretta = rispostaCorretta;
         this.oggettiDaDonare = (oggetti != null) ? new ArrayList<>(oggetti) : new ArrayList<>();
         this.nomeNPC = nomeNPC;
+        this.posizioneCorrenteNPC = posizioneCorrenteNPC;
     }
 
 
@@ -82,6 +84,12 @@ public class NPC extends PersonaIncontrata {
 
     public void setNomeNPC(String nomeNPC) {
         this.nomeNPC = nomeNPC;
+    }
+    public Stanza getPosizioneCorrenteNPC() {
+        return posizioneCorrenteNPC;
+    }
+    public void setPosizioneCorrenteNPC(Stanza posizioneCorrenteNPC) {
+        this.posizioneCorrenteNPC = posizioneCorrenteNPC;
     }
 
     @Override

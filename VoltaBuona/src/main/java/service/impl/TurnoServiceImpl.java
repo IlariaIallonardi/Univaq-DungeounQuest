@@ -8,7 +8,6 @@ import java.util.Random;
 import java.util.Scanner;
 
 import domain.Evento;
-import domain.Mostro;
 import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
@@ -29,7 +28,6 @@ public class TurnoServiceImpl implements TurnoService {
     private EventoService eventoService;
     // stanzaCorrente, oggetti ed eventi devono essere recuperati dal Personaggio al momento del turno
     private List<Personaggio> ordineTurno = new ArrayList<>();
-    private CombattimentoService combattimentoService = new CombattimentoServiceImpl();
     private Random random = new Random();
 
     public TurnoServiceImpl(GiocoService giocoService,
@@ -102,6 +100,7 @@ public class TurnoServiceImpl implements TurnoService {
         }
 
         List<Personaggio> ordine = calcolaOrdineIniziativa(partecipanti);
+        //fino a qui è giusto 
 
         for (Personaggio p : ordine) {
             if (p == null) continue;
@@ -110,7 +109,7 @@ public class TurnoServiceImpl implements TurnoService {
                 continue;
             }
 
-            System.out.println("\n===== INIZIO TURNO DI " + p.getNomePersonaggio() + " =====");
+            System.out.println("\n INIZIO TURNO DI " + p.getNomePersonaggio() );
 
             Stanza stanza = p.getPosizioneCorrente();
             if (stanza == null) {
@@ -118,40 +117,41 @@ public class TurnoServiceImpl implements TurnoService {
                 continue;
             }
 
-            // Mostra eventi e oggetti presenti
-            List<Evento> eventi = stanza.getListaEventiAttivi();
-            List<Oggetto> oggetti = stanza.getOggettiPresenti();
+            // Inizio turno: gestioni generali del personaggio (es. consumo protezione)
+            p.onTurnStart();
 
-            if (eventi == null || eventi.isEmpty()) {
-                System.out.println("Nessun evento nella stanza.");
-            } else {
-                System.out.println("Eventi presenti nella stanza:");
-                mostraEventi(eventi);
+            // Se il personaggio deve saltare il turno, consumiamo il salto e passiamo oltre
+            if (p.consumeSaltoTurno()) {
+                System.out.println(p.getNomePersonaggio() + " salta questo turno.");
+                // applichiamo comunque eventuali effetti di fine turno
+                terminaTurnoCorrente(p);
+                continue;
             }
 
-            if (oggetti == null || oggetti.isEmpty()) {
-                System.out.println("Nessun oggetto nella stanza.");
-            } else {
-                System.out.println("Oggetti presenti nella stanza:");
-                mostraOggetti(oggetti);
-            }
-
-            System.out.println("\nCosa vuoi fare? Seguiranno le opzioni interattive.");
-
-            // Delega alla logica interattiva già presente
+            // 1) passo : chiedere al personaggio se vuole muoversi in un 'altra stanza
+            gestisciMovimento(p, scanner);
+            // 2) passo : esplorare la stanza (mostra eventi e oggetti)
+            esploraStanza(p);
+            // 3) passo : scegliere azione (fare evento, prendere oggetto, usare oggetto)
             scegliAzione(p, scanner);
-
-            System.out.println("===== FINE TURNO DI " + p.getNomePersonaggio() + " =====");
+            System.out.println("FINE TURNO DI " + p.getNomePersonaggio() );
+          
         }
     }
 
     public void terminaTurnoCorrente(Personaggio personaggio) {
+        if (personaggio == null) return;
 
-        for (Personaggio p : ordineTurno) {
-            if (!p.èMorto(p)) {
-                aggiornaEffettiFineTurno(personaggio);
-            }
+        if (personaggio.èMorto(personaggio)) {
+            System.out.println(personaggio.getNomePersonaggio() + " è morto. Nessun effetto da aggiornare.");
+            ordineTurno.remove(personaggio);
+            return;
         }
+
+        // Applica gli effetti di fine turno solo al personaggio passato
+        aggiornaEffettiFineTurno(personaggio);
+
+    
     }
 
     public void aggiornaEffettiFineTurno(Personaggio personaggio) {
@@ -202,16 +202,6 @@ public class TurnoServiceImpl implements TurnoService {
 
         Stanza stanzaCorrente = personaggio.getPosizioneCorrente();
         System.out.println("Ti trovi in: " + stanzaCorrente.getNomeStanza());
-
-        // 1 movimento opzionale
-        System.out.println("Vuoi muoverti? (s/n)");
-        String risposta = scanner.nextLine().trim().toLowerCase();
-
-        if (risposta.equals("s")) {
-            gestisciMovimento(personaggio, scanner);
-            stanzaCorrente = personaggio.getPosizioneCorrente();
-        }
-
         // 2 esplorazione: mostro eventi e oggetti
         List<Evento> eventi = stanzaCorrente.getListaEventiAttivi();
         List<Oggetto> oggetti = stanzaCorrente.getOggettiPresenti();
@@ -221,12 +211,12 @@ public class TurnoServiceImpl implements TurnoService {
 
         System.out.println("\n--- Esplorazione stanza ---");
 
-    /*     if (!ciSonoEventi && !ciSonoOggetti) {
+      /*  if (!ciSonoEventi && !ciSonoOggetti) {
             System.out.println("La stanza è vuota.");
             return;
-        } */
+        } 
 
-     /*    if (ciSonoEventi) {
+         if (ciSonoEventi) {
             System.out.println("\nEventi presenti:");
             for (int i = 0; i < eventi.size(); i++) {
                 System.out.println(" [" + (i + 1) + "] " + eventi.get(i).getDescrizione());
@@ -260,24 +250,22 @@ public class TurnoServiceImpl implements TurnoService {
 
         switch (scelta) {
             case 1:
-                if (ciSonoEventi) {
+                if (ciSonoEventi) 
                     mostraEventi(eventi);
-                }
-                eseguiEvento(personaggio, stanzaCorrente, eventi, scanner);
+                    eventoService.eseguiEventiInStanza(personaggio, stanzaCorrente);
+
                 break;
             case 2:
-                if (ciSonoOggetti) {
+                if (ciSonoOggetti) 
                     mostraOggetti(oggetti);
-                }
-                raccogliUnOggetto(personaggio, stanzaCorrente, oggetti, scanner);
+                    raccogliUnOggetto(personaggio, stanzaCorrente, oggetti, scanner);
                 break;
             case 3:
-                if (ciSonoEventi && ciSonoOggetti) {
+                if (ciSonoEventi && ciSonoOggetti) 
                     mostraEventi(eventi);
-                }
-                mostraOggetti(oggetti);
-                eseguiEvento(personaggio, stanzaCorrente, eventi, scanner);
-                raccogliUnOggetto(personaggio, stanzaCorrente, oggetti, scanner);
+                    mostraOggetti(oggetti);
+                    eventoService.eseguiEventiInStanza(personaggio, stanzaCorrente);
+                  raccogliUnOggetto(personaggio, stanzaCorrente, oggetti, scanner);
                 break;
             case 4:
                 gestisciUsoOggettoDaZaino(personaggio, scanner);
@@ -291,9 +279,9 @@ public class TurnoServiceImpl implements TurnoService {
                 break;
         }
 
-        terminaTurnoCorrente(personaggio); // da  implementare
+        terminaTurnoCorrente(personaggio); 
 
-        System.out.println("===== FINE TURNO DI " + personaggio.getNomePersonaggio() + " =====");
+        System.out.println("FINE TURNO DI " + personaggio.getNomePersonaggio() );
     }
 
     /// mostra gli eventi nella stanza 
@@ -337,7 +325,7 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     // 🔧 Metodo: esegue UN evento scelto
-    public void eseguiEvento(Personaggio personaggio, Stanza stanza, List<Evento> eventi, Scanner scanner) {
+ /*    public void eseguiEvento(Personaggio personaggio, Stanza stanza, List<Evento> eventi, Scanner scanner) {
 
         System.out.println("Scegli l'evento da eseguire:");
         int index = Integer.parseInt(scanner.nextLine()) - 1;
@@ -355,9 +343,10 @@ public class TurnoServiceImpl implements TurnoService {
         }
         eventoService.eseguiEventiInStanza(personaggio, stanza);
         eventi.remove(index);
-    }
+    } */
 
     //  Metodo: raccoglie UN oggetto scelto
+    @Override
     public void raccogliUnOggetto(Personaggio personaggio, Stanza stanza, List<Oggetto> oggetti, Scanner scanner) {
 
         System.out.println("Scegli l'oggetto da prendere:");
@@ -445,7 +434,12 @@ public class TurnoServiceImpl implements TurnoService {
         if (!stanza.getListaEventiAttivi().isEmpty()) {
             System.out.println(" Eventi attivi:");
             for (Evento e : stanza.getListaEventiAttivi()) {
-                eventoService.attivaEvento(personaggio, e);
+                boolean termina = eventoService.attivaEvento(personaggio, e);
+                if (termina) {
+                    // se l'evento ha consumato il turno (es. combattimento), terminiamo il turno
+                    terminaTurnoCorrente(personaggio);
+                    return;
+                }
             }
         } else {
             System.out.println(" La stanza è tranquilla...");
@@ -455,4 +449,5 @@ public class TurnoServiceImpl implements TurnoService {
         stanza.setStatoS(StatoStanza.VISITATA);
     }
 
+    
 }
