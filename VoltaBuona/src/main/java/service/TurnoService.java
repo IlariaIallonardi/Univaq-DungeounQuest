@@ -12,6 +12,7 @@ public interface TurnoService {
 
     //public Personaggio getTurnoCorrente(); -> da implementare in turnoserviceimpl
     //public void passaProssimoTurno(); -> da implementare in turnoserviceimpl
+    public void iniziaNuovoTurno(List<Personaggio> partecipanti,Scanner scanner);
     public List<Personaggio> calcolaOrdineIniziativa(List<Personaggio> partecipanti);
 
     public void terminaTurnoCorrente(Personaggio personaggio);
@@ -19,7 +20,7 @@ public interface TurnoService {
     //public void passaProssimoGiocatore(Personaggio personaggio); -> da implementare in turnoserviceimpl
     public void aggiornaEffettiFineTurno(Personaggio personaggio);
 
-    public void scegliAzione(Personaggio personaggio);
+    public void scegliAzione(Personaggio personaggio, java.util.Scanner scanner);
 
     public void gestisciMovimento(Personaggio personaggio, Scanner scanner);
 
