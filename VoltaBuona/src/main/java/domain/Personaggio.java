@@ -22,20 +22,26 @@ public class Personaggio {
     private int turniStordito;
     private Arma armaEquippaggiata;
     // private Armatura armaturaEquippaggiata;
+    private String abilitàSpeciale;
 
-    public Personaggio(int attacco, int difesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, int puntiMana, int puntiVita, String statoPersonaggio, Zaino zaino) {
-        this.attacco = attacco;
+    public Personaggio(String abilitàSpeciale, Arma armaEquippaggiata, int difesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, boolean protetto, int puntiMana, int puntiVita, String statoPersonaggio, int turniAvvelenato, int turniCongelato, int turniStordito, int turnoProtetto, Zaino zaino) {
+        this.abilitàSpeciale = abilitàSpeciale;
+        this.armaEquippaggiata = armaEquippaggiata;
         this.difesa = difesa;
         this.esperienza = esperienza;
         this.id = id;
         this.livello = livello;
         this.nomePersonaggio = nomePersonaggio;
         this.posizioneCorrente = posizioneCorrente;
+        this.protetto = protetto;
         this.puntiMana = puntiMana;
         this.puntiVita = puntiVita;
         this.statoPersonaggio = statoPersonaggio;
+        this.turniAvvelenato = turniAvvelenato;
+        this.turniCongelato = turniCongelato;
+        this.turniStordito = turniStordito;
+        this.turnoProtetto = turnoProtetto;
         this.zaino = zaino;
-
     }
 
     public int getId() {
@@ -219,7 +225,6 @@ public class Personaggio {
         return dannoEffettivo;
     }
 
-
     public Arma getArmaEquippaggiata() {
         return armaEquippaggiata;
     }
@@ -255,19 +260,19 @@ public class Personaggio {
             }
             if (!personaggio.puoEquipaggiare(((Arma) oggetto).getTipoArma())) {
                 return false; // Il personaggio non può equipaggiare questo tipo di arma
-            }else{
-            ((Arma) oggetto).eseguiEffetto(personaggio);
-            // decidere se rimuovere dall'inventario o mantenerla come equip
-            zaino.rimuoviOggettoDaZaino(oggetto);
-            zaino.setCapienza(zaino.getCapienza() + 1);
-            return true;
+            } else {
+                ((Arma) oggetto).eseguiEffetto(personaggio);
+                // decidere se rimuovere dall'inventario o mantenerla come equip
+                zaino.rimuoviOggettoDaZaino(oggetto);
+                zaino.setCapienza(zaino.getCapienza() + 1);
+                return true;
             }
         }
 
         // Armatura: indossa (metodo service indossaArmatura)
         if (oggetto instanceof Armatura) {
             ((Armatura) oggetto).eseguiEffetto(personaggio);
-             zaino.rimuoviOggettoDaZaino(oggetto);
+            zaino.rimuoviOggettoDaZaino(oggetto);
             zaino.setCapienza(zaino.getCapienza() + 1);
             return true;
         }
@@ -394,10 +399,18 @@ public class Personaggio {
     }
 
     public void scegliEquipaggiamento(Personaggio personaggio) {
-   Zaino zaino = personaggio.getZaino();
-   List<Oggetto> oggetti = zaino.getListaOggetti();
-   
+        Zaino zaino = personaggio.getZaino();
+        List<Oggetto> oggetti = zaino.getListaOggetti();
+
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String getAbilitàSpeciale() {
+        return abilitàSpeciale;
+    }
+
+    public void setAbilitàSpeciale(String abilitàSpeciale) {
+        this.abilitàSpeciale = abilitàSpeciale;
     }
 
 }

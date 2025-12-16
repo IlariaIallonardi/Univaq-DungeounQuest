@@ -1,60 +1,54 @@
 package service.impl;
 
-
-import domain.Arma;
 import domain.Combattimento;
-import domain.Guerriero;
 import domain.Mago;
 import domain.Mostro;
-import domain.Oggetto;
 import domain.Personaggio;
 import service.PersonaggioService;
 
-public class MagoServiceimpl implements  PersonaggioService {
-    
+public class MagoServiceimpl implements PersonaggioService {
+
     /**
      * Metodo per utilizzare la magia del mago
+     *
      * @param mago Il mago che usa la magia
      * @param bersaglio Il personaggio bersaglio della magia
      * @param tipoMagia Il tipo di magia da utilizzare
      * @return true se la magia è stata lanciata con successo
      */
-     /**
-     * Usa la magia unica del mago.
-     * Comportamento:
-     *  - la magia è unica (non ci sono tipi): consuma sia punti mana che "punti attacco"
-     *  - può colpire solo i mostri
+    /**
+     * Usa la magia unica del mago. Comportamento: - la magia è unica (non ci
+     * sono tipi): consuma sia punti mana che "punti attacco" - può colpire solo
+     * i mostri
      *
-     * 
+     *
      */
+    public final int COSTO_MANA = 10;
 
-public final int COSTO_MANA = 10;
     @Override
-    public int attacca(Personaggio personaggio,Mostro mostro,Combattimento combattimento) {
-        
+    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
+
         if (!(personaggio instanceof Mago)) {
-        return 1;
-    }
+            return 1;
+        }
 
-    Mago mago = (Mago) personaggio;
-    if (mago == null || mostro == null) return 0;
+        Mago mago = (Mago) personaggio;
+        if (mago == null || mostro == null) {
+            return 0;
+        }
         // costi fissi della magia (adatta i valori al bilanciamento)
-    
-    
-
 
         // verifica risorse del mago
-        if (mago.getPuntiMana() < COSTO_MANA){
+        if (mago.getPuntiMana() < COSTO_MANA) {
             System.out.println("Mana insufficiente per lanciare la magia.");
             return 0;
-        } 
+        }
 
         return lanciaIncantesimoBase(mago, mostro);
 
     }
-        
 
-       private int lanciaIncantesimoBase(Mago mago, Mostro mostro) {
+    private int lanciaIncantesimoBase(Mago mago, Mostro mostro) {
 
         // Semplice formula danno: attacco + livello * 3
         int potereMagico = mago.getAttacco();
@@ -83,7 +77,7 @@ public final int COSTO_MANA = 10;
             System.out.println("💀 " + mostro.getNomeMostro() + " è stato sconfitto dal Mago!");
             try {
                 mago.setEsperienza(mago.getEsperienza() + 10);
-                if(mago.getEsperienza() >= 100) {
+                if (mago.getEsperienza() >= 100) {
                     mago.setLivello(mago.getLivello() + 1);
                     mago.setEsperienza(0);
                     System.out.println(" " + mago.getNomePersonaggio() + " è salito al livello " + mago.getLivello() + "!");
@@ -96,17 +90,12 @@ public final int COSTO_MANA = 10;
         return dannoNetto;
     }
 
-
-   
-
+    public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
+    }
 
     @Override
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-
-   
 }
-       

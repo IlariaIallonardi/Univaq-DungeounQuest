@@ -9,30 +9,31 @@ import domain.Arciere;
 import domain.Combattimento;
 import domain.Evento;
 import domain.Mostro;
-import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
 import service.PersonaggioService;
 
-public class ArciereServiceImpl implements  PersonaggioService {
-
+public class ArciereServiceImpl implements PersonaggioService {
 
     /**
-     * Attacco a distanza: l'arciere può colpire solo stanze adiacenti;
-     * Se nella stanza bersaglio ci sono personaggi, attacca il primo valido incontrato.
+     * Attacco a distanza: l'arciere può colpire solo stanze adiacenti; Se nella
+     * stanza bersaglio ci sono personaggi, attacca il primo valido incontrato.
      *
-     * Nota: questo metodo assume che:
-     * - Arciere abbia getPosizioneCorrente()
-     * - Stanza esponga getStanzaAdiacente(): Map<String, Stanza>
+     * Nota: questo metodo assume che: - Arciere abbia getPosizioneCorrente() -
+     * Stanza esponga getStanzaAdiacente(): Map<String, Stanza>
      * - Stanza esponga getPersonaggi(): List<Personaggio>
      *
      * Adatta i nomi dei metodi se nella tua implementazione differiscono.
      */
     public boolean colpireStanza(Arciere arciere, Stanza stanzaBersaglio) {
-        if (arciere == null || stanzaBersaglio == null) return false;
+        if (arciere == null || stanzaBersaglio == null) {
+            return false;
+        }
 
         Stanza posizione = arciere.getPosizioneCorrente();
-        if (posizione == null) return false;
+        if (posizione == null) {
+            return false;
+        }
 
         // verifica che la stanza bersaglio sia adiacente alla posizione dell'arciere
         Map<String, Stanza> adiacenti = posizione.getStanzaAdiacente();
@@ -55,11 +56,17 @@ public class ArciereServiceImpl implements  PersonaggioService {
         List<Evento> mostri = stanzaBersaglio.getListaEventiAttivi();
         if (mostri != null && !mostri.isEmpty()) {
             for (Evento target : mostri) {
-                if (target == null) continue;
+                if (target == null) {
+                    continue;
+                }
                 // colpisci solo mostri, non i compagni
-                if (!(target instanceof Mostro)) continue;
+                if (!(target instanceof Mostro)) {
+                    continue;
+                }
                 Mostro m = (Mostro) target;
-                if (m.getPuntiVitaMostro() <= 0) continue;
+                if (m.getPuntiVitaMostro() <= 0) {
+                    continue;
+                }
                 // usare l'overload che accetta Mostro se presente
                 attacca(arciere, m, null);
                 System.out.println("Arciere " + arciere.getNomePersonaggio() + " ha colpito il mostro " + m.getTipoPersonaIncontrata() + " in stanza adiacente.");
@@ -73,103 +80,107 @@ public class ArciereServiceImpl implements  PersonaggioService {
         System.out.println("Arciere " + arciere.getNomePersonaggio() + " spara in una stanza adiacente vuota.");
         return true;
     }
-  @Override
-     public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
 
-    if (!(personaggio instanceof Arciere arciere)) {
-        System.out.println(" Solo un arciere può usare attacco a distanza!");
-        return 0;
-    }
-    if (mostro == null) return 0;
+    @Override
+    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
 
-    Stanza stanzaAttuale = arciere.getPosizioneCorrente();
-    Stanza stanzaMostro = mostro.getPosizioneCorrenteMostro();
+        if (!(personaggio instanceof Arciere arciere)) {
+            System.out.println(" Solo un arciere può usare attacco a distanza!");
+            return 0;
+        }
+        if (mostro == null) {
+            return 0;
+        }
 
-    if (stanzaAttuale == null || stanzaMostro == null) return 0;
+        Stanza stanzaAttuale = arciere.getPosizioneCorrente();
+        Stanza stanzaMostro = mostro.getPosizioneCorrenteMostro();
 
-    // Caso semplice → mostro nella stessa stanza
-    if (stanzaAttuale.equals(stanzaMostro)) {
+        if (stanzaAttuale == null || stanzaMostro == null) {
+            return 0;
+        }
+
+        // Caso semplice → mostro nella stessa stanza
+        if (stanzaAttuale.equals(stanzaMostro)) {
+            return infliggiDanno(arciere, mostro);
+        }
+
+        // 🔍 Cerco tutte le stanze adiacenti che contengono il mostro
+        Map<String, Stanza> adiacenti = stanzaAttuale.getStanzaAdiacente();
+        List<Stanza> stanzeConMostro = new ArrayList<>();
+
+        if (adiacenti != null) {
+            for (Stanza s : adiacenti.values()) {
+                if (s.getListaEventiAttivi() != null && s.getListaEventiAttivi().contains(mostro)) {
+                    stanzeConMostro.add(s);
+                }
+            }
+        }
+
+        //  Mostro non raggiungibile
+        if (stanzeConMostro.isEmpty()) {
+            System.out.println("Il mostro è troppo lontano per essere colpito!");
+            return 0;
+        }
+
+        // 🎯 Se c’è solo una stanza → attacco automatico
+        Stanza sceltaStanza = stanzeConMostro.get(0);
+
+        // 🗳 Se più stanze → scelta giocatore
+        if (stanzeConMostro.size() > 1) {
+            Scanner scan = new Scanner(System.in);
+            System.out.println(" Il mostro è in più stanze adiacenti! Scegli quale colpire:");
+
+            for (int i = 0; i < stanzeConMostro.size(); i++) {
+                System.out.println((i + 1) + ") " + stanzeConMostro.get(i).getNomeStanza());
+            }
+
+            int scelta = scan.nextInt() - 1;
+            if (scelta < 0 || scelta >= stanzeConMostro.size()) {
+                System.out.println(" Scelta non valida, attacco annullato!");
+                return 0;
+            }
+            sceltaStanza = stanzeConMostro.get(scelta);
+        }
+
+        System.out.println("🏹 Attacco a distanza verso " + sceltaStanza.getNomeStanza());
         return infliggiDanno(arciere, mostro);
     }
 
-    // 🔍 Cerco tutte le stanze adiacenti che contengono il mostro
-    Map<String, Stanza> adiacenti = stanzaAttuale.getStanzaAdiacente();
-    List<Stanza> stanzeConMostro = new ArrayList<>();
+    private int infliggiDanno(Arciere arciere, Mostro mostro) {
+        int attacco = arciere.getAttacco();
+        int livello = arciere.getLivello();
+        int difesaMostro = mostro.getDifesaMostro();
 
-    if (adiacenti != null) {
-        for (Stanza s : adiacenti.values()) {
-            if (s.getListaEventiAttivi() != null && s.getListaEventiAttivi().contains(mostro)) {
-                stanzeConMostro.add(s);
+        int dannoBase = attacco + livello * 2;
+        int dannoNetto = Math.max(0, dannoBase - difesaMostro);
+
+        mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
+
+        System.out.println(" " + arciere.getNomePersonaggio()
+                + " infligge " + dannoNetto
+                + " danni a " + mostro.getTipoPersonaIncontrata());
+
+        if (mostro.getPuntiVitaMostro() <= 0) {
+            arciere.setEsperienza(arciere.getEsperienza() + 20);
+            if (arciere.getEsperienza() >= 100) {
+                arciere.setLivello(arciere.getLivello() + 1);
+                arciere.setEsperienza(0);
+                System.out.println(" Complimenti! " + arciere.getNomePersonaggio() + " è salito al livello " + arciere.getLivello());
             }
+            System.out.println(" Mostro sconfitto!");
         }
+        return dannoNetto;
     }
 
-    //  Mostro non raggiungibile
-    if (stanzeConMostro.isEmpty()) {
-        System.out.println("Il mostro è troppo lontano per essere colpito!");
-        return 0;
-    }
-
-    // 🎯 Se c’è solo una stanza → attacco automatico
-    Stanza sceltaStanza = stanzeConMostro.get(0);
-
-    // 🗳 Se più stanze → scelta giocatore
-    if (stanzeConMostro.size() > 1) {
-        Scanner scan = new Scanner(System.in);
-        System.out.println(" Il mostro è in più stanze adiacenti! Scegli quale colpire:");
-
-        for (int i = 0; i < stanzeConMostro.size(); i++) {
-            System.out.println((i + 1) + ") " + stanzeConMostro.get(i).getNomeStanza());
-        }
-
-        int scelta = scan.nextInt() - 1;
-        if (scelta < 0 || scelta >= stanzeConMostro.size()) {
-            System.out.println(" Scelta non valida, attacco annullato!");
-            return 0;
-        }
-        sceltaStanza = stanzeConMostro.get(scelta);
-    }
-
-    System.out.println("🏹 Attacco a distanza verso " + sceltaStanza.getNomeStanza());
-    return infliggiDanno(arciere, mostro);
-   }
-
-
-
-   private int infliggiDanno(Arciere arciere, Mostro mostro) {
-    int attacco = arciere.getAttacco();
-    int livello = arciere.getLivello();
-    int difesaMostro = mostro.getDifesaMostro();
-
-    int dannoBase = attacco + livello * 2;
-    int dannoNetto = Math.max(0, dannoBase - difesaMostro);
-
-    mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
-
-    System.out.println(" " + arciere.getNomePersonaggio() +
-            " infligge " + dannoNetto +
-            " danni a " + mostro.getTipoPersonaIncontrata());
-
-    if (mostro.getPuntiVitaMostro() <= 0) {
-        arciere.setEsperienza(arciere.getEsperienza() + 20);
-        if(arciere.getEsperienza() >= 100){
-            arciere.setLivello(arciere.getLivello() + 1);
-            arciere.setEsperienza(0);
-            System.out.println(" Complimenti! " + arciere.getNomePersonaggio() + " è salito al livello " + arciere.getLivello());
-        }
-        System.out.println(" Mostro sconfitto!");
-    }
-    return dannoNetto;
-   }
     @Override
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    
+    public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
+    }
 
-
-/* 
+    /* 
     public static void main(String[] args) {
 
         // === Service necessari ===
@@ -247,6 +258,3 @@ public class ArciereServiceImpl implements  PersonaggioService {
         System.out.println("\nTest completato!");
     } */
 }
-
-    
-  

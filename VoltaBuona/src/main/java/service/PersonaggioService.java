@@ -1,19 +1,17 @@
 package service;
 
-
 import domain.Combattimento;
 import domain.Mostro;
 import domain.Personaggio;
 
-public interface  PersonaggioService {
+public interface PersonaggioService {
 
+    Personaggio creaPersonaggio(String nome, Personaggio personaggio);
 
-     Personaggio creaPersonaggio(String nome, Personaggio personaggio);
     int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento);
 
-
-
-/*
+    public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale);
+    /*
 
     // ...existing code...
     /**
@@ -39,5 +37,4 @@ public interface  PersonaggioService {
 
     } */
 
-   
 }
