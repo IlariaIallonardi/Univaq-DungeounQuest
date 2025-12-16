@@ -25,7 +25,7 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        // FACTORY
+        // FACTORY1
         StanzaFactory stanzaFactory = new StanzaFactory();
         DungeonFactory dungeonFactory = new DungeonFactory(stanzaFactory);
 

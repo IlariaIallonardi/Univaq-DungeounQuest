@@ -12,7 +12,6 @@ import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
 import domain.Zaino;
-import service.CombattimentoService;
 import service.Direzione;
 import service.EventoService;
 import service.GiocoService;
@@ -155,7 +154,10 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     public void aggiornaEffettiFineTurno(Personaggio personaggio) {
-
+        if(personaggio.getStatoPersonaggio().equals("NESSUN_EFFETTO")) {
+            System.out.println(personaggio.getNomePersonaggio() + " non ha effetti attivi.");
+            return;
+        }
         if (personaggio.getTurniAvvelenato() > 0) {
             int dannoVeleno = 3; // puoi cambiare
             personaggio.subisciDanno(dannoVeleno);
@@ -289,7 +291,7 @@ public class TurnoServiceImpl implements TurnoService {
         System.out.println("\nEventi disponibili:");
         for (int i = 0; i < eventi.size(); i++) {
             Evento e = eventi.get(i);
-            System.out.println((i + 1) + ") " + e.getDescrizione());
+            System.out.println((i + 1) + ") " + e.getNomeEvento());
         }
     }
     // mostra gli oggetti nella stanza 

@@ -22,7 +22,7 @@ public class TrappolaServiceImpl implements EventoService {
 
                 if (!disinnescata) {
                     // Trappola si attiva
-                    attiva(personaggio);
+                    scattaTrappola(personaggio);
                     rimuoviEventoDaStanza(stanza, e);
                     // l'attivazione della trappola consuma il turno
                     return true;
@@ -36,7 +36,7 @@ public class TrappolaServiceImpl implements EventoService {
         return false;
     }
 
-    public void attiva(Personaggio personaggio) {
+    public void scattaTrappola(Personaggio personaggio) {
         Effetto.TipoEffetto effetto = tiraDado();
 
         switch (effetto) {

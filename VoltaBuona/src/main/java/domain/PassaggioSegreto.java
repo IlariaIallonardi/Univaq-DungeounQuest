@@ -6,7 +6,7 @@ public class PassaggioSegreto extends Evento {
     private boolean scoperto;
 
     public PassaggioSegreto(Stanza destinazione, boolean rebusApertura, boolean scoperto, int id, boolean inizioEvento, boolean fineEvento) {
-        super(id, inizioEvento, fineEvento, "PassaggioSegreto");
+        super(id, inizioEvento, fineEvento, "Passaggio Segreto", "PassaggioSegreto");
         this.destinazione = destinazione;
         this.rebusApertura = rebusApertura;
         this.scoperto = scoperto;

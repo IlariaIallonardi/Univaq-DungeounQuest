@@ -72,7 +72,7 @@ public class StanzaFactory {
             "Una luce magica illumina la stanza."
         };
         for (int i = 0; i < n; i++) {
-            eventi.add(new Evento(rnd.nextInt(1000), false, false, descrizioni[rnd.nextInt(descrizioni.length)]));
+            eventi.add(new Evento(i, true, false, descrizioni[rnd.nextInt(descrizioni.length)], "EventoCasuale"));
         }
         return eventi;
     }
