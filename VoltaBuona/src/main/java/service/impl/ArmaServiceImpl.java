@@ -39,14 +39,14 @@ public Oggetto creaOggettoCasuale() {
     int id = ID_COUNTER.getAndIncrement();
     var rnd = java.util.concurrent.ThreadLocalRandom.current();
     Arma.TipoArma tipo = Arma.TipoArma.values()[rnd.nextInt(Arma.TipoArma.values().length)];
-    int danno = tipo.getDannoBonus() + rnd.nextInt(1, 6); // base + random
-    String nome = tipo.name() + " " + id;
+    int danno = tipo.getDannoBonus() ; 
+    String nome = tipo.name() ;
     String descrizione = switch (tipo) {
         case FRECCIA_E_ARCO -> "Arma con freccia e arco";
         case BACCHETTA_MAGICA -> "Bacchetta_magica potente";
         case SPADA -> "Spada affilata";
         case BALESTRA_PESANTE -> "Balestra pesante";
     };
-    return new Arma(danno, id, nome, descrizione, false, true, false, tipo);
+    return new Arma(danno, id, nome, descrizione, true, true, false, tipo);
 }
 }

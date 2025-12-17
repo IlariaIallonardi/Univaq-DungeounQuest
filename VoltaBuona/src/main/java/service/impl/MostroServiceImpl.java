@@ -1,13 +1,15 @@
 package service.impl;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import domain.Evento;
 import domain.Mostro;
 import domain.Personaggio;
 import domain.Stanza;
 import service.PersonaIncontrataService;
-import service.impl.*;
 
 public class MostroServiceImpl implements  PersonaIncontrataService {
+      private static final AtomicInteger ID_COUNTER = new AtomicInteger(1);
     /**
      * Calcolo del danno che il mostro 
      * infligge al personaggio.
@@ -102,5 +104,30 @@ public class MostroServiceImpl implements  PersonaIncontrataService {
             boolean termina = attivaEvento(personaggio, e);
             if (termina) return; // interrompe la catena di eventi e termina il turno
         }
+    }
+
+    @Override
+    public Evento aggiungiEventoCasuale() {
+        int id = ID_COUNTER.getAndIncrement();
+        var rnd = java.util.concurrent.ThreadLocalRandom.current();
+
+        String[] nomi = {"Spiritello", "Drago", "Golem", "Ragno Gigante", "Troll"};
+        String nomeMostro = nomi[rnd.nextInt(nomi.length)];
+        
+        // Mostro.TipoAttaccoMostro tipoAttaccoMostro = Mostro.TipoAttaccoMostro.values()[rnd.nextInt(Mostro.TipoAttaccoMostro.values().length)];
+     //   int valoreBonus = tipoAttaccoMostro.getDannoTipoMostro();
+        String descrizione = switch (nomeMostro) {
+        case "Spiritello" -> "un pericoloso " + nomeMostro + " ti attacca con morso";
+        case "Drago" -> "un pericoloso " + nomeMostro + " ti attacca con ruggito di fuoco";
+        case "Golem" -> "un pericoloso " + nomeMostro + " ti attacca con urlo assordante";
+        case "Ragno Gigante" -> "un pericoloso " + nomeMostro + " ti attacca con ragnatela immobilizzante";
+        case "Troll" -> "un pericoloso " + nomeMostro + " ti attacca con artigli possenti";
+        default -> "un pericoloso mostro ti attacca";
+        };
+       
+        Mostro mostro = new Mostro(id,false,false,descrizione,"mostro",0,0,nomeMostro,null,null,0);
+        int dannoMostro = rnd.nextInt(5, 21); // 5..20
+        mostro.settareVitaeDifesaMostro();
+        return mostro;
     }
 }

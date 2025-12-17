@@ -2,12 +2,13 @@ package domain;
 
 public class Mostro extends PersonaIncontrata {
 
-    private int puntiVitaMostro = 100;
-    private int difesaMostro = 100;
+    private int puntiVitaMostro ;
+    private int difesaMostro ;
     private int dannoMostro;
     private String nomeMostro;
     private TipoAttaccoMostro tipoAttaccoMostro;
     private Stanza posizioneCorrenteMostro;
+    private int dannoTipoMostro;
 
     public Stanza getPosizioneCorrenteMostro() {
         return posizioneCorrenteMostro;
@@ -17,21 +18,34 @@ public class Mostro extends PersonaIncontrata {
         this.posizioneCorrenteMostro = posizioneCorrenteMostro;
     }
 
-    public enum TipoAttaccoMostro {
-        MORSO,
-        RUGGITO_DI_FUOCO,
-        URLO_ASSORDANTE,
-        RAGNATELA_IMMOBILIZZANTE,
-        ARTIGLI_POSSENTI
-    }
-
-    public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, String tipoPersonaIncontrata, int puntiVitaMostro, int difesaMostro, String nomeMostro, TipoAttaccoMostro tipoAttaccoMostro, Stanza posizioneCorrenteMostro) {
+   
+    public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, String tipoPersonaIncontrata, int puntiVitaMostro, int difesaMostro, String nomeMostro, TipoAttaccoMostro tipoAttaccoMostro, Stanza posizioneCorrenteMostro,int dannoTipoMostro) {
         super(id, inizioEvento, fineEvento, descrizione, tipoPersonaIncontrata);
         this.puntiVitaMostro = puntiVitaMostro;
         this.difesaMostro = difesaMostro;
         this.nomeMostro = nomeMostro;
         this.tipoAttaccoMostro = tipoAttaccoMostro;
         this.posizioneCorrenteMostro = posizioneCorrenteMostro;
+        this.dannoTipoMostro = dannoTipoMostro;
+    }
+     public enum TipoAttaccoMostro {
+        MORSO(15),
+        RUGGITO_DI_FUOCO(20),
+        URLO_ASSORDANTE(10),
+        RAGNATELA_IMMOBILIZZANTE(12),
+        ARTIGLI_POSSENTI(18);
+
+         private final int dannoTipoMostro;
+        private TipoAttaccoMostro tipoAttaccoMostro;
+
+        TipoAttaccoMostro(int dannoTipoMostro) {
+            this.dannoTipoMostro = dannoTipoMostro;
+        }
+
+        public int getDannoTipoMostro() {
+            return dannoTipoMostro;
+        }
+
     }
 
     public int getPuntiVitaMostro() {
@@ -144,6 +158,49 @@ public class Mostro extends PersonaIncontrata {
         return super.attivo();
     }
 
+
+    public int settareVitaeDifesaMostro() {
+    if (this.nomeMostro == null) return 0;
+    switch (this.nomeMostro) {
+        case "Spiritello" -> {
+            this.puntiVitaMostro = 60;
+            this.difesaMostro = 5;
+            this.tipoAttaccoMostro = TipoAttaccoMostro.MORSO;
+            return 1;
+        }
+        case "Drago" -> {
+            this.puntiVitaMostro = 200;
+            this.difesaMostro = 30;
+            this.tipoAttaccoMostro = TipoAttaccoMostro.RUGGITO_DI_FUOCO;
+            return 1;
+        }
+        case "Golem" -> {
+            this.puntiVitaMostro = 180;
+            this.difesaMostro = 40;
+            this.tipoAttaccoMostro = TipoAttaccoMostro.URLO_ASSORDANTE;
+            return 1;
+        }
+        case "Ragno Gigante" -> {
+            this.puntiVitaMostro = 90;
+            this.difesaMostro = 10;
+            this.tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA_IMMOBILIZZANTE;
+            return 1;
+        }
+        case "Troll" -> {
+            this.puntiVitaMostro = 150;
+            this.difesaMostro = 20;
+            this.tipoAttaccoMostro = TipoAttaccoMostro.ARTIGLI_POSSENTI;
+            return 1;
+        }
+        default -> {
+            this.dannoTipoMostro = (this.tipoAttaccoMostro != null) ? this.tipoAttaccoMostro.getDannoTipoMostro() : this.dannoTipoMostro;
+            return 0;
+            // mantiene i valori passati nel costruttore
+        }
+    }
+   
+}
+
     public void attaccoDelMostro(Personaggio personaggio) {
         Mostro mostro = this;
 
@@ -161,6 +218,10 @@ public class Mostro extends PersonaIncontrata {
             tipoAttaccoMostro = null;
         }
     }
+
+
+
+
 
     @Override
     public String toString() {

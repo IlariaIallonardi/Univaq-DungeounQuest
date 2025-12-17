@@ -5,14 +5,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import domain.Arma;
-import domain.Armatura;
 import domain.Chiave;
 import domain.Evento;
 import domain.Oggetto;
-import domain.Pozione;
 import domain.Stanza;
-import domain.Tesoro;
+import service.impl.ArmaServiceImpl;
+import service.impl.ArmaturaServiceImpl;
+import service.impl.PozioneServiceImpl;
+import service.impl.*;
 
 
 public class StanzaFactory {
@@ -47,20 +47,19 @@ public class StanzaFactory {
             int tipo = rnd.nextInt(4); // 0..3
             switch (tipo) {
                 case 0:
-                    
-                    oggetti.add(creaPozioneCasuale());
+                    oggetti.add(new PozioneServiceImpl().creaOggettoCasuale());
                     break;
                 case 1:
-                    oggetti.add(creaArmaCasuale());
+                    oggetti.add(new ArmaServiceImpl().creaOggettoCasuale());
                     break;
                 case 2:
-                    oggetti.add(creaArmaturaCasuale());
+                    oggetti.add(new ArmaturaServiceImpl().creaOggettoCasuale());
                     break;
                 case 3:
-                    oggetti.add(creaTesoroCasuale());
+                    oggetti.add(new TesoroServiceImpl().creaOggettoCasuale());
                     break;
                 default:
-                    oggetti.add(creaPozioneCasuale());
+                    oggetti.add(new PozioneServiceImpl().creaOggettoCasuale());
                     break;
             }
         }
@@ -68,14 +67,28 @@ public class StanzaFactory {
     }
 
    private List<Evento> generaEventiCasuali() {
-    List<Evento> eventi = new ArrayList<>();
-
-    int n = rnd.nextInt(3); // 0..2 eventi
-    String descrizione = evento.getDescrizione(); // descrizione unica per tutti gli eventi
-    for (int i = 0; i < n; i++) {
-        int eventoId = EVENTO_ID_COUNTER.getAndIncrement();
-        eventi.add(new Evento(eventoId, true, false, descrizione, "EventoCasuale"));
-    }
+   List<Evento> eventi = new ArrayList<>();
+        int n = rnd.nextInt(3); // 0..2 eventi
+        for (int i = 0; i < n; i++) {
+            int tipo = rnd.nextInt(4); // 0..3
+            //switch per tipi di evento da implementare
+             switch (tipo) {
+                case 0:
+                    eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
+                    break;
+                case 1:
+                    eventi.add(new ArmaServiceImpl().creaOggettoCasuale());
+                    break;
+                case 2:
+                    eventi.add(new ArmaturaServiceImpl().creaOggettoCasuale());
+                    break;
+                case 3:
+                    eventi.add(new TesoroServiceImpl().creaOggettoCasuale());
+                    break;
+                default:
+                    eventi.add(new PozioneServiceImpl().creaOggettoCasuale());
+                    break;
+        }}
     return eventi;
 }
 
@@ -97,34 +110,5 @@ public class StanzaFactory {
         return new Chiave(keyId, nomeChiave, descrizione, true, true, false, nomeChiave);
     }
 
-   private Pozione creaPozioneCasuale() {
-    int id = OBJ_ID_COUNTER.getAndIncrement();
-    String nome = "Pozione " + id;
-    String descrizione = "Una pozione magica.";
-    return new Pozione(false, null, potenza, id, nome, descrizione, false, false, false);
-}
-
-    private Arma creaArmaCasuale() {
-        int id = OBJ_ID_COUNTER.getAndIncrement();
-        String nome = "Spada " + id;
-        String descrizione = "Una spada affilata.";
-        int danno = rnd.nextInt(30) + 5;
-        return new Arma(danno, id, nome, descrizione, false, false, false, null);
-    }
-
-    private Armatura creaArmaturaCasuale() {
-        int id = OBJ_ID_COUNTER.getAndIncrement();
-        String nome = "Armatura " + id;
-        String descrizione = "Un'armatura resistente.";
-        int difesa = rnd.nextInt(20) + 5;
-        return new Armatura(difesa, 0, Armatura.TipoArmatura.DEBOLE, id, "armatura", "armatura", false, false, false);
-    }
-
-    private Tesoro creaTesoroCasuale() {
-        int id = OBJ_ID_COUNTER.getAndIncrement();
-        String nome = "Tesoro " + id;
-        String descrizione = "Un tesoro prezioso.";
-        int valore = rnd.nextInt(100) + 50;
-        return new Tesoro(valore, id, nome, descrizione, false, false, false);
-    }
+  
 }

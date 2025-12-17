@@ -39,15 +39,15 @@ public Oggetto creaOggettoCasuale() {
     int id = ID_COUNTER.getAndIncrement();
     var rnd = java.util.concurrent.ThreadLocalRandom.current();
     Armatura.TipoArmatura tipo = Armatura.TipoArmatura.values()[rnd.nextInt(Armatura.TipoArmatura.values().length)];
-    int difesa = tipo.getDifesaBonus() + rnd.nextInt(0, 4);
-    int durabilita = rnd.nextInt(20, 101);
-    String nome = "Armatura " + tipo.name() + " " + id;
+    int difesa = tipo.getDifesaBonus();
+  
+    String nome = "Armatura " + tipo.name() ;
     String descrizione = switch (tipo) {
         case DEBOLE -> "Armatura debole";
         case MEDIA -> "Armatura media";
         case FORTE -> "Armatura forte";
         
     };
-    return new Armatura(difesa, durabilita, tipo, id, nome, descrizione, false, true, false);
+    return new Armatura(difesa,tipo, id, nome, descrizione,true , true, false);
 }
 }

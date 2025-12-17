@@ -1,57 +1,46 @@
 package domain;
 
+
 public class Pozione extends Oggetto {
 
-    public enum Tipo {
-        CURA, MANA, ANTIDOTO
+
+    private int valoreBonus;
+    private TipoPozione tipoPozione;
+
+ public Pozione(TipoPozione tipoPozione, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato,int valoreBonus) {
+                super(id, nome, descrizione, usabile, equipaggiabile, trovato);
+            
+                this.tipoPozione = tipoPozione;
+                this.valoreBonus = valoreBonus;
+            
+            }
+
+    
+    public enum TipoPozione {
+        CURA(25),
+        MANA(30),
+        ANTIDOTO(20);
+
+          private final int valoreBonus;
+        private TipoPozione tipoPozione;
+
+        TipoPozione(int valoreBonus) {
+            this.valoreBonus = valoreBonus;
+        }
+
+        public int getValoreBonus() {
+            return valoreBonus;
+        }
+
     }
 
-    private boolean durata;
-    private Tipo tipo;
-    private int valorePozione;
 
-    public boolean isDurata() {
-        return durata;
-    }
 
-    public void setDurata(boolean durata) {
-        this.durata = durata;
-    }
+   
 
-    public Tipo getTipo() {
-        return tipo;
-    }
+            
 
-    public void setTipo(Tipo tipo) {
-        this.tipo = tipo;
-    }
-
-    public int getValorePozione() {
-        return valorePozione;
-    }
-
-    public void setValorePozione(int valorePozione) {
-        this.valorePozione = valorePozione;
-    }
-
-    public Pozione(boolean durata, Tipo tipo, int valorePozione, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
-        super(id, nome, descrizione, usabile, equipaggiabile, trovato);
-        this.durata = durata;
-        this.tipo = tipo;
-        this.valorePozione = valorePozione;
-    }
-
-    public int aumentoPuntiVita() {
-        return tipo == Tipo.CURA ? valorePozione : 0;
-    }
-
-    public int aumentoMana() {
-        return tipo == Tipo.MANA ? valorePozione : 0;
-    }
-
-    public int antidotoVeleno() {
-        return tipo == Tipo.ANTIDOTO ? valorePozione : 0;
-    }
+   
 
     @Override
     public boolean eseguiEffetto(Personaggio personaggio) {
@@ -59,14 +48,15 @@ public class Pozione extends Oggetto {
             return false;
         }
 
-        switch (tipo) {
+        switch (tipoPozione) {
             case CURA:
-                personaggio.setPuntiVita(personaggio.getPuntiVita() + valorePozione);
+                personaggio.setPuntiVita(personaggio.getPuntiVita() + tipoPozione.getValoreBonus());
                 break;
             case MANA:
-                personaggio.setPuntiMana(personaggio.getPuntiMana() + valorePozione);
+                personaggio.setPuntiMana(personaggio.getPuntiMana() + tipoPozione.getValoreBonus());
                 break;
             case ANTIDOTO:
+                personaggio.setPuntiVita(personaggio.getPuntiVita() + tipoPozione.getValoreBonus());
                 personaggio.setStatoPersonaggio("NORMALE");
                 // azzera eventuali contatori (se usi turni)
                 personaggio.setTurniAvvelenato(0);

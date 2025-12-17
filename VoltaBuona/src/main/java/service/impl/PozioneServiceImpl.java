@@ -37,15 +37,15 @@ public class PozioneServiceImpl implements  OggettoService {
 public Oggetto creaOggettoCasuale() {
     int id = ID_COUNTER.getAndIncrement();
     var rnd = java.util.concurrent.ThreadLocalRandom.current();
-    Pozione.Tipo tipo = Pozione.Tipo.values()[rnd.nextInt(Pozione.Tipo.values().length)];
-    int valore = rnd.nextInt(20, 71); // 20..70
-    boolean durata = false;
-    String nome = "Pozione " + id;
+
+    Pozione.TipoPozione tipo = Pozione.TipoPozione.values()[rnd.nextInt(Pozione.TipoPozione.values().length)];
+    int valoreBonus = tipo.getValoreBonus();
+    String nome = "Pozione " + tipo.name() ;
     String descrizione = switch (tipo) {
         case CURA -> "Pozione curativa";
         case MANA -> "Pozione di mana";
         case ANTIDOTO -> "Pozione antidoto";
     };
-    return new Pozione(durata, tipo, valore, id, nome, descrizione, true, false, false);
+    return new Pozione(tipo, id, nome, descrizione, false, false, false, valoreBonus);
 }
 }

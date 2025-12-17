@@ -51,7 +51,13 @@ public class Tesoro extends Oggetto {
     public Tesoro(int valore,  int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
         super(id, nome, descrizione, usabile, equipaggiabile, trovato);
         this.valore = valore;
-    }
+    } 
+
+   
+
+
+
+
 
     public int getValore() {
         return valore;

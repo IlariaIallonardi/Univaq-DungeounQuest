@@ -4,13 +4,12 @@ public class Armatura extends Oggetto {
 
     private TipoArmatura tipoArmatura;
     private int difesaBonus;
-    private int durabilitaArmatura;
     private Armatura armaturaEquippaggiata;
 
-    public Armatura(int difesaBonus, int durabilitaArmatura, TipoArmatura tipoArmatura, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
+    public Armatura(int difesaBonus, TipoArmatura tipoArmatura, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
         super(id, nome, descrizione, usabile, equipaggiabile, trovato);
         this.difesaBonus = difesaBonus;
-        this.durabilitaArmatura = durabilitaArmatura;
+    
         this.tipoArmatura = tipoArmatura;
     }
 
@@ -44,13 +43,6 @@ public class Armatura extends Oggetto {
         this.difesaBonus = difesaBonus;
     }
 
-    public int getDurabilitaArmatura() {
-        return durabilitaArmatura;
-    }
-
-    public void setDurabilitaArmatura(int durabilitaArmatura) {
-        this.durabilitaArmatura = durabilitaArmatura;
-    }
 
     @Override
     public boolean usare(Personaggio personaggio) {
