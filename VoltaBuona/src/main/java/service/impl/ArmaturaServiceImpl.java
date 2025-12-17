@@ -1,13 +1,15 @@
 package service.impl;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import domain.*;
-
-import service.*;
+import domain.Armatura;
+import domain.Oggetto;
+import domain.Stanza;
+import service.OggettoService;
 
 public class ArmaturaServiceImpl implements   OggettoService {
-
+    private static final AtomicInteger ID_COUNTER = new AtomicInteger(1);
    @Override
       public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza){
         if (stanza == null || oggetto == null) return;
@@ -30,9 +32,22 @@ public class ArmaturaServiceImpl implements   OggettoService {
         // serializzazione da implementare (JSON, XML, ecc.)
     }
 
-    @Override
-    public Oggetto creaOggetto(){
-        // Factory temporanea: implementare creazione specifica in base ai tipi concreti
-        return null;
-    }
+
+
+@Override
+public Oggetto creaOggettoCasuale() {
+    int id = ID_COUNTER.getAndIncrement();
+    var rnd = java.util.concurrent.ThreadLocalRandom.current();
+    Armatura.TipoArmatura tipo = Armatura.TipoArmatura.values()[rnd.nextInt(Armatura.TipoArmatura.values().length)];
+    int difesa = tipo.getDifesaBonus() + rnd.nextInt(0, 4);
+    int durabilita = rnd.nextInt(20, 101);
+    String nome = "Armatura " + tipo.name() + " " + id;
+    String descrizione = switch (tipo) {
+        case DEBOLE -> "Armatura debole";
+        case MEDIA -> "Armatura media";
+        case FORTE -> "Armatura forte";
+        
+    };
+    return new Armatura(difesa, durabilita, tipo, id, nome, descrizione, false, true, false);
+}
 }

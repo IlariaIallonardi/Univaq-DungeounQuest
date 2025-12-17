@@ -3,6 +3,7 @@ package service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import domain.Arma;
 import domain.Armatura;
@@ -13,7 +14,12 @@ import domain.Pozione;
 import domain.Stanza;
 import domain.Tesoro;
 
+
 public class StanzaFactory {
+
+    private static final AtomicInteger OBJ_ID_COUNTER = new AtomicInteger(1);
+    private static final AtomicInteger EVENTO_ID_COUNTER = new AtomicInteger(1);
+    private static final AtomicInteger KEY_ID_COUNTER = new AtomicInteger(1);
 
     private final Random rnd = new Random();
 
@@ -25,14 +31,12 @@ public class StanzaFactory {
 
         List<Oggetto> oggetti = generaOggettiCasuali();
         List<Evento> eventi = generaEventiCasuali();
-        
-        // ora decidiamo se la stanza richiede una chiave usando true (serve) o false (non serve)
+
         boolean richiedeChiave = generaRichiestaChiave();
         String nomeStanza = "Stanza " + id;
         Chiave chiave = richiedeChiave ? creaChiavePerStanza(nomeStanza) : null;
 
-       
-    return new Stanza(id,coord,stato,oggetti,eventi,chiave,false, nomeStanza);
+        return new Stanza(id, coord, stato, oggetti, eventi, chiave, false, nomeStanza);
     }
 
     public List<Oggetto> generaOggettiCasuali() {
@@ -40,9 +44,10 @@ public class StanzaFactory {
         int n = rnd.nextInt(3); // 0..2 oggetti
 
         for (int i = 0; i < n; i++) {
-            int tipo = rnd.nextInt(5); // 0..4
+            int tipo = rnd.nextInt(4); // 0..3
             switch (tipo) {
                 case 0:
+                    
                     oggetti.add(creaPozioneCasuale());
                     break;
                 case 1:
@@ -55,29 +60,26 @@ public class StanzaFactory {
                     oggetti.add(creaTesoroCasuale());
                     break;
                 default:
+                    oggetti.add(creaPozioneCasuale());
                     break;
             }
         }
         return oggetti;
     }
 
-    private List<Evento> generaEventiCasuali() {
-        List<Evento> eventi = new ArrayList<>();
-        int n = rnd.nextInt(3);
-        String[] descrizioni = {
-            "Un rumore sinistro si avvicina...",
-            "Hai trovato un messaggio inciso nella pietra.",
-            "Una trappola scatta improvvisamente!",
-            "Appare un NPC misterioso...",
-            "Una luce magica illumina la stanza."
-        };
-        for (int i = 0; i < n; i++) {
-            eventi.add(new Evento(i, true, false, descrizioni[rnd.nextInt(descrizioni.length)], "EventoCasuale"));
-        }
-        return eventi;
-    }
+   private List<Evento> generaEventiCasuali() {
+    List<Evento> eventi = new ArrayList<>();
 
-   // restituisce true se la stanza deve richiedere una chiave, false altrimenti
+    int n = rnd.nextInt(3); // 0..2 eventi
+    String descrizione = evento.getDescrizione(); // descrizione unica per tutti gli eventi
+    for (int i = 0; i < n; i++) {
+        int eventoId = EVENTO_ID_COUNTER.getAndIncrement();
+        eventi.add(new Evento(eventoId, true, false, descrizione, "EventoCasuale"));
+    }
+    return eventi;
+}
+
+    // restituisce true se la stanza deve richiedere una chiave, false altrimenti
     private boolean generaRichiestaChiave() {
         return rnd.nextInt(2) == 1; // true o false
     }
@@ -87,42 +89,42 @@ public class StanzaFactory {
         NON_VISITATA
     }
 
-   private Chiave creaChiavePerStanza(String nomeStanza) {
-        int keyId = rnd.nextInt(10000); // id generico per la chiave
-        // la chiave avrà come nome esattamente il nome della stanza (match by name)
+    private Chiave creaChiavePerStanza(String nomeStanza) {
+        int keyId = KEY_ID_COUNTER.getAndIncrement();
         String nomeChiave = nomeStanza;
         String descrizione = "Chiave che apre la stanza: " + nomeStanza;
         int livello = 1;
-        return new Chiave(keyId,nomeChiave,descrizione,true,true,false,nomeChiave);}
-
-
-    private Pozione creaPozioneCasuale() {
-        int id = rnd.nextInt(1000);
-        String nome = "Pozione " + id;
-        String descrizione = "Una pozione magica.";
-        int potenza = rnd.nextInt(50) + 10;
-        return new Pozione(false, null, potenza, id, nome, descrizione, false, false, false);
+        return new Chiave(keyId, nomeChiave, descrizione, true, true, false, nomeChiave);
     }
+
+   private Pozione creaPozioneCasuale() {
+    int id = OBJ_ID_COUNTER.getAndIncrement();
+    String nome = "Pozione " + id;
+    String descrizione = "Una pozione magica.";
+    return new Pozione(false, null, potenza, id, nome, descrizione, false, false, false);
+}
+
     private Arma creaArmaCasuale() {
-        int id = rnd.nextInt(1000);
+        int id = OBJ_ID_COUNTER.getAndIncrement();
         String nome = "Spada " + id;
         String descrizione = "Una spada affilata.";
         int danno = rnd.nextInt(30) + 5;
         return new Arma(danno, id, nome, descrizione, false, false, false, null);
     }
+
     private Armatura creaArmaturaCasuale() {
-        int id = rnd.nextInt(1000);
+        int id = OBJ_ID_COUNTER.getAndIncrement();
         String nome = "Armatura " + id;
         String descrizione = "Un'armatura resistente.";
         int difesa = rnd.nextInt(20) + 5;
-        return new Armatura(difesa,0,Armatura.TipoArmatura.DEBOLE,id,"armatura","armatura",false,false,false);
+        return new Armatura(difesa, 0, Armatura.TipoArmatura.DEBOLE, id, "armatura", "armatura", false, false, false);
     }
-    
+
     private Tesoro creaTesoroCasuale() {
-        int id = rnd.nextInt(1000);
+        int id = OBJ_ID_COUNTER.getAndIncrement();
         String nome = "Tesoro " + id;
         String descrizione = "Un tesoro prezioso.";
         int valore = rnd.nextInt(100) + 50;
-        return new Tesoro(valore,id,nome,descrizione,false,false,false);
+        return new Tesoro(valore, id, nome, descrizione, false, false, false);
     }
 }

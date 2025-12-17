@@ -1,10 +1,15 @@
 package service.impl;
 
-import service.*;
 import java.util.List;
-import domain.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import domain.Oggetto;
+import domain.Pozione;
+import domain.Stanza;
+import service.OggettoService;
 
 public class PozioneServiceImpl implements  OggettoService {
+    private static final AtomicInteger ID_COUNTER = new AtomicInteger(1);
     @Override
       public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza){
         if (stanza == null || oggetto == null) return;
@@ -26,10 +31,21 @@ public class PozioneServiceImpl implements  OggettoService {
     public void salvaOggettiSuFile(List<Oggetto> oggetti, String filePath){
         // serializzazione da implementare (JSON, XML, ecc.)
     }
+    
 
-    @Override
-    public Oggetto creaOggetto(){
-        // Factory temporanea: implementare creazione specifica in base ai tipi concreti
-        return null;
-    }
+@Override
+public Oggetto creaOggettoCasuale() {
+    int id = ID_COUNTER.getAndIncrement();
+    var rnd = java.util.concurrent.ThreadLocalRandom.current();
+    Pozione.Tipo tipo = Pozione.Tipo.values()[rnd.nextInt(Pozione.Tipo.values().length)];
+    int valore = rnd.nextInt(20, 71); // 20..70
+    boolean durata = false;
+    String nome = "Pozione " + id;
+    String descrizione = switch (tipo) {
+        case CURA -> "Pozione curativa";
+        case MANA -> "Pozione di mana";
+        case ANTIDOTO -> "Pozione antidoto";
+    };
+    return new Pozione(durata, tipo, valore, id, nome, descrizione, true, false, false);
+}
 }

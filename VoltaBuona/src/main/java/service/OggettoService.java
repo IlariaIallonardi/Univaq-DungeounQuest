@@ -21,6 +21,6 @@ public interface OggettoService {
 
     public void salvaOggettiSuFile(List<Oggetto> oggetti, String filePath);
 
-    public Oggetto creaOggetto();
+    public Oggetto creaOggettoCasuale();
 
 }

@@ -1,12 +1,15 @@
 package service.impl;
 
-import java.util.*;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import domain.*;
-
-import service.*;
+import domain.Arma;
+import domain.Oggetto;
+import domain.Stanza;
+import service.OggettoService;
 
 public class ArmaServiceImpl implements OggettoService {
+       private static final AtomicInteger ID_COUNTER = new AtomicInteger(1);
     @Override
       public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza){
         if (stanza == null || oggetto == null) return;
@@ -29,9 +32,21 @@ public class ArmaServiceImpl implements OggettoService {
         // serializzazione da implementare (JSON, XML, ecc.)
     }
 
-    @Override
-    public Oggetto creaOggetto(){
-        // Factory temporanea: implementare creazione specifica in base ai tipi concreti
-        return null;
-    }
+   
+
+@Override
+public Oggetto creaOggettoCasuale() {
+    int id = ID_COUNTER.getAndIncrement();
+    var rnd = java.util.concurrent.ThreadLocalRandom.current();
+    Arma.TipoArma tipo = Arma.TipoArma.values()[rnd.nextInt(Arma.TipoArma.values().length)];
+    int danno = tipo.getDannoBonus() + rnd.nextInt(1, 6); // base + random
+    String nome = tipo.name() + " " + id;
+    String descrizione = switch (tipo) {
+        case FRECCIA_E_ARCO -> "Arma con freccia e arco";
+        case BACCHETTA_MAGICA -> "Bacchetta_magica potente";
+        case SPADA -> "Spada affilata";
+        case BALESTRA_PESANTE -> "Balestra pesante";
+    };
+    return new Arma(danno, id, nome, descrizione, false, true, false, tipo);
+}
 }
