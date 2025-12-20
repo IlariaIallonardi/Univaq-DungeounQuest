@@ -1,18 +1,18 @@
 package service.impl;
 
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import domain.Evento;
 import domain.NPC;
 import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
-import domain.Trappola;
 import domain.Zaino;
 import service.PersonaIncontrataService;
 
 public class  NPCServiceImpl implements PersonaIncontrataService {
-
+     private static final AtomicInteger ID_COUNTER = new AtomicInteger(1);
     private final Scanner scanner = new Scanner(System.in);
     private final NPC npc = null;
 
@@ -100,6 +100,19 @@ public class  NPCServiceImpl implements PersonaIncontrataService {
 
         zaino.getListaOggetti().add(oggetto);
         System.out.println("👉 Oggetto aggiunto allo zaino: " + oggetto.getNome());
+    }
+
+    @Override
+    public Evento aggiungiEventoCasuale() {
+        // Implementazione di esempio per creare un NPC casuale
+        int id = ID_COUNTER.getAndIncrement();
+        String nomeNPC = "NPC_" + id;
+        String rebus = "Qual è la capitale d'Italia?";
+        String rispostaCorretta = "Roma";
+
+        NPC npc = new NPC(id, rispostaCorretta, rebus, rispostaCorretta, null, nomeNPC, null);
+
+        return npc;
     }
 
 

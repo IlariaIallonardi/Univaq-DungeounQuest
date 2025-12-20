@@ -2,33 +2,27 @@ package domain;
 
 public class Trappola extends Evento {
 
-    private int danno;
+    
     private Effetto effetto;
     private Stanza posizioneCorrenteTrappola;
 
-    public Trappola(int danno, Effetto effetto, Stanza posizioneCorrenteTrappola, int id, boolean inizioEvento, boolean fineEvento, String descrizione) {
+    public Trappola( Effetto effetto, Stanza posizioneCorrenteTrappola, int id, boolean inizioEvento, boolean fineEvento, String descrizione) {
         super(id, inizioEvento, fineEvento, descrizione, "Trappola");
-        this.danno = danno;
+    
         this.effetto = effetto;
         this.posizioneCorrenteTrappola = posizioneCorrenteTrappola;
     }
 
-    public int getDanno() {
-        return danno;
-    }
+   
 
     public boolean alterareStato() {
         // cambia stato stanza/giocatore
         return true;
     }
 
-    public int getDannoTrappola() {
-        return danno;
-    }
+   
 
-    public void setDanno(int danno) {
-        this.danno = danno;
-    }
+    
 
     public Effetto getEffettoTrappola() {
         return effetto;

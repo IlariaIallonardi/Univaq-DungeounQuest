@@ -120,7 +120,7 @@ public class GiocoServiceImpl implements GiocoService {
         // opzionale: segno la stanza come visitata
         destinazione.setStatoS(StanzaFactory.StatoStanza.VISITATA);
 
-        System.out.println(personaggio.getNomePersonaggio() + " si sposta verso " + direzione + ".");
+    
         return true;
     }
       @Override

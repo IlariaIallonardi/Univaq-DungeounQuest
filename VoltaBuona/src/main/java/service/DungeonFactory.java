@@ -29,20 +29,21 @@ public class DungeonFactory {
 
      public Dungeon creaDungeon(int righe, int colonne) {
 
-        Dungeon d = new Dungeon(righe, colonne);
+    Dungeon d = new Dungeon(righe, colonne);
 
-        for (int y = 0; y < righe; y++) {
-            for (int x = 0; x < colonne; x++) {
-                Stanza stanza = stanzaFactory.creaStanza(0); // random
-                d.setStanza(x, y, stanza);
-            }
+    int idCounter = 0;
+    for (int y = 0; y < righe; y++) {
+        for (int x = 0; x < colonne; x++) {
+            Stanza stanza = stanzaFactory.creaStanza(idCounter++,x,y);
+            d.setStanza(x, y, stanza);
         }
+    }
 
-        d.collegaAdiacenti();
-        this.dungeon = d;
+    d.collegaAdiacenti();
+    this.dungeon = d;
 
-        return d;
-    } 
+    return d;
+}
 
     public Dungeon getDungeon() {
         return dungeon;

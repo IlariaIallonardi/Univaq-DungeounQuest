@@ -61,7 +61,7 @@ public class Stanza {
         return oggettiPresenti;
     }
 
-    public void setInventario(List<Oggetto> oggettoPresenti) {
+    public void setOggettiPresenti(List<Oggetto> oggettiPresenti) {
         this.oggettiPresenti = oggettiPresenti;
     }
 
@@ -106,6 +106,8 @@ public class Stanza {
     }
 
     public void rimuoviOggetto(Oggetto o) {
+        if(o != null)
+            oggettiPresenti.remove(o);
     }
 
     public void aggiungiOggetto(Oggetto o) {

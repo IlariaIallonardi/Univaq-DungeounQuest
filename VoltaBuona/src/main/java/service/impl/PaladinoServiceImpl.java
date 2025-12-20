@@ -4,6 +4,8 @@ import domain.Combattimento;
 import domain.Mostro;
 import domain.Paladino;
 import domain.Personaggio;
+import domain.Stanza;
+import domain.Zaino;
 import service.PersonaggioService;
 
 public class PaladinoServiceImpl implements PersonaggioService {
@@ -146,7 +148,9 @@ public class PaladinoServiceImpl implements PersonaggioService {
 
     @Override
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Stanza stanza = personaggio.getPosizioneCorrente();
+        Zaino zaino = personaggio.getZaino();
+        return new Paladino("abilità",null,200,300,0,2,"paladino",stanza,false,100,300,"normale",0,0,0,0,zaino,50);
     }
 
     public enum TipoMagiaSacra {

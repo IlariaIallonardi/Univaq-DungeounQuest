@@ -14,7 +14,7 @@ public class Zaino {
     }
 
     public boolean aggiungiOggettoAZaino(Oggetto oggetto) {
-        if (listaOggetti.size() > capienza) return false;
+        if (listaOggetti.size() >= capienza) return false;
         return listaOggetti.add(oggetto);
     }
 

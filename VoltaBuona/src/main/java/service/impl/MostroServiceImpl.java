@@ -114,8 +114,7 @@ public class MostroServiceImpl implements  PersonaIncontrataService {
         String[] nomi = {"Spiritello", "Drago", "Golem", "Ragno Gigante", "Troll"};
         String nomeMostro = nomi[rnd.nextInt(nomi.length)];
         
-        // Mostro.TipoAttaccoMostro tipoAttaccoMostro = Mostro.TipoAttaccoMostro.values()[rnd.nextInt(Mostro.TipoAttaccoMostro.values().length)];
-     //   int valoreBonus = tipoAttaccoMostro.getDannoTipoMostro();
+    
         String descrizione = switch (nomeMostro) {
         case "Spiritello" -> "un pericoloso " + nomeMostro + " ti attacca con morso";
         case "Drago" -> "un pericoloso " + nomeMostro + " ti attacca con ruggito di fuoco";

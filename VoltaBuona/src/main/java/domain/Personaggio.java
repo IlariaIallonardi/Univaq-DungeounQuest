@@ -24,8 +24,9 @@ public class Personaggio {
     private Arma armaEquippaggiata;
     // private Armatura armaturaEquippaggiata;
     private String abilitàSpeciale;
+    private int portafoglioPersonaggio;
 
-    public Personaggio(String abilitàSpeciale, Arma armaEquippaggiata, int difesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, boolean protetto, int puntiMana, int puntiVita, String statoPersonaggio, int turniAvvelenato, int turniCongelato, int turniStordito, int turnoProtetto, Zaino zaino) {
+    public Personaggio(String abilitàSpeciale, Arma armaEquippaggiata, int difesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, boolean protetto, int puntiMana, int puntiVita, String statoPersonaggio, int turniAvvelenato, int turniCongelato, int turniStordito, int turnoProtetto, Zaino zaino, int portafoglioPersonaggio) {
         this.abilitàSpeciale = abilitàSpeciale;
         this.armaEquippaggiata = armaEquippaggiata;
         this.difesa = difesa;
@@ -43,6 +44,7 @@ public class Personaggio {
         this.turniStordito = turniStordito;
         this.turnoProtetto = turnoProtetto;
         this.zaino = zaino;
+        this.portafoglioPersonaggio = portafoglioPersonaggio;
     }
 
     public int getId() {
@@ -155,6 +157,12 @@ public class Personaggio {
 
     public void setTurniStordito(int turniStordito) {
         this.turniStordito = turniStordito;
+    }
+    public int getPortafoglioPersonaggio() {
+        return portafoglioPersonaggio;
+    }
+    public void setPortafoglioPersonaggio(int portafoglioPersonaggio) {
+        this.portafoglioPersonaggio = portafoglioPersonaggio;
     }
 
     public boolean èMorto(Personaggio personaggio) {
@@ -276,7 +284,7 @@ public class Personaggio {
             if (risultato) {
                 zaino.rimuoviOggettoDaZaino(oggetto);
                 zaino.setCapienza(zaino.getCapienza() + 1);
-                System.out.println(personaggio.getNomePersonaggio() + " usa una pozione: " + ((Pozione) oggetto).getTipo());
+                System.out.println(personaggio.getNomePersonaggio() + " usa una pozione: " + ((Pozione) oggetto).getNome());
             }
             return risultato;
         }
@@ -337,12 +345,16 @@ public class Personaggio {
             return false;
         }
 
+    
+
         // verifica lista e capienza (capienza intesa come posti disponibili)
         if (zaino.getListaOggetti() == null) {
             return false;
         }
 
-        if (zaino.getCapienza() < 5) {
+        //fino a qui tutto ok, provo ad aggiungere
+
+        if (zaino.getListaOggetti().size() < zaino.getCapienza()) {
             // spazio disponibile: aggiungi direttamente
             zaino.getListaOggetti().add(oggetto);
             zaino.setCapienza(zaino.getCapienza() - 1);

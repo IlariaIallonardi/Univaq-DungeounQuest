@@ -1,5 +1,7 @@
 package service.impl;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import domain.Effetto;
 import domain.Evento;
 import domain.Personaggio;
@@ -9,6 +11,7 @@ import service.EventoService;
 
 
 public class TrappolaServiceImpl implements EventoService {
+     private static final AtomicInteger ID_COUNTER = new AtomicInteger(1);
 
     @Override
     public boolean attivaEvento(Personaggio personaggio, Evento e) {
@@ -128,4 +131,31 @@ public class TrappolaServiceImpl implements EventoService {
 
         }
     }
+
+
+    @Override
+public Evento aggiungiEventoCasuale() {
+    int id = ID_COUNTER.getAndIncrement();
+    var rnd = java.util.concurrent.ThreadLocalRandom.current();
+
+
+    // scegli un effetto casuale
+    Effetto.TipoEffetto[] tipiEffetto = Effetto.TipoEffetto.values();
+    Effetto.TipoEffetto tipoEffetto = tipiEffetto[rnd.nextInt(tipiEffetto.length)];
+
+    String descrizione =
+    switch (tipoEffetto) {
+        case CONGELAMENTO -> "Trappola di congelamento";
+        case AVVELENAMENTO -> "Trappola di avvelenamento";
+        case STORDIMENTO -> "Trappola di stordimento";
+        case IMMOBILIZZATO -> "Trappola di immobilizzazione";
+        case SALTA_TURNO -> "Trappola che fa saltare il turno";
+        default -> "Trappola senza effetto";
+    };
+
+    Effetto effetto = new Effetto(tipoEffetto, descrizione, 0);
+    Trappola trappola = new Trappola( effetto, null, id, true, false, descrizione);
+    return trappola;
+}
+
 }

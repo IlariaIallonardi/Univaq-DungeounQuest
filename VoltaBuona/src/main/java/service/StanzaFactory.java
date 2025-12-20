@@ -11,8 +11,12 @@ import domain.Oggetto;
 import domain.Stanza;
 import service.impl.ArmaServiceImpl;
 import service.impl.ArmaturaServiceImpl;
+import service.impl.MostroServiceImpl;
+import service.impl.NPCServiceImpl;
+import service.impl.PassaggioSegretoServiceImpl;
 import service.impl.PozioneServiceImpl;
-import service.impl.*;
+import service.impl.TesoroServiceImpl;
+import service.impl.TrappolaServiceImpl;
 
 
 public class StanzaFactory {
@@ -23,9 +27,8 @@ public class StanzaFactory {
 
     private final Random rnd = new Random();
 
-    public Stanza creaStanza(int id) {
-        int x = rnd.nextInt(100);
-        int y = rnd.nextInt(100);
+    public Stanza creaStanza(int id,int x,int y) {
+      
         int[][] coord = {{x, y}};
         StatoStanza stato = StatoStanza.NON_VISITATA;
 
@@ -33,7 +36,7 @@ public class StanzaFactory {
         List<Evento> eventi = generaEventiCasuali();
 
         boolean richiedeChiave = generaRichiestaChiave();
-        String nomeStanza = "Stanza " + id;
+        String nomeStanza = "Stanza (" + x + "," + y + ")";
         Chiave chiave = richiedeChiave ? creaChiavePerStanza(nomeStanza) : null;
 
         return new Stanza(id, coord, stato, oggetti, eventi, chiave, false, nomeStanza);
@@ -77,16 +80,16 @@ public class StanzaFactory {
                     eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 1:
-                    eventi.add(new ArmaServiceImpl().creaOggettoCasuale());
+                    eventi.add(new TrappolaServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 2:
-                    eventi.add(new ArmaturaServiceImpl().creaOggettoCasuale());
+                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 3:
-                    eventi.add(new TesoroServiceImpl().creaOggettoCasuale());
+                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
                     break;
                 default:
-                    eventi.add(new PozioneServiceImpl().creaOggettoCasuale());
+                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
                     break;
         }}
     return eventi;

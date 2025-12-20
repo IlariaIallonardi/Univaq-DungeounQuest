@@ -42,7 +42,6 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
 
-  
 
     @Override
     public List<Personaggio> calcolaOrdineIniziativa(List<Personaggio> partecipanti) {
@@ -56,10 +55,10 @@ public class TurnoServiceImpl implements TurnoService {
         for (Personaggio p : partecipanti) {
             int tiro = random.nextInt(20) + 1; // dado d20
             tiri.put(p, tiro);
-            System.out.println(p.getNomePersonaggio() + " tira iniziativa: " + tiro);
+
         }
 
-        // 2️⃣ Costruzione ordine turno SENZA sort
+        // 2 Costruzione ordine turno SENZA sort
         while (!tiri.isEmpty()) {
 
             Personaggio migliore = null;
@@ -80,10 +79,10 @@ public class TurnoServiceImpl implements TurnoService {
             tiri.remove(migliore);
         }
 
-        System.out.println("\nOrdine dei turni:");
+     /*    System.out.println("\nOrdine dei turni:");
         for (int i = 0; i < ordineTurno.size(); i++) {
-            System.out.println((i + 1) + ") " + ordineTurno.get(i).getNomePersonaggio());
-        }
+            System.out.println((i + 1) + ") " + ordineTurno.get(i).getNomePersonaggio());*/
+        
         return ordineTurno;
     }
 
@@ -108,7 +107,8 @@ public class TurnoServiceImpl implements TurnoService {
                 continue;
             }
 
-            System.out.println("\n INIZIO TURNO DI " + p.getNomePersonaggio() );
+          //1
+          //   System.out.println("\n INIZIO TURNO DI " + p.getNomePersonaggio() );
 
             Stanza stanza = p.getPosizioneCorrente();
             if (stanza == null) {
@@ -130,11 +130,15 @@ public class TurnoServiceImpl implements TurnoService {
             // 1) passo : chiedere al personaggio se vuole muoversi in un 'altra stanza
             gestisciMovimento(p, scanner);
             // 2) passo : esplorare la stanza (mostra eventi e oggetti)
-            esploraStanza(p);
+            boolean eventoHaConsumtoTurno = esploraStanza(p);
+            if (eventoHaConsumtoTurno) {
+                System.out.println("Turno consumato da un evento.");
+                continue;
+            }
             // 3) passo : scegliere azione (fare evento, prendere oggetto, usare oggetto)
             scegliAzione(p, scanner);
             System.out.println("FINE TURNO DI " + p.getNomePersonaggio() );
-          
+
         }
     }
 
@@ -150,7 +154,7 @@ public class TurnoServiceImpl implements TurnoService {
         // Applica gli effetti di fine turno solo al personaggio passato
         aggiornaEffettiFineTurno(personaggio);
 
-    
+
     }
 
     public void aggiornaEffettiFineTurno(Personaggio personaggio) {
@@ -173,7 +177,7 @@ public class TurnoServiceImpl implements TurnoService {
         // 2 CONGELAMENTO: dura N turni, qui puoi gestire eventuali penalità
         if (personaggio.getTurniCongelato() > 0) {
             personaggio.setTurniCongelato(personaggio.getTurniCongelato() - 1);
-            System.out.println("❄ " + personaggio.getNomePersonaggio() + " è ancora congelato ("
+            System.out.println("❄ " + personaggio.getNomePersonaggio() + " è ancora congelato (" 
                     + personaggio.getTurniCongelato() + " turni rimanenti)");
 
             if (personaggio.getTurniCongelato() == 0 && "CONGELATO".equalsIgnoreCase(personaggio.getStatoPersonaggio())) {
@@ -185,7 +189,7 @@ public class TurnoServiceImpl implements TurnoService {
         // 3 STORDIMENTO: penalizza per N turni (es. non può attaccare)
         if (personaggio.getTurniStordito() > 0) {
             personaggio.setTurniStordito(personaggio.getTurniStordito() - 1);
-            System.out.println(personaggio.getNomePersonaggio() + " è ancora stordito ("
+            System.out.println(personaggio.getNomePersonaggio() + " è ancora stordito (" 
                     + personaggio.getTurniStordito() + " turni rimanenti)");
 
             if (personaggio.getTurniStordito() == 0 && "STORDITO".equalsIgnoreCase(personaggio.getStatoPersonaggio())) {
@@ -200,10 +204,10 @@ public class TurnoServiceImpl implements TurnoService {
     @Override
     public void scegliAzione(Personaggio personaggio, Scanner scanner) {
 
-        System.out.println("\n===== TURNO DI " + personaggio.getNomePersonaggio() + " =====");
+       //1 System.out.println("\n===== TURNO DI " + personaggio.getNomePersonaggio() + " =====");
 
         Stanza stanzaCorrente = personaggio.getPosizioneCorrente();
-        System.out.println("Ti trovi in: " + stanzaCorrente.getNomeStanza());
+     //   System.out.println("Ti trovi in: " + stanzaCorrente.getNomeStanza());
         // 2 esplorazione: mostro eventi e oggetti
         List<Evento> eventi = stanzaCorrente.getListaEventiAttivi();
         List<Oggetto> oggetti = stanzaCorrente.getOggettiPresenti();
@@ -252,26 +256,27 @@ public class TurnoServiceImpl implements TurnoService {
 
         switch (scelta) {
             case 1:
-                if (ciSonoEventi) 
+                if (ciSonoEventi){ 
                     mostraEventi(eventi);
                     eventoService.eseguiEventiInStanza(personaggio, stanzaCorrente);
-
+                }
                 break;
             case 2:
-                if (ciSonoOggetti) 
+                if (ciSonoOggetti) {
                     mostraOggetti(oggetti);
                     raccogliUnOggetto(personaggio, stanzaCorrente, oggetti, scanner);
+                }
                 break;
             case 3:
-                if (ciSonoEventi && ciSonoOggetti) 
+                if (ciSonoEventi && ciSonoOggetti){ 
                     mostraEventi(eventi);
                     mostraOggetti(oggetti);
                     eventoService.eseguiEventiInStanza(personaggio, stanzaCorrente);
                   raccogliUnOggetto(personaggio, stanzaCorrente, oggetti, scanner);
+                }
                 break;
             case 4:
                 gestisciUsoOggettoDaZaino(personaggio, scanner);
-                System.out.println("Oggetto usato dallo zaino.");
                 break;
             case 0:
                 System.out.println("Turno terminato.");
@@ -283,7 +288,7 @@ public class TurnoServiceImpl implements TurnoService {
 
         terminaTurnoCorrente(personaggio); 
 
-        System.out.println("FINE TURNO DI " + personaggio.getNomePersonaggio() );
+     //   System.out.println("FINE TURNO DI " + personaggio.getNomePersonaggio() );
     }
 
     /// mostra gli eventi nella stanza 
@@ -389,6 +394,7 @@ public class TurnoServiceImpl implements TurnoService {
 
         try {
             scelta = Integer.parseInt(scanner.nextLine());
+            System.out.println("Hai scelto: " + scelta);
         } catch (NumberFormatException e) {
             System.out.println("Input non valido.");
             return;
@@ -415,11 +421,11 @@ public class TurnoServiceImpl implements TurnoService {
         }
     }
 
-    public void esploraStanza(Personaggio personaggio) {
+    public boolean esploraStanza(Personaggio personaggio) {
 
         Stanza stanza = personaggio.getPosizioneCorrente();
         if (stanza == null) {
-            return;
+            return false;
         }
 
         System.out.println("\n Stanza: " + stanza.getNomeStanza());
@@ -440,7 +446,7 @@ public class TurnoServiceImpl implements TurnoService {
                 if (termina) {
                     // se l'evento ha consumato il turno (es. combattimento), terminiamo il turno
                     terminaTurnoCorrente(personaggio);
-                    return;
+                    return true;
                 }
             }
         } else {
@@ -449,7 +455,8 @@ public class TurnoServiceImpl implements TurnoService {
 
         // Segna la stanza come visitata
         stanza.setStatoS(StatoStanza.VISITATA);
+        return false;
     }
 
-    
+
 }

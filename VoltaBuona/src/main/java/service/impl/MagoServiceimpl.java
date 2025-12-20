@@ -4,6 +4,8 @@ import domain.Combattimento;
 import domain.Mago;
 import domain.Mostro;
 import domain.Personaggio;
+import domain.Stanza;
+import domain.Zaino;
 import service.PersonaggioService;
 
 public class MagoServiceimpl implements PersonaggioService {
@@ -95,7 +97,9 @@ public class MagoServiceimpl implements PersonaggioService {
 
     @Override
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    Stanza stanza = personaggio.getPosizioneCorrente();
+        Zaino zaino = personaggio.getZaino();
+        return new Mago("abilità",null,200,300,0,2,"mago",stanza,false,100,300,"normale",0,0,0,0,zaino,50);
     }
 
 }

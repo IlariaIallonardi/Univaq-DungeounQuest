@@ -4,12 +4,14 @@ public class PassaggioSegreto extends Evento {
     private Stanza destinazione;
     private boolean rebusApertura;
     private boolean scoperto;
+    private Stanza stanzaOrigine;
 
-    public PassaggioSegreto(Stanza destinazione, boolean rebusApertura, boolean scoperto, int id, boolean inizioEvento, boolean fineEvento) {
+    public PassaggioSegreto(Stanza destinazione, boolean rebusApertura, boolean scoperto, int id, boolean inizioEvento, boolean fineEvento, Stanza stanzaOrigine) {
         super(id, inizioEvento, fineEvento, "Passaggio Segreto", "PassaggioSegreto");
         this.destinazione = destinazione;
         this.rebusApertura = rebusApertura;
         this.scoperto = scoperto;
+        this.stanzaOrigine = stanzaOrigine;
     }
 
     
@@ -48,6 +50,13 @@ public class PassaggioSegreto extends Evento {
     public boolean èRiutilizzabile() {
         // se deve aprirsi una sola volta
         return true;
+    }
+
+    public Stanza getStanzaOrigine() {
+        return stanzaOrigine;
+    }
+    public void setStanzaOrigine(Stanza stanzaOrigine) {
+        this.stanzaOrigine = stanzaOrigine;
     }
 
     

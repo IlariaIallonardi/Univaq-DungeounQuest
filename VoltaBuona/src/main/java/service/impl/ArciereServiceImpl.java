@@ -11,6 +11,7 @@ import domain.Evento;
 import domain.Mostro;
 import domain.Personaggio;
 import domain.Stanza;
+import domain.Zaino;
 import service.PersonaggioService;
 
 public class ArciereServiceImpl implements PersonaggioService {
@@ -174,7 +175,9 @@ public class ArciereServiceImpl implements PersonaggioService {
 
     @Override
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
-        throw new UnsupportedOperationException("Not supported yet.");
+       Stanza stanza = personaggio.getPosizioneCorrente();
+        Zaino zaino = personaggio.getZaino();
+        return new Arciere("abilità",null,200,300,0,2,"arciere",stanza,false,100,300,"normale",0,0,0,0,zaino,50);
     }
 
     public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {

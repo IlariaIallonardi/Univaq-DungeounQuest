@@ -5,6 +5,7 @@ import domain.Guerriero;
 import domain.Mostro;
 import domain.Personaggio;
 import domain.Stanza;
+import domain.Zaino;
 import service.PersonaggioService;
 
 public class GuerrieroServiceImpl implements PersonaggioService {
@@ -108,9 +109,11 @@ public class GuerrieroServiceImpl implements PersonaggioService {
 
     @Override
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
-        throw new UnsupportedOperationException("Not supported yet.");
+       Stanza stanza = null;
+        Zaino zaino = new Zaino();
+        return new Guerriero("abilità",null,200,300,0,2,nome,stanza,false,100,300,"normale",0,0,0,0,zaino,50);
     }
-
+    
     public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
     }
 
