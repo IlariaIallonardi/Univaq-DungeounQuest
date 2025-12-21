@@ -8,6 +8,7 @@ public abstract class Oggetto {
     private boolean usabile;
     private boolean equipaggiabile;
     private boolean trovato;
+    private int prezzo;
 
     public Oggetto(int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
         this.id = id;
@@ -16,6 +17,13 @@ public abstract class Oggetto {
         this.usabile = usabile;
         this.equipaggiabile = equipaggiabile;
         this.trovato = trovato;
+        
+    }
+    public int getPrezzo() {
+        return prezzo;
+    }
+    public void setPrezzo(int prezzo) {
+        this.prezzo = prezzo;
     }
 
     public int getId() {

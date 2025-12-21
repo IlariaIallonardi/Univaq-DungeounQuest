@@ -24,8 +24,11 @@ public class PozioneServiceImpl implements  OggettoService {
 
     @Override
     public void rimuoviOggettoDaStanza(Stanza stanza, Oggetto oggetto){
+        if (stanza == null || oggetto == null) return;
+    if (stanza.getOggettiPresenti() != null) {
         stanza.getOggettiPresenti().remove(oggetto);
     }
+}
 
     @Override
     public void salvaOggettiSuFile(List<Oggetto> oggetti, String filePath){
@@ -46,6 +49,8 @@ public Oggetto creaOggettoCasuale() {
         case MANA -> "Pozione di mana";
         case ANTIDOTO -> "Pozione antidoto";
     };
-    return new Pozione(tipo, id, nome, descrizione, false, false, false, valoreBonus);
+    Pozione p = new Pozione(tipo, id, nome, descrizione, false, false, false, valoreBonus);
+    p.setPrezzo(15); // <--- imposta qui il prezzo che desideri per le pozioni
+    return p;
 }
 }

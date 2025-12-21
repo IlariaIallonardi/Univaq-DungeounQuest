@@ -369,7 +369,11 @@ public class TurnoServiceImpl implements TurnoService {
         for (int i = 0; i < eventi.size(); i++) {
             Evento e = eventi.get(i);
             if(e instanceof domain.NPC) {
-                System.out.println((i + 1) + ") NPC: " + ((domain.NPC) e).getNomeNPC());
+                System.out.println((i + 1) + ") Persona Incontrata: " + ((domain.NPC) e).getNomeNPC());
+                continue;
+            }
+            if(e instanceof domain.Mostro) {
+                System.out.println((i + 1) + ") Persona Incontrata: " + ((domain.Mostro) e).getNomeMostro());
                 continue;
             }
             System.out.println((i + 1) + ") " + e.getNomeEvento());

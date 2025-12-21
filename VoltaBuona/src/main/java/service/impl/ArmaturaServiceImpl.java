@@ -48,6 +48,8 @@ public Oggetto creaOggettoCasuale() {
         case FORTE -> "Armatura forte";
         
     };
-    return new Armatura(difesa,tipo, id, nome, descrizione,true , true, false);
+    Armatura ar = new Armatura(difesa, tipo, id, nome, descrizione, true, true, false);
+    ar.setPrezzo(30); // <--- imposta qui il prezzo che desideri per le armature
+    return ar;
 }
 }

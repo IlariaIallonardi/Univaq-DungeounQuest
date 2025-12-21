@@ -47,6 +47,8 @@ public Oggetto creaOggettoCasuale() {
         case SPADA -> "Spada affilata";
         case BALESTRA_PESANTE -> "Balestra pesante";
     };
-    return new Arma(danno, id, nome, descrizione, true, true, false, tipo);
+   Arma a = new Arma(danno, id, nome, descrizione, true, true, false, tipo);
+   a.setPrezzo(25); // <--- imposta qui il prezzo che desideri per le armi
+   return a;
 }
 }
