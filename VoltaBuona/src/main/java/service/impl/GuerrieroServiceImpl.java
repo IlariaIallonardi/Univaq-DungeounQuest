@@ -107,12 +107,11 @@ public class GuerrieroServiceImpl implements PersonaggioService {
         return dannoNetto;
     }
 
-    @Override
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
-       Stanza stanza = null;
-        Zaino zaino = new Zaino();
-        return new Guerriero("abilità",null,200,300,0,2,nome,stanza,false,100,300,"normale",0,0,0,0,zaino,50);
-    }
+Stanza stanza = null;
+Zaino zaino = new Zaino();
+return new Guerriero("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 300, "normale", 0, 0, 0, 0, zaino, 50);
+}
     
     public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
     }

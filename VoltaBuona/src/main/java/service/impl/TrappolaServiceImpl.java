@@ -13,31 +13,28 @@ import service.EventoService;
 public class TrappolaServiceImpl implements EventoService {
      private static final AtomicInteger ID_COUNTER = new AtomicInteger(1);
 
-    @Override
-    public boolean attivaEvento(Personaggio personaggio, Evento e) {
-        if (e instanceof Trappola) {
-            Stanza stanza = ((Trappola) e).getPosizioneCorrenteTrappola();
-            if (e != null) {
-                System.out.println("Hai trovato una trappola!");
+   @Override
+public boolean attivaEvento(Personaggio personaggio, Evento e) {
+    if (!(e instanceof Trappola trappola)) return false;
 
-                // Check di disinnesco
-                boolean disinnescata = ((Trappola) e).checkDiDisinnesco(personaggio);
+    Stanza stanza = trappola.getPosizioneCorrenteTrappola();
+    if (stanza == null && personaggio != null) {
+        stanza = personaggio.getPosizioneCorrente();
+    }
 
-                if (!disinnescata) {
-                    // Trappola si attiva
-                    scattaTrappola(personaggio);
-                    rimuoviEventoDaStanza(stanza, e);
-                    // l'attivazione della trappola consuma il turno
-                    return true;
-                } else {
-                    System.out.println("La trappola è stata disinnescata.");
-                    rimuoviEventoDaStanza(stanza, e);
-                    return false;
-                }
-            }
-        }
+    System.out.println("Hai trovato una trappola!");
+    boolean disinnescata = trappola.checkDiDisinnesco(personaggio);
+
+    if (!disinnescata) {
+        scattaTrappola(personaggio);
+        if (stanza != null) rimuoviEventoDaStanza(stanza, e);
+        return true; // consuma turno
+    } else {
+        System.out.println("La trappola è stata disinnescata.");
+        if (stanza != null) rimuoviEventoDaStanza(stanza, e);
         return false;
     }
+}
 
     public void scattaTrappola(Personaggio personaggio) {
         Effetto.TipoEffetto effetto = tiraDado();
@@ -118,7 +115,10 @@ public class TrappolaServiceImpl implements EventoService {
 
     @Override
     public void rimuoviEventoDaStanza(Stanza stanza, Evento evento) {
+         if (stanza == null || evento == null) return;
+    if (stanza.getListaEventiAttivi() != null) {
         stanza.getListaEventiAttivi().remove(evento);
+    }
     }
 
     ;

@@ -25,7 +25,7 @@ public class Paladino extends Personaggio {
     }
 
     @Override
-    public boolean puoEquipaggiare(Arma.TipoArma tipo) {
+    public boolean puoRaccogliere(Arma.TipoArma tipo) {
         if (tipo == null) {
             return false;
         }

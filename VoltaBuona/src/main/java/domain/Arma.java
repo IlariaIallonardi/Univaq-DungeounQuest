@@ -1,4 +1,5 @@
 package domain;
+import domain.Personaggio;
 
 public class Arma extends Oggetto {
 

@@ -312,17 +312,19 @@ public class Main {
         }
 
         // crea i bot chiedendo nome e classe (anche i bot scelgono nome e classe)
+        // Nomi di esempio per i BOT (personalizzabili)
+        String[] nomiBot = {"Aldo", "Bea", "Ciro", "Dora", "Ezio", "Fiona", "Gino", "Hana"};
+        Random rngBot = new Random();
+
         for (int i = 1; i <= numBot; i++) {
-            System.out.print("Inserisci il nome del BOT " + i + ": ");
-            String nome = scanner.nextLine().trim();
-            while (nome.isEmpty()) {
-                System.out.print("Nome vuoto. Inserisci il nome del BOT " + i + ": ");
-                nome = scanner.nextLine().trim();
-            }
-            int sceltaClasse = scegliClasse(scanner, nome + " (BOT)");
+            // genera un nome unico (es. "Aldo_1")
+           String nome = "BOT_" + nomiBot[rngBot.nextInt(nomiBot.length)] + "_" + i;
+            // scegli casualmente una classe: 1=Guerriero,2=Mago,3=Arciere,4=Paladino
+            int sceltaClasse = rngBot.nextInt(4) + 1;
+
             Personaggio p = creaPersonaggioDaScelta(sceltaClasse, nome);
             giocatori.add(p);
-            System.out.println("BOT creato: " + p.getNomePersonaggio());
+            System.out.println("BOT creato: " + p.getNomePersonaggio() + " (classe scelta: " + sceltaClasse + ")");
         }
         System.out.println(" Totale personaggi in partita: " + giocatori.size());
 
@@ -403,46 +405,8 @@ public class Main {
             }
         }
     }
-        /*   Random rng = new Random();
-
-        TurnoService turnoService = new TurnoServiceImpl(new GiocoServiceImpl(), ps, new PassaggioSegretoServiceImpl());
-        System.out.println("\nInizio turni di prova. Digita 'q' quando richiesto per uscire.");
-        boolean continua = true;
 
     
-
-        while (continua) {
-            // 1) Calcola iniziativa per tutti i giocatori
-            Map<Personaggio, Integer> iniziative = new HashMap<>();
-            for (Personaggio p : giocatori) {
-                int roll = rng.nextInt(20) + 1; // d20 semplice
-                iniziative.put(p, roll);
-            }
-
-            // 2) Ordina i giocatori per iniziativa (decrescente)
-            List<Personaggio> ordine = new ArrayList<>(giocatori);
-            ordine.sort((a, b) -> Integer.compare(iniziative.get(b), iniziative.get(a)));
-
-            // 3) Stampa ordine di iniziativa
-            System.out.println("\nOrdine di iniziativa:");
-            for (Personaggio p : ordine) {
-                System.out.println(" - " + p.getNomePersonaggio() + " (iniz.: " + iniziative.get(p) + ")");
-            }
-
-            // 4) Esegui i turni singoli nell'ordine calcolato
-           for (Personaggio p : ordine) {
-                System.out.println("\nTurno di: " + p.getNomePersonaggio());
-                turnoService.iniziaNuovoTurno(java.util.List.of(p), scanner);
-            } 
-
-            System.out.print("Continuare altri turni? (S/N): ");
-            String c = scanner.nextLine().trim().toLowerCase();
-            if (!c.equals("s") && !c.equals("si")) {
-                continua = false;
-            }
-        }
-    }*/
-
     private static int scegliClasse(Scanner scanner, String who) {
         int sceltaClasse = 0;
         while (sceltaClasse < 1 || sceltaClasse > 4) {

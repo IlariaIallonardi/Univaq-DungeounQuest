@@ -158,9 +158,11 @@ public class Personaggio {
     public void setTurniStordito(int turniStordito) {
         this.turniStordito = turniStordito;
     }
+
     public int getPortafoglioPersonaggio() {
         return portafoglioPersonaggio;
     }
+
     public void setPortafoglioPersonaggio(int portafoglioPersonaggio) {
         this.portafoglioPersonaggio = portafoglioPersonaggio;
     }
@@ -218,7 +220,9 @@ public class Personaggio {
      * Aggiunge N turni da saltare per questo personaggio.
      */
     public void aggiungiTurniDaSaltare(int n) {
-        if (n <= 0) return;
+        if (n <= 0) {
+            return;
+        }
         this.turniDaSaltare += n;
     }
 
@@ -265,6 +269,11 @@ public class Personaggio {
         return armaEquippaggiata;
     }
 
+    public boolean puoRaccogliere(Arma.TipoArma tipo) {
+
+        return true;
+    }
+
     public boolean puoEquipaggiare(Arma.TipoArma tipo) {
         return true;
     }
@@ -294,15 +303,14 @@ public class Personaggio {
             if (zaino == null || !zaino.getListaOggetti().contains(oggetto)) {
                 return false; // L'arma non è nello zaino
             }
-            if (!personaggio.puoEquipaggiare(((Arma) oggetto).getTipoArma())) {
-                return false; // Il personaggio non può equipaggiare questo tipo di arma
-            } else {
+            if (personaggio.puoEquipaggiare(((Arma) oggetto).getTipoArma())) {
                 ((Arma) oggetto).eseguiEffetto(personaggio);
                 // decidere se rimuovere dall'inventario o mantenerla come equip
                 zaino.rimuoviOggettoDaZaino(oggetto);
                 zaino.setCapienza(zaino.getCapienza() + 1);
                 return true;
             }
+            return false; // Non può equipaggiare questo tipo di arma
         }
 
         // Armatura: indossa (metodo service indossaArmatura)
@@ -345,15 +353,19 @@ public class Personaggio {
             return false;
         }
 
-    
-
         // verifica lista e capienza (capienza intesa come posti disponibili)
         if (zaino.getListaOggetti() == null) {
             return false;
         }
+        if (oggetto instanceof Arma) {
+            Arma.TipoArma tipo = ((Arma) oggetto).getTipoArma();
+            if (!this.puoRaccogliere(tipo)) {
+                System.out.println(this.getNomePersonaggio() + " non può raccogliere questo tipo di arma.");
+                return false;
+            }
+        }
 
         //fino a qui tutto ok, provo ad aggiungere
-
         if (zaino.getListaOggetti().size() < zaino.getCapienza()) {
             // spazio disponibile: aggiungi direttamente
             zaino.getListaOggetti().add(oggetto);

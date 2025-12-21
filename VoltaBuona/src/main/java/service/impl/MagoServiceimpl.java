@@ -94,12 +94,11 @@ public class MagoServiceimpl implements PersonaggioService {
 
     public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
     }
-
-    @Override
-    public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
-    Stanza stanza = personaggio.getPosizioneCorrente();
-        Zaino zaino = personaggio.getZaino();
-        return new Mago("abilità",null,200,300,0,2,"mago",stanza,false,100,300,"normale",0,0,0,0,zaino,50);
-    }
+@Override
+      public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
+Stanza stanza = null;
+Zaino zaino = new Zaino();
+return new Mago("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 300, "normale", 0, 0, 0, 0, zaino, 50);
+}
 
 }

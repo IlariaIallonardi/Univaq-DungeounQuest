@@ -1,6 +1,9 @@
 package service.impl;
 
+import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import domain.Evento;
@@ -11,11 +14,11 @@ import domain.Stanza;
 import domain.Zaino;
 import service.PersonaIncontrataService;
 
-public class  NPCServiceImpl implements PersonaIncontrataService {
-     private static final AtomicInteger ID_COUNTER = new AtomicInteger(1);
+public class NPCServiceImpl implements PersonaIncontrataService {
+
+    private static final AtomicInteger ID_COUNTER = new AtomicInteger(1);
     private final Scanner scanner = new Scanner(System.in);
     private final NPC npc = null;
-
 
     public String parla(Personaggio personaggio, NPC npc) {
 
@@ -42,13 +45,10 @@ public class  NPCServiceImpl implements PersonaIncontrataService {
         return risposta;
     }
 
-    
     public boolean risolviRebus(NPC npc, Personaggio personaggio, String risposta) {
         return npc.verificaRisposta(risposta);
     }
 
-
-    
     public void donaOggettoSingolo(NPC npc, Personaggio personaggio) {
 
         if (!npc.haOggettiDaDare()) {
@@ -60,17 +60,20 @@ public class  NPCServiceImpl implements PersonaIncontrataService {
         System.out.println("L’NPC ti dona: " + dono.getNome());
 
         aggiungiOggettoAZaino(personaggio, dono);
-     
+
     }
-    @Override
-    public void rimuoviEventoDaStanza(Stanza stanza, Evento evento){
-        stanza.getListaEventiAttivi().remove(evento);
-    };
 
     @Override
-    public boolean attivaEvento(Personaggio personaggio, Evento e){
+    public void rimuoviEventoDaStanza(Stanza stanza, Evento evento) {
+        stanza.getListaEventiAttivi().remove(evento);
+    }
+
+    ;
+
+    @Override
+    public boolean attivaEvento(Personaggio personaggio, Evento e) {
         if (e instanceof NPC npc) {
-             Stanza stanza = ((NPC) e).getPosizioneCorrenteNPC();
+            Stanza stanza = ((NPC) e).getPosizioneCorrenteNPC();
             System.out.println("Incontri un NPC: " + npc.getNomeNPC());
             parla(personaggio, npc);
             rimuoviEventoDaStanza(stanza, e);
@@ -78,17 +81,20 @@ public class  NPCServiceImpl implements PersonaIncontrataService {
             return true;
         }
         return false;
-    };
+    }
 
-    @Override   
-    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza){   
+    ;
+
+    @Override
+    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza) {
         for (Evento e : stanza.getListaEventiAttivi()) {
             boolean termina = attivaEvento(personaggio, e);
-            if (termina) return;
+            if (termina) {
+                return;
+            }
         }
     }
 
-   
     private void aggiungiOggettoAZaino(Personaggio personaggio, Oggetto oggetto) {
 
         Zaino zaino = personaggio.getZaino();
@@ -103,20 +109,46 @@ public class  NPCServiceImpl implements PersonaIncontrataService {
     }
 
     @Override
-    public Evento aggiungiEventoCasuale() {
-        // Implementazione di esempio per creare un NPC casuale
-        int id = ID_COUNTER.getAndIncrement();
-        String nomeNPC = "NPC_" + id;
-        String rebus = "Qual è la capitale d'Italia?";
-        String rispostaCorretta = "Roma";
 
-        NPC npc = new NPC(id, rispostaCorretta, rebus, rispostaCorretta, null, nomeNPC, null);
+    public Evento aggiungiEventoCasuale() {
+        int id = ID_COUNTER.getAndIncrement();
+          String[] nomiBot = {"Il confuso", "Nonno Rebus", "L'indeciso", "Borin", "La Saggia"};
+        Random rngBot = new Random();
+
+        String nomeNPC = "NPC_" + nomiBot[rngBot.nextInt(nomiBot.length)];
+
+        // 5 domande semplici (domanda, risposta)
+        List<QA> domande = List.of(
+                new QA("Qual è la capitale d'Italia?", "Roma"),
+                new QA("Quanto fa 2 + 2?", "4"),
+                new QA("Di che colore è il cielo in una giornata serena?", "Blu"),
+                new QA("Quanti giorni ci sono in una settimana?", "7"),
+                new QA("Qual è il contrario di 'caldo'?", "Freddo")
+        );
+
+        // Pesca casuale
+        QA scelta = domande.get(ThreadLocalRandom.current().nextInt(domande.size()));
+
+        String rebus = scelta.domanda();
+        String rispostaCorretta = scelta.risposta();
+
+        NPC npc = new NPC(
+                id,
+                "NPC",
+                rebus,
+                rispostaCorretta,
+                null,
+                nomeNPC,
+                null
+        );
 
         return npc;
     }
 
+// Piccola struttura per tenere insieme domanda/risposta
+    private record QA(String domanda, String risposta) {
 
-
+    }
 
     @Override
     public String toString() {
@@ -137,6 +169,5 @@ public class  NPCServiceImpl implements PersonaIncontrataService {
     public int hashCode() {
         return super.hashCode();
     }
-
 
 }

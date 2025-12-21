@@ -147,11 +147,11 @@ public class PaladinoServiceImpl implements PersonaggioService {
     }
 
     @Override
-    public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
-        Stanza stanza = personaggio.getPosizioneCorrente();
-        Zaino zaino = personaggio.getZaino();
-        return new Paladino("abilità",null,200,300,0,2,"paladino",stanza,false,100,300,"normale",0,0,0,0,zaino,50);
-    }
+      public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
+Stanza stanza = null;
+Zaino zaino = new Zaino();
+return new Paladino("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 300, "normale", 0, 0, 0, 0, zaino, 50);
+}
 
     public enum TipoMagiaSacra {
         RUBAVITA(4),
