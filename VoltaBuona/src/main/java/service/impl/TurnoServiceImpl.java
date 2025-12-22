@@ -255,6 +255,7 @@ public class TurnoServiceImpl implements TurnoService {
             System.out.println("3) Fare un evento E prendere un oggetto");
         }
         System.out.println("4) usare un oggetto dallo zaino");
+        System.out.println("5) Controlla il portafoglio");
         System.out.println("0) Passa il turno");
 
         int scelta;
@@ -281,9 +282,7 @@ public class TurnoServiceImpl implements TurnoService {
                 break;
             case 3:
                 if (ciSonoEventi && ciSonoOggetti) {
-                    if (eseguiSingoloEvento(personaggio, stanzaCorrente, eventi, scanner)) {
-                        return;
-                    }
+                    if (eseguiSingoloEvento(personaggio, stanzaCorrente, eventi, scanner)) 
                     // poi prendere oggetto
                     mostraOggetti(oggetti);
                     raccogliUnOggetto(personaggio, stanzaCorrente, oggetti, scanner);
@@ -291,6 +290,10 @@ public class TurnoServiceImpl implements TurnoService {
                 break;
             case 4:
                 gestisciUsoOggettoDaZaino(personaggio, scanner);
+                break;
+            case 5:
+                personaggio.getPortafoglioPersonaggio();
+                System.out.println("saldo attuale :" + personaggio.getPortafoglioPersonaggio());
                 break;
             case 0:
                 System.out.println("Turno terminato.");

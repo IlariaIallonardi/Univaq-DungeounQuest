@@ -67,13 +67,10 @@ public class Tesoro extends Oggetto {
         this.valore = valore;
     }
 
-    @Override
-    public boolean eseguiEffetto(Personaggio personaggio) {
-        if (personaggio == null) return false;
-
-        // applica l'effetto: aggiunge il valore al TESORO del personaggio
-        personaggio.setPortafoglioPersonaggio(personaggio.getPortafoglioPersonaggio() + this.valore);
-
-        return true;
-    }
+   @Override
+   public boolean eseguiEffetto(Personaggio personaggio) {
+    if (personaggio == null) return false;
+    personaggio.addMonete(this.valore);
+    return true;
+}
 }

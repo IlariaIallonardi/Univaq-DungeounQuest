@@ -92,22 +92,18 @@ public class NPC extends PersonaIncontrata {
         return rispostaGiocatore.trim().equalsIgnoreCase(rispostaCorretta);
     }
 
-    /**
-     * Controlla se l’NPC ha oggetti da dare
-     */
-    public boolean haOggettiDaDare() {
-        return !oggettiDaDonare.isEmpty();
-    }
+
 
     /**
      * Restituisce un oggetto e lo rimuove dalla lista
      */
-    public Oggetto daOggetto() {
-        if (oggettiDaDonare.isEmpty()) {
-            return null;
-        }
-        return oggettiDaDonare.remove(0);
+ public Tesoro daOggetto(Oggetto o){     
+    if (o instanceof Tesoro) {
+        this.haInteragito = true;
+        return (Tesoro) o;
     }
+    return null;
+}
 
     public String getNomeNPC() {
         return nomeNPC;

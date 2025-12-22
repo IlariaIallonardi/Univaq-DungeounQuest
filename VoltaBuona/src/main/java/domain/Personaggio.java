@@ -358,17 +358,21 @@ public class Personaggio {
             return false;
         }
         // se è un Tesoro, applica l'effetto subito (non va nello zaino)
-        if (oggetto instanceof Tesoro) {
-            boolean applicato = ((Tesoro) oggetto).eseguiEffetto(personaggio);
-            if (applicato) {
-                stanza.rimuoviOggetto(oggetto);
-                System.out.println(personaggio.getNomePersonaggio() + " raccoglie " + oggetto.getNome() + " e ottiene " + ((Tesoro) oggetto).getValore() + " monete.");
-                return true;
-            } else {
-                return false;
-            }
-        }
+       if (oggetto instanceof Tesoro) {
+    System.out.println("DEBUG raccogliereOggetto: personaggio identity=" + System.identityHashCode(personaggio));
+    int saldoPrima = personaggio.getPortafoglioPersonaggio();
+    System.out.println("Saldo prima raccolta: " + saldoPrima);
 
+    boolean applicato = ((Tesoro) oggetto).eseguiEffetto(personaggio);
+    if (applicato) {
+        stanza.rimuoviOggetto(oggetto);
+        System.out.println(personaggio.getNomePersonaggio() + " raccoglie " + oggetto.getNome() + " e ottiene " + ((Tesoro) oggetto).getValore() + " monete.");
+        System.out.println("Saldo dopo raccolta: " + personaggio.getPortafoglioPersonaggio() + " monete. Identity: " + System.identityHashCode(personaggio));
+        return true;
+    } else {
+        return false;
+    }
+}
         if (oggetto instanceof Arma) {
             Arma.TipoArma tipo = ((Arma) oggetto).getTipoArma();
             if (!this.puoRaccogliere(tipo)) {
@@ -434,6 +438,22 @@ public class Personaggio {
         System.out.println(personaggio.getNomePersonaggio() + " raccoglie " + oggetto.getNome());
         return true;
     }
+
+    public void addMonete(int amount) {
+    if (amount <= 0) return;
+    this.portafoglioPersonaggio += amount;
+}
+
+public boolean removeMonete(int amount) {
+    if (amount <= 0) return false;
+    if (this.portafoglioPersonaggio < amount) return false;
+    this.portafoglioPersonaggio -= amount;
+    return true;
+}
+
+public boolean hasMonete(int amount) {
+    return this.portafoglioPersonaggio >= amount;
+}
 
     @Override
     public String toString() {

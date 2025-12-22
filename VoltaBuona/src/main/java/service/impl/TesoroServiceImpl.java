@@ -39,6 +39,7 @@ public Oggetto creaOggettoCasuale() {
     int valore = rnd.nextInt(10, 201); // 10..200
     String nome = "Tesoro del valore di " + valore;
     String descrizione = "Un tesoro dal valore di " + valore;
+    
     return new Tesoro(valore, id, nome, descrizione, true, true, false);
 }
 }
