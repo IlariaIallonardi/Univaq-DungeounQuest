@@ -13,15 +13,20 @@ public class Zaino {
         this.listaOggetti = new ArrayList<>();
     }
 
-    public boolean aggiungiOggettoAZaino(Oggetto oggetto) {
-        if (listaOggetti.size() >= capienza) return false;
-        return listaOggetti.add(oggetto);
-    }
+   public boolean aggiungiOggettoAZaino(Oggetto oggetto) {
+    Zaino zaino=this;
+    if (oggetto == null) return false;
+    if (listaOggetti.size() >= capienza) return false;
+    listaOggetti.add(oggetto);
+    capienza = zaino.setCapienza(zaino.getCapienza()-1);
+    return true;
+}
 
-    public boolean rimuoviOggettoDaZaino(Oggetto oggetto) {
-        return listaOggetti.remove(oggetto);
-    }
-
+public boolean rimuoviOggettoDaZaino(Oggetto oggetto) {
+    boolean removed = listaOggetti.remove(oggetto);
+    if (removed) capienza++;
+    return removed;
+}
 
     public int getId() {
         return id;
@@ -35,8 +40,9 @@ public class Zaino {
         return capienza;
     }
 
-    public void setCapienza(int capienza) {
+    public int setCapienza(int capienza) {
         this.capienza = capienza;
+        return this.capienza;
     }
 
     public List<Oggetto> getListaOggetti() {

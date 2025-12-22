@@ -177,7 +177,7 @@ public class ArciereServiceImpl implements PersonaggioService {
    public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
 Stanza stanza = null;
 Zaino zaino = new Zaino();
-return new Arciere("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 300, "normale", 0, 0, 0, 0, zaino, 50);
+return new Arciere("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 300, "normale", 0, 0, 0, 0, zaino, 0);
 }
 
 

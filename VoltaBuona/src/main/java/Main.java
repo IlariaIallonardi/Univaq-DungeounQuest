@@ -260,7 +260,7 @@ public class Main {
         GiocatoreService giocatoreService = new GiocatoreService();
 
         // *** 1 LETTURA CONFIGURAZIONE ***
-        int[] dimensioni = {4, 4}; // valori di esempio
+        int[] dimensioni = {6, 6}; // valori di esempio
         int righe = dimensioni[0];
         int colonne = dimensioni[1];
 

@@ -72,7 +72,7 @@ public class Tesoro extends Oggetto {
         if (personaggio == null) return false;
 
         // applica l'effetto: aggiunge il valore al TESORO del personaggio
-        personaggio.setEsperienza(personaggio.getEsperienza() + this.valore);//DA CAMBIARE
+        personaggio.setPortafoglioPersonaggio(personaggio.getPortafoglioPersonaggio() + this.valore);
 
         return true;
     }

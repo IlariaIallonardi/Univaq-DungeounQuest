@@ -44,10 +44,10 @@ public class StanzaFactory {
 
     public List<Oggetto> generaOggettiCasuali() {
         List<Oggetto> oggetti = new ArrayList<>();
-        int n = rnd.nextInt(3); // 0..2 oggetti
-
+        int n = rnd.nextInt(5); // 0..4 oggetti
+        
         for (int i = 0; i < n; i++) {
-            int tipo = rnd.nextInt(4); // 0..3
+            int tipo = rnd.nextInt(5); // 0..4  
             switch (tipo) {
                 case 0:
                     oggetti.add(new PozioneServiceImpl().creaOggettoCasuale());
@@ -71,9 +71,9 @@ public class StanzaFactory {
 
    private List<Evento> generaEventiCasuali() {
    List<Evento> eventi = new ArrayList<>();
-        int n = rnd.nextInt(3); // 0..2 eventi
+        int n = rnd.nextInt(5); // 0..4 eventi
         for (int i = 0; i < n; i++) {
-            int tipo = rnd.nextInt(4); // 0..3
+            int tipo = rnd.nextInt(5); // 0..4s
             //switch per tipi di evento da implementare
              switch (tipo) {
                 case 0:

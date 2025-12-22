@@ -357,6 +357,18 @@ public class Personaggio {
         if (zaino.getListaOggetti() == null) {
             return false;
         }
+        // se è un Tesoro, applica l'effetto subito (non va nello zaino)
+        if (oggetto instanceof Tesoro) {
+            boolean applicato = ((Tesoro) oggetto).eseguiEffetto(personaggio);
+            if (applicato) {
+                stanza.rimuoviOggetto(oggetto);
+                System.out.println(personaggio.getNomePersonaggio() + " raccoglie " + oggetto.getNome() + " e ottiene " + ((Tesoro) oggetto).getValore() + " monete.");
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         if (oggetto instanceof Arma) {
             Arma.TipoArma tipo = ((Arma) oggetto).getTipoArma();
             if (!this.puoRaccogliere(tipo)) {
