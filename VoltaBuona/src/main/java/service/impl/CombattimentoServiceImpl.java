@@ -1,5 +1,7 @@
 package service.impl;
 
+import java.util.List;
+
 import domain.Combattimento;
 import domain.Mostro;
 import domain.Personaggio;
@@ -13,61 +15,57 @@ public class CombattimentoServiceImpl implements CombattimentoService {
     private MostroServiceImpl mostroService = new MostroServiceImpl();
     private PersonaggioService personaggioService;
 
-    /**
-     * Calcola e applica il danno generato dall'attaccante sul bersaglio
-     * implicito memorizzato in Combattimento. Ritorna il danno effettivamente
-     * applicato.
-     *
-     */
     @Override
     public int applicaECalcolaDanno(Combattimento combattimento, Object attaccante) {
         if (combattimento == null || attaccante == null) {
             return 0;
         }
 
-        //scelta equipaggiamento personaggio
         Personaggio personaggio = combattimento.getPersonaggioCoinvolto();
         Mostro mostro = combattimento.getMostroCoinvolto();
 
-        // Attaccante = Mostro -> bersaglio = Personaggio
-        // Verifichiamo che l'attaccante sia esattamente il mostro coinvolto nel combattimento
-        if (combattimento.getMostroCoinvolto() != null && attaccante == combattimento.getMostroCoinvolto()) {
+        // Garantiamo 1 vs 1: se manca uno dei due, non procediamo
+        if (personaggio == null || mostro == null) {
+            return 0;
+        }
 
-            if (mostro == null || personaggio == null) {
-                return 0;
-            }
-
-            // calcola danno base evitando metodi che applicano già il danno internamente
+        // Caso: attacca il mostro -> bersaglio = personaggio
+        if (attaccante == mostro) {
             int dannoBase = MostroServiceImpl.dannoBase(mostro, personaggio);
+            int dannoApplicato = new MostroServiceImpl().attaccoDelMostro(mostro, personaggio, dannoBase);
 
-            // applica il danno tramite PersonaggioService (centrale per l'applicazione e gli effetti)
-            int dannoApplicato = mostroService.attaccoDelMostro(mostro, personaggio, dannoBase);
-
-            System.out.println(mostro.getNomeMostro() + " infligge " + dannoApplicato + " danni a " + personaggio.getNomePersonaggio()
-                    + " (HP rimasti: " + personaggio.getPuntiVita() + ")");
+          //  System.out.println(personaggio.getNomePersonaggio() + " HP rimasti: " + personaggio.getPuntiVita());
 
             if (personaggio.getPuntiVita() <= 0) {
                 combattimento.setVincitore(mostro);
                 combattimento.setInCorso(false);
                 System.out.println(personaggio.getNomePersonaggio() + " è stato sconfitto da " + mostro.getNomeMostro());
             }
-
             return dannoApplicato;
         }
 
-        // Attaccante = Personaggio -> bersaglio = Mostro
-        // Verifichiamo che l'attaccante sia esattamente il personaggio coinvolto nel combattimento
-        if (combattimento.getPersonaggioCoinvolto() != null && attaccante == combattimento.getPersonaggioCoinvolto()) {
-
-            if (personaggio == null || mostro == null) {
-                return 0;
+        // Caso: attacca il personaggio -> bersaglio = mostro
+        if (attaccante == personaggio) {
+            // risolvo il service concreto del personaggio (fallback alle implementazioni esistenti)
+            PersonaggioService ps = this.personaggioService;
+            if (ps == null) {
+                if (personaggio instanceof domain.Guerriero) {
+                    ps = new GuerrieroServiceImpl();
+                } else if (personaggio instanceof domain.Arciere) {
+                    ps = new ArciereServiceImpl();
+                } else if (personaggio instanceof domain.Mago) {
+                    ps = new MagoServiceImpl();
+                } else if (personaggio instanceof domain.Paladino) {
+                    ps = new PaladinoServiceImpl();
+                } else {
+                    ps = new GuerrieroServiceImpl();
+                }
             }
 
-            // già applica la difesa e sottrae gli HP al mostro, e ritorna il danno applicato.
-            int dannoApplicato = personaggioService.attacca(personaggio, mostro, combattimento);
+            int dannoApplicato = ps.attacca(personaggio, mostro, combattimento);
 
-            System.out.println(personaggio.getNomePersonaggio() + " infligge " + dannoApplicato + " danni a " + mostro.getNomeMostro()
-                    + " (HP rimasti: " + mostro.getPuntiVitaMostro() + ")");
+          // System.out.println(mostro.getNomeMostro() + " HP rimasti: " + mostro.getPuntiVitaMostro());
+
             if (mostro.getPuntiVitaMostro() <= 0) {
                 combattimento.setVincitore(personaggio);
                 combattimento.setInCorso(false);
@@ -77,12 +75,11 @@ public class CombattimentoServiceImpl implements CombattimentoService {
                 } catch (Exception ignored) {
                 }
             }
-
             return dannoApplicato;
         }
 
-        // tipo non gestito
-        System.out.println("Tipo attaccante non gestito in applicaECalcolaDanno: " + attaccante.getClass().getName());
+        // fallback: attaccante non riconosciuto
+        System.out.println("Attaccante non gestito in applicaECalcolaDanno: " + attaccante.getClass().getName());
         return 0;
     }
 
@@ -113,81 +110,163 @@ public class CombattimentoServiceImpl implements CombattimentoService {
     }
 
     @Override
-    public void scegliAzione(Personaggio personaggio, Zaino zaino) {
-        // TODO Auto-generated method stub
+    public void scegliAzioneCombattimento(Personaggio personaggio, Zaino zaino) {
+        if (personaggio == null) {
+            return;
+        }
+        java.util.Scanner sc = new java.util.Scanner(System.in);
+        System.out.println("\nScegli azione in combattimento per " + personaggio.getNomePersonaggio());
+        System.out.println("1) Attacca");
+        System.out.println("2) Usa un oggetto dallo zaino");
+        System.out.println("0) Annulla");
 
+        String line = sc.nextLine().trim();
+        int scelta;
+        try {
+            scelta = Integer.parseInt(line);
+        } catch (NumberFormatException e) {
+            System.out.println("Scelta non valida.");
+            return;
+        }
+
+        switch (scelta) {
+            case 1:
+                System.out.println("Hai scelto di attaccare.");
+                break;
+            case 2:
+                if (zaino == null || zaino.getListaOggetti().isEmpty()) {
+                    System.out.println("Zaino vuoto.");
+                    break;
+                }
+                List<domain.Oggetto> utilizzabili = new java.util.ArrayList<>();
+                for (domain.Oggetto o : zaino.getListaOggetti()) {
+                    if (o != null && o.isUsabile()) {
+                        utilizzabili.add(o);
+                    }
+                }
+                if (utilizzabili.isEmpty()) {
+                    System.out.println("Nessun oggetto utilizzabile nello zaino.");
+                    break;
+                }
+                System.out.println("\nOggetti utilizzabili:");
+                for (int i = 0; i < utilizzabili.size(); i++) {
+                    System.out.println((i + 1) + ") " + utilizzabili.get(i).getNome());
+                }
+                System.out.println("0) Annulla");
+                System.out.print("Scegli un oggetto da usare: ");
+                int idx;
+                try {
+                    idx = Integer.parseInt(sc.nextLine());
+                } catch (NumberFormatException ex) {
+                    System.out.println("Input non valido.");
+                    break;
+                }
+                if (idx == 0) {
+                    System.out.println("Hai annullato.");
+                    break;
+                }
+                if (idx < 1 || idx > utilizzabili.size()) {
+                    System.out.println("Scelta non valida.");
+                    break;
+                }
+                domain.Oggetto oggetto = utilizzabili.get(idx - 1);
+                try {
+                    boolean applicato = oggetto.eseguiEffetto(personaggio);
+                    if (applicato) {
+                        // rimuovi l'oggetto dallo zaino se consumabile
+                        zaino.rimuoviOggettoDaZaino(oggetto);
+                        System.out.println("Hai usato: " + oggetto.getNome());
+                    } else {
+                        System.out.println("Impossibile usare l'oggetto.");
+                    }
+                } catch (Exception ex) {
+                    System.out.println("Errore nell'uso dell'oggetto: " + ex.getMessage());
+                }
+                break;
+            case 0:
+            default:
+                System.out.println("Azione annullata.");
+        }
     }
 
     @Override
     public boolean terminaCombattimento(Combattimento combattimento) {
-        // TODO Auto-generated method stub
-        return false;
+        if (combattimento == null) {
+            return false;
+        }
+        if (!combattimento.isInCorso()) {
+            return false;
+        }
+        combattimento.setInCorso(false);
+        // eventuale pulizia: rimuovi mostro dalla stanza se morto
+        Stanza s = combattimento.getStanza();
+        if (s != null && combattimento.getMostroCoinvolto() != null && combattimento.getMostroCoinvolto().èMortoilMostro() == true) {
+            if (s.getListaEventiAttivi() != null) {
+                s.getListaEventiAttivi().remove(combattimento.getMostroCoinvolto());
+            }
+        }
+        return true;
     }
 
     @Override
     public boolean èInCorso(Combattimento combattimento) {
-        // TODO Auto-generated method stub
-        return false;
+        return combattimento != null && combattimento.isInCorso();
     }
 
     @Override
     public Object iniziaCombattimento(Personaggio personaggio, Mostro mostro, Stanza stanza) {
 
         if (personaggio == null || mostro == null) {
-            System.out.println(" Combattimento non valido.");
+            System.out.println("Combattimento non valido.");
             return false;
         }
 
-        System.out.println("\n Inizia il combattimento: "
-                + personaggio.getNomePersonaggio() + " VS " + mostro.getNomeMostro());
+        System.out.println("\nInizia il combattimento: " + personaggio.getNomePersonaggio() + " VS " + mostro.getNomeMostro());
 
-        Combattimento combattimento = new Combattimento(null, 0, mostro, 0, false, personaggio, stanza, 0, stanza, mostro);
+        domain.Evento evento = new domain.Evento(0, true, false,
+                "Incontro con " + mostro.getNomeMostro(),
+                "Combattimento_" + mostro.getNomeMostro());
+        Combattimento combattimento = new Combattimento(null, 0, evento, 0, true, personaggio, stanza, 0, null, mostro);
         combattimento.setInCorso(true);
 
-        // 🎲 iniziativa random: 0 = mostro, 1 = personaggio
-        int iniziativa = new java.util.Random().nextInt(2);
-        System.out.println("🎲 Iniziativa: " + (iniziativa == 0 ? "inizia il MOSTRO" : "inizia il PERSONAGGIO"));
-
-        // Imposta chi attacca per primo
-        //Object attaccante = (iniziativa == 0) ? mostro : personaggio;
-        combattimento.setInCorso(true);
-
-        // ciclo di combattimento semplice: alterna finché uno non muore
+        // iniziativa: 0 = mostro, 1 = personaggio (memorizzata nel Combattimento)
+        Integer iniziativa = combattimento.getIniziativa();
+        if (iniziativa == null) {
+            iniziativa = new java.util.Random().nextInt(2);
+            combattimento.setIniziativa(iniziativa);
+            System.out.println(" Iniziativa: " + (iniziativa == 0 ? mostro.getNomeMostro() : personaggio.getNomePersonaggio()) + " inizia per primo.");
+        }
+        // loop alternato 1vs1 finché uno non muore
         while (combattimento.isInCorso()) {
-            if (iniziativa == 1) {
-                System.out.println(personaggio.getNomePersonaggio() + " inizia il combattimento.");
-                applicaECalcolaDanno(combattimento, personaggio);
-            } else {
-                System.out.println(mostro.getNomeMostro() + " inizia il combattimento.");
+
+            if (iniziativa == 0) {
                 applicaECalcolaDanno(combattimento, mostro);
+            } else {
+                applicaECalcolaDanno(combattimento, personaggio);
             }
-            //  fine combattimento: rimozione mostro dalla stanza se morto
+
+            // controlla vittoria
             if (mostro.getPuntiVitaMostro() <= 0) {
                 combattimento.setVincitore(personaggio);
-                System.out.println("🏆 " + personaggio.getNomePersonaggio() + " ha vinto!");
-
-                // se il mostro è nella lista eventi della stanza, lo rimuovi
+                combattimento.setInCorso(false);
+                System.out.println( personaggio.getNomePersonaggio() + " ha vinto!");
                 if (stanza != null && stanza.getListaEventiAttivi() != null) {
                     stanza.getListaEventiAttivi().remove(mostro);
                 }
-
-            } else if (personaggio.getPuntiVita() <= 0) {
-                combattimento.setVincitore(mostro);
-                System.out.println("💀 " + personaggio.getNomePersonaggio() + " è stato sconfitto...");
+                break;
             }
-
-            combattimento.setInCorso(false);
-            // Se qualcuno è morto, applicaECalcolaDanno avrà settato inCorso=false
-            if (!combattimento.isInCorso()) {
+            if (personaggio.getPuntiVita() <= 0) {
+                combattimento.setVincitore(mostro);
+                combattimento.setInCorso(false);
+                //System.out.println( personaggio.getNomePersonaggio() + " è stato sconfitto...");
                 break;
             }
 
-            // switch dell’attaccante (alternanza turni)
-            iniziativa = 0;
+            // alterna turno
+            iniziativa = 1 - iniziativa;
         }
 
         return combattimento.getVincitore();
-
     }
 
 }

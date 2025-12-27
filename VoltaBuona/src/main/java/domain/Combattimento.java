@@ -13,6 +13,7 @@ public class Combattimento {
     private Personaggio personaggioCoinvolto;
     private Evento eventoMostro;
     private Mostro mostroCoinvolto; // --> eventoMostro
+    private Integer iniziativa;
 
     public Combattimento(Mostro.TipoAttaccoMostro attaccoMostro, int danniInflittiCombattimento, Evento eventoMostro, int id, boolean inCorso, Personaggio personaggioCoinvolto, Stanza stanza, int turnoCorrenteCombattimento, Object vincitore, Mostro mostroCoinvolto) {
         this.attaccoMostro = attaccoMostro;
@@ -105,6 +106,13 @@ public class Combattimento {
 
     public void setMostroCoinvolto(Mostro mostroCoinvolto) {
         this.mostroCoinvolto = mostroCoinvolto;
+    }
+
+    public Integer getIniziativa() {
+        return iniziativa;
+    }
+    public void setIniziativa(Integer iniziativa) {
+        this.iniziativa = iniziativa;
     }
 
 }

@@ -251,19 +251,22 @@ public class Personaggio {
      * viene consumata qui). - Restituisce true se il personaggio è morto (PV <=
      * 0).
      */
-    public int subisciDanno(int danno) {
-        if (danno <= 0) {
-            return 0;
-        }
-        if (isProtetto()) {
-            // protezione impedisce il danno; verrà consumata in onTurnStart del personaggio
-            return 0;
-        }
-
-        int dannoEffettivo = Math.max(0, danno - this.difesa);
-        this.puntiVita -= dannoEffettivo;
-        return dannoEffettivo;
+   public int subisciDanno(int danno) {
+    if (danno <= 0) {
+        return 0;
     }
+    if (isProtetto()) {
+        return 0;
+    }
+
+    int dannoNetto =  this.difesa - danno;
+    if (dannoNetto <= 0) {
+        dannoNetto = 1; // garantisco almeno 1 danno per far progredire il combattimento
+    }
+
+    this.puntiVita -= dannoNetto;
+    return dannoNetto;
+}
 
     public Arma getArmaEquippaggiata() {
         return armaEquippaggiata;

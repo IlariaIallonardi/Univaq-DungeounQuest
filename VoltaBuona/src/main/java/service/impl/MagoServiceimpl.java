@@ -8,7 +8,7 @@ import domain.Stanza;
 import domain.Zaino;
 import service.PersonaggioService;
 
-public class MagoServiceimpl implements PersonaggioService {
+public class MagoServiceImpl implements PersonaggioService {
 
     /**
      * Metodo per utilizzare la magia del mago

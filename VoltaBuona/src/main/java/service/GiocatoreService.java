@@ -6,7 +6,7 @@ import java.util.Random;
 import domain.Personaggio;
 import service.impl.ArciereServiceImpl;
 import service.impl.GuerrieroServiceImpl;
-import service.impl.MagoServiceimpl;
+import service.impl.MagoServiceImpl;
 import service.impl.PaladinoServiceImpl;
 
 public class GiocatoreService {

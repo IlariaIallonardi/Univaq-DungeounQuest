@@ -25,7 +25,7 @@ public class MostroServiceImpl implements  PersonaIncontrataService {
      * Esecuzione dell'attacco del mostro
      * sul personaggio bersaglio.
      */
-    public int attaccoDelMostro(Mostro mostro, Personaggio bersaglio,int dannoBase) {
+  /*   public int attaccoDelMostro(Mostro mostro, Personaggio bersaglio,int dannoBase) {
 
 
         Mostro.TipoAttaccoMostro tipoAttacco = mostro.getTipoAttaccoMostro();
@@ -38,7 +38,7 @@ public class MostroServiceImpl implements  PersonaIncontrataService {
 
         int dannoApplicato = bersaglio.subisciDanno(danno);
         return dannoApplicato;  
-    }
+    }*/
 
     public  int calcolaDannoPerTipo(Mostro.TipoAttaccoMostro tipoAttacco, int base, Personaggio bersaglio) {
         if(tipoAttacco == Mostro.TipoAttaccoMostro.MORSO){
@@ -61,8 +61,23 @@ public class MostroServiceImpl implements  PersonaIncontrataService {
 
         
 
-    }
-    
+    } 
+
+       public int attaccoDelMostro(Mostro mostro, Personaggio bersaglio, int dannoBase) {
+    if (mostro == null || bersaglio == null) return 0;
+
+    Mostro.TipoAttaccoMostro tipoAttacco = mostro.getTipoAttaccoMostro();
+
+    int attaccoGrezzo = Math.max(1, mostro.getDannoMostro());
+    int dannoGrezzo = calcolaDannoPerTipo(tipoAttacco, attaccoGrezzo, bersaglio);
+
+    int dannoApplicato = bersaglio.subisciDanno(dannoGrezzo);
+
+    System.out.println(mostro.getNomeMostro() + " usa " + tipoAttacco
+        + " infliggendo " + dannoGrezzo + " danni a " + bersaglio.getNomePersonaggio()
+        + " (HP personaggio rimasti: " + bersaglio.getPuntiVita() + ")");
+    return dannoApplicato;
+}
 
 
     @Override
@@ -80,6 +95,7 @@ public class MostroServiceImpl implements  PersonaIncontrataService {
 
         if (e instanceof Mostro mostro) {
             Stanza stanza = mostro.getPosizioneCorrenteMostro() != null ? mostro.getPosizioneCorrenteMostro() : personaggio.getPosizioneCorrente();
+            mostro.setPosizioneCorrenteMostro(stanza);
             System.out.println("Hai incontrato: " + mostro.getNomeMostro());
 
             // Avvia il combattimento (usa il service di combattimento)

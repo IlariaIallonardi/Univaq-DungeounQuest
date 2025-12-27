@@ -50,10 +50,13 @@ public class TurnoServiceImpl implements TurnoService {
         Map<Personaggio, Integer> tiri = new HashMap<>();
 
         // 1️⃣ Ogni personaggio tira il dado
+        // 1️⃣ Ogni personaggio tira il dado (escludo i morti)
         for (Personaggio p : partecipanti) {
+            if (p == null || p.èMorto(p)) {
+                continue;
+            }
             int tiro = random.nextInt(20) + 1; // dado d20
             tiri.put(p, tiro);
-
         }
 
         // 2 Costruzione ordine turno SENZA sort
@@ -77,10 +80,8 @@ public class TurnoServiceImpl implements TurnoService {
             tiri.remove(migliore);
         }
 
-        /*    System.out.println("\nOrdine dei turni:");
-        for (int i = 0; i < ordineTurno.size(); i++) {
-            System.out.println((i + 1) + ") " + ordineTurno.get(i).getNomePersonaggio());*/
-        return ordineTurno;
+       
+       return new ArrayList<>(ordineTurno);
     }
 
     /**
@@ -97,12 +98,18 @@ public class TurnoServiceImpl implements TurnoService {
         List<Personaggio> ordine = calcolaOrdineIniziativa(partecipanti);
         //fino a qui è giusto 
 
-        for (Personaggio p : ordine) {
+        for (Personaggio p : List.copyOf(ordine)) {
             if (p == null) {
                 continue;
             }
             if (p.èMorto(p)) {
-                System.out.println(p.getNomePersonaggio() + " è morto. Salto il turno.");
+                System.out.println(p.getNomePersonaggio() + " è morto. Rimosso dalla partita.");
+                // rimuovo il personaggio dalle liste per non ricomparire nei turni futuri
+                try {
+                    partecipanti.remove(p);
+                } catch (Exception ignored) {
+                }
+                ordineTurno.remove(p);
                 continue;
             }
 
@@ -145,15 +152,14 @@ public class TurnoServiceImpl implements TurnoService {
             return;
         }
 
+        // Se è morto, rimuoviamo silenciosamente dall'ordine interno
         if (personaggio.èMorto(personaggio)) {
-            System.out.println(personaggio.getNomePersonaggio() + " è morto. Nessun effetto da aggiornare.");
             ordineTurno.remove(personaggio);
             return;
         }
 
         // Applica gli effetti di fine turno solo al personaggio passato
         aggiornaEffettiFineTurno(personaggio);
-
     }
 
     public void aggiornaEffettiFineTurno(Personaggio personaggio) {
@@ -215,7 +221,7 @@ public class TurnoServiceImpl implements TurnoService {
         System.out.println("\n--- Esplorazione stanza ---");
 
         if (!stanzaCorrente.getOggettiPresenti().isEmpty()) {
-           // System.out.println("Oggetti trovati:");
+            // System.out.println("Oggetti trovati:");
             mostraOggetti(stanzaCorrente.getOggettiPresenti());
             //  stanza.getOggettiPresenti().forEach(o -> System.out.println(" - " + o.getNome()));
         } else {
@@ -223,7 +229,7 @@ public class TurnoServiceImpl implements TurnoService {
         }
 
         if (eventi != null && !eventi.isEmpty()) {
-         //   System.out.println(" Eventi presenti:");
+            //   System.out.println(" Eventi presenti:");
             mostraEventi(eventi);
         } else {
             System.out.println(" La stanza è tranquilla...");
@@ -282,9 +288,10 @@ public class TurnoServiceImpl implements TurnoService {
                 break;
             case 3:
                 if (ciSonoEventi && ciSonoOggetti) {
-                    if (eseguiSingoloEvento(personaggio, stanzaCorrente, eventi, scanner)) 
-                    // poi prendere oggetto
-                    mostraOggetti(oggetti);
+                    if (eseguiSingoloEvento(personaggio, stanzaCorrente, eventi, scanner)) // poi prendere oggetto
+                    {
+                        mostraOggetti(oggetti);
+                    }
                     raccogliUnOggetto(personaggio, stanzaCorrente, oggetti, scanner);
                 }
                 break;
@@ -371,11 +378,11 @@ public class TurnoServiceImpl implements TurnoService {
         System.out.println("\nEventi disponibili:");
         for (int i = 0; i < eventi.size(); i++) {
             Evento e = eventi.get(i);
-            if(e instanceof domain.NPC) {
+            if (e instanceof domain.NPC) {
                 System.out.println((i + 1) + ") Persona Incontrata: " + ((domain.NPC) e).getNomeNPC());
                 continue;
             }
-            if(e instanceof domain.Mostro) {
+            if (e instanceof domain.Mostro) {
                 System.out.println((i + 1) + ") Persona Incontrata: " + ((domain.Mostro) e).getNomeMostro());
                 continue;
             }

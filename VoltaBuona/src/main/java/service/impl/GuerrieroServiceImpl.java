@@ -87,10 +87,9 @@ public class GuerrieroServiceImpl implements PersonaggioService {
         int nuoviPV = mostro.getPuntiVitaMostro() - dannoNetto;
         mostro.setPuntiVitaMostro(nuoviPV);
 
-        System.out.println("⚔ " + guerriero.getNomePersonaggio()
-                + " sferra un potente colpo contro " + mostro.getNomeMostro()
-                + " infliggendo " + dannoNetto + " danni!");
-
+System.out.println( guerriero.getNomePersonaggio()
+        + " sferra un potente colpo contro " + mostro.getNomeMostro()
+        + " infliggendo " + dannoNetto + " danni (HP mostro rimasti: " + mostro.getPuntiVitaMostro() + ")");
         if (mostro.getPuntiVitaMostro() <= 0) {
             System.out.println("💀 " + mostro.getNomeMostro() + " è stato sconfitto dal Guerriero!");
             try {
