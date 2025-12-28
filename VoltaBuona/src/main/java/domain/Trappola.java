@@ -115,6 +115,14 @@ public class Trappola extends Evento {
         this.effetto = effetto;
     }
 
+    /**
+ * Tenta di disinnescare la trappola per il `personaggio` passato.
+ *
+ * Comportamento corrente:
+ *  - Usa un tiro d6 casuale confrontato con una difficoltà fissa (CD = 4).
+ *  - Stampa il risultato del tiro e ritorna true se il disinnesco ha successo.
+ */
+
     public boolean checkDiDisinnesco(Personaggio personaggio) {
 
         // difficoltà della trappola (puoi modificarla come attributo)

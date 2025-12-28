@@ -1,5 +1,6 @@
 package service.impl;
 
+import domain.Arma;
 import domain.Combattimento;
 import domain.Guerriero;
 import domain.Mostro;
@@ -7,6 +8,7 @@ import domain.Personaggio;
 import domain.Stanza;
 import domain.Zaino;
 import service.PersonaggioService;
+import util.ANSI;
 
 public class GuerrieroServiceImpl implements PersonaggioService {
 
@@ -67,7 +69,7 @@ public class GuerrieroServiceImpl implements PersonaggioService {
         return attaccoFisico(guerriero, mostro);
     }
 
-    private int attaccoFisico(Guerriero guerriero, Mostro mostro) {
+   /*  public int attaccoFisico(Guerriero guerriero, Mostro mostro) {
 
         int attacco = guerriero.getAttacco() + 5;
         int livello = guerriero.getLivello();
@@ -79,7 +81,7 @@ public class GuerrieroServiceImpl implements PersonaggioService {
         // piccola "furia": se ha pochi HP, picco di danno
         if (guerriero.getPuntiVita() <= 10) {
             dannoBase += 5;
-            System.out.println("😤 " + guerriero.getNomePersonaggio() + " entra in FURIA e colpisce più forte!");
+            System.out.println( guerriero.getNomePersonaggio() + " entra in FURIA e colpisce più forte!");
         }
 
         int dannoNetto = Math.max(1, dannoBase - difesaMostro);
@@ -91,7 +93,7 @@ System.out.println( guerriero.getNomePersonaggio()
         + " sferra un potente colpo contro " + mostro.getNomeMostro()
         + " infliggendo " + dannoNetto + " danni (HP mostro rimasti: " + mostro.getPuntiVitaMostro() + ")");
         if (mostro.getPuntiVitaMostro() <= 0) {
-            System.out.println("💀 " + mostro.getNomeMostro() + " è stato sconfitto dal Guerriero!");
+            System.out.println( mostro.getNomeMostro() + " è stato sconfitto dal Guerriero!");
             try {
                 guerriero.setEsperienza(guerriero.getEsperienza() + 12);
                 if (guerriero.getEsperienza() >= 100) {
@@ -104,12 +106,82 @@ System.out.println( guerriero.getNomePersonaggio()
 
         }
         return dannoNetto;
+    }*/
+
+    public int attaccoFisico(Guerriero guerriero, Mostro mostro) {
+
+    int attacco = guerriero.getAttacco() + 15;
+    int livello = guerriero.getLivello();
+    int difesaMostro = mostro.getDifesaMostro();
+    Arma arma = guerriero.getArmaEquippaggiata();
+if (arma != null) {
+    System.out.println("[ARMA] " + guerriero.getNomePersonaggio()
+        + " ha equipaggiato: " + arma.getNome()
+        + " (dannoBonus=" + arma.getDannoBonus()
+        + ", tipo=" + arma.getTipoArma() + ")");
+} else {
+    System.out.println("[ARMA] " + guerriero.getNomePersonaggio() + " non ha arma equipaggiata.");
+}
+
+    int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
+   int bonusAttacco =java.util.concurrent.ThreadLocalRandom.current().nextInt(20, 150);
+    int totale = tiro + bonusAttacco;   
+    System.out.println(guerriero.getNomePersonaggio() + " tiro attacco: " + tiro + " + bonus " + bonusAttacco + " = " + totale + " (CA mostro: " + difesaMostro + ")");
+
+    if (tiro == 1) {
+        System.out.println("Tiro 1: fallimento critico!");
+        return 0;
     }
+
+    boolean critico = (tiro == 20);
+
+    if (totale < difesaMostro && !critico) {
+        System.out.println(guerriero.getNomePersonaggio() + " manca il bersaglio.");
+        return 0;
+    }
+
+    int dannoBase = attacco + livello * 2;
+    if (guerriero.getPuntiVita() <= 10) {
+        dannoBase += 5;
+       System.out.println(ANSI.BRIGHT_YELLOW + guerriero.getNomePersonaggio()
+    + " entra in " + ANSI.BRIGHT_RED + "FURIA" + ANSI.RESET + ANSI.BRIGHT_YELLOW + " e colpisce più forte!" + ANSI.RESET);
+    }
+
+    int dannoNetto = Math.max(1, dannoBase - difesaMostro);
+    if (critico) {
+        dannoNetto *= 2;
+       System.out.println(ANSI.BRIGHT_RED + ANSI.BOLD + "Colpo critico! Danno raddoppiato." + ANSI.RESET);
+
+    }
+
+    mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
+
+    System.out.println(guerriero.getNomePersonaggio()
+            + " sferra un potente colpo contro " + mostro.getNomeMostro()
+            + " infliggendo " + dannoNetto + " danni (HP mostro rimasti: " + mostro.getPuntiVitaMostro() + ")");
+
+    if (mostro.getPuntiVitaMostro() <= 0) {
+        System.out.println(ANSI.BRIGHT_GREEN + mostro.getNomeMostro() + " è stato sconfitto dal Guerriero!" + ANSI.RESET);
+        try {
+            guerriero.setEsperienza(guerriero.getEsperienza() + 12);
+            if (guerriero.getEsperienza() >= 100) {
+                guerriero.setLivello(guerriero.getLivello() + 1);
+                guerriero.setEsperienza(0);
+                System.out.println(" " + guerriero.getNomePersonaggio() + " è salito al livello " + guerriero.getLivello() + "!");
+            }
+        } catch (Exception ignored) {
+        }
+    }
+    return dannoNetto;
+}
 
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
 Stanza stanza = null;
 Zaino zaino = new Zaino();
-return new Guerriero("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 300, "normale", 0, 0, 0, 0, zaino, 0);
+return new Guerriero("abilità", null, 100, 100,
+ 0, 2, nome, stanza, false, 50, 300, "normale", 
+ 0, 0, 0, 
+ 0, zaino, 0);
 }
     
     public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {

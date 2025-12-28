@@ -47,6 +47,8 @@ public class Pozione extends Oggetto {
         if (personaggio == null) {
             return false;
         }
+        System.out.println("[POZIONE] Applicazione " + tipoPozione + " su " + personaggio.getNomePersonaggio()
+    + " (HP prima: " + personaggio.getPuntiVita() + ", Mana prima: " + personaggio.getPuntiMana() + ")");
 
         switch (tipoPozione) {
             case CURA:
@@ -65,6 +67,9 @@ public class Pozione extends Oggetto {
             default:
                 return false;
         }
+        System.out.println("[POZIONE] Risultato -> HP: " + personaggio.getPuntiVita()
+    + " | Mana: " + personaggio.getPuntiMana()
+    + " | Stato: " + personaggio.getStatoPersonaggio());
         return true;
     }
 

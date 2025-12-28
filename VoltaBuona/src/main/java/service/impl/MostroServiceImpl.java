@@ -68,17 +68,41 @@ public class MostroServiceImpl implements  PersonaIncontrataService {
 
     Mostro.TipoAttaccoMostro tipoAttacco = mostro.getTipoAttaccoMostro();
 
-    int attaccoGrezzo = Math.max(1, mostro.getDannoMostro());
-    int dannoGrezzo = calcolaDannoPerTipo(tipoAttacco, attaccoGrezzo, bersaglio);
+    int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
+    int bonusAttacco = Math.max(0, mostro.getDannoMostro() / 2);
+    int totale = tiro + bonusAttacco;
+    int ca = bersaglio.getDifesa();
+
+    System.out.println(mostro.getNomeMostro() + " tiro attacco: " + tiro + " + bonus " + bonusAttacco + " = " + totale + " (CA bersaglio: " + ca + ")");
+
+    if (tiro == 1) {
+        System.out.println("Tiro 1: fallimento critico del mostro!");
+        return 0;
+    }
+
+    boolean critico = (tiro == 20);
+
+    if (totale < ca && !critico) {
+        System.out.println(mostro.getNomeMostro() + " manca il bersaglio.");
+        return 0;
+    }
+
+    int baseDanno = Math.max(1, mostro.getDannoMostro());
+    int dannoGrezzo = calcolaDannoPerTipo(tipoAttacco, baseDanno, bersaglio);
+
+    if (critico) {
+        dannoGrezzo = Math.max(1, dannoGrezzo * 2);
+        System.out.println("Colpo critico del mostro! Danno raddoppiato.");
+    }
 
     int dannoApplicato = bersaglio.subisciDanno(dannoGrezzo);
 
     System.out.println(mostro.getNomeMostro() + " usa " + tipoAttacco
         + " infliggendo " + dannoGrezzo + " danni a " + bersaglio.getNomePersonaggio()
-        + " (HP personaggio rimasti: " + bersaglio.getPuntiVita() + ")");
+        + " (HP rimanenti: " + bersaglio.getPuntiVita() + ")");
+
     return dannoApplicato;
 }
-
 
     @Override
     public void rimuoviEventoDaStanza(Stanza stanza, Evento evento){

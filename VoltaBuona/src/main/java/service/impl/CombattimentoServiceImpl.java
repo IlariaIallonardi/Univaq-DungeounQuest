@@ -10,6 +10,7 @@ import domain.Zaino;
 import service.CombattimentoService;
 import service.PersonaggioService;
 
+
 public class CombattimentoServiceImpl implements CombattimentoService {
 
     private MostroServiceImpl mostroService = new MostroServiceImpl();
@@ -43,14 +44,27 @@ public class CombattimentoServiceImpl implements CombattimentoService {
             }
             return dannoApplicato;
         }
-
+         PersonaggioService ps = this.personaggioService;
         // Caso: attacca il personaggio -> bersaglio = mostro
         if (attaccante == personaggio) {
             // risolvo il service concreto del personaggio (fallback alle implementazioni esistenti)
-            PersonaggioService ps = this.personaggioService;
+           // PersonaggioService ps = this.personaggioService;
             if (ps == null) {
                 if (personaggio instanceof domain.Guerriero) {
-                    ps = new GuerrieroServiceImpl();
+                    GuerrieroServiceImpl gsvc = new GuerrieroServiceImpl();
+             int dannoApplicato = gsvc.attaccoFisico((domain.Guerriero) personaggio, mostro);
+
+            if (mostro.getPuntiVitaMostro() <= 0) {
+            combattimento.setVincitore(personaggio);
+            combattimento.setInCorso(false);
+            System.out.println(mostro.getNomeMostro() + " è stato sconfitto da " + personaggio.getNomePersonaggio());
+            try {
+                personaggio.setEsperienza(personaggio.getEsperienza() + 10);
+            } catch (Exception ignored) {
+            }
+        }
+        return dannoApplicato;
+    }
                 } else if (personaggio instanceof domain.Arciere) {
                     ps = new ArciereServiceImpl();
                 } else if (personaggio instanceof domain.Mago) {
@@ -78,10 +92,8 @@ public class CombattimentoServiceImpl implements CombattimentoService {
             return dannoApplicato;
         }
 
-        // fallback: attaccante non riconosciuto
-        System.out.println("Attaccante non gestito in applicaECalcolaDanno: " + attaccante.getClass().getName());
-        return 0;
-    }
+        
+    
 
     @Override
     public Mostro getMostro(Combattimento combattimento) {

@@ -29,11 +29,11 @@ public class Mostro extends PersonaIncontrata {
         this.dannoTipoMostro = dannoTipoMostro;
     }
      public enum TipoAttaccoMostro {
-        MORSO(15),
-        RUGGITO_DI_FUOCO(20),
-        URLO_ASSORDANTE(10),
-        RAGNATELA_IMMOBILIZZANTE(12),
-        ARTIGLI_POSSENTI(18);
+        MORSO(30),
+        RUGGITO_DI_FUOCO(40),
+        URLO_ASSORDANTE(45),
+        RAGNATELA_IMMOBILIZZANTE(20),
+        ARTIGLI_POSSENTI(48);
 
          private final int dannoTipoMostro;
         private TipoAttaccoMostro tipoAttaccoMostro;
@@ -163,32 +163,32 @@ public class Mostro extends PersonaIncontrata {
     if (this.nomeMostro == null) return 0;
     switch (this.nomeMostro) {
         case "Spiritello" -> {
-            this.puntiVitaMostro = 60;
-            this.difesaMostro = 5;
+            this.puntiVitaMostro = 100;
+            this.difesaMostro = 90;
             this.tipoAttaccoMostro = TipoAttaccoMostro.MORSO;
             return 1;
         }
         case "Drago" -> {
             this.puntiVitaMostro = 200;
-            this.difesaMostro = 30;
+            this.difesaMostro = 100;
             this.tipoAttaccoMostro = TipoAttaccoMostro.RUGGITO_DI_FUOCO;
             return 1;
         }
         case "Golem" -> {
             this.puntiVitaMostro = 180;
-            this.difesaMostro = 40;
+            this.difesaMostro = 130;
             this.tipoAttaccoMostro = TipoAttaccoMostro.URLO_ASSORDANTE;
             return 1;
         }
         case "Ragno Gigante" -> {
-            this.puntiVitaMostro = 90;
-            this.difesaMostro = 10;
+            this.puntiVitaMostro = 150;
+            this.difesaMostro = 110;
             this.tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA_IMMOBILIZZANTE;
             return 1;
         }
         case "Troll" -> {
-            this.puntiVitaMostro = 150;
-            this.difesaMostro = 20;
+            this.puntiVitaMostro = 250;
+            this.difesaMostro = 210;
             this.tipoAttaccoMostro = TipoAttaccoMostro.ARTIGLI_POSSENTI;
             return 1;
         }
