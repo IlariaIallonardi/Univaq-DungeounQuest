@@ -132,7 +132,7 @@ public class ArciereServiceImpl implements PersonaggioService {
             System.out.println(" Il mostro è in più stanze adiacenti! Scegli quale colpire:");
 
             for (int i = 0; i < stanzeConMostro.size(); i++) {
-                System.out.println((i + 1) + ") " + stanzeConMostro.get(i).getNomeStanza());
+                System.out.println((i + 1) + ") " + stanzeConMostro.get(i).getId());
             }
 
             int scelta = scan.nextInt() - 1;

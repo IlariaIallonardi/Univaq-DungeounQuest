@@ -3,8 +3,6 @@ package domain;
 import java.util.HashMap;
 import java.util.Map;
 
-import service.StanzaFactory;
-
 public class Dungeon {
 
     private int righe = 0;
@@ -79,7 +77,7 @@ public class Dungeon {
                 if (s == null) {
                     System.out.print("   ");
                 } else {
-                    System.out.print(s.getStatoS() == StanzaFactory.StatoStanza.VISITATA ? " . " : " ? ");
+                    System.out.print(s.getStatoStanza() == true ? " . " : " ? ");
                 }
             }
             System.out.println();

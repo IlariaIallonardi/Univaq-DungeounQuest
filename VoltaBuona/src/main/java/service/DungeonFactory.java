@@ -1,8 +1,11 @@
 package service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import domain.Chiave;
 import domain.Dungeon;
 import domain.Stanza;
 
@@ -40,6 +43,42 @@ public class DungeonFactory {
     }
 
     d.collegaAdiacenti();
+    // posiziona le chiavi per le stanze bloccate in altre stanze casuali
+var allStanze = new ArrayList<>(d.getMappaStanze().values());
+java.util.Random rnd = new java.util.Random();
+
+for (Stanza stanzaBloccata : allStanze) {
+    if (!stanzaBloccata.isBloccata()) continue;
+
+    // crea la chiave per questa stanza bloccata
+    Chiave chiave = stanzaFactory.creaChiavePerStanza(stanzaBloccata.getId());
+    stanzaBloccata.setChiaveRichiesta(chiave);
+
+    // scegli una stanza diversa dove mettere la chiave (escludi stanza stessa e preferibilmente stanze bloccate e start (0,0))
+    List<Stanza> candidati = new ArrayList<>();
+    for (Stanza s : allStanze) {
+        if (s.getId() == stanzaBloccata.getId()) continue;
+        // escludi start (id 0) se presente
+        if (s.getId() == 0) continue;
+        if (s.isBloccata()) continue;
+        candidati.add(s);
+    }
+    if (candidati.isEmpty()) {
+        // fallback: tutte le stanze diverse dalla bloccata
+        for (Stanza s : allStanze) if (s.getId() != stanzaBloccata.getId()) candidati.add(s);
+    }
+
+    if (chiave.getId() == stanzaBloccata.getId()) {
+
+        continue;
+    }
+
+    Stanza dove = candidati.get(rnd.nextInt(candidati.size()));
+    dove.aggiungiOggetto(chiave);
+    System.out.println("DEBUG: stanza bloccata id " + stanzaBloccata.getId()
+    + " -> chiave id " + chiave.getId()
+    + " posizionata in stanza id " + dove.getId());
+}
     this.dungeon = d;
 
     return d;

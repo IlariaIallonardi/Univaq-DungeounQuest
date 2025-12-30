@@ -16,7 +16,6 @@ import service.Direzione;
 import service.EventoService;
 import service.GiocoService;
 import service.PersonaggioService;
-import service.StanzaFactory.StatoStanza;
 import service.TurnoService;
 
 public class TurnoServiceImpl implements TurnoService {
@@ -49,8 +48,8 @@ public class TurnoServiceImpl implements TurnoService {
         // Mappa: Personaggio → tiro dado
         Map<Personaggio, Integer> tiri = new HashMap<>();
 
-        // 1️⃣ Ogni personaggio tira il dado
-        // 1️⃣ Ogni personaggio tira il dado (escludo i morti)
+        // 1 Ogni personaggio tira il dado
+        // Ogni personaggio tira il dado (escludo i morti)
         for (Personaggio p : partecipanti) {
             if (p == null || p.èMorto(p)) {
                 continue;
@@ -392,13 +391,14 @@ public class TurnoServiceImpl implements TurnoService {
     // mostra gli oggetti nella stanza 
 
     private void mostraOggetti(List<Oggetto> oggetti) {
-        System.out.println("\nOggetti presenti nella stanza:");
-        for (int i = 0; i < oggetti.size(); i++) {
-            Oggetto o = oggetti.get(i);
-            System.out.println((i + 1) + ") " + o.getNome());
-        }
-    }
+    System.out.println("\nOggetti presenti nella stanza:");
 
+    for (int i = 0; i < oggetti.size(); i++) {
+        Oggetto o = oggetti.get(i);
+        String nome = (o != null && o.getNome() != null) ? o.getNome() : "<oggetto null>";
+        System.out.println((i + 1) + ") " + nome);
+    }
+}
     // 🔧 Movimento gestito tramite input
     public void gestisciMovimento(Personaggio personaggio, Scanner scanner) {
 
@@ -517,7 +517,7 @@ public class TurnoServiceImpl implements TurnoService {
             return false;
         }
 
-        System.out.println("\n Stanza: " + stanza.getNomeStanza());
+        System.out.println("\n Stanza: " + stanza.getId());
 
         // Mostra oggetti visibili
         /*   if (!stanza.getOggettiPresenti().isEmpty()) {
@@ -551,7 +551,7 @@ public class TurnoServiceImpl implements TurnoService {
             System.out.println(" La stanza è tranquilla...");
         }*/
         // Segna la stanza come visitata
-        stanza.setStatoS(StatoStanza.VISITATA);
+        stanza.setStatoStanza(true);
         return false;
     }
 

@@ -2,35 +2,43 @@ package service.impl;
 
 import java.util.List;
 
-import domain.*;
-import service.*;
+import domain.Oggetto;
+import domain.Stanza;
+import service.OggettoService;
 
-public class ChiaveServiceImpl implements  OggettoService {
-    @Override
-      public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza){
-        if (stanza == null || oggetto == null) return;
-        stanza.aggiungiOggetto(oggetto);}
-
+public class ChiaveServiceImpl implements OggettoService {
 
     @Override
-    public List<Oggetto> getOggettiInStanza(Stanza stanza){
+    public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza) {
+        if (stanza == null || oggetto == null) {
+            return;
+        }
+        stanza.aggiungiOggetto(oggetto);
+    }
+
+    @Override
+    public List<Oggetto> getOggettiInStanza(Stanza stanza) {
         return stanza.getOggettiPresenti();
     }
 
-
     @Override
-    public void rimuoviOggettoDaStanza(Stanza stanza, Oggetto oggetto){
+    public void rimuoviOggettoDaStanza(Stanza stanza, Oggetto oggetto) {
         stanza.getOggettiPresenti().remove(oggetto);
     }
 
     @Override
-    public void salvaOggettiSuFile(List<Oggetto> oggetti, String filePath){
+    public void salvaOggettiSuFile(List<Oggetto> oggetti, String filePath) {
         // serializzazione da implementare (JSON, XML, ecc.)
     }
 
+    private static final java.util.concurrent.atomic.AtomicInteger KEY_ID_COUNTER = new java.util.concurrent.atomic.AtomicInteger(1);
+
     @Override
-    public Oggetto creaOggetto(){
-        // Factory temporanea: implementare creazione specifica in base ai tipi concreti
-        return null;
+    public Oggetto creaOggettoCasuale() {
+        int id = KEY_ID_COUNTER.getAndIncrement();
+        String nome = "Chiave_" + id;
+        String descrizione = "Chiave generica id=" + id;
+        // usabile=true (può essere usata), equipaggiabile=false (non si equipaggia), trovato=false (appena creata)
+        return new domain.Chiave(id, nome, descrizione, true, false, false);
     }
 }

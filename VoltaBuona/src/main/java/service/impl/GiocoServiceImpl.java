@@ -1,15 +1,18 @@
 package service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import domain.Chiave;
 import domain.Dungeon;
 import domain.Giocatore;
+import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
+import domain.Zaino;
 import service.Direzione;
 import service.GiocatoreService;
 import service.GiocoService;
-import service.StanzaFactory;
 import service.TurnoService;
 
 public class GiocoServiceImpl implements GiocoService {
@@ -39,7 +42,6 @@ public class GiocoServiceImpl implements GiocoService {
         this.giocatori = giocatori;
     }
 
-
     public void setDungeon(List<Stanza> dungeon) {
         this.dungeon = dungeon;
     }
@@ -67,7 +69,7 @@ public class GiocoServiceImpl implements GiocoService {
     public void setTurnoCorrente(int turnoCorrente) {
         this.turnoCorrente = turnoCorrente;
     }
-    
+
     @Override
     public boolean muoviPersonaggio(Personaggio personaggio, Direzione direzione) {
         if (personaggio == null) {
@@ -80,9 +82,7 @@ public class GiocoServiceImpl implements GiocoService {
             return false;
         }
 
-        // prendo la stanza adiacente nella direzione scelta
         Stanza destinazione = null;
-
         switch (direzione) {
             case NORD ->
                 destinazione = corrente.getStanzaAdiacente().get("NORD");
@@ -94,19 +94,39 @@ public class GiocoServiceImpl implements GiocoService {
                 destinazione = corrente.getStanzaAdiacente().get("OVEST");
         }
 
-        // nessuna stanza in quella direzione
         if (destinazione == null) {
             System.out.println("Non puoi andare in quella direzione.");
             return false;
         }
 
-        // se hai il concetto di stanza bloccata:
         if (destinazione.isBloccata()) {
-            System.out.println("La stanza in " + direzione + " è bloccata.");
-            return false;
+            Chiave richiesta = destinazione.getChiaveRichiesta();
+            if (richiesta == null) {
+                System.out.println("La stanza in " + direzione + " è bloccata ma non ha chiave associata.");
+                return false;
+            }
+            System.out.println("La stanza in " + direzione + " è bloccata. Chiave richiesta: id="
+                    + richiesta.getId() + " nome=" + richiesta.getNome());
+
+            Zaino zaino = personaggio.getZaino();
+            boolean trovato = false;
+            if (zaino != null && zaino.getListaOggetti() != null) {
+                for (Oggetto o : new ArrayList<>(zaino.getListaOggetti())) {
+                    if (o instanceof Chiave && ((Chiave) o).getId() == richiesta.getId()) {
+                        System.out.println("Hai la chiave richiesta (" + o.getNome() + "). Sblocco la stanza e consumo la chiave.");
+                        destinazione.sblocca();
+                        zaino.rimuoviOggettoDaZaino(o);
+                        trovato = true;
+                        break;
+                    }
+                }
+            }
+            if (!trovato) {
+                System.out.println("Non possiedi la chiave richiesta nello zaino. Impossibile entrare.");
+                return false;
+            }
         }
 
-        // aggiorno le liste di personaggi nelle stanze
         if (corrente.getListaPersonaggi() != null) {
             corrente.getListaPersonaggi().remove(personaggio);
         }
@@ -114,26 +134,24 @@ public class GiocoServiceImpl implements GiocoService {
             destinazione.getListaPersonaggi().add(personaggio);
         }
 
-        // aggiorno la posizione del personaggio
         personaggio.setPosizioneCorrente(destinazione);
+        destinazione.setStatoStanza(true);
 
-        // opzionale: segno la stanza come visitata
-        destinazione.setStatoS(StanzaFactory.StatoStanza.VISITATA);
-
-    
         return true;
     }
-      @Override
-      public Dungeon getDungeon(){
-        return null;
-      }
 
     @Override
-    public Dungeon creaDungeon(int righe, int colonne){
+    public Dungeon getDungeon() {
         return null;
-    };
+    }
 
-    /*
+    @Override
+    public Dungeon creaDungeon(int righe, int colonne) {
+        return null;
+    }
+;
+
+/*
      * @Override
      * public void inizioPartita() {
      * 
@@ -201,5 +219,5 @@ public class GiocoServiceImpl implements GiocoService {
      * public int lanciaDado() {
      * return 0;
      * }
-     */
+ */
 }

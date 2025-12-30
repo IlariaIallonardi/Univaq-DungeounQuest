@@ -5,32 +5,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import service.StanzaFactory.StatoStanza;
+
 
 public class Stanza {
 
     private int id;
     private int[][] coordinate;
-    private StatoStanza statoS; //visitata o non visitata ed è enum in GiocoService
+    private boolean statoStanza; //visitata o non visitata ed è enum in GiocoService
     private List<Oggetto> oggettiPresenti = new ArrayList<>();
     private List<Personaggio> listaPersonaggi = new ArrayList<>();
     private Map<String, Stanza> stanzaAdiacente = new HashMap<>();
     private List<Evento> listaEventi = new ArrayList<>();
     private Chiave chiaveRichiesta;
     private boolean bloccata;
-    private String nomeStanza;
+    
 
-    public Stanza(int id, int[][] coordinate, StatoStanza statoS, List<Oggetto> inventario,
-            List<Evento> listaEventi, Chiave chiaveRichiesta, boolean bloccata, String nomeStanza) {
+    public Stanza(int id, int[][] coordinate, boolean statoStanza, List<Oggetto> inventario,
+            List<Evento> listaEventi, Chiave chiaveRichiesta, boolean bloccata) {
         this.id = id;
         this.coordinate = coordinate;
-        this.statoS = statoS;
+        this.statoStanza = statoStanza;
         this.oggettiPresenti = inventario != null ? new ArrayList<>(inventario) : new ArrayList<>();
         this.stanzaAdiacente = (stanzaAdiacente != null) ? stanzaAdiacente : new HashMap<>();
         this.listaEventi = listaEventi != null ? new ArrayList<>(listaEventi) : new ArrayList<>();
         this.chiaveRichiesta = chiaveRichiesta;
         this.bloccata = bloccata;
-        this.nomeStanza = nomeStanza;
+    
     }
 
     public int getId() {
@@ -49,12 +49,12 @@ public class Stanza {
         this.coordinate = coordinate;
     }
 
-    public StatoStanza getStatoS() {
-        return statoS;
+    public boolean getStatoStanza() {
+        return statoStanza;
     }
 
-    public void setStatoS(StatoStanza statoStanza) {
-        this.statoS = statoS;
+    public void setStatoStanza(boolean statoStanza) {
+        this.statoStanza = statoStanza;
     }
 
     public List<Oggetto> getOggettiPresenti() {
@@ -97,13 +97,6 @@ public class Stanza {
         this.chiaveRichiesta = chiaveRichiesta;
     }
 
-    public String getNomeStanza() {
-        return nomeStanza;
-    }
-
-    public void setNomeStanza(String nomeStanza) {
-        this.nomeStanza = nomeStanza;
-    }
 
     public void rimuoviOggetto(Oggetto o) {
         if(o != null)
@@ -139,7 +132,7 @@ public class Stanza {
     @Override
     public String toString() {
         Stanza stanza=this;
-        return stanza.getNomeStanza();
+        return "Stanza ID: " + stanza.getId();
     }
 
     public void aggiungiPersonaggio(Personaggio p) {
@@ -149,7 +142,5 @@ public class Stanza {
         listaPersonaggi.remove(p);}
 
 
-    /*public Map<String, Stanza> getStanzeAdiacenti() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }*/
+    
 }

@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 import domain.Dungeon;
+import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
 import service.DungeonFactory;
@@ -104,12 +105,24 @@ public class Main {
 
         // *** 4 CREAZIONE DUNGEON ***
         Dungeon dungeon = dungeonFactory.creaDungeon(righe, colonne);
+        System.out.println("--- STANZE BLOCCATE E CHIAVI ---");
+for (Stanza s : dungeon.getMappaStanze().values()) {
+    String chiaveInfo = (s.getChiaveRichiesta() != null) ? String.valueOf(s.getChiaveRichiesta().getId()) : "nessuna";
+    StringBuilder objs = new StringBuilder();
+    for (int i=0;i<s.getOggettiPresenti().size();i++) {
+        Object o = s.getOggettiPresenti().get(i);
+        objs.append(o == null ? "<null>" : ((Oggetto) o).getNome());
+        if (i < s.getOggettiPresenti().size()-1) objs.append(", ");
+    }
+    System.out.println("Stanza id " + s.getId() + " bloccata=" + s.isBloccata()
+        + " chiaveId=" + chiaveInfo + " oggetti=[" + objs + "]");
+}
 
         // *** 5 POSIZIONA GIOCATORI NELLA STANZA INIZIALE ***
         Stanza stanzaStart = dungeon.getStanza(0, 0);
 
         if (stanzaStart != null) {
-            stanzaStart.setStatoS(StanzaFactory.StatoStanza.VISITATA);
+            stanzaStart.setStatoStanza(false);
             System.out.println(" Posizionamento giocatori nella stanza iniziale (0,0)");
 
             for (Personaggio p : giocatori) {

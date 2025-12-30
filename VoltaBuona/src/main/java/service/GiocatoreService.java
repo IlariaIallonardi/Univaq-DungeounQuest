@@ -21,7 +21,7 @@ public class GiocatoreService {
                 bot = new GuerrieroServiceImpl().creaPersonaggio("Bot-Guerriero", personaggio);
                 break;
             case 1:
-                bot = new MagoServiceimpl().creaPersonaggio("Bot-Mago", personaggio);
+                bot = new MagoServiceImpl().creaPersonaggio("Bot-Mago", personaggio);
                 break;
             case 2:
                 bot = new ArciereServiceImpl().creaPersonaggio("Bot-Arciere", personaggio);

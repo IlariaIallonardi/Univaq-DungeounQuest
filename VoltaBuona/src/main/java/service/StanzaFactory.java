@@ -11,13 +11,13 @@ import domain.Oggetto;
 import domain.Stanza;
 import service.impl.ArmaServiceImpl;
 import service.impl.ArmaturaServiceImpl;
+import service.impl.ChiaveServiceImpl;
 import service.impl.MostroServiceImpl;
 import service.impl.NPCServiceImpl;
 import service.impl.PassaggioSegretoServiceImpl;
 import service.impl.PozioneServiceImpl;
 import service.impl.TesoroServiceImpl;
 import service.impl.TrappolaServiceImpl;
-
 
 public class StanzaFactory {
 
@@ -27,55 +27,52 @@ public class StanzaFactory {
 
     private final Random rnd = new Random();
 
-    public Stanza creaStanza(int id,int x,int y) {
-      
-        int[][] coord = {{x, y}};
-        StatoStanza stato = StatoStanza.NON_VISITATA;
+    public Stanza creaStanza(int id, int x, int y) {
 
+        int[][] coord = {{x, y}};
+        boolean stato = false; // false = non visitata, true = visitata
         List<Oggetto> oggetti = generaOggettiCasuali();
         List<Evento> eventi = generaEventiCasuali();
-
-        boolean richiedeChiave = generaRichiestaChiave();
+        Chiave chiave = null;
+        boolean bloccata = generaRichiestaChiave(x,y);
         String nomeStanza = "Stanza (" + x + "," + y + ")";
-        Chiave chiave = richiedeChiave ? creaChiavePerStanza(nomeStanza) : null;
-
-        return new Stanza(id, coord, stato, oggetti, eventi, chiave, false, nomeStanza);
+       return new Stanza(id, coord, stato, oggetti, eventi, chiave, bloccata);
     }
 
     public List<Oggetto> generaOggettiCasuali() {
         List<Oggetto> oggetti = new ArrayList<>();
         int n = rnd.nextInt(5); // 0..4 oggetti
-        
+
         for (int i = 0; i < n; i++) {
-            int tipo = rnd.nextInt(5); // 0..4  
+            int tipo = rnd.nextInt(1,6); // 1..5  
             switch (tipo) {
-                case 0:
-                    oggetti.add(new PozioneServiceImpl().creaOggettoCasuale());
-                    break;
                 case 1:
-                    oggetti.add(new ArmaServiceImpl().creaOggettoCasuale());
+                    oggetti.add(new PozioneServiceImpl().creaOggettoCasuale());
                     break;
                 case 2:
-                    oggetti.add(new ArmaturaServiceImpl().creaOggettoCasuale());
+                    oggetti.add(new ArmaServiceImpl().creaOggettoCasuale());
                     break;
                 case 3:
+                    oggetti.add(new ArmaturaServiceImpl().creaOggettoCasuale());
+                    break;
+                case 4:
                     oggetti.add(new TesoroServiceImpl().creaOggettoCasuale());
                     break;
-                default:
-                    oggetti.add(new PozioneServiceImpl().creaOggettoCasuale());
+                case 5:
+                    oggetti.add(new ChiaveServiceImpl().creaOggettoCasuale());
                     break;
             }
         }
         return oggetti;
     }
 
-   private List<Evento> generaEventiCasuali() {
-   List<Evento> eventi = new ArrayList<>();
+    private List<Evento> generaEventiCasuali() {
+        List<Evento> eventi = new ArrayList<>();
         int n = rnd.nextInt(5); // 0..4 eventi
         for (int i = 0; i < n; i++) {
             int tipo = rnd.nextInt(5); // 0..4s
             //switch per tipi di evento da implementare
-             switch (tipo) {
+            switch (tipo) {
                 case 0:
                     eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
                     break;
@@ -91,27 +88,33 @@ public class StanzaFactory {
                 default:
                     eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
                     break;
-        }}
-    return eventi;
-}
+            }
+        }
+        return eventi;
+    }
 
     // restituisce true se la stanza deve richiedere una chiave, false altrimenti
-    private boolean generaRichiestaChiave() {
-        return rnd.nextInt(2) == 1; // true o false
+    private boolean generaRichiestaChiave(int x, int y) {
+        boolean bloccataProva;
+        if(x==0 && y==0) {
+            bloccataProva = false;
+            return bloccataProva;
+        }
+        int randomBloccata= rnd.nextInt(2) ;
+        if(randomBloccata == 1) {
+        bloccataProva = true;
+        } else {
+            bloccataProva = false;
+        }
+        return bloccataProva;
     }
 
-    public enum StatoStanza {
-        VISITATA,
-        NON_VISITATA
-    }
 
-    private Chiave creaChiavePerStanza(String nomeStanza) {
-        int keyId = KEY_ID_COUNTER.getAndIncrement();
-        String nomeChiave = nomeStanza;
-        String descrizione = "Chiave che apre la stanza: " + nomeStanza;
-        int livello = 1;
-        return new Chiave(keyId, nomeChiave, descrizione, true, true, false, nomeChiave);
-    }
 
-  
+   public Chiave creaChiavePerStanza(int stanzaId) {
+    int keyId = KEY_ID_COUNTER.getAndIncrement();
+    String descrizione = "Chiave che apre la stanza con id: " + stanzaId;
+    return new Chiave(keyId,"Chiave",descrizione,true,false,false);
+}
+
 }
