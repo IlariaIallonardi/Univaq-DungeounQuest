@@ -10,7 +10,6 @@ import domain.Zaino;
 import service.CombattimentoService;
 import service.PersonaggioService;
 
-
 public class CombattimentoServiceImpl implements CombattimentoService {
 
     private MostroServiceImpl mostroService = new MostroServiceImpl();
@@ -25,7 +24,6 @@ public class CombattimentoServiceImpl implements CombattimentoService {
         Personaggio personaggio = combattimento.getPersonaggioCoinvolto();
         Mostro mostro = combattimento.getMostroCoinvolto();
 
-        // Garantiamo 1 vs 1: se manca uno dei due, non procediamo
         if (personaggio == null || mostro == null) {
             return 0;
         }
@@ -35,8 +33,6 @@ public class CombattimentoServiceImpl implements CombattimentoService {
             int dannoBase = MostroServiceImpl.dannoBase(mostro, personaggio);
             int dannoApplicato = new MostroServiceImpl().attaccoDelMostro(mostro, personaggio, dannoBase);
 
-          //  System.out.println(personaggio.getNomePersonaggio() + " HP rimasti: " + personaggio.getPuntiVita());
-
             if (personaggio.getPuntiVita() <= 0) {
                 combattimento.setVincitore(mostro);
                 combattimento.setInCorso(false);
@@ -44,17 +40,28 @@ public class CombattimentoServiceImpl implements CombattimentoService {
             }
             return dannoApplicato;
         }
-         PersonaggioService ps = this.personaggioService;
-        // Caso: attacca il personaggio -> bersaglio = mostro
-        if (attaccante == personaggio) {
-            // risolvo il service concreto del personaggio (fallback alle implementazioni esistenti)
-           // PersonaggioService ps = this.personaggioService;
-            if (ps == null) {
-                if (personaggio instanceof domain.Guerriero) {
-                    GuerrieroServiceImpl gsvc = new GuerrieroServiceImpl();
-             int dannoApplicato = gsvc.attaccoFisico((domain.Guerriero) personaggio, mostro);
 
-            if (mostro.getPuntiVitaMostro() <= 0) {
+        // Caso: attacca il personaggio -> bersaglio = mostro
+        PersonaggioService ps = this.personaggioService;
+
+        // Se non è stato iniettato un service, risolvo il corretto fallback
+        if (ps == null) {
+            if (personaggio instanceof domain.Guerriero) {
+                ps = new GuerrieroServiceImpl();
+            } else if (personaggio instanceof domain.Arciere) {
+                ps = new ArciereServiceImpl();
+            } else if (personaggio instanceof domain.Mago) {
+                ps = new MagoServiceImpl();
+            } else if (personaggio instanceof domain.Paladino) {
+                ps = new PaladinoServiceImpl();
+            } else {
+                ps = new GuerrieroServiceImpl();
+            }
+        }
+
+        int dannoApplicato = ps.attacca(personaggio, mostro, combattimento);
+
+        if (mostro.getPuntiVitaMostro() <= 0) {
             combattimento.setVincitore(personaggio);
             combattimento.setInCorso(false);
             System.out.println(mostro.getNomeMostro() + " è stato sconfitto da " + personaggio.getNomePersonaggio());
@@ -65,35 +72,6 @@ public class CombattimentoServiceImpl implements CombattimentoService {
         }
         return dannoApplicato;
     }
-                } else if (personaggio instanceof domain.Arciere) {
-                    ps = new ArciereServiceImpl();
-                } else if (personaggio instanceof domain.Mago) {
-                    ps = new MagoServiceImpl();
-                } else if (personaggio instanceof domain.Paladino) {
-                    ps = new PaladinoServiceImpl();
-                } else {
-                    ps = new GuerrieroServiceImpl();
-                }
-            }
-
-            int dannoApplicato = ps.attacca(personaggio, mostro, combattimento);
-
-          // System.out.println(mostro.getNomeMostro() + " HP rimasti: " + mostro.getPuntiVitaMostro());
-
-            if (mostro.getPuntiVitaMostro() <= 0) {
-                combattimento.setVincitore(personaggio);
-                combattimento.setInCorso(false);
-                System.out.println(mostro.getNomeMostro() + " è stato sconfitto da " + personaggio.getNomePersonaggio());
-                try {
-                    personaggio.setEsperienza(personaggio.getEsperienza() + 10);
-                } catch (Exception ignored) {
-                }
-            }
-            return dannoApplicato;
-        }
-
-        
-    
 
     @Override
     public Mostro getMostro(Combattimento combattimento) {
@@ -261,7 +239,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
             if (mostro.getPuntiVitaMostro() <= 0) {
                 combattimento.setVincitore(personaggio);
                 combattimento.setInCorso(false);
-                System.out.println( personaggio.getNomePersonaggio() + " ha vinto!");
+                System.out.println(personaggio.getNomePersonaggio() + " ha vinto!");
                 if (stanza != null && stanza.getListaEventiAttivi() != null) {
                     stanza.getListaEventiAttivi().remove(mostro);
                 }

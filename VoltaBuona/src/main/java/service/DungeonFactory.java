@@ -59,6 +59,7 @@ for (Stanza stanzaBloccata : allStanze) {
     for (Stanza s : allStanze) {
         if (s.getId() == stanzaBloccata.getId()) continue;
         // escludi start (id 0) se presente
+        if (s.getCoordinate()[0][0] == 0 && s.getCoordinate()[0][1] == 0) continue;
         if (s.getId() == 0) continue;
         if (s.isBloccata()) continue;
         candidati.add(s);

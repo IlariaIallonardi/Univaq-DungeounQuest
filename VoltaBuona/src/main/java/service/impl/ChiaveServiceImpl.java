@@ -41,4 +41,9 @@ public class ChiaveServiceImpl implements OggettoService {
         // usabile=true (può essere usata), equipaggiabile=false (non si equipaggia), trovato=false (appena creata)
         return new domain.Chiave(id, nome, descrizione, true, false, false);
     }
+    public domain.Chiave creaChiavePerStanza(int stanzaId) {
+        int keyId = KEY_ID_COUNTER.getAndIncrement();
+        String descrizione = "Chiave che apre la stanza con id: " + stanzaId;
+        return new domain.Chiave(keyId, "Chiave_"+ keyId, descrizione, true, false, false);
+    }
 }

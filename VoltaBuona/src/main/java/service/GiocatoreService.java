@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Random;
 
 import domain.Personaggio;
+import domain.TipoGiocatore;
 import service.impl.ArciereServiceImpl;
 import service.impl.GuerrieroServiceImpl;
 import service.impl.MagoServiceImpl;
@@ -12,37 +13,61 @@ import service.impl.PaladinoServiceImpl;
 public class GiocatoreService {
 
     public Personaggio attribuisciPersonaggioAComputer(Personaggio personaggio) {
+        // genera il personaggio "base" (classe scelta casuale)
         Random rnd = new Random();
         int scelta = rnd.nextInt(4);
 
-        Personaggio bot;
+        Personaggio botBase;
         switch (scelta) {
             case 0:
-                bot = new GuerrieroServiceImpl().creaPersonaggio("Bot-Guerriero", personaggio);
+                botBase = new GuerrieroServiceImpl().creaPersonaggio(personaggio.getNomePersonaggio(), personaggio);
                 break;
             case 1:
-                bot = new MagoServiceImpl().creaPersonaggio("Bot-Mago", personaggio);
+                botBase = new MagoServiceImpl().creaPersonaggio(personaggio.getNomePersonaggio(), personaggio);
                 break;
             case 2:
-                bot = new ArciereServiceImpl().creaPersonaggio("Bot-Arciere", personaggio);
+                botBase = new ArciereServiceImpl().creaPersonaggio(personaggio.getNomePersonaggio(), personaggio);
                 break;
             case 3:
-                bot = new PaladinoServiceImpl().creaPersonaggio("Bot-Paladino", personaggio);
+                botBase = new PaladinoServiceImpl().creaPersonaggio(personaggio.getNomePersonaggio(), personaggio);
                 break;
             default:
-                throw new IllegalStateException("Errore nella generazione del bot");
+                botBase = new GuerrieroServiceImpl().creaPersonaggio(personaggio.getNomePersonaggio(), personaggio);
         }
 
         // tenta di impostare un nome descrittivo se la classe lo supporta
         try {
-            Method setter = bot.getClass().getMethod("setNome", String.class);
-            setter.invoke(bot, "Bot-" + bot.getClass().getSimpleName());
+            Method setter = botBase.getClass().getMethod("setNome", String.class);
+            setter.invoke(botBase, "Bot-" + botBase.getClass().getSimpleName());
         } catch (Exception ignored) {
-            // se non esiste setNome, ignora
         }
 
-        System.out.println("🤖 Il computer giocherà come: " + bot.getClass().getSimpleName());
-        return bot;
+        // converte il Personaggio in una vera istanza domain.Computer
+        domain.Computer c = new domain.Computer(
+            TipoGiocatore.COMPUTER,
+            botBase.getAbilitàSpeciale(),
+            botBase.getArmaEquippaggiata(),
+            botBase.getDifesa(),
+            botBase.getEsperienza(),
+            botBase.getId(),
+            botBase.getLivello(),
+            botBase.getNomePersonaggio(),
+            botBase.getPosizioneCorrente(),
+            false, // protetto
+            botBase.getPuntiMana(),
+            botBase.getPuntiVita(),
+            botBase.getStatoPersonaggio(),
+            botBase.getTurniAvvelenato(),
+            botBase.getTurniCongelato(),
+            botBase.getTurniStordito(),
+            botBase.getTurnoProtetto(),
+            botBase.getZaino(),
+            botBase.getPortafoglioPersonaggio()
+        );
+
+        System.out.println("🤖 Il computer giocherà come: " + botBase.getClass().getSimpleName() + " (nome: " + c.getNomePersonaggio() + ")");
+
+        return c;
     }
 
 }

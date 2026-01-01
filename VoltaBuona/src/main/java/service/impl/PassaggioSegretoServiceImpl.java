@@ -50,7 +50,7 @@ public boolean attivaEvento(Personaggio personaggio, Evento e) {
         if (stanzaCorrente != null && ps.getDestinazione() != null) {
             String key = "SEGRETO_" + ps.getId();
             stanzaCorrente.getStanzaAdiacente().put(key, ps.getDestinazione());
-            System.out.println("Un varco verso '" + ps.getDestinazione().getNomeStanza() + "' è ora visibile (chiave: " + key + ").");
+            System.out.println("Un varco verso '" + ps.getDestinazione().getId() + "' è ora visibile (chiave: " + key + ").");
         }
 
         return false; // di default i passaggi segreti non consumano il turno

@@ -52,45 +52,55 @@ public class MagoServiceImpl implements PersonaggioService {
 
     private int lanciaIncantesimoBase(Mago mago, Mostro mostro) {
 
-        // Semplice formula danno: attacco + livello * 3
-        int potereMagico = mago.getAttacco();
-        int livello = mago.getLivello();
-        int difesaMostro = mostro.getDifesaMostro();
-
-        int dannoBase = potereMagico + livello * 3;
-
-        // Consideriamo che la difesa del mostro riduca solo in parte il danno magico
-        int dannoNetto = Math.max(1, dannoBase - (difesaMostro / 2));
-
-        // Applica danno
-        int nuoviPV = mostro.getPuntiVitaMostro() - dannoNetto;
-        mostro.setPuntiVitaMostro(nuoviPV);
-
-        // Consuma mana
-        mago.setPuntiMana(Math.max(0, mago.getPuntiMana() - COSTO_MANA));
-
-        System.out.println(" " + mago.getNomePersonaggio()
-                + " lancia un incantesimo su " + mostro.getNomeMostro()
-                + " infliggendo " + dannoNetto + " danni!"
-                + " (Mana rimanente: " + mago.getPuntiMana() + ")");
-
-        // Gestione morte mostro + XP
-        if (mostro.getPuntiVitaMostro() <= 0) {
-            System.out.println("💀 " + mostro.getNomeMostro() + " è stato sconfitto dal Mago!");
-            try {
-                mago.setEsperienza(mago.getEsperienza() + 10);
-                if (mago.getEsperienza() >= 100) {
-                    mago.setLivello(mago.getLivello() + 1);
-                    mago.setEsperienza(0);
-                    System.out.println(" " + mago.getNomePersonaggio() + " è salito al livello " + mago.getLivello() + "!");
-                }
-            } catch (Exception ignored) {
-            }
-
-        }
-
-        return dannoNetto;
+    domain.Arma arma = mago.getArmaEquippaggiata();
+    if (arma != null) {
+        System.out.println("[ARMA] " + mago.getNomePersonaggio()
+            + " ha equipaggiato: " + arma.getNome()
+            + " (dannoBonus=" + arma.getDannoBonus() + ")");
     }
+
+    int potereMagico = mago.getAttacco();
+    int livello = mago.getLivello();
+    int difesaMostro = mostro.getDifesaMostro();
+
+    int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
+    int bonus = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 16);
+    boolean critico = tiro == 20;
+    if (tiro == 1) {
+        System.out.println("Tiro 1: incantesimo fallito!");
+        mago.setPuntiMana(Math.max(0, mago.getPuntiMana() - COSTO_MANA));
+        return 0;
+    }
+
+    int dannoBase = potereMagico + livello * 3 + (arma != null ? arma.getDannoBonus() : 0) + bonus;
+    int dannoNetto = Math.max(1, dannoBase - (difesaMostro / 2));
+    if (critico) {
+        dannoNetto *= 2;
+        System.out.println("Colpo critico magico! Danno raddoppiato.");
+    }
+
+    mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
+    mago.setPuntiMana(Math.max(0, mago.getPuntiMana() - COSTO_MANA));
+
+    System.out.println(" " + mago.getNomePersonaggio()
+            + " lancia un incantesimo su " + mostro.getNomeMostro()
+            + " infliggendo " + dannoNetto + " danni! (Mana rimanente: " + mago.getPuntiMana() + ")");
+
+    if (mostro.getPuntiVitaMostro() <= 0) {
+        System.out.println("💀 " + mostro.getNomeMostro() + " è stato sconfitto dal Mago!");
+        try {
+            mago.setEsperienza(mago.getEsperienza() + 10);
+            if (mago.getEsperienza() >= 100) {
+                mago.setLivello(mago.getLivello() + 1);
+                mago.setEsperienza(0);
+                System.out.println(" " + mago.getNomePersonaggio() + " è salito al livello " + mago.getLivello() + "!");
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    return dannoNetto;
+}
 
     public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
     }

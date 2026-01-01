@@ -105,7 +105,7 @@ public class ArciereServiceImpl implements PersonaggioService {
             return infliggiDanno(arciere, mostro);
         }
 
-        // 🔍 Cerco tutte le stanze adiacenti che contengono il mostro
+        // Cerco tutte le stanze adiacenti che contengono il mostro
         Map<String, Stanza> adiacenti = stanzaAttuale.getStanzaAdiacente();
         List<Stanza> stanzeConMostro = new ArrayList<>();
 
@@ -123,10 +123,10 @@ public class ArciereServiceImpl implements PersonaggioService {
             return 0;
         }
 
-        // 🎯 Se c’è solo una stanza → attacco automatico
+        //  Se c’è solo una stanza → attacco automatico
         Stanza sceltaStanza = stanzeConMostro.get(0);
 
-        // 🗳 Se più stanze → scelta giocatore
+        // Se più stanze → scelta giocatore
         if (stanzeConMostro.size() > 1) {
             Scanner scan = new Scanner(System.in);
             System.out.println(" Il mostro è in più stanze adiacenti! Scegli quale colpire:");
@@ -143,35 +143,65 @@ public class ArciereServiceImpl implements PersonaggioService {
             sceltaStanza = stanzeConMostro.get(scelta);
         }
 
-        System.out.println("🏹 Attacco a distanza verso " + sceltaStanza.getNomeStanza());
+        System.out.println(" Attacco a distanza verso " + sceltaStanza.getId());
         return infliggiDanno(arciere, mostro);
     }
 
-    private int infliggiDanno(Arciere arciere, Mostro mostro) {
-        int attacco = arciere.getAttacco();
-        int livello = arciere.getLivello();
-        int difesaMostro = mostro.getDifesaMostro();
+   private int infliggiDanno(Arciere arciere, Mostro mostro) {
+    int attacco = arciere.getAttacco();
+    int livello = arciere.getLivello();
+    int difesaMostro = mostro.getDifesaMostro();
+    domain.Arma arma = arciere.getArmaEquippaggiata();
 
-        int dannoBase = attacco + livello * 2;
-        int dannoNetto = Math.max(0, dannoBase - difesaMostro);
-
-        mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
-
-        System.out.println(" " + arciere.getNomePersonaggio()
-                + " infligge " + dannoNetto
-                + " danni a " + mostro.getTipoPersonaIncontrata());
-
-        if (mostro.getPuntiVitaMostro() <= 0) {
-            arciere.setEsperienza(arciere.getEsperienza() + 20);
-            if (arciere.getEsperienza() >= 100) {
-                arciere.setLivello(arciere.getLivello() + 1);
-                arciere.setEsperienza(0);
-                System.out.println(" Complimenti! " + arciere.getNomePersonaggio() + " è salito al livello " + arciere.getLivello());
-            }
-            System.out.println(" Mostro sconfitto!");
-        }
-        return dannoNetto;
+    if (arma != null) {
+        System.out.println("[ARMA] " + arciere.getNomePersonaggio()
+            + " ha equipaggiato: " + arma.getNome()
+            + " (dannoBonus=" + arma.getDannoBonus()
+            + ", tipo=" + arma.getTipoArma() + ")");
     }
+
+    int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
+    int bonusAttacco = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
+    int totale = tiro + bonusAttacco;
+    System.out.println(arciere.getNomePersonaggio() + " tiro attacco: " + tiro + " + bonus " + bonusAttacco + " = " + totale + " (CA mostro: " + difesaMostro + ")");
+
+    if (tiro == 1) {
+        System.out.println("Tiro 1: fallimento critico!");
+        return 0;
+    }
+
+    boolean critico = (tiro == 20);
+
+    int dannoBase = attacco + livello * 2 + (arma != null ? arma.getDannoBonus() : 0);
+    if (arciere.getPuntiVita() <= 10) {
+        dannoBase += 5;
+        System.out.println(arciere.getNomePersonaggio() + " entra in FURIA e colpisce più forte!");
+    }
+
+    int dannoNetto = Math.max(1, dannoBase - difesaMostro);
+    if (critico) {
+        dannoNetto *= 2;
+        System.out.println("Colpo critico! Danno raddoppiato.");
+    }
+
+    mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
+
+    System.out.println(arciere.getNomePersonaggio()
+            + " infligge " + dannoNetto
+            + " danni a " + mostro.getTipoPersonaIncontrata()
+            + " (HP rimasti: " + mostro.getPuntiVitaMostro() + ")");
+
+    if (mostro.getPuntiVitaMostro() <= 0) {
+        arciere.setEsperienza(arciere.getEsperienza() + 20);
+        if (arciere.getEsperienza() >= 100) {
+            arciere.setLivello(arciere.getLivello() + 1);
+            arciere.setEsperienza(0);
+            System.out.println("Complimenti! " + arciere.getNomePersonaggio() + " è salito al livello " + arciere.getLivello());
+        }
+        System.out.println("Mostro sconfitto!");
+    }
+    return dannoNetto;
+}
 
     @Override
    public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {

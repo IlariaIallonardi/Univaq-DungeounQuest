@@ -69,44 +69,7 @@ public class GuerrieroServiceImpl implements PersonaggioService {
         return attaccoFisico(guerriero, mostro);
     }
 
-   /*  public int attaccoFisico(Guerriero guerriero, Mostro mostro) {
-
-        int attacco = guerriero.getAttacco() + 5;
-        int livello = guerriero.getLivello();
-        int difesaMostro = mostro.getDifesaMostro();
-
-        // base: forte fisicamente
-        int dannoBase = attacco + livello * 2;
-
-        // piccola "furia": se ha pochi HP, picco di danno
-        if (guerriero.getPuntiVita() <= 10) {
-            dannoBase += 5;
-            System.out.println( guerriero.getNomePersonaggio() + " entra in FURIA e colpisce più forte!");
-        }
-
-        int dannoNetto = Math.max(1, dannoBase - difesaMostro);
-
-        int nuoviPV = mostro.getPuntiVitaMostro() - dannoNetto;
-        mostro.setPuntiVitaMostro(nuoviPV);
-
-System.out.println( guerriero.getNomePersonaggio()
-        + " sferra un potente colpo contro " + mostro.getNomeMostro()
-        + " infliggendo " + dannoNetto + " danni (HP mostro rimasti: " + mostro.getPuntiVitaMostro() + ")");
-        if (mostro.getPuntiVitaMostro() <= 0) {
-            System.out.println( mostro.getNomeMostro() + " è stato sconfitto dal Guerriero!");
-            try {
-                guerriero.setEsperienza(guerriero.getEsperienza() + 12);
-                if (guerriero.getEsperienza() >= 100) {
-                    guerriero.setLivello(guerriero.getLivello() + 1);
-                    guerriero.setEsperienza(0);
-                    System.out.println(" " + guerriero.getNomePersonaggio() + " è salito al livello " + guerriero.getLivello() + "!");
-                }
-            } catch (Exception ignored) {
-            }
-
-        }
-        return dannoNetto;
-    }*/
+  
 
     public int attaccoFisico(Guerriero guerriero, Mostro mostro) {
 

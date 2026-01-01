@@ -41,7 +41,12 @@ public class StanzaFactory {
 
     public List<Oggetto> generaOggettiCasuali() {
         List<Oggetto> oggetti = new ArrayList<>();
-        int n = rnd.nextInt(5); // 0..4 oggetti
+          int coord[][] = {{0,0}};
+        if (coord[0][0] == 0 && coord[0][1] == 0) {
+            // stanza di partenza, nessuna chiave
+    oggetti.removeIf(o -> o instanceof Chiave);
+}
+        int n = rnd.nextInt(1,5); // 1..4 oggetti
 
         for (int i = 0; i < n; i++) {
             int tipo = rnd.nextInt(1,6); // 1..5  
@@ -68,7 +73,7 @@ public class StanzaFactory {
 
     private List<Evento> generaEventiCasuali() {
         List<Evento> eventi = new ArrayList<>();
-        int n = rnd.nextInt(5); // 0..4 eventi
+        int n = rnd.nextInt(1,5); // 1..4 eventi
         for (int i = 0; i < n; i++) {
             int tipo = rnd.nextInt(5); // 0..4s
             //switch per tipi di evento da implementare
@@ -108,13 +113,15 @@ public class StanzaFactory {
         }
         return bloccataProva;
     }
+public Chiave creaChiavePerStanza(int stanzaId) {
+    return new service.impl.ChiaveServiceImpl().creaChiavePerStanza(stanzaId);
+}
 
 
-
-   public Chiave creaChiavePerStanza(int stanzaId) {
+   /*public Chiave creaChiavePerStanza(int stanzaId) {
     int keyId = KEY_ID_COUNTER.getAndIncrement();
     String descrizione = "Chiave che apre la stanza con id: " + stanzaId;
     return new Chiave(keyId,"Chiave",descrizione,true,false,false);
-}
+}*/
 
 }

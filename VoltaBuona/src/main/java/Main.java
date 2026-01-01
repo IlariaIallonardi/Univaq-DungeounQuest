@@ -21,6 +21,7 @@ import service.impl.PaladinoServiceImpl;
 import service.impl.PassaggioSegretoServiceImpl;
 import service.impl.TurnoServiceImpl;
 
+
 public class Main {
 
     public static void main(String[] args) {
@@ -91,32 +92,33 @@ public class Main {
         String[] nomiBot = {"Aldo", "Bea", "Ciro", "Dora", "Ezio", "Fiona", "Gino", "Hana"};
         Random rngBot = new Random();
 
-        for (int i = 1; i <= numBot; i++) {
-            // genera un nome unico (es. "Aldo_1")
-           String nome = "BOT_" + nomiBot[rngBot.nextInt(nomiBot.length)] + "_" + i;
-            // scegli casualmente una classe: 1=Guerriero,2=Mago,3=Arciere,4=Paladino
-            int sceltaClasse = rngBot.nextInt(4) + 1;
 
-            Personaggio p = creaPersonaggioDaScelta(sceltaClasse, nome);
-            giocatori.add(p);
-            System.out.println("BOT creato: " + p.getNomePersonaggio() + " (classe scelta: " + sceltaClasse + ")");
+        for (int i = 1; i <= numBot; i++) {
+            String nome = "BOT_" + nomiBot[rngBot.nextInt(nomiBot.length)] + "_" + i;
+            int sceltaClasse = rngBot.nextInt(4) + 1;
+            Personaggio base = creaPersonaggioDaScelta(sceltaClasse, nome);
+            Personaggio bot = giocatoreService.attribuisciPersonaggioAComputer(base);
+            giocatori.add(bot);
+            System.out.println("BOT creato: " + bot.getNomePersonaggio() + " (classe: " + bot.getClass().getSimpleName() + ")");
         }
         System.out.println(" Totale personaggi in partita: " + giocatori.size());
 
         // *** 4 CREAZIONE DUNGEON ***
         Dungeon dungeon = dungeonFactory.creaDungeon(righe, colonne);
         System.out.println("--- STANZE BLOCCATE E CHIAVI ---");
-for (Stanza s : dungeon.getMappaStanze().values()) {
-    String chiaveInfo = (s.getChiaveRichiesta() != null) ? String.valueOf(s.getChiaveRichiesta().getId()) : "nessuna";
-    StringBuilder objs = new StringBuilder();
-    for (int i=0;i<s.getOggettiPresenti().size();i++) {
-        Object o = s.getOggettiPresenti().get(i);
-        objs.append(o == null ? "<null>" : ((Oggetto) o).getNome());
-        if (i < s.getOggettiPresenti().size()-1) objs.append(", ");
-    }
-    System.out.println("Stanza id " + s.getId() + " bloccata=" + s.isBloccata()
-        + " chiaveId=" + chiaveInfo + " oggetti=[" + objs + "]");
-}
+        for (Stanza s : dungeon.getMappaStanze().values()) {
+            String chiaveInfo = (s.getChiaveRichiesta() != null) ? String.valueOf(s.getChiaveRichiesta().getId()) : "nessuna";
+            StringBuilder objs = new StringBuilder();
+            for (int i = 0; i < s.getOggettiPresenti().size(); i++) {
+                Object o = s.getOggettiPresenti().get(i);
+                objs.append(o == null ? "<null>" : ((Oggetto) o).getNome());
+                if (i < s.getOggettiPresenti().size() - 1) {
+                    objs.append(", ");
+                }
+            }
+            System.out.println("Stanza id " + s.getId() + " bloccata=" + s.isBloccata()
+                    + " chiaveId=" + chiaveInfo + " oggetti=[" + objs + "]");
+        }
 
         // *** 5 POSIZIONA GIOCATORI NELLA STANZA INIZIALE ***
         Stanza stanzaStart = dungeon.getStanza(0, 0);
@@ -180,8 +182,10 @@ for (Stanza s : dungeon.getMappaStanze().values()) {
 
         while (continua) {
             // esegui i turni singoli nell'ordine calcolato
-             for (Personaggio p : List.copyOf(giocatori)) {
-             if (p == null || p.èMorto(p)) continue;
+            for (Personaggio p : List.copyOf(giocatori)) {
+                if (p == null || p.èMorto(p)) {
+                    continue;
+                }
                 System.out.println("\nTurno di: " + p.getNomePersonaggio());
                 turnoServiceImpl.iniziaNuovoTurno(java.util.List.of(p), scanner);
             }
@@ -194,7 +198,6 @@ for (Stanza s : dungeon.getMappaStanze().values()) {
         }
     }
 
-    
     private static int scegliClasse(Scanner scanner, String who) {
         int sceltaClasse = 0;
         while (sceltaClasse < 1 || sceltaClasse > 4) {

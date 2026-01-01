@@ -52,18 +52,25 @@ public class PaladinoServiceImpl implements PersonaggioService {
             return 0;
 
         }
-        Paladino paladino = (Paladino) personaggio;
-        if (paladino == null || mostro == null) {
-            return 0;
-        }
+       Paladino paladino = (Paladino) personaggio;
+if (paladino == null || mostro == null) {
+    return 0;
+}
 
-        TipoMagiaSacra tipoMagiaSacra = scegliMagiaPerPaladino(paladino, mostro, combattimento);
-
-        // verifica mana
-        if (paladino.getPuntiMana() < tipoMagiaSacra.getCostoMana()) {
-            System.out.println(paladino.getNomePersonaggio() + " non ha abbastanza mana per usare " + tipoMagiaSacra);
-            return 0;
-        }
+domain.Arma arma = paladino.getArmaEquippaggiata();
+if (arma != null) {
+    System.out.println("[ARMA] " + paladino.getNomePersonaggio()
+        + " ha equipaggiato: " + arma.getNome()
+        + " (dannoBonus=" + arma.getDannoBonus()
+        + ", tipo=" + arma.getTipoArma() + ")");
+}
+TipoMagiaSacra tipoMagiaSacra = scegliMagiaPerPaladino(paladino, mostro, combattimento);
+int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
+if (tiro == 1) {
+    System.out.println("Tiro 1: fallimento critico!");
+    return 0;
+}
+boolean critico = (tiro == 20);
 
         // Applica l'effetto: qui esempi negativi/offensivi contro il mostro
         switch (tipoMagiaSacra) {
@@ -171,4 +178,5 @@ return new Paladino("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 
 
     public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
     }
+    
 }

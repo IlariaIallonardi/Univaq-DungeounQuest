@@ -79,8 +79,7 @@ public class TurnoServiceImpl implements TurnoService {
             tiri.remove(migliore);
         }
 
-       
-       return new ArrayList<>(ordineTurno);
+        return new ArrayList<>(ordineTurno);
     }
 
     /**
@@ -128,6 +127,13 @@ public class TurnoServiceImpl implements TurnoService {
                 System.out.println(p.getNomePersonaggio() + " salta questo turno.");
                 // applichiamo comunque eventuali effetti di fine turno
                 terminaTurnoCorrente(p);
+                continue;
+            }
+
+            String nome = p.getNomePersonaggio();
+            if (nome != null && (nome.startsWith("BOT_") || nome.startsWith("Bot-") || nome.toLowerCase().contains("bot"))) {
+                ComputerServiceImpl computerService = new ComputerServiceImpl();
+                computerService.agisciAutomatico(p, this, giocoService, eventoService, personaggioService);
                 continue;
             }
 
@@ -391,35 +397,61 @@ public class TurnoServiceImpl implements TurnoService {
     // mostra gli oggetti nella stanza 
 
     private void mostraOggetti(List<Oggetto> oggetti) {
-    System.out.println("\nOggetti presenti nella stanza:");
+        System.out.println("\nOggetti presenti nella stanza:");
 
-    for (int i = 0; i < oggetti.size(); i++) {
-        Oggetto o = oggetti.get(i);
-        String nome = (o != null && o.getNome() != null) ? o.getNome() : "<oggetto null>";
-        System.out.println((i + 1) + ") " + nome);
+        for (int i = 0; i < oggetti.size(); i++) {
+            Oggetto o = oggetti.get(i);
+            String nome = (o != null && o.getNome() != null) ? o.getNome() : "<oggetto null>";
+            System.out.println((i + 1) + ") " + nome);
+        }
+    }
+
+    // Movimento gestito tramite input
+  public void gestisciMovimento(Personaggio personaggio, Scanner scanner) {
+
+    Stanza stanza = personaggio.getPosizioneCorrente();
+    if (stanza == null) {
+        System.out.println("Posizione del personaggio non definita. Saltando movimento.");
+        return;
+    }
+
+    Map<String, Stanza> adiacenti = stanza.getStanzaAdiacente();
+    if (adiacenti == null || adiacenti.isEmpty()) {
+        System.out.println("Nessuna direzione disponibile da questa stanza.");
+        return;
+    }
+
+    System.out.println("Direzioni disponibili:");
+    for (Map.Entry<String, Stanza> entry : adiacenti.entrySet()) {
+        String nomeDir = entry.getKey(); // es. "NORD"
+        Stanza s = entry.getValue();
+        String abbreviazione = nomeDir.length() > 0 ? nomeDir.substring(0, 1) : nomeDir;
+        System.out.println(" - " + abbreviazione + " / " + nomeDir + " -> stanza id " + (s != null ? s.getId() : "null"));
+    }
+
+    System.out.print("Scegli una direzione (lettera o nome): ");
+    String input = scanner.nextLine().trim().toUpperCase();
+
+    Direzione direzione = Direzione.fromString(input);
+    if (direzione == null) {
+        System.out.println("Direzione non valida.");
+        return;
+    }
+
+    String dirKey = direzione.name(); // "NORD","SUD",...
+    if (!adiacenti.containsKey(dirKey)) {
+        System.out.println("Non puoi andare in quella direzione da qui.");
+        return;
+    }
+
+    boolean mosso = giocoService.muoviPersonaggio(personaggio, direzione);
+
+    if (mosso) {
+        System.out.println("Ti sei mosso verso " + direzione);
+    } else {
+        System.out.println("Non puoi muoverti in quella direzione.");
     }
 }
-    // 🔧 Movimento gestito tramite input
-    public void gestisciMovimento(Personaggio personaggio, Scanner scanner) {
-
-        System.out.println("Direzioni disponibili: N, S, E, O");
-        String dir = scanner.nextLine().trim().toUpperCase();
-
-        Direzione direzione = Direzione.fromString(dir);
-
-        if (direzione == null) {
-            System.out.println("Direzione non valida.");
-            return;
-        }
-
-        boolean mosso = giocoService.muoviPersonaggio(personaggio, direzione);
-
-        if (mosso) {
-            System.out.println("Ti sei mosso verso " + direzione);
-        } else {
-            System.out.println("Non puoi muoverti in quella direzione.");
-        }
-    }
 
     // 🔧 Metodo: esegue UN evento scelto
     /*    public void eseguiEvento(Personaggio personaggio, Stanza stanza, List<Evento> eventi, Scanner scanner) {
