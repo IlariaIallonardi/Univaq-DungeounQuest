@@ -252,16 +252,17 @@ public class NPCServiceImpl implements PersonaIncontrataService {
     }
 
     @Override
-    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza) {
+    public void  eseguiEventiInStanza(Personaggio personaggio, Stanza stanza) {
         if (stanza == null || stanza.getListaEventiAttivi() == null) {
-            return;
+            return ;
         }
         for (Evento e : List.copyOf(stanza.getListaEventiAttivi())) {
             boolean termina = attivaEvento(personaggio, e);
             if (termina) {
-                return;
+                return ;
             }
         }
+        return ;
     }
 
     @Override

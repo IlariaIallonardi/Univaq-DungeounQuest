@@ -2,16 +2,18 @@ package domain;
 
 public class PassaggioSegreto extends Evento {
     private Stanza destinazione;
-    private boolean rebusApertura;
+    private String rebusApertura;
     private boolean scoperto;
     private Stanza stanzaOrigine;
+    private String rispostaRebus;
 
-    public PassaggioSegreto(Stanza destinazione, boolean rebusApertura, boolean scoperto, int id, boolean inizioEvento, boolean fineEvento, Stanza stanzaOrigine) {
+    public PassaggioSegreto(Stanza destinazione, String rebusApertura, boolean scoperto, int id, boolean inizioEvento, boolean fineEvento, Stanza stanzaOrigine, String rispostaRebus) {
         super(id, inizioEvento, fineEvento, "Passaggio Segreto", "PassaggioSegreto");
         this.destinazione = destinazione;
         this.rebusApertura = rebusApertura;
         this.scoperto = scoperto;
         this.stanzaOrigine = stanzaOrigine;
+        this.rispostaRebus = rispostaRebus;
     }
 
     
@@ -25,11 +27,11 @@ public class PassaggioSegreto extends Evento {
         this.destinazione = destinazione;
     }
 
-    public boolean isRebusApertura() {
+    public String getRebusApertura() {
         return rebusApertura;
     }
 
-    public void setRebusApertura(boolean rebusApertura) {
+    public void setRebusApertura(String rebusApertura) {
         this.rebusApertura = rebusApertura;
     }
 
@@ -57,6 +59,12 @@ public class PassaggioSegreto extends Evento {
     }
     public void setStanzaOrigine(Stanza stanzaOrigine) {
         this.stanzaOrigine = stanzaOrigine;
+    }
+    public void setRispostaRebus(String rispostaRebus) {
+        this.rispostaRebus = rispostaRebus;
+    }
+    public String getRispostaRebus() {
+        return rispostaRebus;
     }
 
     

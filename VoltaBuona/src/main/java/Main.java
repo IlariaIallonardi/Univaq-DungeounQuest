@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 import domain.Dungeon;
+import domain.Evento;
 import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
@@ -116,8 +117,16 @@ public class Main {
                     objs.append(", ");
                 }
             }
+            StringBuilder eventi = new StringBuilder();
+            for (int i = 0; i < s.getListaEventiAttivi().size(); i++) {
+                Evento e = s.getListaEventiAttivi().get(i);
+                eventi.append(e == null ? "<null>" : e.getNomeEvento());
+                if (i < s.getListaEventiAttivi().size() - 1) {
+                    eventi.append(", ");
+                }
+            }
             System.out.println("Stanza id " + s.getId() + " bloccata=" + s.isBloccata()
-                    + " chiaveId=" + chiaveInfo + " oggetti=[" + objs + "]");
+                    + " chiaveId=" + chiaveInfo + " oggetti=[" + objs + "]"+" eventi=[" + eventi + "]");
         }
 
         // *** 5 POSIZIONA GIOCATORI NELLA STANZA INIZIALE ***

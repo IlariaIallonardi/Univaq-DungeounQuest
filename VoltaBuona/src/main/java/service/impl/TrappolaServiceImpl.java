@@ -1,5 +1,7 @@
 package service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import domain.Effetto;
@@ -82,13 +84,15 @@ public boolean attivaEvento(Personaggio personaggio, Evento e) {
             + " | stord=" + personaggio.getTurniStordito()
             + " | turniDaSaltare=" + personaggio.getTurniDaSaltare());
 
-        if (stanza != null) rimuoviEventoDaStanza(stanza, e);
+       /*  if (stanza != null) rimuoviEventoDaStanza(stanza, e);
         return true; // consuma turno
     } else {
         System.out.println("La trappola è stata disinnescata.");
         if (stanza != null) rimuoviEventoDaStanza(stanza, e);
         return false;
+    }*/
     }
+    return true; // consuma turno
 }
     public void scattaTrappola(Trappola trappola, Personaggio personaggio, Effetto effetto) {
     if (personaggio == null || effetto == null) return;
@@ -162,22 +166,36 @@ public boolean attivaEvento(Personaggio personaggio, Evento e) {
 
     @Override
     public void rimuoviEventoDaStanza(Stanza stanza, Evento evento) {
+    
          if (stanza == null || evento == null) return;
     if (stanza.getListaEventiAttivi() != null) {
+
         stanza.getListaEventiAttivi().remove(evento);
     }
+ } ;
+
+@Override
+public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza) {
+    if (stanza == null || stanza.getListaEventiAttivi() == null || stanza.getListaEventiAttivi().isEmpty()) {
+        return;
     }
 
-    ;
-
-    @Override
-    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza) {
-        for (Evento e : stanza.getListaEventiAttivi()) {
-            boolean termina = attivaEvento(personaggio, e);
-            if (termina) return;
-
+    List<Trappola> trappole = new ArrayList<>();
+    for (Evento e : new ArrayList<>(stanza.getListaEventiAttivi())) {
+        if (e instanceof Trappola t) {
+            trappole.add(t);
         }
     }
+
+    if (trappole.isEmpty()) {
+        return;
+    }
+
+    // Scegliere una trappola a caso tra quelle presenti
+    Trappola scelta = trappole.get(java.util.concurrent.ThreadLocalRandom.current().nextInt(trappole.size()));
+    attivaEvento(personaggio, scelta);
+    rimuoviEventoDaStanza(stanza, scelta);
+}
 
 
     @Override

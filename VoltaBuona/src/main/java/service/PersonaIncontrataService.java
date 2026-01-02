@@ -1,7 +1,6 @@
 package service;
 
 import domain.Evento;
-import domain.NPC;
 import domain.Personaggio;
 import domain.Stanza;
 

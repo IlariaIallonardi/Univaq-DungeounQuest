@@ -142,8 +142,9 @@ public class MostroServiceImpl implements  PersonaIncontrataService {
     public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza){   
         for (Evento e : stanza.getListaEventiAttivi()) {
             boolean termina = attivaEvento(personaggio, e);
-            if (termina) return; // interrompe la catena di eventi e termina il turno
+            if (termina) return ; // interrompe la catena di eventi e termina il turno
         }
+    
     }
 
     @Override
