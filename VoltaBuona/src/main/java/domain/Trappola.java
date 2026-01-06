@@ -7,7 +7,7 @@ public class Trappola extends Evento {
     private Stanza posizioneCorrenteTrappola;
 
     public Trappola( Effetto effetto, Stanza posizioneCorrenteTrappola, int id, boolean inizioEvento, boolean fineEvento, String descrizione) {
-        super(id, inizioEvento, fineEvento, descrizione, "Trappola");
+        super(id, inizioEvento, fineEvento, descrizione, "Trappola", posizioneCorrenteTrappola);
     
         this.effetto = effetto;
         this.posizioneCorrenteTrappola = posizioneCorrenteTrappola;

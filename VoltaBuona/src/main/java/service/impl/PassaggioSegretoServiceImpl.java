@@ -61,72 +61,147 @@ public boolean attivaEvento(Personaggio personaggio, Evento e) {
     return false;
 }*/
 @Override
-    public boolean attivaEvento(Personaggio personaggio, Evento e) {
-        if (personaggio == null || e == null) {
-            return false;
-        }
-        if (e instanceof PassaggioSegreto ps) {
-            Stanza stanzaCorrente = personaggio.getPosizioneCorrente();
-            if (ps.isScoperto()) {
-                System.out.println("Hai già scoperto un passaggio segreto qui.");
-                return false; // non consuma il turno
-            }
+public boolean attivaEvento(Personaggio personaggio, Evento e) {
+    if (personaggio == null || e == null) return false;
+    if (!(e instanceof PassaggioSegreto ps)) return false;
 
-            System.out.println("Hai trovato un possibile passaggio segreto...");
+    Stanza stanzaCorrente = personaggio.getPosizioneCorrente();
 
-            if (ps.getRebusApertura() != null) {
-                // assicurati che il rebus sia impostato
-                if (ps.getRebusApertura() == null || ps.getRispostaRebus() == null) {
-                    // fallback: crea un rebus semplice
-                    ps.setRebusApertura("Qual è la capitale d'Italia?");
-                    ps.setRispostaRebus("Roma");
-                }
-
-                System.out.println("Rebus: " + ps.getRebusApertura());
-
-                // comportamento BOT: prova automaticamente con probabilità di successo
-                if (personaggio instanceof domain.Computer) {
-                    double chance = 0.75; // 75% chance di risolvere
-                    double v = Math.random();
-                    if (v <= chance) {
-                        ps.setScoperto(true);
-                        System.out.println(personaggio.getNomePersonaggio() + " (bot) risolve il rebus e apre il passaggio!");
-                    } else {
-                        System.out.println(personaggio.getNomePersonaggio() + " (bot) non risolve il rebus.");
-                        return false;
-                    }
-                } else {
-                    // giocatore umano: chiedo input
-                    java.util.Scanner scanner = new java.util.Scanner(System.in);
-                    System.out.print("Inserisci la soluzione: ");
-                    String risposta = scanner.nextLine().trim();
-                    if (risposta.equalsIgnoreCase(ps.getRispostaRebus().trim())) {
-                        ps.setScoperto(true);
-                        System.out.println("Hai risolto il rebus: il passaggio segreto si apre!");
-                    } else {
-                        System.out.println("Risposta errata. Non riesci a risolvere il rebus ora.");
-                        return false;
-                    }
-                }
-            } else {
-                ps.setScoperto(true);
-                System.out.println("Hai scoperto un passaggio segreto!");
-            }
-
-            // se c'è una destinazione nota, collegala alla stanza corrente con una chiave leggibile
-            if (stanzaCorrente != null && ps.getDestinazione() != null) {
-                String key = "SEGRETO_" + ps.getId();
-                stanzaCorrente.getStanzaAdiacente().put(key, ps.getDestinazione());
-                System.out.println("Un varco verso stanza id '" + ps.getDestinazione().getId() + "' è ora visibile (direzione: " + key + ").");
-            }
-
-            return false; // non consuma il turno
-        }
+    if (ps.isScoperto()) {
+        System.out.println("Hai già scoperto un passaggio segreto qui.");
         return false;
     }
 
+    System.out.println("Hai trovato un possibile passaggio segreto...");
+
+    // gestione rebus (se presente)
+    if (ps.getRebusApertura() != null) {
+        // fallback se mancanti
+        if (ps.getRebusApertura() == null || ps.getRispostaRebus() == null) {
+            ps.setRebusApertura("Qual è la capitale d'Italia?");
+            ps.setRispostaRebus("Roma");
+        }
+
+        System.out.println("Rebus: " + ps.getRebusApertura());
+
+        if (personaggio instanceof domain.Computer) {
+            double chance = 0.75;
+            if (Math.random() <= chance) {
+                ps.setScoperto(true);
+                System.out.println(personaggio.getNomePersonaggio() + " (bot) risolve il rebus e apre il passaggio!");
+            } else {
+                System.out.println(personaggio.getNomePersonaggio() + " (bot) non risolve il rebus.");
+                return false;
+            }
+        } else {
+            java.util.Scanner scanner = new java.util.Scanner(System.in);
+            System.out.print("Inserisci la soluzione: ");
+            String risposta = scanner.nextLine().trim();
+            if (risposta.equalsIgnoreCase(ps.getRispostaRebus().trim())) {
+                ps.setScoperto(true);
+                System.out.println("Hai risolto il rebus: il passaggio segreto si apre!");
+            } else {
+                System.out.println("Risposta errata. Non riesci a risolvere il rebus ora.");
+                return false;
+            }
+        }
+    } else {
+        ps.setScoperto(true);
+        System.out.println("Hai scoperto un passaggio segreto!");
+    }
+        
+    // stampa stanze adiacenti alla stanza del passaggio (debug/guida)
+    if (stanzaCorrente != null && stanzaCorrente.getStanzaAdiacente() != null && !stanzaCorrente.getStanzaAdiacente().isEmpty()) {
+        System.out.println("Stanze adiacenti a stanza id=" + stanzaCorrente.getId() + ":");
+        stanzaCorrente.getStanzaAdiacente().forEach((chiave, s) -> {
+             if (s != null && s != stanzaCorrente) {
+                 System.out.println(" - " + chiave + " -> stanza id=" + s.getId());
+             }  
+            
+           });
+    } else {
+        System.out.println("[DEBUG] Nessuna stanza adiacente da mostrare per stanza id=" + (stanzaCorrente != null ? stanzaCorrente.getId() : "null"));
+    }
+
+    // se non è stata impostata una destinazione, collega una stanza adiacente casuale (ma NON attivare eventi)
+    if (ps.getDestinazione() == null && stanzaCorrente != null && stanzaCorrente.getStanzaAdiacente() != null && !stanzaCorrente.getStanzaAdiacente().isEmpty()) {
+        List<Stanza> adiacenti = new java.util.ArrayList<>();
+        for (Stanza s : stanzaCorrente.getStanzaAdiacente().values()) {
+            if (s != null && s.getId() != stanzaCorrente.getId()) adiacenti.add(s);
+        }
+        if (!adiacenti.isEmpty()) {
+            var rnd = java.util.concurrent.ThreadLocalRandom.current();
+            Stanza scelta = adiacenti.get(rnd.nextInt(adiacenti.size()));
+            ps.setDestinazione(scelta);
+          //  String key = "SEGRETO_" + ps.getId();
+           // stanzaCorrente.getStanzaAdiacente().put(key, scelta);
+           // System.out.println("[DEBUG] Passaggio segreto collegato a stanza id=" + scelta.getId() + " (chiave: " + key + ")");
+        } else {
+            System.out.println("[DEBUG] Nessuna stanza adiacente valida per collegare il passaggio.");
+        }
+    }
+
+    // Offri al giocatore la possibilità di spostarsi e esplorare immediatamente
+    if (stanzaCorrente != null && stanzaCorrente.getStanzaAdiacente() != null && !stanzaCorrente.getStanzaAdiacente().isEmpty()) {
+
+        List<java.util.Map.Entry<String, Stanza>> entries = new java.util.ArrayList<>(stanzaCorrente.getStanzaAdiacente().entrySet());
+        // filtra eventuali null o riferimenti alla stessa stanza
+        entries.removeIf(en -> en.getValue() == null || en.getValue().getId() == stanzaCorrente.getId());
+
+        if (!entries.isEmpty()) {
+            if (personaggio instanceof domain.Computer) {
+                // comportamento semplice per bot: 50% chance muoversi, scelta casuale
+                if (Math.random() < 0.5) {
+                    var rnd = java.util.concurrent.ThreadLocalRandom.current();
+                    var en = entries.get(rnd.nextInt(entries.size()));
+                    personaggio.setPosizioneCorrente(en.getValue());
+                    System.out.println(personaggio.getNomePersonaggio() + " (bot) si sposta verso " + en.getKey() + " (stanza id=" + en.getValue().getId() + ") e la esplora.");
+                    new TurnoServiceImpl((service.PersonaggioService) null).esploraStanza(personaggio);
+                } else {
+                    System.out.println(personaggio.getNomePersonaggio() + " (bot) rimane nella stanza corrente.");
+                }
+            } else {
+                System.out.println("\nVuoi muoverti in una delle stanze adiacenti adesso?");
+                System.out.println("0) Annulla");
+                for (int i = 0; i < entries.size(); i++) {
+                    var en = entries.get(i);
+                    System.out.println((i + 1) + ") " + en.getKey() + " -> stanza id=" + en.getValue().getId());
+                }
+                java.util.Scanner scanner = new java.util.Scanner(System.in);
+                int sceltaIdx = -1;
+                try {
+                    System.out.print("Scegli (numero): ");
+                    sceltaIdx = Integer.parseInt(scanner.nextLine().trim());
+                } catch (NumberFormatException ex) {
+                    System.out.println("Input non valido. Nessuno spostamento effettuato.");
+                    return false;
+                }
+                if (sceltaIdx == 0) {
+                    System.out.println("Hai annullato lo spostamento.");
+                    return false;
+                }
+                if (sceltaIdx < 1 || sceltaIdx > entries.size()) {
+                    System.out.println("Scelta non valida. Nessuno spostamento effettuato.");
+                    return false;
+                }
+                Stanza destinazioneScelta = entries.get(sceltaIdx - 1).getValue();
+                personaggio.setPosizioneCorrente(destinazioneScelta);
+                System.out.println("Ti sei spostato nella stanza id=" + destinazioneScelta.getId() + ". La stanza viene esplorata:");
+                new TurnoServiceImpl((service.PersonaggioService) null).scegliAzione(personaggio, scanner);
+            }
+        }
+    }
+
+    // il passaggio segreto non consuma il turno di default
+    return false;
+}
+
+
+
+
     @Override
-    public void  eseguiEventiInStanza(Personaggio personaggio, Stanza stanza) {
+    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza
+    ) {
         for (Evento e : stanza.getListaEventiAttivi()) {
             boolean termina = attivaEvento(personaggio, e);
             if (termina) {
@@ -138,28 +213,28 @@ public boolean attivaEvento(Personaggio personaggio, Evento e) {
 
     ;
 
-  @Override
-public Evento aggiungiEventoCasuale() {
-    int id = ID_COUNTER.getAndIncrement();
-    Stanza destinazione = null;
-    boolean rebusApertura = true;
-    boolean scoperto = false;
+        @Override
+    public Evento aggiungiEventoCasuale() {
+        int id = ID_COUNTER.getAndIncrement();
+        Stanza destinazione = null;
+        boolean rebusApertura = true;
+        boolean scoperto = false;
 
-    PassaggioSegreto passaggioSegreto = new PassaggioSegreto(destinazione, "", scoperto, id, false, false, null, "");   
+        PassaggioSegreto passaggioSegreto = new PassaggioSegreto(destinazione, "", scoperto, id, false, false, null, "");
 
-    // serie di rebus semplici - scegli uno casuale
-    List<String[]> qa = List.of(
-        new String[] {"Qual è la capitale d'Italia?", "Roma"},
-        new String[] {"Quanto fa 2 + 2?", "4"},
-        new String[] {"Di che colore è il cielo in una giornata serena?", "Blu"},
-        new String[] {"Quanti giorni ci sono in una settimana?", "7"},
-        new String[] {"Qual è il contrario di 'caldo'?", "Freddo"}
-    );
-    var rnd = java.util.concurrent.ThreadLocalRandom.current();
-    var pair = qa.get(rnd.nextInt(qa.size()));
-    passaggioSegreto.setRebusApertura(pair[0]);
-    passaggioSegreto.setRispostaRebus(pair[1]);
+        // serie di rebus semplici - scegli uno casuale
+        List<String[]> qa = List.of(
+                new String[]{"Qual è la capitale d'Italia?", "Roma"},
+                new String[]{"Quanto fa 2 + 2?", "4"},
+                new String[]{"Di che colore è il cielo in una giornata serena?", "Blu"},
+                new String[]{"Quanti giorni ci sono in una settimana?", "7"},
+                new String[]{"Qual è il contrario di 'caldo'?", "Freddo"}
+        );
+        var rnd = java.util.concurrent.ThreadLocalRandom.current();
+        var pair = qa.get(rnd.nextInt(qa.size()));
+        passaggioSegreto.setRebusApertura(pair[0]);
+        passaggioSegreto.setRispostaRebus(pair[1]);
 
-    return passaggioSegreto;
-}
+        return passaggioSegreto;
+    }
 }

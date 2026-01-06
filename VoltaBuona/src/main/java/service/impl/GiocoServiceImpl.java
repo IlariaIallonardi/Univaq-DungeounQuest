@@ -16,6 +16,7 @@ import service.GiocatoreService;
 import service.GiocoService;
 import service.TurnoService;
 
+
 public class GiocoServiceImpl implements GiocoService {
 
     private List<Giocatore> giocatori;
@@ -90,16 +91,23 @@ public class GiocoServiceImpl implements GiocoService {
             System.out.println("Non esiste una direzione/varco chiamato: " + direzione.name());
             return false;
         }
-        if (destinazione.getListaEventiAttivi() != null) {
+       if (destinazione.getListaEventiAttivi() != null) {
+    List<Trappola> trappole = new ArrayList<>();
     for (Evento e : new ArrayList<>(destinazione.getListaEventiAttivi())) {
-        if (e instanceof Trappola) {
-            boolean consumaTurno = new TrappolaServiceImpl().attivaEvento(personaggio, e);
-            if (consumaTurno) {
-                System.out.println("La trappola ha attivato un effetto che consuma il turno.");
-            }
+        if (e instanceof Trappola t) {
+            trappole.add(t);
+        }
+    }
+    if (!trappole.isEmpty()) {
+        var rnd = java.util.concurrent.ThreadLocalRandom.current();
+        Trappola scelta = trappole.get(rnd.nextInt(trappole.size()));
+        boolean consumaTurno = new TrappolaServiceImpl().attivaEvento(personaggio, scelta);
+        if (consumaTurno) {
+            System.out.println("La trappola ha attivato un effetto che consuma il turno.");
         }
     }
 }
+
 
         // controllo stanza bloccata come nel metodo esistente
         if (destinazione.isBloccata()) {

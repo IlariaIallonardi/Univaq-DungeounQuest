@@ -215,7 +215,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
 
         domain.Evento evento = new domain.Evento(0, true, false,
                 "Incontro con " + mostro.getNomeMostro(),
-                "Combattimento_" + mostro.getNomeMostro());
+                "Combattimento_" + mostro.getNomeMostro(), stanza);
         Combattimento combattimento = new Combattimento(null, 0, evento, 0, true, personaggio, stanza, 0, null, mostro);
         combattimento.setInCorso(true);
 

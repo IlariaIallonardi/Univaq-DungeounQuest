@@ -8,6 +8,8 @@ import java.util.Random;
 import java.util.Scanner;
 
 import domain.Evento;
+import domain.Mostro;
+import domain.NPC;
 import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
@@ -263,8 +265,8 @@ public class TurnoServiceImpl implements TurnoService {
         System.out.println("\nCosa vuoi fare?");
         System.out.println("1) Fare un evento");
         System.out.println("2) Prendere un oggetto");
-        if (ciSonoEventi && ciSonoOggetti) {
-            System.out.println("3) Fare un evento E prendere un oggetto");
+        if (ciSonoOggetti && ciSonoEventi) {
+            System.out.println("3) Prendere un oggetto e fare un evento");
         }
         System.out.println("4) usare un oggetto dallo zaino");
         System.out.println("5) Controlla il portafoglio");
@@ -293,12 +295,13 @@ public class TurnoServiceImpl implements TurnoService {
                 }
                 break;
             case 3:
-                if (ciSonoEventi && ciSonoOggetti) {
+                if (ciSonoOggetti && ciSonoEventi) {
+                     mostraOggetti(oggetti);
+                    raccogliUnOggetto(personaggio, stanzaCorrente, oggetti, scanner);
                     if (eseguiSingoloEvento(personaggio, stanzaCorrente, eventi, scanner)) // poi prendere oggetto
                     {
-                        mostraOggetti(oggetti);
+                        return; // turno consumato
                     }
-                    raccogliUnOggetto(personaggio, stanzaCorrente, oggetti, scanner);
                 }
                 break;
             case 4:
@@ -346,7 +349,19 @@ public class TurnoServiceImpl implements TurnoService {
             System.out.println("Nessun evento disponibile.");
             return false;
         }
-        mostraEventi(eventi);
+        // costruisci lista visibile coerente con mostraEventi (esclude Trappola)
+        List<Evento> visibili = new ArrayList<>();
+        for (Evento ev : eventi) {
+            if (ev == null) {
+                continue;
+            }
+            if (ev instanceof domain.Trappola) {
+                continue;
+            }
+            visibili.add(ev);
+        }
+
+        mostraEventi(visibili);
         System.out.print("Scegli l'evento da eseguire (0 = annulla): ");
         int index;
         try {
@@ -359,11 +374,11 @@ public class TurnoServiceImpl implements TurnoService {
             System.out.println("Operazione annullata.");
             return false;
         }
-        if (index >= eventi.size()) {
+        if (index >= visibili.size()) {
             System.out.println("Indice non valido.");
             return false;
         }
-        Evento e = eventi.get(index);
+        Evento e = visibili.get(index);
         EventoService svc = servicePerEvento(e);
         boolean termina = svc.attivaEvento(personaggio, e);
         try {
@@ -381,25 +396,36 @@ public class TurnoServiceImpl implements TurnoService {
 
     /// mostra gli eventi nella stanza 
    private void mostraEventi(List<Evento> eventi) {
-    System.out.println("\nEventi disponibili:");
+        System.out.println("\nEventi disponibili:");
 
-    int sceltaIndex = 1; // numerazione visibile al giocatore
+        int sceltaIndex = 1; // numerazione visibile al giocatore
 
-    for (Evento e : eventi) {
-        // NON mostrare le trappole: scattano automaticamente all'ingresso
-        if (e instanceof Trappola) {
-            continue;
+        for (Evento e : eventi) {
+            if (e instanceof Mostro mostro) {
+                System.out.println(sceltaIndex + ") Hai incontrato un mostro:" + mostro.getNomeMostro());
+                sceltaIndex++;
+                continue;
+            }
+
+            if (e instanceof NPC npc) {
+                System.out.println(sceltaIndex + ") Hai incontrato un NPC:" + npc.getNomeNPC());
+                sceltaIndex++;
+                continue;
+            }
+            // NON mostrare le trappole: scattano automaticamente all'ingresso
+            if (e instanceof Trappola) {
+                continue;
+            }
+
+            System.out.println(sceltaIndex + ") " + e.getNomeEvento());
+            sceltaIndex++;
         }
 
-        System.out.println(sceltaIndex + ") " + e.getNomeEvento());
-        sceltaIndex++;
+        // opzionale: se non c'è nulla da mostrare
+        if (sceltaIndex == 1) {
+            System.out.println("(Nessun evento selezionabile in questa stanza)");
+        }
     }
-
-    // opzionale: se non c'è nulla da mostrare
-    if (sceltaIndex == 1) {
-        System.out.println("(Nessun evento selezionabile in questa stanza)");
-    }
-}
     // mostra gli oggetti nella stanza 
 
     private void mostraOggetti(List<Oggetto> oggetti) {
@@ -413,7 +439,7 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     // Movimento gestito tramite input
-  /*public void gestisciMovimento(Personaggio personaggio, Scanner scanner) {
+    /*public void gestisciMovimento(Personaggio personaggio, Scanner scanner) {
 
     Stanza stanza = personaggio.getPosizioneCorrente();
     if (stanza == null) {
@@ -460,55 +486,56 @@ public class TurnoServiceImpl implements TurnoService {
 }*/
     public void gestisciMovimento(Personaggio personaggio, Scanner scanner) {
 
-    Stanza stanza = personaggio.getPosizioneCorrente();
-    if (stanza == null) {
-        System.out.println("Posizione del personaggio non definita. Saltando movimento.");
-        return;
-    }
-
-    Map<String, Stanza> adiacenti = stanza.getStanzaAdiacente();
-    if (adiacenti == null || adiacenti.isEmpty()) {
-        System.out.println("Nessuna direzione disponibile da questa stanza.");
-        return;
-    }
-
-    System.out.println("Direzioni disponibili:");
-    for (Map.Entry<String, Stanza> entry : adiacenti.entrySet()) {
-        String nomeDir = entry.getKey(); // es. "NORD" o "SEGRETO_3"
-        Stanza s = entry.getValue();
-        String display = nomeDir.length() > 1 ? nomeDir : nomeDir;
-        System.out.println(" - " + display + " -> stanza id " + (s != null ? s.getId() : "null"));
-    }
-
-    System.out.print("Scegli una direzione (lettera, nome o chiave segreta): ");
-    String input = scanner.nextLine().trim().toUpperCase();
-
-    // prova prima a interpretare come direzione standard
-    Direzione direzione = Direzione.fromString(input);
-
-    boolean mosso = false;
-    if (direzione != null) {
-        mosso = giocoService.muoviPersonaggio(personaggio, direzione);
-    } else {
-        // se non è una direzione standard, verifica se è una chiave personalizzata presente nella mappa
-        if (adiacenti.containsKey(input)) {
-            // usa il metodo specifico se disponibile (cast sicuro)
-            if (giocoService instanceof service.impl.GiocoServiceImpl) {
-                mosso = ((service.impl.GiocoServiceImpl) giocoService).muoviPersonaggio(personaggio, Direzione.valueOf(input));
-            } else {
-                System.out.println("Impossibile muoversi: servizio di gioco non supporta movimenti custom.");
-            }
-        } else {
-            System.out.println("Direzione non valida.");
+        Stanza stanza = personaggio.getPosizioneCorrente();
+        if (stanza == null) {
+            System.out.println("Posizione del personaggio non definita. Saltando movimento.");
             return;
         }
-    }
 
-    if (mosso) {
-        System.out.println("Ti sei mosso verso " + input);
-    } else {
-        System.out.println("Non puoi muoverti in quella direzione.");
-    }}
+        Map<String, Stanza> adiacenti = stanza.getStanzaAdiacente();
+        if (adiacenti == null || adiacenti.isEmpty()) {
+            System.out.println("Nessuna direzione disponibile da questa stanza.");
+            return;
+        }
+
+        System.out.println("Direzioni disponibili:");
+        for (Map.Entry<String, Stanza> entry : adiacenti.entrySet()) {
+            String nomeDir = entry.getKey(); // es. "NORD" o "SEGRETO_3"
+            Stanza s = entry.getValue();
+            String display = nomeDir.length() > 1 ? nomeDir : nomeDir;
+            System.out.println(" - " + display + " -> stanza id " + (s != null ? s.getId() : "null"));
+        }
+
+        System.out.print("Scegli una direzione (lettera, nome o chiave segreta): ");
+        String input = scanner.nextLine().trim().toUpperCase();
+
+        // prova prima a interpretare come direzione standard
+        Direzione direzione = Direzione.fromString(input);
+
+        boolean mosso = false;
+        if (direzione != null) {
+            mosso = giocoService.muoviPersonaggio(personaggio, direzione);
+        } else {
+            // se non è una direzione standard, verifica se è una chiave personalizzata presente nella mappa
+            if (adiacenti.containsKey(input)) {
+                // usa il metodo specifico se disponibile (cast sicuro)
+                if (giocoService instanceof service.impl.GiocoServiceImpl) {
+                    mosso = ((service.impl.GiocoServiceImpl) giocoService).muoviPersonaggio(personaggio, Direzione.valueOf(input));
+                } else {
+                    System.out.println("Impossibile muoversi: servizio di gioco non supporta movimenti custom.");
+                }
+            } else {
+                System.out.println("Direzione non valida.");
+                return;
+            }
+        }
+
+        if (mosso) {
+            System.out.println("Ti sei mosso verso " + input);
+        } else {
+            System.out.println("Non puoi muoverti in quella direzione.");
+        }
+    }
 
     // 🔧 Metodo: esegue UN evento scelto
     /*    public void eseguiEvento(Personaggio personaggio, Stanza stanza, List<Evento> eventi, Scanner scanner) {
@@ -609,14 +636,14 @@ public class TurnoServiceImpl implements TurnoService {
         System.out.println("\n Stanza: " + stanza.getId());
 
         // Mostra oggetti visibili
-        /*   if (!stanza.getOggettiPresenti().isEmpty()) {
+         /*   if (!stanza.getOggettiPresenti().isEmpty()) {
             System.out.println("Oggetti trovati:");
             mostraOggetti(stanza.getOggettiPresenti());
           //  stanza.getOggettiPresenti().forEach(o -> System.out.println(" - " + o.getNome()));
         } else {
             System.out.println(" Nessun oggetto nella stanza.");
         }
-//gestione eventi 
+         //gestione eventi 
         List<Evento> eventi = stanza.getListaEventiAttivi();
         if (eventi != null && !eventi.isEmpty()) {
             System.out.println(" Eventi presenti:");
@@ -626,7 +653,7 @@ public class TurnoServiceImpl implements TurnoService {
         }
 
         // Gestione eventi
-        /*   if (!stanza.getListaEventiAttivi().isEmpty()) {
+           if (!stanza.getListaEventiAttivi().isEmpty()) {
             System.out.println(" Eventi attivi:");
             for (Evento e : stanza.getListaEventiAttivi()) {
                 boolean termina = eventoService.attivaEvento(personaggio, e);

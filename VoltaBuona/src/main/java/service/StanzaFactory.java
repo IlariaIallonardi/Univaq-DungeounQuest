@@ -11,7 +11,6 @@ import domain.Oggetto;
 import domain.Stanza;
 import service.impl.ArmaServiceImpl;
 import service.impl.ArmaturaServiceImpl;
-import service.impl.ChiaveServiceImpl;
 import service.impl.MostroServiceImpl;
 import service.impl.NPCServiceImpl;
 import service.impl.PassaggioSegretoServiceImpl;
@@ -36,7 +35,7 @@ public class StanzaFactory {
         Chiave chiave = null;
         boolean bloccata = generaRichiestaChiave(x,y);
         String nomeStanza = "Stanza (" + x + "," + y + ")";
-       return new Stanza(id, coord, stato, oggetti, eventi, chiave, bloccata);
+        return new Stanza(id, coord, stato, oggetti, eventi, chiave, bloccata);
     }
 
     public List<Oggetto> generaOggettiCasuali() {
@@ -64,7 +63,7 @@ public class StanzaFactory {
                     oggetti.add(new TesoroServiceImpl().creaOggettoCasuale());
                     break;
                 case 5:
-                    oggetti.add(new ChiaveServiceImpl().creaOggettoCasuale());
+                    oggetti.add(new PozioneServiceImpl().creaOggettoCasuale());
                     break;
             }
         }
@@ -91,7 +90,7 @@ public class StanzaFactory {
                     eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
                     break;
                 default:
-                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new TrappolaServiceImpl().aggiungiEventoCasuale());
                     break;
             }
         }
@@ -99,7 +98,7 @@ public class StanzaFactory {
     }
 
     // restituisce true se la stanza deve richiedere una chiave, false altrimenti
-    private boolean generaRichiestaChiave(int x, int y) {
+  /*   private boolean generaRichiestaChiave(int x, int y) {
         boolean bloccataProva;
         if(x==0 && y==0) {
             bloccataProva = false;
@@ -112,16 +111,24 @@ public class StanzaFactory {
             bloccataProva = false;
         }
         return bloccataProva;
-    }
+    }*/
+   // restituisce true se la stanza deve richiedere una chiave, false altrimenti
+private boolean generaRichiestaChiave(int x, int y) {
+    // start (0,0) e le stanze adiacenti (distanza Manhattan = 1) NON devono essere bloccate
+    if (x == 0 && y == 0) return false;
+    if (Math.abs(x - 0) + Math.abs(y - 0) == 1) return false;
+    // per le altre stanze random true/false
+  //  return rnd.nextInt(2) == 1;
+   double probBlocco = 0.25;
+    return rnd.nextDouble() < probBlocco;
+}
+
+
 public Chiave creaChiavePerStanza(int stanzaId) {
     return new service.impl.ChiaveServiceImpl().creaChiavePerStanza(stanzaId);
 }
 
 
-   /*public Chiave creaChiavePerStanza(int stanzaId) {
-    int keyId = KEY_ID_COUNTER.getAndIncrement();
-    String descrizione = "Chiave che apre la stanza con id: " + stanzaId;
-    return new Chiave(keyId,"Chiave",descrizione,true,false,false);
-}*/
+   
 
 }

@@ -21,7 +21,7 @@ import service.impl.GuerrieroServiceImpl;
 import service.impl.PaladinoServiceImpl;
 import service.impl.PassaggioSegretoServiceImpl;
 import service.impl.TurnoServiceImpl;
-
+import util.ANSI;
 
 public class Main {
 
@@ -93,7 +93,6 @@ public class Main {
         String[] nomiBot = {"Aldo", "Bea", "Ciro", "Dora", "Ezio", "Fiona", "Gino", "Hana"};
         Random rngBot = new Random();
 
-
         for (int i = 1; i <= numBot; i++) {
             String nome = "BOT_" + nomiBot[rngBot.nextInt(nomiBot.length)] + "_" + i;
             int sceltaClasse = rngBot.nextInt(4) + 1;
@@ -125,8 +124,11 @@ public class Main {
                     eventi.append(", ");
                 }
             }
-            System.out.println("Stanza id " + s.getId() + " bloccata=" + s.isBloccata()
-                    + " chiaveId=" + chiaveInfo + " oggetti=[" + objs + "]"+" eventi=[" + eventi + "]");
+            String idColorato = ANSI.BOLD + ANSI.BRIGHT_RED + s.getId() + ANSI.RESET;
+            String bloccataColorato = ANSI.BOLD + ANSI.BRIGHT_BLUE + s.isBloccata() + ANSI.RESET;
+             String oggetti = ANSI.BOLD + ANSI.GREEN + objs + ANSI.RESET;
+            System.out.println("Stanza id " + idColorato + " bloccata=" + bloccataColorato
+                    + " chiaveId=" + chiaveInfo + "\n" + " oggetti=[" + oggetti + "]\n" + " eventi=[" + eventi + "]");
         }
 
         // *** 5 POSIZIONA GIOCATORI NELLA STANZA INIZIALE ***
@@ -191,7 +193,7 @@ public class Main {
 
         while (continua) {
             // esegui i turni singoli nell'ordine calcolato
-            for (Personaggio p : List.copyOf(giocatori)) {
+            for (Personaggio p : List.copyOf(ordine)) {
                 if (p == null || p.èMorto(p)) {
                     continue;
                 }

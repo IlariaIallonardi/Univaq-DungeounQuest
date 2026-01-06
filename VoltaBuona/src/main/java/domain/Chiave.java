@@ -2,9 +2,11 @@ package domain;
 
 public class Chiave extends Oggetto {
 
-    public Chiave(int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
-        super(id, nome, descrizione, usabile, equipaggiabile, trovato);
+    int idStanzaTarget; // id della stanza che sblocca
 
+    public Chiave(int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato, int idStanzaTarget) {
+        super(id, nome, descrizione, usabile, equipaggiabile, trovato);
+        this.idStanzaTarget = idStanzaTarget;
     }
 
     public boolean unicaApertura() {
@@ -46,6 +48,14 @@ public class Chiave extends Oggetto {
         System.out.println(" Hai usato la chiave e hai sbloccato la stanza!");
         return true;
     } */
+    public int getIdStanzaTarget() {
+        return idStanzaTarget;
+    }
+
+    public void setIdStanzaTarget(int idStanzaTarget) {
+        this.idStanzaTarget = idStanzaTarget;
+    }
+
     @Override
     public boolean eseguiEffetto(Personaggio personaggio) {
         Stanza stanza = personaggio.getPosizioneCorrente();
@@ -59,18 +69,17 @@ public class Chiave extends Oggetto {
             return false;
         }
         // 2 Verifica che la chiave corrisponda: prima confronto targetStanzaName (se impostato), altrimenti confronto con la chiave richiesta della stanza (nome)
-    
 
         Chiave richiesta = stanza.getChiaveRichiesta();
         if (richiesta == null) {
             return false;
         }
 
-        if (this.getId() == richiesta.getId()) {
+        if (this.getIdStanzaTarget() == stanza.getId()) {
             stanza.sblocca();
-
             System.out.println("Hai sbloccato la stanza con la chiave id " + getId());
             return true;
+
         } else {
             System.out.println("La chiave non corrisponde (id " + getId() + ")");
             return false;

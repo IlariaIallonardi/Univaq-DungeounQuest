@@ -128,6 +128,9 @@ public class Stanza {
         System.out.println(" La stanza è stata sbloccata!");
         return true;
     }
+    public void setBloccata(boolean bloccata) {
+        this.bloccata = bloccata;
+    }
 
     @Override
     public String toString() {

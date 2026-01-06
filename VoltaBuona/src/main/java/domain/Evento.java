@@ -7,14 +7,17 @@ public class Evento {
     private boolean fineEvento;
     private String descrizione;
     private String nomeEvento;
+    private Stanza posizioneCorrente;
 
-    public Evento(int id, boolean inizioEvento, boolean fineEvento, String descrizione, String nomeEvento) {
+    public Evento(int id, boolean inizioEvento, boolean fineEvento, String descrizione, String nomeEvento, Stanza posizioneCorrente) {
         this.id = id;
         this.inizioEvento = inizioEvento;
         this.fineEvento = fineEvento;
         this.descrizione = descrizione;
         this.nomeEvento = nomeEvento;
+        this.posizioneCorrente = posizioneCorrente;
     }
+
 
     public boolean attivo() {
         return inizioEvento && !fineEvento;
@@ -67,6 +70,12 @@ public class Evento {
     }
     public void setNomeEvento(String nomeEvento) {
         this.nomeEvento = nomeEvento;
+    }
+    public Stanza getPosizioneCorrente() {
+        return posizioneCorrente;
+    }
+    public void setPosizioneCorrente(Stanza posizioneCorrente) {
+        this.posizioneCorrente = posizioneCorrente;
     }
 
 

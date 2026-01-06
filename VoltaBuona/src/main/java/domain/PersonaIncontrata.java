@@ -7,7 +7,7 @@ public class PersonaIncontrata extends Evento {
 
 
     public PersonaIncontrata(int id, boolean inizioEvento, boolean fineEvento, String descrizione, String tipoPersonaIncontrata) {
-        super(id, inizioEvento, fineEvento, descrizione, "PersonaIncontrata");
+        super(id, inizioEvento, fineEvento, descrizione, "PersonaIncontrata", null);
 
         this.tipoPersonaIncontrata = tipoPersonaIncontrata;
     }
