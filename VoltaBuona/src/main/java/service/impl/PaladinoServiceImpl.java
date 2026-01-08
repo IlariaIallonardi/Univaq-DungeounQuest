@@ -10,6 +10,9 @@ import service.PersonaggioService;
 
 public class PaladinoServiceImpl implements PersonaggioService {
 
+    private static final int bonusDifesaProtezione = 10;
+    private static final int turniProtezione = 1;
+
     /**
      * Metodo per proteggere un altro giocatore
      *
@@ -17,24 +20,28 @@ public class PaladinoServiceImpl implements PersonaggioService {
      * @param bersaglio Il personaggio da proteggere
      * @return true se la protezione è stata applicata con successo
      */
-    public boolean protezionePersonaggio(Paladino paladino, Personaggio bersaglio) {
-        if (paladino == null || bersaglio == null) {
+    public boolean proteggiCompagno(Paladino paladino, Personaggio alleato) {
+
+        if (paladino == null || alleato == null) return false;
+
+        if (paladino.getPuntiVita() <= 10) {
+            System.out.println("Il paladino è troppo debole per proteggere qualcuno.");
             return false;
         }
 
-        // Verifica se il paladino ha abbastanza punti vita
-        if (paladino.getPuntiVita() < 20) {
+        if (!alleato.prenotaProtezione()) {
+        
+            System.out.println(alleato.getNomePersonaggio() + " è già protetto.");
             return false;
         }
 
-        // delega al dominio: solo 
-        boolean ok = paladino.proteggi(bersaglio);
-        bersaglio.setTurnoProtetto(bersaglio.getTurnoProtetto() + 1);
-        if (!ok) {
-            return false;
-        }
+        
 
-        System.out.println(paladino.getNomePersonaggio() + " protegge per un turno " + bersaglio.getNomePersonaggio());
+        System.out.println(
+                paladino.getNomePersonaggio() + " protegge " +
+                alleato.getNomePersonaggio()
+        );
+
         return true;
     }
 
@@ -52,25 +59,25 @@ public class PaladinoServiceImpl implements PersonaggioService {
             return 0;
 
         }
-       Paladino paladino = (Paladino) personaggio;
-if (paladino == null || mostro == null) {
-    return 0;
-}
+        Paladino paladino = (Paladino) personaggio;
+        if (paladino == null || mostro == null) {
+            return 0;
+        }
 
-domain.Arma arma = paladino.getArmaEquippaggiata();
-if (arma != null) {
-    System.out.println("[ARMA] " + paladino.getNomePersonaggio()
-        + " ha equipaggiato: " + arma.getNome()
-        + " (dannoBonus=" + arma.getDannoBonus()
-        + ", tipo=" + arma.getTipoArma() + ")");
-}
-TipoMagiaSacra tipoMagiaSacra = scegliMagiaPerPaladino(paladino, mostro, combattimento);
-int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
-if (tiro == 1) {
-    System.out.println("Tiro 1: fallimento critico!");
-    return 0;
-}
-boolean critico = (tiro == 20);
+        domain.Arma arma = paladino.getArmaEquippaggiata();
+        if (arma != null) {
+            System.out.println("[ARMA] " + paladino.getNomePersonaggio()
+                    + " ha equipaggiato: " + arma.getNome()
+                    + " (dannoBonus=" + arma.getDannoBonus()
+                    + ", tipo=" + arma.getTipoArma() + ")");
+        }
+        TipoMagiaSacra tipoMagiaSacra = scegliMagiaPerPaladino(paladino, mostro, combattimento);
+        int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
+        if (tiro == 1) {
+            System.out.println("Tiro 1: fallimento critico!");
+            return 0;
+        }
+        boolean critico = (tiro == 20);
 
         // Applica l'effetto: qui esempi negativi/offensivi contro il mostro
         switch (tipoMagiaSacra) {
@@ -154,11 +161,11 @@ boolean critico = (tiro == 20);
     }
 
     @Override
-      public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
-Stanza stanza = null;
-Zaino zaino = new Zaino();
-return new Paladino("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 300, "normale", 0, 0, 0, 0, zaino, 0);
-}
+    public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
+        Stanza stanza = null;
+        Zaino zaino = new Zaino();
+        return new Paladino("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 300, "normale", 0, 0, 0, 0, zaino, 0);
+    }
 
     public enum TipoMagiaSacra {
         RUBAVITA(4),
@@ -178,5 +185,5 @@ return new Paladino("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 
 
     public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
     }
-    
+
 }

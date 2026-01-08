@@ -8,7 +8,7 @@ public class PassaggioSegreto extends Evento {
     private String rispostaRebus;
 
     public PassaggioSegreto(Stanza destinazione, String rebusApertura, boolean scoperto, int id, boolean inizioEvento, boolean fineEvento, Stanza stanzaOrigine, String rispostaRebus) {
-        super(id, inizioEvento, fineEvento, " ", "PassaggioSegreto", stanzaOrigine);
+        super(id, inizioEvento, fineEvento, " ", "Passaggio Segreto", stanzaOrigine);
         this.destinazione = destinazione;
         this.rebusApertura = rebusApertura;
         this.scoperto = scoperto;

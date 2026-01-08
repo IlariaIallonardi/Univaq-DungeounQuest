@@ -17,7 +17,7 @@ public class Personaggio {
     private int livello;
     private int esperienza;
     private Stanza posizioneCorrente;
-    private boolean protetto;
+    private boolean protettoProssimoTurno;
     private int turnoProtetto;
     private int turniAvvelenato;
     private int turniCongelato;
@@ -37,7 +37,7 @@ public class Personaggio {
         this.livello = livello;
         this.nomePersonaggio = nomePersonaggio;
         this.posizioneCorrente = posizioneCorrente;
-        this.protetto = protetto;
+        this.protettoProssimoTurno = protetto;
         this.puntiMana = puntiMana;
         this.puntiVita = puntiVita;
         this.statoPersonaggio = statoPersonaggio;
@@ -173,51 +173,46 @@ public class Personaggio {
         return personaggio.getPuntiVita() <= 0;
     }
 
-    /**
-     * Applica la protezione al personaggio per 1 turno. Se il personaggio è già
-     * protetto la chiamata NON rinnova/estende la protezione. package-private:
-     * solo classi nello stesso package domain possono invocarlo.
-     */
-    public void applicaProtezione() {
-        if (!this.protetto) {
-            this.protetto = true;
-            this.turnoProtetto = 1;
-        }
-    }
+   
 
     /**
      * Verifica se il personaggio è attualmente protetto.
      */
-    boolean isProtetto() {
-        return this.protetto && this.turnoProtetto > 0;
+    public boolean isProtetto() {
+        return this.protettoProssimoTurno && this.turnoProtetto > 0;
     }
 
-    /**
-     * Decrementa la protezione di un turno. Chiamare dopo che un attacco è
-     * stato evitato (ossia quando la protezione ha impedito il danno) o alla
-     * fine del turno.
-     */
-    public void decrementaProtezione() {
-        if (this.turnoProtetto > 0) {
-            this.turnoProtetto--;
-            if (this.turnoProtetto <= 0) {
-                this.protetto = false;
-                this.turnoProtetto = 0;
-            }
-        }
+    public boolean prenotaProtezione() {
+    if (this.turnoProtetto > 0 || this.protettoProssimoTurno) {
+        return false;
     }
-
+    this.protettoProssimoTurno = true;
+    return true;
+}
     /**
      * Chiamare all'inizio del turno del personaggio. Si occupa di consumare la
      * protezione (durata = 1) quando "tocca di nuovo" al personaggio.
      */
-    public void onTurnStart() {
-        // se era protetto, consumiamo la protezione ora (fine dell'effetto)
-        if (isProtetto()) {
-            decrementaProtezione();
+   public void onTurnStart() {
+    // se era stata programmata una protezione per il prossimo turno,
+    // assicurati che abbia durata minima
+    if (this.protettoProssimoTurno) {
+        this.protettoProssimoTurno = false;
+        this.turnoProtetto = 1;
+        return;
+    }
+
+    // consuma la protezione attiva
+    if (this.turnoProtetto > 0) {
+        this.turnoProtetto--;
+        if (this.turnoProtetto <= 0) {
+            this.protettoProssimoTurno = false;
+            this.turnoProtetto = 0;
         }
     }
 
+    // qui puoi mettere altre cose da eseguire all'inizio del turno, mantenute centralizzate
+}
     /**
      * Aggiunge N turni da saltare per questo personaggio.
      */
@@ -254,19 +249,17 @@ public class Personaggio {
      * 0).
      */
     public int subisciDanno(int danno) {
-        if (danno <= 0) {
-            return 0;
-        }
-        if (isProtetto()) {
-            return 0;
-        }
-        int dannoNetto = danno - this.difesa;
-        if (dannoNetto <= 0) {
-            dannoNetto = 1;
-        }
-        this.puntiVita -= dannoNetto;
-        return dannoNetto;
-    }
+    if (danno <= 0) return 0;
+
+    // protezione attiva: annulla danno
+    if (this.turnoProtetto > 0) return 0;
+
+    int dannoNetto = danno - this.difesa;
+    if (dannoNetto <= 0) dannoNetto = 1;
+
+    this.puntiVita -= dannoNetto;
+    return dannoNetto;
+}
 
     public Arma getArmaEquippaggiata() {
         return armaEquippaggiata;

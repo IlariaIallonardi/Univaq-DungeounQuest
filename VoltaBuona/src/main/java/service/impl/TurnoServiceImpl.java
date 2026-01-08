@@ -500,7 +500,7 @@ public class TurnoServiceImpl implements TurnoService {
 
         System.out.println("Direzioni disponibili:");
         for (Map.Entry<String, Stanza> entry : adiacenti.entrySet()) {
-            String nomeDir = entry.getKey(); // es. "NORD" o "SEGRETO_3"
+            String nomeDir = entry.getKey();
             Stanza s = entry.getValue();
             String display = nomeDir.length() > 1 ? nomeDir : nomeDir;
             System.out.println(" - " + display + " -> stanza id " + (s != null ? s.getId() : "null"));
