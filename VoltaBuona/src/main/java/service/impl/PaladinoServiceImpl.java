@@ -1,17 +1,26 @@
 package service.impl;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import domain.Combattimento;
+import domain.Guerriero;
 import domain.Mostro;
 import domain.Paladino;
 import domain.Personaggio;
 import domain.Stanza;
 import domain.Zaino;
 import service.PersonaggioService;
+import util.ANSI;
 
 public class PaladinoServiceImpl implements PersonaggioService {
 
-    private static final int bonusDifesaProtezione = 10;
-    private static final int turniProtezione = 1;
+
+    
+    private static final int bonusAttaccoPaladino = 7;
+    private static final int bonusDannoLivello = 2;
+    
+    
+
 
     /**
      * Metodo per proteggere un altro giocatore
@@ -44,6 +53,10 @@ public class PaladinoServiceImpl implements PersonaggioService {
 
         return true;
     }
+
+    
+
+
 
     /**
      * Metodo per utilizzare la magia sacra del paladino
@@ -159,6 +172,88 @@ public class PaladinoServiceImpl implements PersonaggioService {
 
         return TipoMagiaSacra.AMMALIAMENTO;
     }
+
+public int attaccoFisicoPaladino(Paladino paladino, Mostro mostro) {
+
+    ThreadLocalRandom random = ThreadLocalRandom.current();
+
+    int tiro = random.nextInt(1, 21); // d20
+
+    // bonus
+    int bonusAttacco = paladino.getAttacco() + (paladino.getLivello() / 2);
+    int totale = tiro + bonusAttacco;
+
+    int difesaMostroCombattimento = mostro.getDifesaMostro(); // qui la usi come Classe Armatura
+
+    System.out.println(
+        paladino.getNomePersonaggio() +
+        " tiro: " + tiro + " + bonus " + bonusAttacco +
+        " = " + totale + " (CA mostro: " + difesaMostroCombattimento + ")"
+    );
+
+    if (tiro == 1) {
+        System.out.println("Fallimento!");
+        return 0;
+    }
+
+    boolean critico = (tiro == 20);
+
+    if (!critico && totale < difesaMostroCombattimento) {
+        System.out.println("L'attacco manca il bersaglio.");
+        return 0;
+    }
+
+
+
+    // Parte a dadi: es. 1d8 (puoi cambiarla in base all'arma)
+    int dadoDanno = random.nextInt(1, 9); // 1..8
+
+    // Bonus fissi: i tuoi bonus (restano uguali)
+    int bonusFissi = bonusAttaccoPaladino + paladino.getLivello() * bonusDannoLivello;
+
+    /* ?????
+    Arma arma = paladino.getArmaEquippaggiata();
+    if (arma != null) {
+        bonusFissi += arma.getDannoBonus();
+        System.out.println("[ARMA] " + arma.getNome() + " (+" + arma.getDannoBonus() + " danni)");
+    }*/
+
+    
+
+    int dadiTotali = dadoDanno;
+
+    // Critico: raddoppia SOLO i dadi
+    if (critico) {
+        int dadoExtra = random.nextInt(1, 9);
+        dadiTotali += dadoExtra;
+        System.out.println(
+            ANSI.BRIGHT_RED + ANSI.BOLD +
+            "COLPO CRITICO! Dadi danno raddoppiati!" +
+            ANSI.RESET
+        );
+    }
+
+    int dannoNetto = Math.max(1, dadiTotali + bonusFissi);
+
+    /* ===== APPLICA DANNO ===== */
+
+    mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
+
+    System.out.println(
+    paladino.getNomePersonaggio() +
+        " infligge " + dannoNetto +
+        " danni a " + mostro.getNomeMostro() +
+        " (HP rimasti: " + mostro.getPuntiVitaMostro() + ")"
+    );
+
+    if (mostro.getPuntiVitaMostro() <= 0) {
+        return 0;
+    }
+
+    return dannoNetto;
+}
+        
+
 
     @Override
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {

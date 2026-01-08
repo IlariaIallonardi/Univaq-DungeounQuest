@@ -12,17 +12,7 @@ public class Paladino extends Personaggio {
 
     }
 
-    public boolean proteggi(Personaggio target) {
-        if (target == null) {
-            return false;
-        }
-        // esempio di controllo: richiedi che il guerriero abbia almeno 1 PV
-        if (this.getPuntiVita() <= 0) {
-            return false;
-        }
-        target.applicaProtezione();
-        return true;
-    }
+
 
     @Override
     public boolean puoRaccogliere(Arma.TipoArma tipo) {
