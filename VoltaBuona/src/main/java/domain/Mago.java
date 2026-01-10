@@ -21,5 +21,20 @@ public class Mago extends Personaggio {
 
         return tipo == Arma.TipoArma.BACCHETTA_MAGICA;
     }
+    public enum TipoMagiaSacra {
+        RUBAVITA(4),
+        AMMALIAMENTO(5),
+        MALATTIA(7);
+
+        private final int costoMana;
+
+        TipoMagiaSacra(int costoMana) {
+            this.costoMana = costoMana;
+        }
+
+        public int getCostoMana() {
+            return costoMana;
+        }
+    }
 
 }
