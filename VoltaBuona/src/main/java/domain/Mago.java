@@ -2,11 +2,19 @@ package domain;
 
 public class Mago extends Personaggio {
 
-    public Mago(String abilitàSpeciale, Arma armaEquippaggiata, int difesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, boolean protetto, int puntiMana, int puntiVita, String statoPersonaggio, int turniAvvelenato, int turniCongelato, int turniStordito, int turnoProtetto, Zaino zaino, int portafoglioPersonaggio) {
+    private TipoMagiaSacra magiaSelezionata;
+
+    public Mago(String abilitàSpeciale, Arma armaEquippaggiata, int difesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, boolean protetto, int puntiMana, int puntiVita, String statoPersonaggio, int turniAvvelenato, int turniCongelato, int turniStordito, int turnoProtetto, Zaino zaino, int portafoglioPersonaggio, TipoMagiaSacra magiaSelezionata) {
         super(abilitàSpeciale, armaEquippaggiata, difesa, esperienza, id, livello, nomePersonaggio, posizioneCorrente, protetto, puntiMana, puntiVita, statoPersonaggio, turniAvvelenato, turniCongelato, turniStordito, turnoProtetto, zaino, portafoglioPersonaggio);
     }
 
-   
+    public TipoMagiaSacra getMagiaSelezionata() {
+        return magiaSelezionata;
+    }
+
+    public void setMagiaSelezionata(TipoMagiaSacra magiaSelezionata) {
+        this.magiaSelezionata = magiaSelezionata;
+    }
 
     @Override
     public void setAbilitàSpeciale(String abilitàSpeciale) {
@@ -21,6 +29,7 @@ public class Mago extends Personaggio {
 
         return tipo == Arma.TipoArma.BACCHETTA_MAGICA;
     }
+
     public enum TipoMagiaSacra {
         RUBAVITA(4),
         AMMALIAMENTO(5),

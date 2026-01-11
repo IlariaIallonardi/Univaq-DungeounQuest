@@ -73,6 +73,7 @@ public class MagoServiceImpl implements PersonaggioService {
         // ===== DANNO (dadi + bonus fissi, critico raddoppia SOLO i dadi) =====
         // Scegli il dado base: esempio 1d10
         int dadoDanno = random.nextInt(1, 11); // 1..10
+        int bonusAttaccoMago = 15;
 
         // Bonus fissi (stile guerriero): qui puoi usare costanti analoghe alle tue
         // esempio: bonusAttaccoMago + livello * bonusDannoLivello
@@ -157,7 +158,7 @@ public class MagoServiceImpl implements PersonaggioService {
             return 0;
         }
 
-        TipoMagiaSacra magiaScelta = combattimento.getMagiaSelezionata();
+        TipoMagiaSacra magiaScelta = mago.getMagiaSelezionata();
 
         // ✅ QUI: protezione se non è stata scelta alcuna magia
         if (magiaScelta == null) {
@@ -173,7 +174,12 @@ public class MagoServiceImpl implements PersonaggioService {
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
         Stanza stanza = null;
         Zaino zaino = new Zaino();
-        return new Mago("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 300, "normale", 0, 0, 0, 0, zaino, 0);
+        return new Mago("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 300, "normale", 0, 0, 0, 0, zaino, 0, null);
+    }
+
+    @Override
+    public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
+        // futura estensione (Strategia / Command)
     }
 
 }
