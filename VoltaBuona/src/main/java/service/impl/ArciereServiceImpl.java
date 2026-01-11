@@ -1,20 +1,50 @@
 package service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
 
 import domain.Arciere;
 import domain.Combattimento;
-import domain.Evento;
 import domain.Mostro;
 import domain.Personaggio;
 import domain.Stanza;
 import domain.Zaino;
 import service.PersonaggioService;
+import util.ANSI;
 
 public class ArciereServiceImpl implements PersonaggioService {
+
+    private static final int bonusAttaccoArciere = 10;
+    private static final int bonusDannoLivello = 3;
+
+   @Override
+    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
+
+        if (!(personaggio instanceof Arciere arciere)) {
+            System.out.println("Solo un Arciere può usare questo attacco.");
+            return 0;
+        }
+
+        if (mostro == null) {
+            System.out.println("Nessun bersaglio valido.");
+            return 0;
+        }
+
+        Stanza stanzaArciere = arciere.getPosizioneCorrente();
+        Stanza stanzaMostro  = mostro.getPosizioneCorrenteMostro();
+
+        if (stanzaArciere == null || stanzaMostro == null) {
+            System.out.println("Errore di posizione.");
+            return 0;
+        }
+
+        //  Regola Arciere: stessa stanza O stanza adiacente
+        if (!stanzaArciere.equals(stanzaMostro) && !sonoAdiacenti(stanzaArciere, stanzaMostro)) {
+            System.out.println("Bersaglio troppo lontano: puoi colpire solo stanza corrente o adiacenti.");
+            return 0;
+        }
+
+        return attaccoDistanzaArciere(arciere, mostro);
+    }
 
     /**
      * Attacco a distanza: l'arciere può colpire solo stanze adiacenti; Se nella
@@ -26,182 +56,79 @@ public class ArciereServiceImpl implements PersonaggioService {
      *
      * Adatta i nomi dei metodi se nella tua implementazione differiscono.
      */
-    public boolean colpireStanza(Arciere arciere, Stanza stanzaBersaglio) {
-        if (arciere == null || stanzaBersaglio == null) {
-            return false;
-        }
+   public int attaccoDistanzaArciere(Arciere arciere, Mostro mostro) {
 
-        Stanza posizione = arciere.getPosizioneCorrente();
-        if (posizione == null) {
-            return false;
-        }
+        ThreadLocalRandom random = ThreadLocalRandom.current();
 
-        // verifica che la stanza bersaglio sia adiacente alla posizione dell'arciere
-        Map<String, Stanza> adiacenti = posizione.getStanzaAdiacente();
-        boolean èAdiacente = false;
-        if (adiacenti != null) {
-            for (Stanza s : adiacenti.values()) {
-                if (s == stanzaBersaglio) {
-                    èAdiacente = true;
-                    break;
-                }
-            }
-        }
+        int tiro = random.nextInt(1, 21); // d20
 
-        if (!èAdiacente) {
-            // non è possibile colpire stanza non adiacente
-            return false;
-        }
+        int bonusAttacco = arciere.getAttacco() + (arciere.getLivello() / 2);
+        int totale = tiro + bonusAttacco;
 
-        // prova a recuperare i personaggi nella stanza bersaglio e colpirne il primo valido
-        List<Evento> mostri = stanzaBersaglio.getListaEventiAttivi();
-        if (mostri != null && !mostri.isEmpty()) {
-            for (Evento target : mostri) {
-                if (target == null) {
-                    continue;
-                }
-                // colpisci solo mostri, non i compagni
-                if (!(target instanceof Mostro)) {
-                    continue;
-                }
-                Mostro m = (Mostro) target;
-                if (m.getPuntiVitaMostro() <= 0) {
-                    continue;
-                }
-                // usare l'overload che accetta Mostro se presente
-                attacca(arciere, m, null);
-                System.out.println("Arciere " + arciere.getNomePersonaggio() + " ha colpito il mostro " + m.getTipoPersonaIncontrata() + " in stanza adiacente.");
-                return true;
-            }
-            // stanza occupata ma nessun bersaglio valido
-            return false;
-        }
+        int CA = mostro.getDifesaMostro();
 
-        // stanza vuota: l'attacco "va a vuoto" ma è comunque valido
-        System.out.println("Arciere " + arciere.getNomePersonaggio() + " spara in una stanza adiacente vuota.");
-        return true;
-    }
+        System.out.println(
+            arciere.getNomePersonaggio() +
+            " (tiro a distanza) tiro: " + tiro + " + bonus " + bonusAttacco +
+            " = " + totale + " (CA mostro: " + CA + ")"
+        );
 
-    @Override
-    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
-
-        if (!(personaggio instanceof Arciere arciere)) {
-            System.out.println(" Solo un arciere può usare attacco a distanza!");
-            return 0;
-        }
-        if (mostro == null) {
+        if (tiro == 1) {
+            System.out.println("Il colpo fallisce!");
             return 0;
         }
 
-        Stanza stanzaAttuale = arciere.getPosizioneCorrente();
-        Stanza stanzaMostro = mostro.getPosizioneCorrenteMostro();
+        boolean critico = (tiro == 20);
 
-        if (stanzaAttuale == null || stanzaMostro == null) {
+        if (!critico && totale < CA) {
+            System.out.println("La freccia manca il bersaglio.");
             return 0;
         }
 
-        // Caso semplice → mostro nella stessa stanza
-        if (stanzaAttuale.equals(stanzaMostro)) {
-            return infliggiDanno(arciere, mostro);
+        // Danno: 1d8 (freccia), puoi fare 1d6 se vuoi nerfarlo
+        int dadoDanno = random.nextInt(1, 9); // 1..8
+
+        int bonusFissi = bonusAttaccoArciere + arciere.getLivello() * bonusDannoLivello;
+
+        int dadiTotali = dadoDanno;
+
+        if (critico) {
+            int dadoExtra = random.nextInt(1, 9);
+            dadiTotali += dadoExtra;
+            System.out.println(
+                ANSI.BRIGHT_RED + ANSI.BOLD +
+                "COLPO CRITICO! Dadi danno raddoppiati!" +
+                ANSI.RESET
+            );
         }
 
-        // Cerco tutte le stanze adiacenti che contengono il mostro
-        Map<String, Stanza> adiacenti = stanzaAttuale.getStanzaAdiacente();
-        List<Stanza> stanzeConMostro = new ArrayList<>();
+        int dannoNetto = Math.max(1, dadiTotali + bonusFissi);
 
-        if (adiacenti != null) {
-            for (Stanza s : adiacenti.values()) {
-                if (s.getListaEventiAttivi() != null && s.getListaEventiAttivi().contains(mostro)) {
-                    stanzeConMostro.add(s);
-                }
-            }
-        }
+        mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
 
-        //  Mostro non raggiungibile
-        if (stanzeConMostro.isEmpty()) {
-            System.out.println("Il mostro è troppo lontano per essere colpito!");
-            return 0;
-        }
+        System.out.println(
+            arciere.getNomePersonaggio() +
+            " infligge " + dannoNetto +
+            " danni a " + mostro.getNomeMostro() +
+            " (HP rimasti: " + mostro.getPuntiVitaMostro() + ")"
+        );
 
-        //  Se c’è solo una stanza → attacco automatico
-        Stanza sceltaStanza = stanzeConMostro.get(0);
 
-        // Se più stanze → scelta giocatore
-        if (stanzeConMostro.size() > 1) {
-            Scanner scan = new Scanner(System.in);
-            System.out.println(" Il mostro è in più stanze adiacenti! Scegli quale colpire:");
+        return dannoNetto;
+    }
+    private boolean sonoAdiacenti(Stanza a, Stanza b) {
 
-            for (int i = 0; i < stanzeConMostro.size(); i++) {
-                System.out.println((i + 1) + ") " + stanzeConMostro.get(i).getId());
-            }
+        // --- Variante A: se Stanza ha una lista/set di adiacenti ---
+        // return a.getStanzeAdiacenti() != null && a.getStanzeAdiacenti().contains(b);
 
-            int scelta = scan.nextInt() - 1;
-            if (scelta < 0 || scelta >= stanzeConMostro.size()) {
-                System.out.println(" Scelta non valida, attacco annullato!");
-                return 0;
-            }
-            sceltaStanza = stanzeConMostro.get(scelta);
-        }
+        // --- Variante B: se Stanza ha una mappa uscite (direzione -> stanza) ---
+        // return a.getUscite() != null && a.getUscite().containsValue(b);
 
-        System.out.println(" Attacco a distanza verso " + sceltaStanza.getId());
-        return infliggiDanno(arciere, mostro);
+        // Fallback "sicuro" se non so la tua API: niente adiacenza
+        return false;
     }
 
-   private int infliggiDanno(Arciere arciere, Mostro mostro) {
-    int attacco = arciere.getAttacco();
-    int livello = arciere.getLivello();
-    int difesaMostro = mostro.getDifesaMostro();
-    domain.Arma arma = arciere.getArmaEquippaggiata();
-
-    if (arma != null) {
-        System.out.println("[ARMA] " + arciere.getNomePersonaggio()
-            + " ha equipaggiato: " + arma.getNome()
-            + " (dannoBonus=" + arma.getDannoBonus()
-            + ", tipo=" + arma.getTipoArma() + ")");
-    }
-
-    int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
-    int bonusAttacco = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
-    int totale = tiro + bonusAttacco;
-    System.out.println(arciere.getNomePersonaggio() + " tiro attacco: " + tiro + " + bonus " + bonusAttacco + " = " + totale + " (CA mostro: " + difesaMostro + ")");
-
-    if (tiro == 1) {
-        System.out.println("Tiro 1: fallimento critico!");
-        return 0;
-    }
-
-    boolean critico = (tiro == 20);
-
-    int dannoBase = attacco + livello * 2 + (arma != null ? arma.getDannoBonus() : 0);
-    if (arciere.getPuntiVita() <= 10) {
-        dannoBase += 5;
-        System.out.println(arciere.getNomePersonaggio() + " entra in FURIA e colpisce più forte!");
-    }
-
-    int dannoNetto = Math.max(1, dannoBase - difesaMostro);
-    if (critico) {
-        dannoNetto *= 2;
-        System.out.println("Colpo critico! Danno raddoppiato.");
-    }
-
-    mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
-
-    System.out.println(arciere.getNomePersonaggio()
-            + " infligge " + dannoNetto
-            + " danni a " + mostro.getTipoPersonaIncontrata()
-            + " (HP rimasti: " + mostro.getPuntiVitaMostro() + ")");
-
-    if (mostro.getPuntiVitaMostro() <= 0) {
-        arciere.setEsperienza(arciere.getEsperienza() + 20);
-        if (arciere.getEsperienza() >= 100) {
-            arciere.setLivello(arciere.getLivello() + 1);
-            arciere.setEsperienza(0);
-            System.out.println("Complimenti! " + arciere.getNomePersonaggio() + " è salito al livello " + arciere.getLivello());
-        }
-        System.out.println("Mostro sconfitto!");
-    }
-    return dannoNetto;
-}
+ 
 
     @Override
    public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
@@ -214,81 +141,5 @@ return new Arciere("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 3
     public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
     }
 
-    /* 
-    public static void main(String[] args) {
-
-        // === Service necessari ===
-        ArciereServiceImpl arciereService = new ArciereServiceImpl();
-
-        // === Creo 4 stanze in croce ===
-        Stanza stanzaCentro = new Stanza(1, null, null, new ArrayList<>(), new ArrayList<>(), null, false, "Centro");
-        Stanza stanzaNord = new Stanza(2, null, null, new ArrayList<>(), new ArrayList<>(), null, false, "Nord");
-        Stanza stanzaEst = new Stanza(3, null, null, new ArrayList<>(), new ArrayList<>(), null, false, "Est");
-        Stanza stanzaSud = new Stanza(4, null, null, new ArrayList<>(), new ArrayList<>(), null, false, "Sud");
-
-        // Collego le stanze al centro
-        stanzaCentro.getStanzaAdiacente().put("NORD", stanzaNord);
-        stanzaCentro.getStanzaAdiacente().put("EST", stanzaEst);
-        stanzaCentro.getStanzaAdiacente().put("SUD", stanzaSud);
-
-        stanzaNord.getStanzaAdiacente().put("SUD", stanzaCentro);
-        stanzaEst.getStanzaAdiacente().put("OVEST", stanzaCentro);
-        stanzaSud.getStanzaAdiacente().put("NORD", stanzaCentro);
-
-        // === Creo Arciere ===
-        Personaggio arciere = new Arciere(
-                1, 40, 12, 3, 15,
-                "Legolas", stanzaCentro,
-                1, 0, "Normale",
-                new Zaino()
-        );
-        stanzaCentro.getListaPersonaggi().add(arciere);
-
-        // === Creo 3 Mostri in posizioni diverse ===
-        Mostro mostroCentro = new Mostro(1, false, false, "Mostro al centro", "Goblin", 20, 2, "Goblin", Mostro.TipoAttaccoMostro.MORSO, stanzaCentro);
-        Mostro mostroNord = new Mostro(2, false, false, "Mostro a nord", "Orco", 30, 5, "Orco", Mostro.TipoAttaccoMostro.RUGGITO_DI_FUOCO, stanzaNord);
-        Mostro mostroEst = new Mostro(3, false, false, "Mostro a est", "Scheletro", 25, 3, "Scheletro", Mostro.TipoAttaccoMostro.URLO_ASSORDANTE, stanzaEst);
-
-        stanzaCentro.getListaEventiAttivi().add(mostroCentro);
-        stanzaNord.getListaEventiAttivi().add(mostroNord);
-        stanzaEst.getListaEventiAttivi().add(mostroEst);
-
-        // === TEST CASE ===
-
-        Scanner scanner = new Scanner(System.in);
-        boolean continua = true;
-
-        System.out.println("=== TEST ATTACCO ARCIERE ===");
-
-        while (continua) {
-
-            System.out.println("\nDove vuoi colpire?");
-            System.out.println("1) Mostro nella STESSA stanza (Goblin)");
-            System.out.println("2) Mostro a NORD (Orco)");
-            System.out.println("3) Mostro a EST (Scheletro)");
-            System.out.println("4) Forzare SCELTA tra più adiacenti");
-            System.out.println("0) Esci test");
-
-            int scelta = Integer.parseInt(scanner.nextLine());
-
-            switch (scelta) {
-                case 1 -> arciereService.attacca(arciere, mostroCentro, null);
-                case 2 -> arciereService.attacca(arciere, mostroNord, null);
-                case 3 -> arciereService.attacca(arciere, mostroEst, null);
-                case 4 -> {
-                    System.out.println("⚠ Sposto un mostro anche a Sud per attivare scelta bersaglio...");
-                    Mostro mostroSud = new Mostro(4, false, false, "Mostro a sud", "Demone", 35, 4, "Demone", Mostro.TipoAttaccoMostro.ARTIGLI_POSSENTI, stanzaSud);
-                    stanzaSud.getListaEventiAttivi().add(mostroSud);
-
-                    // ora il giocatore deve scegliere Nord o Sud
-                    arciereService.attacca(arciere, mostroSud, null);
-
-                }
-                case 0 -> continua = false;
-                default -> System.out.println("Scelta non valida!");
-            }
-        }
-
-        System.out.println("\nTest completato!");
-    } */
+  
 }

@@ -3,7 +3,6 @@ package service.impl;
 import java.util.concurrent.ThreadLocalRandom;
 
 import domain.Combattimento;
-import domain.Guerriero;
 import domain.Mostro;
 import domain.Paladino;
 import domain.Personaggio;
@@ -14,13 +13,10 @@ import util.ANSI;
 
 public class PaladinoServiceImpl implements PersonaggioService {
 
-
-    
+    private static final int bonusAttaccoFisico = 6;
+    private static final int bonusAttaccoMagico = 3;
     private static final int bonusAttaccoPaladino = 7;
     private static final int bonusDannoLivello = 2;
-    
-    
-
 
     /**
      * Metodo per proteggere un altro giocatore
@@ -31,7 +27,9 @@ public class PaladinoServiceImpl implements PersonaggioService {
      */
     public boolean proteggiCompagno(Paladino paladino, Personaggio alleato) {
 
-        if (paladino == null || alleato == null) return false;
+        if (paladino == null || alleato == null) {
+            return false;
+        }
 
         if (paladino.getPuntiVita() <= 10) {
             System.out.println("Il paladino è troppo debole per proteggere qualcuno.");
@@ -39,243 +37,222 @@ public class PaladinoServiceImpl implements PersonaggioService {
         }
 
         if (!alleato.prenotaProtezione()) {
-        
+
             System.out.println(alleato.getNomePersonaggio() + " è già protetto.");
             return false;
         }
 
-        
-
         System.out.println(
-                paladino.getNomePersonaggio() + " protegge " +
-                alleato.getNomePersonaggio()
+                paladino.getNomePersonaggio() + " protegge "
+                + alleato.getNomePersonaggio()
         );
 
         return true;
     }
 
-    
-
-
-
-    /**
-     * Metodo per utilizzare la magia sacra del paladino
-     *
-     * @param paladino Il paladino che usa la magia
-     * @param bersaglio Il personaggio bersaglio
-     * @param tipoMagiaSacra Il tipo di magia da utilizzare
-     * @return true se la magia è stata lanciata con successo
-     */
     @Override
     public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
-        if (!(personaggio instanceof Paladino)) {
-            return 0;
 
-        }
-        Paladino paladino = (Paladino) personaggio;
-        if (paladino == null || mostro == null) {
+        if (!(personaggio instanceof Paladino paladino)) {
+            System.out.println("Solo un Paladino può attaccare.");
             return 0;
         }
 
-        domain.Arma arma = paladino.getArmaEquippaggiata();
-        if (arma != null) {
-            System.out.println("[ARMA] " + paladino.getNomePersonaggio()
-                    + " ha equipaggiato: " + arma.getNome()
-                    + " (dannoBonus=" + arma.getDannoBonus()
-                    + ", tipo=" + arma.getTipoArma() + ")");
+        if (mostro == null) {
+            System.out.println("Nessun bersaglio valido.");
+            return 0;
         }
-        TipoMagiaSacra tipoMagiaSacra = scegliMagiaPerPaladino(paladino, mostro, combattimento);
-        int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
+
+        if (paladino.getPosizioneCorrente() == null
+                || mostro.getPosizioneCorrenteMostro() == null) {
+            System.out.println("Errore di posizione.");
+            return 0;
+        }
+
+        if (!paladino.getPosizioneCorrente()
+                .equals(mostro.getPosizioneCorrenteMostro())) {
+            System.out.println("Devi essere nella stessa stanza del mostro.");
+            return 0;
+        }
+
+        // IF SEMPLICE: decide lo stile
+        if (paladino.getMagiaSelezionata() != null) {
+            return colpoSacroPaladino(paladino, mostro, paladino.getMagiaSelezionata());
+        }
+
+        return attaccoFisicoPaladino(paladino, mostro);
+    }
+
+    public int colpoSacroPaladino(Paladino paladino, Mostro mostro, Paladino.TipoMagiaSacra tipo) {
+
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+
+        int costoMana = tipo.getCostoMana();
+
+        if (paladino.getPuntiMana() < costoMana) {
+            System.out.println(paladino.getNomePersonaggio() + " non ha abbastanza mana per " + tipo + "!");
+            return 0;
+        }
+
+        int tiro = random.nextInt(1, 21);
+
+        int bonusAttacco = paladino.getAttacco() + (paladino.getLivello() / 2);
+        int totale = tiro + bonusAttacco;
+
+        int difesaMostro = mostro.getDifesaMostro();
+
+        System.out.println(
+                paladino.getNomePersonaggio()
+                + " (sacro) lancia " + tipo
+                + " tiro: " + tiro + " + bonus " + bonusAttacco
+                + " = " + totale + " (difesa mostro: " + difesaMostro + ")"
+        );
+
+        // Consuma mana comunque, anche se fallisce (coerente col tuo mago)
+        paladino.setPuntiMana(Math.max(0, paladino.getPuntiMana() - costoMana));
+
         if (tiro == 1) {
-            System.out.println("Tiro 1: fallimento critico!");
+            System.out.println("Fallimento magico!");
             return 0;
         }
+
         boolean critico = (tiro == 20);
 
-        // Applica l'effetto: qui esempi negativi/offensivi contro il mostro
-        switch (tipoMagiaSacra) {
-
-            case MALATTIA:
-                // esempio: riduce danno del mostro
-                try {
-                    mostro.setDannoMostro(Math.max(0, mostro.getDannoMostro() - 2));
-                } catch (Exception ignored) {
-                }
-                System.out.println(paladino.getNomePersonaggio() + " indebolisce l'attacco di " + mostro.getNomeMostro());
-                break;
-            case AMMALIAMENTO:
-                try {
-                    mostro.setDifesaMostro(Math.max(0, mostro.getDifesaMostro() - 5));
-                } catch (Exception ignored) {
-                }
-                System.out.println(paladino.getNomePersonaggio() + " ammalia " + mostro.getNomeMostro());
-                break;
-
-            case RUBAVITA:
-                int danno = 10;
-                mostro.setPuntiVitaMostro(Math.max(0, mostro.getPuntiVitaMostro() - danno));
-                System.out.println(paladino.getNomePersonaggio() + " ruba vita a " + mostro.getNomeMostro() + " (" + danno + " danno).");
-                break;
-            default:
-                // fallback: danno normale
-                int attacco = paladino.getAttacco();
-                int livello = paladino.getLivello();
-                int difesaMostro = mostro.getDifesaMostro();
-
-                int dannoBase = attacco + livello * 2;
-                int dannoNetto = Math.max(0, dannoBase - difesaMostro);
-
-                mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
-
-                System.out.println(paladino.getNomePersonaggio() + " colpisce " + mostro.getNomeMostro() + " per " + dannoNetto + " danno.");
-                break;
+        if (!critico && totale < difesaMostro) {
+            System.out.println("L'incantesimo manca il bersaglio.");
+            return 0;
         }
 
-        paladino.setPuntiMana(Math.max(0, paladino.getPuntiMana() - tipoMagiaSacra.getCostoMana()));
+        // Paladino: 1d6 o 1d8 sacro (io farei 1d8 per feeling, ma bilanciamento tuo)
+        int dadoDanno = random.nextInt(1, 9);
 
-        // gestione morte / XP (semplice)
-        if (mostro.getPuntiVitaMostro() <= 0) {
+        int bonusFissi = bonusAttaccoMagico + paladino.getLivello() * bonusDannoLivello;
 
-            paladino.setEsperienza(paladino.getEsperienza() + 20);
-            if (paladino.getEsperienza() >= 100) {
-                paladino.setLivello(paladino.getLivello() + 1);
-                paladino.setEsperienza(0);
-                System.out.println(" Complimenti! " + paladino.getNomePersonaggio() + " è salito al livello " + paladino.getLivello());
-            }
-            System.out.println(mostro.getNomeMostro() + " è stato sconfitto da " + paladino.getNomePersonaggio());
+        int dadiTotali = dadoDanno;
+
+        if (critico) {
+            int dadoExtra = random.nextInt(1, 9);
+            dadiTotali += dadoExtra;
+            System.out.println(
+                    ANSI.BRIGHT_RED + ANSI.BOLD
+                    + "CRITICO SACRO! Dadi danno raddoppiati!"
+                    + ANSI.RESET
+            );
         }
 
-        return 1; // ritorna 1 = magia eseguita (potresti restituire danno effettivo se preferisci)
-    }
+        int dannoNetto = Math.max(1, dadiTotali + bonusFissi);
 
-// Helper che sceglie la magia internamente (heuristica semplice)
-    public TipoMagiaSacra scegliMagiaPerPaladino(Paladino paladino, Mostro mostro, Combattimento combattimento) {
-        // esempio di regole:
-        // - se HP mostro bassi -> RUBAVITA per finire e curarsi
-        // - se paladino ha poca vita -> RUBAVITA
-        // - se mostro ha molta difesa -> CORROSIONE
-        // - altrimenti AVVELENAMENTO
-        try {
-            if (paladino.getPuntiVita() < 15 && paladino.getPuntiMana() >= TipoMagiaSacra.RUBAVITA.getCostoMana()) {
-                return TipoMagiaSacra.RUBAVITA;
+        // Effetti per tipo 
+        switch (tipo) {
+            case RUBAVITA -> {
+                int cura = Math.max(1, dannoNetto / 3); // paladino cura meno del mago
+                paladino.setPuntiVita(paladino.getPuntiVita() + cura);
+                System.out.println(paladino.getNomePersonaggio() + " recupera " + cura + " PV (luce sacra).");
             }
-            if (mostro.getPuntiVitaMostro() <= 12 && paladino.getPuntiMana() >= TipoMagiaSacra.MALATTIA.getCostoMana()) {
-                return TipoMagiaSacra.MALATTIA;
+            case AMMALIAMENTO -> {
+                mostro.setDifesaMostro(Math.max(0, mostro.getDifesaMostro() - 2));
+                System.out.println("Il mostro è indebolito dalla luce!");
             }
-            if (mostro.getDifesaMostro() > 5 && paladino.getPuntiMana() >= TipoMagiaSacra.AMMALIAMENTO.getCostoMana()) {
-                return TipoMagiaSacra.AMMALIAMENTO;
+            case MALATTIA -> {
+                int extra = 2 + (paladino.getLivello() / 2);
+                dannoNetto += extra;
+                System.out.println("Piaga sacra! Danno extra: +" + extra);
             }
-
-        } catch (Exception ignored) {
         }
-        // fallback
 
-        return TipoMagiaSacra.AMMALIAMENTO;
+        mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
+
+        System.out.println(
+                paladino.getNomePersonaggio()
+                + " infligge " + dannoNetto
+                + " danni sacri a " + mostro.getNomeMostro()
+                + " (HP rimasti: " + mostro.getPuntiVitaMostro()
+                + ", Mana rimasto: " + paladino.getPuntiMana() + ")"
+        );
+
+        return dannoNetto;
     }
 
-public int attaccoFisicoPaladino(Paladino paladino, Mostro mostro) {
+    ///giusto
+        public int attaccoFisicoPaladino(Paladino paladino, Mostro mostro) {
 
-    ThreadLocalRandom random = ThreadLocalRandom.current();
+        ThreadLocalRandom random = ThreadLocalRandom.current();
 
-    int tiro = random.nextInt(1, 21); // d20
+        int tiro = random.nextInt(1, 21); // d20
 
-    // bonus
-    int bonusAttacco = paladino.getAttacco() + (paladino.getLivello() / 2);
-    int totale = tiro + bonusAttacco;
+        // bonus
+        int bonusAttacco = paladino.getAttacco() + (paladino.getLivello() / 2);
+        int totale = tiro + bonusAttacco;
 
-    int difesaMostroCombattimento = mostro.getDifesaMostro(); // qui la usi come Classe Armatura
+        int difesaMostroCombattimento = mostro.getDifesaMostro(); // qui la usi come Classe Armatura
 
-    System.out.println(
-        paladino.getNomePersonaggio() +
-        " tiro: " + tiro + " + bonus " + bonusAttacco +
-        " = " + totale + " (CA mostro: " + difesaMostroCombattimento + ")"
-    );
+        System.out.println(
+                paladino.getNomePersonaggio()
+                + " tiro: " + tiro + " + bonus " + bonusAttacco
+                + " = " + totale + " (difesa mostro: " + difesaMostroCombattimento + ")"
+        );
 
-    if (tiro == 1) {
-        System.out.println("Fallimento!");
-        return 0;
-    }
+        if (tiro == 1) {
+            System.out.println("Fallimento!");
+            return 0;
+        }
 
-    boolean critico = (tiro == 20);
+        boolean critico = (tiro == 20);
 
-    if (!critico && totale < difesaMostroCombattimento) {
-        System.out.println("L'attacco manca il bersaglio.");
-        return 0;
-    }
+        if (!critico && totale < difesaMostroCombattimento) {
+            System.out.println("L'attacco manca il bersaglio.");
+            return 0;
+        }
 
+        // Parte a dadi: es. 1d8 (puoi cambiarla in base all'arma)
+        int dadoDanno = random.nextInt(1, 9); // 1..8
 
+        // Bonus fissi: i tuoi bonus (restano uguali)
+        int bonusFissi = bonusAttaccoFisico + paladino.getLivello() * bonusDannoLivello;
 
-    // Parte a dadi: es. 1d8 (puoi cambiarla in base all'arma)
-    int dadoDanno = random.nextInt(1, 9); // 1..8
-
-    // Bonus fissi: i tuoi bonus (restano uguali)
-    int bonusFissi = bonusAttaccoPaladino + paladino.getLivello() * bonusDannoLivello;
-
-    /* ?????
+        /* ?????
     Arma arma = paladino.getArmaEquippaggiata();
     if (arma != null) {
         bonusFissi += arma.getDannoBonus();
         System.out.println("[ARMA] " + arma.getNome() + " (+" + arma.getDannoBonus() + " danni)");
     }*/
+        int dadiTotali = dadoDanno;
 
-    
+        // Critico: raddoppia SOLO i dadi
+        if (critico) {
+            int dadoExtra = random.nextInt(1, 9);
+            dadiTotali += dadoExtra;
+            System.out.println(
+                    ANSI.BRIGHT_RED + ANSI.BOLD
+                    + "COLPO CRITICO! Dadi danno raddoppiati!"
+                    + ANSI.RESET
+            );
+        }
 
-    int dadiTotali = dadoDanno;
+        int dannoNetto = Math.max(1, dadiTotali + bonusFissi);
 
-    // Critico: raddoppia SOLO i dadi
-    if (critico) {
-        int dadoExtra = random.nextInt(1, 9);
-        dadiTotali += dadoExtra;
+        /* ===== APPLICA DANNO ===== */
+        mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
+
         System.out.println(
-            ANSI.BRIGHT_RED + ANSI.BOLD +
-            "COLPO CRITICO! Dadi danno raddoppiati!" +
-            ANSI.RESET
+                paladino.getNomePersonaggio()
+                + " infligge " + dannoNetto
+                + " danni a " + mostro.getNomeMostro()
+                + " (HP rimasti: " + mostro.getPuntiVitaMostro() + ")"
         );
+
+        if (mostro.getPuntiVitaMostro() <= 0) {
+            return 0;
+        }
+
+        return dannoNetto;
     }
-
-    int dannoNetto = Math.max(1, dadiTotali + bonusFissi);
-
-    /* ===== APPLICA DANNO ===== */
-
-    mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
-
-    System.out.println(
-    paladino.getNomePersonaggio() +
-        " infligge " + dannoNetto +
-        " danni a " + mostro.getNomeMostro() +
-        " (HP rimasti: " + mostro.getPuntiVitaMostro() + ")"
-    );
-
-    if (mostro.getPuntiVitaMostro() <= 0) {
-        return 0;
-    }
-
-    return dannoNetto;
-}
-        
-
 
     @Override
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
         Stanza stanza = null;
         Zaino zaino = new Zaino();
-        return new Paladino("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 300, "normale", 0, 0, 0, 0, zaino, 0);
-    }
-
-    public enum TipoMagiaSacra {
-        RUBAVITA(4),
-        AMMALIAMENTO(5),
-        MALATTIA(7);
-
-        private final int costoMana;
-
-        TipoMagiaSacra(int costoMana) {
-            this.costoMana = costoMana;
-        }
-
-        public int getCostoMana() {
-            return costoMana;
-        }
+        return new Paladino("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 300, "normale", 0, 0, 0, 0, zaino, 0, null);
     }
 
     public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {

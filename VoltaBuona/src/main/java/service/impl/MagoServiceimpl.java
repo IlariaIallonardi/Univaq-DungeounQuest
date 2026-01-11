@@ -3,7 +3,6 @@ package service.impl;
 import java.util.concurrent.ThreadLocalRandom;
 
 import domain.Combattimento;
-import domain.Guerriero;
 import domain.Mago;
 import domain.Mago.TipoMagiaSacra;
 import domain.Mostro;
@@ -11,12 +10,12 @@ import domain.Personaggio;
 import domain.Stanza;
 import domain.Zaino;
 import service.PersonaggioService;
-
 import util.ANSI;
 
 public class MagoServiceImpl implements PersonaggioService {
 
     private static final int bonusDannoLivello = 4;
+    private static final int bonusAttaccoMago = 15;
 
     /**
      * Metodo per utilizzare la magia del mago
@@ -44,13 +43,13 @@ public class MagoServiceImpl implements PersonaggioService {
         int bonusAttacco = mago.getAttacco() + (mago.getLivello() / 2);
         int totale = tiro + bonusAttacco;
 
-        int CAmostro = mostro.getDifesaMostro(); // usata come CA
+        int difesaMostro = mostro.getDifesaMostro(); // usata come CA
 
         System.out.println(
                 mago.getNomePersonaggio()
                 + " lancia " + tipo
                 + " tiro: " + tiro + " + bonus " + bonusAttacco
-                + " = " + totale + " (CA mostro: " + CAmostro + ")"
+                + " = " + totale + " (difesa  mostro: " + difesaMostro + ")"
         );
 
         // 1 naturale: fallimento (ma consumo mana lo stesso? scelta tua)
@@ -63,8 +62,8 @@ public class MagoServiceImpl implements PersonaggioService {
 
         boolean critico = (tiro == 20);
 
-        // Se non critico e non supero la CA, manca
-        if (!critico && totale < CAmostro) {
+        // Se non critico e non supero la difesa del mostro, manca
+        if (!critico && totale < difesaMostro) {
             System.out.println("L'incantesimo manca il bersaglio.");
             mago.setPuntiMana(Math.max(0, mago.getPuntiMana() - costoMana));
             return 0;
@@ -73,7 +72,7 @@ public class MagoServiceImpl implements PersonaggioService {
         // ===== DANNO (dadi + bonus fissi, critico raddoppia SOLO i dadi) =====
         // Scegli il dado base: esempio 1d10
         int dadoDanno = random.nextInt(1, 11); // 1..10
-        int bonusAttaccoMago = 15;
+    
 
         // Bonus fissi (stile guerriero): qui puoi usare costanti analoghe alle tue
         // esempio: bonusAttaccoMago + livello * bonusDannoLivello
@@ -90,24 +89,26 @@ public class MagoServiceImpl implements PersonaggioService {
                     + ANSI.RESET
             );
         }
+      
+        int dannoPerMagia = calcolaDannoPerMagia(tipo, mago, mostro);
+        int dannoNetto = Math.max(1, dadiTotali + bonusFissi+ dannoPerMagia);
 
-        int dannoNetto = Math.max(1, dadiTotali + bonusFissi);
-
-        // ===== EFFETTI SPECIALI PER TIPO MAGIA (facoltativi) =====
+        // ===== EFFETTI SPECIALI PER TIPO MAGIA =====
         switch (tipo) {
             case RUBAVITA -> {
-                int cura = Math.max(1, dannoNetto / 2);
+                int cura = 10;
+                mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - cura);
                 mago.setPuntiVita(mago.getPuntiVita() + cura);
                 System.out.println(mago.getNomePersonaggio() + " assorbe " + cura + " PV!");
             }
             case AMMALIAMENTO -> {
                 // esempio semplice: riduci attacco o difesa del mostro (se hai stat adatte)
-                // mostro.setDifesaMostro(Math.max(0, mostro.getDifesaMostro() - 1));
-                System.out.println("Il mostro è ammaliato! (effetto da definire)");
+                 mostro.setDifesaMostro(Math.max(0, mostro.getDifesaMostro() - 3));
+                System.out.println("Il mostro è ammaliato!");
             }
             case MALATTIA -> {
                 // esempio: danno extra fisso o DOT futuro
-                int extra = 2 + (mago.getLivello() / 2);
+                int extra = 4 + (mago.getLivello() / 2);
                 dannoNetto += extra;
                 System.out.println("Malattia! Danno extra: +" + extra);
             }
@@ -160,15 +161,37 @@ public class MagoServiceImpl implements PersonaggioService {
 
         TipoMagiaSacra magiaScelta = mago.getMagiaSelezionata();
 
-        // ✅ QUI: protezione se non è stata scelta alcuna magia
+        // QUI: protezione se non è stata scelta alcuna magia
         if (magiaScelta == null) {
             System.out.println("Nessuna magia selezionata.");
             return 0;
         }
 
-        // ✅ QUI: chiami il nuovo metodo con il terzo parametro
+        //  QUI: chiami il nuovo metodo con il terzo parametro
         return lanciaIncantesimo(mago, mostro, magiaScelta);
     }
+
+   ///probabilmente utile per i bot
+   /*  public TipoMagiaSacra scegliMagia(Mago mago ,Mostro mostro){
+        if(mago.getPuntiMana() >= TipoMagiaSacra.MALATTIA.getCostoMana()){
+            return TipoMagiaSacra.MALATTIA;
+        } else if (mago.getPuntiMana() >= TipoMagiaSacra.RUBAVITA.getCostoMana()){
+            return TipoMagiaSacra.RUBAVITA;
+        } else if (mago.getPuntiMana() >= TipoMagiaSacra.AMMALIAMENTO.getCostoMana()){
+            return TipoMagiaSacra.AMMALIAMENTO;
+        }
+        //logica per scegliere la magia
+        return TipoMagiaSacra.RUBAVITA; //esempio
+    }*/
+
+     private int calcolaDannoPerMagia(TipoMagiaSacra tipo, Mago mago, Mostro mostro) {
+    return switch (tipo) {
+        case MALATTIA -> 4;
+        case RUBAVITA -> 5;
+        case AMMALIAMENTO -> 6;
+    };
+}
+
 
     @Override
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
@@ -176,6 +199,8 @@ public class MagoServiceImpl implements PersonaggioService {
         Zaino zaino = new Zaino();
         return new Mago("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 300, "normale", 0, 0, 0, 0, zaino, 0, null);
     }
+
+
 
     @Override
     public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
