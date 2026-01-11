@@ -1,5 +1,7 @@
 package domain;
 
+import domain.Mago.TipoMagiaSacra;
+
 public class Combattimento {
 
     private int id;
@@ -14,8 +16,9 @@ public class Combattimento {
     private Evento eventoMostro;
     private Mostro mostroCoinvolto; // --> eventoMostro
     private Integer iniziativa;
+    private TipoMagiaSacra magiaSelezionata;
 
-    public Combattimento(Mostro.TipoAttaccoMostro attaccoMostro, int danniInflittiCombattimento, Evento eventoMostro, int id, boolean inCorso, Personaggio personaggioCoinvolto, Stanza stanza, int turnoCorrenteCombattimento, Object vincitore, Mostro mostroCoinvolto) {
+    public Combattimento(Mostro.TipoAttaccoMostro attaccoMostro, int danniInflittiCombattimento, Evento eventoMostro, int id, boolean inCorso, Personaggio personaggioCoinvolto, Stanza stanza, int turnoCorrenteCombattimento, Object vincitore, Mostro mostroCoinvolto, TipoMagiaSacra magiaSelezionata) {
         this.attaccoMostro = attaccoMostro;
         this.danniInflittiCombattimento = danniInflittiCombattimento;
         this.eventoMostro = eventoMostro;
@@ -26,6 +29,7 @@ public class Combattimento {
         this.turnoCorrenteCombattimento = turnoCorrenteCombattimento;
         this.vincitore = vincitore;
         this.mostroCoinvolto = mostroCoinvolto;
+        this.magiaSelezionata = magiaSelezionata;
     }
 
     public int getId() {
@@ -111,8 +115,16 @@ public class Combattimento {
     public Integer getIniziativa() {
         return iniziativa;
     }
+
     public void setIniziativa(Integer iniziativa) {
         this.iniziativa = iniziativa;
     }
 
+    public TipoMagiaSacra getMagiaSelezionata() {
+        return magiaSelezionata;
+    }
+
+    public void setMagiaSelezionata(TipoMagiaSacra magiaSelezionata) {
+        this.magiaSelezionata = magiaSelezionata;
+    }
 }
