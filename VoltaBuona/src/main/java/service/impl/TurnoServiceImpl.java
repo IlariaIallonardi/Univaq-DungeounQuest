@@ -296,7 +296,7 @@ public class TurnoServiceImpl implements TurnoService {
                 break;
             case 3:
                 if (ciSonoOggetti && ciSonoEventi) {
-                     mostraOggetti(oggetti);
+                    mostraOggetti(oggetti);
                     raccogliUnOggetto(personaggio, stanzaCorrente, oggetti, scanner);
                     if (eseguiSingoloEvento(personaggio, stanzaCorrente, eventi, scanner)) // poi prendere oggetto
                     {
@@ -578,12 +578,12 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     //metodo nuovo 
-    public void gestisciUsoOggettoDaZaino(Personaggio personaggio, Scanner scanner) {
+    public boolean gestisciUsoOggettoDaZaino(Personaggio personaggio, Scanner scanner) {
 
         Zaino zaino = personaggio.getZaino();
         if (zaino == null || zaino.getListaOggetti().isEmpty()) {
             System.out.println("Lo zaino è vuoto.");
-            return;
+            return false;
         }
 
         List<Oggetto> inventario = zaino.getListaOggetti();
@@ -602,17 +602,17 @@ public class TurnoServiceImpl implements TurnoService {
             System.out.println("Hai scelto: " + scelta);
         } catch (NumberFormatException e) {
             System.out.println("Input non valido.");
-            return;
+            return false;
         }
 
         if (scelta == 0) {
             System.out.println("Hai annullato.");
-            return;
+            return false;
         }
 
         if (scelta < 1 || scelta > inventario.size()) {
             System.out.println("Scelta non valida.");
-            return;
+            return false;
         }
 
         Oggetto oggetto = inventario.get(scelta - 1);
@@ -624,6 +624,7 @@ public class TurnoServiceImpl implements TurnoService {
         } else {
             System.out.println("Non puoi usare questo oggetto.");
         }
+        return true;
     }
 
     public boolean esploraStanza(Personaggio personaggio) {
@@ -636,7 +637,7 @@ public class TurnoServiceImpl implements TurnoService {
         System.out.println("\n Stanza: " + stanza.getId());
 
         // Mostra oggetti visibili
-         /*   if (!stanza.getOggettiPresenti().isEmpty()) {
+        /*   if (!stanza.getOggettiPresenti().isEmpty()) {
             System.out.println("Oggetti trovati:");
             mostraOggetti(stanza.getOggettiPresenti());
           //  stanza.getOggettiPresenti().forEach(o -> System.out.println(" - " + o.getNome()));

@@ -284,32 +284,19 @@ import service.PersonaggioService;
  * - Tiene traccia di turni e danni inflitti - Supporta scelta azione reale per
  * il turno del personaggio (attacco / oggetto / annulla)
  */
+
 public class CombattimentoServiceImpl implements CombattimentoService {
 
     private final MostroServiceImpl mostroService = new MostroServiceImpl();
     private PersonaggioService personaggioService; // opzionale: injection
 
     private static final Random RNG = new Random();
-    private static final Scanner SC = new Scanner(System.in);
-    // lo prendiamo dal'enumerazione interna
+    private static final Scanner scanner = new Scanner(System.in);
+
 
     /* =======================
        GETTER da interfaccia
        ======================= */
-//???
-    @Override
-    public Mostro getMostro(Combattimento combattimento) {
-        return combattimento == null ? null : combattimento.getMostroCoinvolto();
-    } // restituisce il mostro coinvolto in un combattimento,oppure null se il combattimento non esiste
-    // è utile perchè, essendo un progetto grande, ricava subito il mostro coinvolto.
-//???
-
-    @Override
-    public Personaggio getPersonaggio(Combattimento combattimento) {
-        return combattimento == null ? null : combattimento.getPersonaggioCoinvolto();
-    } //stessa cosa di mostro
-
-    ///???
     @Override
     public Object getVincitore(Combattimento combattimento) {
         return combattimento == null ? null : combattimento.getVincitore();
@@ -368,33 +355,12 @@ public class CombattimentoServiceImpl implements CombattimentoService {
                 Zaino zaino = (personaggio != null) ? personaggio.getZaino() : null; // se esiste getZaino()
                 Azione azione = scegliAzioneCombattimentoInterna(personaggio, zaino);
 
-                if (azione == Azione.ATTACCA) {
+                /*if (azione == Azione.ATTACCA) {
                     applicaECalcolaDanno(combattimento, personaggio);
                 } else if (azione == Azione.USA_OGGETTO) {
-                    // oggetto usato: turno consumato, nessun attacco
-                } else {
-                    // annulla: turno consumato (o potresti riproporre il menu)
-                }
+                    boolean usato= TurnoServiceImpl.gestisciUsoOggettoDaZaino(personaggio, scanner);
+                }*/
             }
-            //aggiungo l'else suggerito:
-            /*else {
-
-                Azione azione = scegliAzioneCombattimentoInterna(personaggio, personaggio.getZaino()); // se esiste getZaino()
-
-                switch (azione) {
-                    case ATTACCA -> applicaECalcolaDanno(combattimento, personaggio);
-
-                    case USA_OGGETTO -> {
-                        // qui richiami il tuo codice attuale che usa oggetti dallo zaino
-                        scegliAzioneCombattimento(personaggio, personaggio.getZaino());
-                        // MA: assicurati che scegliere oggetto consumi il turno (quindi NON chiamare applicaECalcolaDanno)
-                    }
-
-                        case PASSA -> System.out.println(personaggio.getNomePersonaggio() + " passa il turno.");
-
-                        default -> System.out.println("Azione non valida in combattimento.");
-                    }
-                } */
 
             // se qualcuno ha vinto, chiudi e esci
             if (!combattimento.isInCorso()) {
@@ -411,7 +377,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
     /* =======================
        SCELTA AZIONE (interfaccia)
        ======================= */
-    @Override
+    @Override  //MODIFICARE YIELD
     public void scegliAzioneCombattimento(Personaggio personaggio, Zaino zaino) {
         // Mantengo la firma dell'interfaccia.
         // Internamente uso una versione che ritorna l'azione, ma qui la ignoro.
@@ -432,14 +398,13 @@ public class CombattimentoServiceImpl implements CombattimentoService {
 
         int scelta = leggiIntero();
 
-        return switch (scelta) {
-            case 1 -> {
+        if(scelta==1) {
                 System.out.println("Hai scelto di attaccare.");
-                yield Azione.ATTACCA;
+                applicaECalcolaDanno(combattimento, scanner);
             }
-            case 2 -> {
-                boolean usato = provaUsaOggetto(personaggio, zaino);
-                yield usato ? Azione.USA_OGGETTO : Azione.PASSA;
+            else {
+                boolean usato = gestisciUsoOggettoDaZaino(personaggio, scanner);
+                return Azione.USA_OGGETTO : Azione.PASSA;
             }
             default -> {
                 System.out.println("Passi il turno.");

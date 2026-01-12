@@ -16,10 +16,6 @@ public interface CombattimentoService {
     // interrogazioni
     boolean èInCorso(Combattimento combattimento);
 
-    Personaggio getPersonaggio(Combattimento combattimento);
-
-    Mostro getMostro(Combattimento combattimento);
-
     // in CombattimentoService
     Object getVincitore(Combattimento combattimento);
 
