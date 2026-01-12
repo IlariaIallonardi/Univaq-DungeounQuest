@@ -1,5 +1,3 @@
-
-
 /*import java.util.List;
 
 import domain.Combattimento;
@@ -260,7 +258,6 @@ public class CombattimentoServiceImpl implements CombattimentoService {
     }
 
 }*/
-
 package service.impl;
 
 import java.util.ArrayList;
@@ -268,24 +265,24 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
+import domain.Azione;
 import domain.Combattimento;
 import domain.Evento;
 import domain.Mostro;
+import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
 import domain.Zaino;
 import service.CombattimentoService;
 import service.PersonaggioService;
 
-import service.CombattimentoService;
-
 /**
- * Versione completa + robusta di CombattimentoServiceImpl.
- * - Risolve il PersonaggioService corretto in base al tipo (Guerriero/Mago/Arciere/Paladino)
- * - Gestisce correttamente l'Evento del combattimento (chiusura e rimozione opzionale)
- * - Evita new sparsi e bug su remove() di Mostro dentro lista Eventi
- * - Tiene traccia di turni e danni inflitti
- * - Supporta scelta azione reale per il turno del personaggio (attacco / oggetto / annulla)
+ * Versione completa + robusta di CombattimentoServiceImpl. - Risolve il
+ * PersonaggioService corretto in base al tipo (Guerriero/Mago/Arciere/Paladino)
+ * - Gestisce correttamente l'Evento del combattimento (chiusura e rimozione
+ * opzionale) - Evita new sparsi e bug su remove() di Mostro dentro lista Eventi
+ * - Tiene traccia di turni e danni inflitti - Supporta scelta azione reale per
+ * il turno del personaggio (attacco / oggetto / annulla)
  */
 public class CombattimentoServiceImpl implements CombattimentoService {
 
@@ -294,70 +291,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
 
     private static final Random RNG = new Random();
     private static final Scanner SC = new Scanner(System.in);
-  // lo prendiamo dal'enumerazione interna
-    private enum AzioneCombattimento { ATTACCA, USA_OGGETTO, ANNULLA }
-
-    /* =======================
-       CORE: applica danno
-       ======================= */
-
-    @Override
-    public int applicaECalcolaDanno(Combattimento combattimento, Object attaccante) {
-        if (combattimento == null || attaccante == null) return 0;
-
-        Personaggio personaggio = combattimento.getPersonaggioCoinvolto();
-        Mostro mostro = combattimento.getMostroCoinvolto();
-        if (personaggio == null || mostro == null) return 0;
-
-        int dannoApplicato = 0;
-
-        // ===== TURNO MOSTRO =====
-        if (attaccante == mostro) {
-            int dannoBase = MostroServiceImpl.dannoBase(mostro, personaggio);
-            dannoApplicato = mostroService.attaccoDelMostro(mostro, personaggio, dannoBase);
-
-            aggiornaStatistiche(combattimento, dannoApplicato);
-
-            if (personaggio.getPuntiVita() <= 0) {
-                chiudiCombattimento(combattimento, mostro,
-                        personaggio.getNomePersonaggio() + " è stato sconfitto da " + mostro.getNomeMostro());
-            }
-            return dannoApplicato;
-        }
-
-        // ===== TURNO PERSONAGGIO =====
-        PersonaggioService ps = resolveService(personaggio);
-        dannoApplicato = ps.attacca(personaggio, mostro, combattimento);
-
-        aggiornaStatistiche(combattimento, dannoApplicato);
-
-        if (mostro.getPuntiVitaMostro() <= 0) {
-            chiudiCombattimento(combattimento, personaggio,
-                    mostro.getNomeMostro() + " è stato sconfitto da " + personaggio.getNomePersonaggio());
-            // XP qui o nei service dei personaggi: qui lo lascio minimale
-            try {
-                personaggio.setEsperienza(personaggio.getEsperienza() + 10);
-            } catch (Exception ignored) { }
-        }
-
-        return dannoApplicato;
-    }
-
-    private void aggiornaStatistiche(Combattimento c, int danno) {
-        if (c == null) return;
-        c.setDanniInflittiCombattimento(c.getDanniInflittiCombattimento() + Math.max(0, danno));
-        c.setTurnoCorrenteCombattimento(c.getTurnoCorrenteCombattimento() + 1);
-    }
-
-    private void chiudiCombattimento(Combattimento c, Object vincitore, String messaggio) {
-        if (c == null) return;
-        c.setVincitore(vincitore);
-        c.setInCorso(false);
-        if (messaggio != null && !messaggio.isBlank()) {
-            System.out.println(messaggio);
-        }
-        chiudiEventoMostro(c);
-    }
+    // lo prendiamo dal'enumerazione interna
 
     /* =======================
        GETTER da interfaccia
@@ -366,152 +300,24 @@ public class CombattimentoServiceImpl implements CombattimentoService {
     @Override
     public Mostro getMostro(Combattimento combattimento) {
         return combattimento == null ? null : combattimento.getMostroCoinvolto();
-    }
+    } // restituisce il mostro coinvolto in un combattimento,oppure null se il combattimento non esiste
+    // è utile perchè, essendo un progetto grande, ricava subito il mostro coinvolto.
 //???
+
     @Override
     public Personaggio getPersonaggio(Combattimento combattimento) {
         return combattimento == null ? null : combattimento.getPersonaggioCoinvolto();
-    }
-///???
+    } //stessa cosa di mostro
+
+    ///???
     @Override
     public Object getVincitore(Combattimento combattimento) {
         return combattimento == null ? null : combattimento.getVincitore();
-    }
+    }//stessa cosa di mostro
 
     @Override
     public boolean èInCorso(Combattimento combattimento) {
         return combattimento != null && combattimento.isInCorso();
-    }
-
-    /* =======================
-       SCELTA AZIONE (interfaccia)
-       ======================= */
-
-    @Override
-    public void scegliAzioneCombattimento(Personaggio personaggio, Zaino zaino) {
-        // Mantengo la firma dell'interfaccia.
-        // Internamente uso una versione che ritorna l'azione, ma qui la ignoro.
-        scegliAzioneCombattimentoInterna(personaggio, zaino);
-    }
-
-    private AzioneCombattimento scegliAzioneCombattimentoInterna(Personaggio personaggio, Zaino zaino) {
-        if (personaggio == null) return AzioneCombattimento.ANNULLA;
-
-        System.out.println("\nScegli azione in combattimento per " + personaggio.getNomePersonaggio());
-        System.out.println("1) Attacca");
-        System.out.println("2) Usa un oggetto dallo zaino");
-        System.out.println("0) Annulla");
-        System.out.print("> ");
-
-        int scelta = leggiIntero();
-
-        switch (scelta) {
-            case 1:
-                System.out.println("Hai scelto di attaccare.");
-                return AzioneCombattimento.ATTACCA;
-
-            case 2:
-                boolean usato = provaUsaOggetto(personaggio, zaino);
-                // Se ha usato un oggetto, consideriamo consumato il turno.
-                return usato ? AzioneCombattimento.USA_OGGETTO : AzioneCombattimento.ANNULLA;
-
-            case 0:
-            default:
-                System.out.println("Azione annullata.");
-                return AzioneCombattimento.ANNULLA;
-        }
-    }
-  ///vedere dove è implementato
-    private boolean provaUsaOggetto(Personaggio personaggio, Zaino zaino) {
-        if (zaino == null || zaino.getListaOggetti() == null || zaino.getListaOggetti().isEmpty()) {
-            System.out.println("Zaino vuoto.");
-            return false;
-        }
-
-        List<domain.Oggetto> utilizzabili = new ArrayList<>();
-        for (domain.Oggetto o : zaino.getListaOggetti()) {
-            if (o != null && o.isUsabile()) utilizzabili.add(o);
-        }
-
-        if (utilizzabili.isEmpty()) {
-            System.out.println("Nessun oggetto utilizzabile nello zaino.");
-            return false;
-        }
-
-        System.out.println("\nOggetti utilizzabili:");
-        for (int i = 0; i < utilizzabili.size(); i++) {
-            System.out.println((i + 1) + ") " + utilizzabili.get(i).getNome());
-        }
-        System.out.println("0) Annulla");
-        System.out.print("Scegli un oggetto da usare: ");
-
-        int idx = leggiIntero();
-        if (idx == 0) {
-            System.out.println("Hai annullato.");
-            return false;
-        }
-        if (idx < 1 || idx > utilizzabili.size()) {
-            System.out.println("Scelta non valida.");
-            return false;
-        }
-
-        domain.Oggetto oggetto = utilizzabili.get(idx - 1);
-
-        try {
-            boolean applicato = oggetto.eseguiEffetto(personaggio);
-            if (applicato) {
-                zaino.rimuoviOggettoDaZaino(oggetto);
-                System.out.println("Hai usato: " + oggetto.getNome());
-                return true;
-            } else {
-                System.out.println("Impossibile usare l'oggetto.");
-                return false;
-            }
-        } catch (Exception ex) {
-            System.out.println("Errore nell'uso dell'oggetto: " + ex.getMessage());
-            return false;
-        }
-    }
-
-    private int leggiIntero() {
-        String line = SC.nextLine().trim();
-        try {
-            return Integer.parseInt(line);
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
-
-    /* =======================
-       TERMINA COMBATTIMENTO
-       ======================= */
-///controllare con chiudi combattimento
-    @Override
-    public boolean terminaCombattimento(Combattimento combattimento) {
-        if (combattimento == null || !combattimento.isInCorso()) return false;
-
-        combattimento.setInCorso(false);
-        chiudiEventoMostro(combattimento);
-        return true;
-    }
-
-    private void chiudiEventoMostro(Combattimento combattimento) {
-        if (combattimento == null) return;
-
-        Evento evento = combattimento.getEventoMostro();
-        if (evento == null) return;
-
-        // Chiudo l'evento
-        evento.setFineEvento(true);
-        evento.setInizioEvento(false);
-
-        // Se non è riutilizzabile (nel tuo Evento ritorna false), lo rimuovo dalla stanza per "ripulire"
-        Stanza stanza = combattimento.getStanza();
-        if (stanza != null && stanza.getListaEventiAttivi() != null) {
-            if (!evento.èRiutilizzabile()) {
-                stanza.getListaEventiAttivi().remove(evento);
-            }
-        }
     }
 
     /* =======================
@@ -560,19 +366,40 @@ public class CombattimentoServiceImpl implements CombattimentoService {
             } else {
                 // Turno giocatore: qui la scelta influisce davvero
                 Zaino zaino = (personaggio != null) ? personaggio.getZaino() : null; // se esiste getZaino()
-                AzioneCombattimento azione = scegliAzioneCombattimentoInterna(personaggio, zaino);
+                Azione azione = scegliAzioneCombattimentoInterna(personaggio, zaino);
 
-                if (azione == AzioneCombattimento.ATTACCA) {
+                if (azione == Azione.ATTACCA) {
                     applicaECalcolaDanno(combattimento, personaggio);
-                } else if (azione == AzioneCombattimento.USA_OGGETTO) {
+                } else if (azione == Azione.USA_OGGETTO) {
                     // oggetto usato: turno consumato, nessun attacco
                 } else {
                     // annulla: turno consumato (o potresti riproporre il menu)
                 }
             }
+            //aggiungo l'else suggerito:
+            /*else {
+
+                Azione azione = scegliAzioneCombattimentoInterna(personaggio, personaggio.getZaino()); // se esiste getZaino()
+
+                switch (azione) {
+                    case ATTACCA -> applicaECalcolaDanno(combattimento, personaggio);
+
+                    case USA_OGGETTO -> {
+                        // qui richiami il tuo codice attuale che usa oggetti dallo zaino
+                        scegliAzioneCombattimento(personaggio, personaggio.getZaino());
+                        // MA: assicurati che scegliere oggetto consumi il turno (quindi NON chiamare applicaECalcolaDanno)
+                    }
+
+                        case PASSA -> System.out.println(personaggio.getNomePersonaggio() + " passa il turno.");
+
+                        default -> System.out.println("Azione non valida in combattimento.");
+                    }
+                } */
 
             // se qualcuno ha vinto, chiudi e esci
-            if (!combattimento.isInCorso()) break;
+            if (!combattimento.isInCorso()) {
+                break;
+            }
 
             // alterna turno
             iniziativa = 1 - iniziativa;
@@ -582,16 +409,221 @@ public class CombattimentoServiceImpl implements CombattimentoService {
     }
 
     /* =======================
+       SCELTA AZIONE (interfaccia)
+       ======================= */
+    @Override
+    public void scegliAzioneCombattimento(Personaggio personaggio, Zaino zaino) {
+        // Mantengo la firma dell'interfaccia.
+        // Internamente uso una versione che ritorna l'azione, ma qui la ignoro.
+        scegliAzioneCombattimentoInterna(personaggio, zaino);
+    } //serve a gestire il turno del personaggio durante il combattimento, 
+    //chiedendo al giocatore che azione vuole compiere e traducendo la scelta in qualcosa che il sistema possa usare
+
+    private Azione scegliAzioneCombattimentoInterna(Personaggio personaggio, Zaino zaino) {
+        if (personaggio == null) {
+            return Azione.PASSA;
+        }
+
+        System.out.println("\nScegli azione in combattimento per " + personaggio.getNomePersonaggio());
+        System.out.println("1) Attacca");
+        System.out.println("2) Usa un oggetto");
+        System.out.println("0) Passa turno");
+        System.out.print("> ");
+
+        int scelta = leggiIntero();
+
+        return switch (scelta) {
+            case 1 -> {
+                System.out.println("Hai scelto di attaccare.");
+                yield Azione.ATTACCA;
+            }
+            case 2 -> {
+                boolean usato = provaUsaOggetto(personaggio, zaino);
+                yield usato ? Azione.USA_OGGETTO : Azione.PASSA;
+            }
+            default -> {
+                System.out.println("Passi il turno.");
+                yield Azione.PASSA;
+            }
+        };
+    }
+
+    private int leggiIntero() {
+        String line = SC.nextLine().trim();
+        try {
+            return Integer.parseInt(line);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    ///è implementato in personaggio e l'ho mdificato in modo che lo richiami alla fine
+    private boolean provaUsaOggetto(Personaggio personaggio, Zaino zaino) {
+        if (personaggio == null || zaino == null || zaino.getListaOggetti().isEmpty()) {
+            System.out.println("Zaino vuoto.");
+            return false;
+        }
+
+        List<Oggetto> utilizzabili = new ArrayList<>();
+        for (Oggetto o : zaino.getListaOggetti()) {
+            if (o != null && o.isUsabile()) {
+                utilizzabili.add(o);
+            }
+        }
+
+        if (utilizzabili.isEmpty()) {
+            System.out.println("Nessun oggetto utilizzabile.");
+            return false;
+        }
+
+        System.out.println("\nOggetti utilizzabili:");
+        for (int i = 0; i < utilizzabili.size(); i++) {
+            System.out.println((i + 1) + ") " + utilizzabili.get(i).getNome());
+        }
+        System.out.println("0) Annulla");
+
+        int scelta = leggiIntero();
+        if (scelta <= 0 || scelta > utilizzabili.size()) {
+            System.out.println("Annullato.");
+            return false;
+        }
+
+        Oggetto oggetto = utilizzabili.get(scelta - 1);
+
+        boolean usato = personaggio.usaOggetto(personaggio, oggetto);
+
+        if (!usato) {
+            System.out.println("Impossibile usare l'oggetto.");
+        }
+
+        return usato;
+    }
+
+
+    /* =======================
+       TERMINA COMBATTIMENTO
+       ======================= */
+    ///controllare con chiudi combattimento --> li ho uniti
+    @Override
+    public boolean terminaCombattimento(Combattimento combattimento, Object vincitore, String messaggio) {
+        if (combattimento == null || !combattimento.isInCorso()) {
+            return false;
+        }
+
+        combattimento.setVincitore(vincitore);
+        combattimento.setInCorso(false);
+
+        if (messaggio != null && !messaggio.isBlank()) {
+            System.out.println(messaggio);
+        }
+
+        chiudiEventoMostro(combattimento);
+        return true;
+    }
+
+    private void chiudiEventoMostro(Combattimento combattimento) {
+        if (combattimento == null) {
+            return;
+        } //serve perché l’evento mostro non risulti più attivo in stanza
+
+        Evento evento = combattimento.getEventoMostro();
+        if (evento == null) {
+            return;
+        }
+
+        // Chiudo l'evento
+        evento.setFineEvento(true);
+        evento.setInizioEvento(false);
+
+        // Se non è riutilizzabile (nel tuo Evento ritorna false), lo rimuovo dalla stanza per "ripulire"
+        Stanza stanza = combattimento.getStanza();
+        if (stanza != null && stanza.getListaEventiAttivi() != null) {
+            if (!evento.èRiutilizzabile()) {
+                stanza.getListaEventiAttivi().remove(evento);
+            }
+        }
+    }
+
+
+    /* =======================
+       CORE: applica danno
+       ======================= */
+    @Override
+    public int applicaECalcolaDanno(Combattimento combattimento, Object attaccante) {
+        if (combattimento == null || attaccante == null) {
+            return 0;
+        }
+
+        Personaggio personaggio = combattimento.getPersonaggioCoinvolto();
+        Mostro mostro = combattimento.getMostroCoinvolto();
+        if (personaggio == null || mostro == null) {
+            return 0;
+        }
+
+        int dannoApplicato = 0;
+
+        // ===== TURNO MOSTRO =====
+        if (attaccante == mostro) {
+            int dannoBase = MostroServiceImpl.dannoBase(mostro, personaggio);
+            dannoApplicato = mostroService.attaccoDelMostro(mostro, personaggio, dannoBase);
+
+            aggiornaStatistiche(combattimento, dannoApplicato);
+
+            if (personaggio.getPuntiVita() <= 0) {
+                terminaCombattimento(combattimento, mostro,
+                        personaggio.getNomePersonaggio() + " è stato sconfitto da " + mostro.getNomeMostro());
+            }
+            return dannoApplicato;
+        }
+
+        // ===== TURNO PERSONAGGIO =====
+        PersonaggioService ps = resolveService(personaggio);
+        dannoApplicato = ps.attacca(personaggio, mostro, combattimento);
+
+        aggiornaStatistiche(combattimento, dannoApplicato);
+
+        if (mostro.getPuntiVitaMostro() <= 0) {
+            terminaCombattimento(combattimento, personaggio,
+                    mostro.getNomeMostro() + " è stato sconfitto da " + personaggio.getNomePersonaggio());
+            // XP qui o nei service dei personaggi: qui lo lascio minimale
+            try {
+                personaggio.setEsperienza(personaggio.getEsperienza() + 10);
+            } catch (Exception ignored) {
+            }
+        }
+
+        return dannoApplicato;
+    }
+
+    private void aggiornaStatistiche(Combattimento c, int danno) {
+        if (c == null) {
+            return;
+        }
+        c.setDanniInflittiCombattimento(c.getDanniInflittiCombattimento() + Math.max(0, danno));
+        c.setTurnoCorrenteCombattimento(c.getTurnoCorrenteCombattimento() + 1);
+    }
+
+    /* =======================
        Risoluzione service personaggio
        ======================= */
-///???
+    ///???
     private PersonaggioService resolveService(Personaggio personaggio) {
-        if (this.personaggioService != null) return this.personaggioService;
+        if (this.personaggioService != null) {
+            return this.personaggioService;
+        }
 
-        if (personaggio instanceof domain.Guerriero) return new GuerrieroServiceImpl();
-        if (personaggio instanceof domain.Arciere)   return new ArciereServiceImpl();
-        if (personaggio instanceof domain.Mago)      return new MagoServiceImpl();
-        if (personaggio instanceof domain.Paladino)  return new PaladinoServiceImpl();
+        if (personaggio instanceof domain.Guerriero) {
+            return new GuerrieroServiceImpl();
+        }
+        if (personaggio instanceof domain.Arciere) {
+            return new ArciereServiceImpl();
+        }
+        if (personaggio instanceof domain.Mago) {
+            return new MagoServiceImpl();
+        }
+        if (personaggio instanceof domain.Paladino) {
+            return new PaladinoServiceImpl();
+        }
 
         return new GuerrieroServiceImpl(); // fallback
     }
