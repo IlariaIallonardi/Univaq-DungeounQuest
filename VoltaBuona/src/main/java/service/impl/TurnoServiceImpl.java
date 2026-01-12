@@ -42,6 +42,9 @@ public class TurnoServiceImpl implements TurnoService {
     public TurnoServiceImpl(PersonaggioService ps) {
         this.personaggioService = ps;
     }
+    public TurnoServiceImpl() {
+        return;
+    }
 
     @Override
     public List<Personaggio> calcolaOrdineIniziativa(List<Personaggio> partecipanti) {

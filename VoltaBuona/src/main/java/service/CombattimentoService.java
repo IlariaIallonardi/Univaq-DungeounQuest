@@ -24,7 +24,7 @@ public interface CombattimentoService {
      * "ATTACCA","USA_POZIONE", ecc.) target può essere null o un
      * Personaggio/Mostro/Oggetto a seconda dell'azione.
      */
-    void scegliAzioneCombattimento(Personaggio personaggio, Zaino zaino);
+    void scegliAzioneCombattimento(Combattimento combattimento,Personaggio personaggio, Zaino zaino);
 
     // danno / risoluzione
     int applicaECalcolaDanno(Combattimento combattimento, Object attaccante);
