@@ -1,4 +1,5 @@
-/*import java.util.List;
+/* 
+import java.util.List;
 
 import domain.Combattimento;
 import domain.Mostro;
@@ -258,7 +259,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
     }
 
 }*/
-package service.impl;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -274,7 +275,8 @@ import domain.Personaggio;
 import domain.Stanza;
 import domain.Zaino;
 import service.CombattimentoService;
-import service.PersonaggioService;
+
+
 
 /**
  * Versione completa + robusta di CombattimentoServiceImpl. - Risolve il
