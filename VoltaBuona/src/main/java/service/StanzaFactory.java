@@ -33,22 +33,31 @@ public class StanzaFactory {
         List<Oggetto> oggetti = generaOggettiCasuali();
         List<Evento> eventi = generaEventiCasuali();
         Chiave chiave = null;
-        boolean bloccata = generaRichiestaChiave(x,y);
+        boolean bloccata = generaRichiestaChiave(x, y);
         String nomeStanza = "Stanza (" + x + "," + y + ")";
-        return new Stanza(id, coord, stato, oggetti, eventi, chiave, bloccata);
+
+        Stanza stanza = new Stanza(id, coord, stato, oggetti, eventi, chiave, bloccata);
+        if (stanza.getListaEventiAttivi() != null) {
+            for (Evento evento : stanza.getListaEventiAttivi()) {
+                if (evento != null) {
+                    evento.setPosizioneCorrente(stanza);
+                }
+            }
+        }
+        return stanza;
     }
 
     public List<Oggetto> generaOggettiCasuali() {
         List<Oggetto> oggetti = new ArrayList<>();
-          int coord[][] = {{0,0}};
+        int coord[][] = {{0, 0}};
         if (coord[0][0] == 0 && coord[0][1] == 0) {
             // stanza di partenza, nessuna chiave
-    oggetti.removeIf(o -> o instanceof Chiave);
-}
-        int n = rnd.nextInt(1,5); // 1..4 oggetti
+            oggetti.removeIf(o -> o instanceof Chiave);
+        }
+        int n = rnd.nextInt(1, 5); // 1..4 oggetti
 
         for (int i = 0; i < n; i++) {
-            int tipo = rnd.nextInt(1,6); // 1..5  
+            int tipo = rnd.nextInt(1, 6); // 1..5  
             switch (tipo) {
                 case 1:
                     oggetti.add(new PozioneServiceImpl().creaOggettoCasuale());
@@ -72,7 +81,7 @@ public class StanzaFactory {
 
     private List<Evento> generaEventiCasuali() {
         List<Evento> eventi = new ArrayList<>();
-        int n = rnd.nextInt(1,5); // 1..4 eventi
+        int n = rnd.nextInt(1, 5); // 1..4 eventi
         for (int i = 0; i < n; i++) {
             int tipo = rnd.nextInt(5); // 0..4s
             //switch per tipi di evento da implementare
@@ -98,7 +107,7 @@ public class StanzaFactory {
     }
 
     // restituisce true se la stanza deve richiedere una chiave, false altrimenti
-  /*   private boolean generaRichiestaChiave(int x, int y) {
+    /*   private boolean generaRichiestaChiave(int x, int y) {
         boolean bloccataProva;
         if(x==0 && y==0) {
             bloccataProva = false;
@@ -112,23 +121,23 @@ public class StanzaFactory {
         }
         return bloccataProva;
     }*/
-   // restituisce true se la stanza deve richiedere una chiave, false altrimenti
-private boolean generaRichiestaChiave(int x, int y) {
-    // start (0,0) e le stanze adiacenti (distanza Manhattan = 1) NON devono essere bloccate
-    if (x == 0 && y == 0) return false;
-    if (Math.abs(x - 0) + Math.abs(y - 0) == 1) return false;
-    // per le altre stanze random true/false
-  //  return rnd.nextInt(2) == 1;
-   double probBlocco = 0.25;
-    return rnd.nextDouble() < probBlocco;
-}
+    // restituisce true se la stanza deve richiedere una chiave, false altrimenti
+    private boolean generaRichiestaChiave(int x, int y) {
+        // start (0,0) e le stanze adiacenti (distanza Manhattan = 1) NON devono essere bloccate
+        if (x == 0 && y == 0) {
+            return false;
+        }
+        if (Math.abs(x - 0) + Math.abs(y - 0) == 1) {
+            return false;
+        }
+        // per le altre stanze random true/false
+        //  return rnd.nextInt(2) == 1;
+        double probBlocco = 0.25;
+        return rnd.nextDouble() < probBlocco;
+    }
 
-
-public Chiave creaChiavePerStanza(int stanzaId) {
-    return new service.impl.ChiaveServiceImpl().creaChiavePerStanza(stanzaId);
-}
-
-
-   
+    public Chiave creaChiavePerStanza(int stanzaId) {
+        return new service.impl.ChiaveServiceImpl().creaChiavePerStanza(stanzaId);
+    }
 
 }

@@ -11,7 +11,7 @@ public interface CombattimentoService {
     // lifecycle
     Object iniziaCombattimento(Personaggio personaggio, Mostro mostro, Stanza stanza);
 
-    boolean terminaCombattimento(Combattimento combattimento, Object vincitore, String messaggio);
+    boolean terminaCombattimento(Combattimento combattimento, Object vincitore);
 
     // interrogazioni
     boolean èInCorso(Combattimento combattimento);

@@ -384,12 +384,14 @@ public class TurnoServiceImpl implements TurnoService {
         Evento e = visibili.get(index);
         EventoService svc = servicePerEvento(e);
         boolean termina = svc.attivaEvento(personaggio, e);
-        try {
-            if (e.isFineEvento() || !e.èRiutilizzabile()) {
-                svc.rimuoviEventoDaStanza(stanza, e);
-            }
-        } catch (Exception ignored) {
+       try {
+    if (e.isFineEvento() || !e.èRiutilizzabile()) {
+        if (stanza != null) {
+            stanza.rimuoviEvento(e);
         }
+    }
+} catch (Exception ignored) {
+}
         if (termina) {
             terminaTurnoCorrente(personaggio);
             return true;

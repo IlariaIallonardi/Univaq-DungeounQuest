@@ -4,14 +4,14 @@ public class Trappola extends Evento {
 
     
     private Effetto effetto;
-    private Stanza posizioneCorrenteTrappola;
 
-    public Trappola( Effetto effetto, Stanza posizioneCorrenteTrappola, int id, boolean inizioEvento, boolean fineEvento, String descrizione) {
-        super(id, inizioEvento, fineEvento, descrizione, "Trappola", posizioneCorrenteTrappola);
-    
+    public Trappola(Effetto effetto, int id, boolean inizioEvento, boolean fineEvento, String descrizione, String nomeEvento, Stanza posizioneCorrente) {
+        super(id, inizioEvento, fineEvento, descrizione, nomeEvento,posizioneCorrente);
         this.effetto = effetto;
-        this.posizioneCorrenteTrappola = posizioneCorrenteTrappola;
     }
+    
+
+    
 
    
 
@@ -217,11 +217,5 @@ public class Trappola extends Evento {
         System.out.println("HP finali: " + p.getPuntiVita());
         System.out.println("Stato finale: " + p.getStatoPersonaggio());
     } */
-    public Stanza getPosizioneCorrenteTrappola() {
-        return posizioneCorrenteTrappola;
-    }
-
-    public void setPosizioneCorrenteTrappola(Stanza posizioneCorrenteTrappola) {
-        this.posizioneCorrenteTrappola = posizioneCorrenteTrappola;
-    }
+   
 }

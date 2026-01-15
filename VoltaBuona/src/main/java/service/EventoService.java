@@ -9,7 +9,7 @@ import domain.Stanza;
 public interface EventoService {
 
 // rimuovi evento dalla stanza specificata quando non è più attivo
-    public void rimuoviEventoDaStanza(Stanza stanza, Evento evento);
+  //  public void rimuoviEventoDaStanza(Stanza stanza, Evento evento);
 
 public Evento aggiungiEventoCasuale();
 

@@ -13,12 +13,7 @@ public class PassaggioSegretoServiceImpl implements EventoService {
 
     private static final AtomicInteger ID_COUNTER = new AtomicInteger(1);
 
-    @Override
-    public void rimuoviEventoDaStanza(Stanza stanza, Evento evento) {
-        stanza.getListaEventiAttivi().remove(evento);
-    }
-
-    ;
+  
 
    /*  @Override
 public boolean attivaEvento(Personaggio personaggio, Evento e) {
@@ -219,9 +214,7 @@ public boolean attivaEvento(Personaggio personaggio, Evento e) {
             }
         }
         return;
-    }
-
-    ;
+    };
 
         @Override
     public Evento aggiungiEventoCasuale() {

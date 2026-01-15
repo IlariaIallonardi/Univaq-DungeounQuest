@@ -221,15 +221,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
         }
     }
 
-    @Override
-    public void rimuoviEventoDaStanza(Stanza stanza, Evento evento) {
-        if (stanza == null || evento == null) {
-            return;
-        }
-        if (stanza.getListaEventiAttivi() != null) {
-            stanza.getListaEventiAttivi().remove(evento);
-        }
-    }
+   
 
     @Override
     public boolean attivaEvento(Personaggio personaggio, Evento e) {
@@ -237,7 +229,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             return false;
         }
 
-        Stanza stanza = npc.getPosizioneCorrenteNPC();
+        Stanza stanza = npc.getPosizioneCorrente();
         System.out.println("Incontri un NPC: " + npc.getNomeNPC());
 
         if (npc.isVenditore() || isNomeVenditore(npc.getNomeNPC())) {
@@ -247,7 +239,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             parla(personaggio, npc);
         }
 
-        rimuoviEventoDaStanza(stanza, e);
+    
         return true;
     }
 
@@ -284,7 +276,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
         String rebus = scelta.domanda();
         String rispostaCorretta = scelta.risposta();
 
-        NPC npc = new NPC(id, "NPC", rebus, rispostaCorretta, null, nomeNPC, null);
+        NPC npc = new NPC(id, "NPC", rebus, rispostaCorretta, null, nomeNPC);
         if (isNomeVenditore(nomeNPC)) {
             npc.setVenditore(true);
             popolaArticoliVenditore(npc);

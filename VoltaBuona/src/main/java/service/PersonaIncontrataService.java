@@ -6,7 +6,7 @@ import domain.Stanza;
 
 public interface PersonaIncontrataService extends EventoService {
     
-  public void rimuoviEventoDaStanza(Stanza stanza, Evento evento);
+  
 
   public Evento aggiungiEventoCasuale();
 
