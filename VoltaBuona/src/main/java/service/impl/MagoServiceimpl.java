@@ -144,13 +144,13 @@ public class MagoServiceImpl implements PersonaggioService {
         }
 
         if (mago.getPosizioneCorrente() == null
-                || mostro.getPosizioneCorrenteMostro() == null) {
+                || mostro.getPosizioneCorrente() == null) {
             System.out.println("Errore di posizione.");
             return 0;
         }
 
         if (!mago.getPosizioneCorrente()
-                .equals(mostro.getPosizioneCorrenteMostro())) {
+                .equals(mostro.getPosizioneCorrente())) {
             System.out.println(" Devi essere nella stessa stanza del mostro.");
             return 0;
         }
@@ -197,7 +197,8 @@ public class MagoServiceImpl implements PersonaggioService {
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
         Stanza stanza = null;
         Zaino zaino = new Zaino();
-        return new Mago("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 300, "normale", 0, 0, 0, 0, zaino, 0, null);
+        return new Mago("abilità", null, 15, 300, 0, 2, 
+        nome, stanza, false, 100, 20, "normale", 0, 0, 0, 0, zaino, 0, null);
     }
 
 

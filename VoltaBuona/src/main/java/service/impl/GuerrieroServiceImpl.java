@@ -69,13 +69,13 @@ public class GuerrieroServiceImpl implements PersonaggioService {
         }
 
         if (guerriero.getPosizioneCorrente() == null ||
-            mostro.getPosizioneCorrenteMostro() == null) {
+            mostro.getPosizioneCorrente() == null) {
             System.out.println("Errore di posizione.");
             return 0;
         }
 
         if (!guerriero.getPosizioneCorrente()
-                .equals(mostro.getPosizioneCorrenteMostro())) {
+                .equals(mostro.getPosizioneCorrente())) {
             System.out.println(" Devi essere nella stessa stanza del mostro.");
             return 0;
         }
@@ -219,7 +219,7 @@ public class GuerrieroServiceImpl implements PersonaggioService {
                 null,
                 false,
                 50,
-                30,
+                20,
                 "normale",
                 0,
                 0,

@@ -33,7 +33,7 @@ public class ArciereServiceImpl implements PersonaggioService {
         }
 
         Stanza stanzaArciere = arciere.getPosizioneCorrente();
-        Stanza stanzaMostro  = mostro.getPosizioneCorrenteMostro();
+        Stanza stanzaMostro  = mostro.getPosizioneCorrente();
         mostraStanzeAdiacentiConMostro(stanzaArciere);
 
         if (stanzaArciere == null || stanzaMostro == null) {
@@ -154,7 +154,9 @@ public class ArciereServiceImpl implements PersonaggioService {
    public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
 Stanza stanza = null;
 Zaino zaino = new Zaino();
-return new Arciere("abilità", null, 200, 300, 0, 2, nome, stanza, false, 100, 300, "normale", 0, 0, 0, 0, zaino, 0);
+return new Arciere("abilità", null, 15, 
+300, 
+0, 2, nome, stanza, false, 100, 20, "normale", 0, 0, 0, 0, zaino, 0);
 }
 
 

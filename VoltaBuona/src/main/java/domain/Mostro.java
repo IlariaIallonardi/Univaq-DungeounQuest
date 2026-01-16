@@ -7,16 +7,10 @@ public class Mostro extends PersonaIncontrata {
     private int dannoMostro;
     private String nomeMostro;
     private TipoAttaccoMostro tipoAttaccoMostro;
-    private Stanza posizioneCorrenteMostro;
+    
     private int dannoTipoMostro;
 
-    public Stanza getPosizioneCorrenteMostro() {
-        return posizioneCorrenteMostro;
-    }
-
-    public void setPosizioneCorrenteMostro(Stanza posizioneCorrenteMostro) {
-        this.posizioneCorrenteMostro = posizioneCorrenteMostro;
-    }
+   
 
    
     public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, String tipoPersonaIncontrata, int puntiVitaMostro, int difesaMostro, String nomeMostro, TipoAttaccoMostro tipoAttaccoMostro, Stanza posizioneCorrenteMostro,int dannoTipoMostro) {
@@ -25,7 +19,6 @@ public class Mostro extends PersonaIncontrata {
         this.difesaMostro = difesaMostro;
         this.nomeMostro = nomeMostro;
         this.tipoAttaccoMostro = tipoAttaccoMostro;
-        this.posizioneCorrenteMostro = posizioneCorrenteMostro;
         this.dannoTipoMostro = dannoTipoMostro;
     }
      public enum TipoAttaccoMostro {
@@ -163,32 +156,32 @@ public class Mostro extends PersonaIncontrata {
     if (this.nomeMostro == null) return 0;
     switch (this.nomeMostro) {
         case "Spiritello" -> {
-            this.puntiVitaMostro = 30;
-            this.difesaMostro = 30;
+            this.puntiVitaMostro = 15;
+            this.difesaMostro = 15;
             this.tipoAttaccoMostro = TipoAttaccoMostro.MORSO;
             return 1;
         }
         case "Drago" -> {
-            this.puntiVitaMostro = 30;
-            this.difesaMostro = 30;
+            this.puntiVitaMostro = 15;
+            this.difesaMostro = 15;
             this.tipoAttaccoMostro = TipoAttaccoMostro.RUGGITO_DI_FUOCO;
             return 1;
         }
         case "Golem" -> {
-            this.puntiVitaMostro = 20;
-            this.difesaMostro = 10;
+            this.puntiVitaMostro = 15;
+            this.difesaMostro = 15;
             this.tipoAttaccoMostro = TipoAttaccoMostro.URLO_ASSORDANTE;
             return 1;
         }
         case "Ragno Gigante" -> {
-            this.puntiVitaMostro = 20;
+            this.puntiVitaMostro = 15;
             this.difesaMostro = 15;
             this.tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA_IMMOBILIZZANTE;
             return 1;
         }
         case "Troll" -> {
-            this.puntiVitaMostro = 30;
-            this.difesaMostro = 30;
+            this.puntiVitaMostro = 15;
+            this.difesaMostro = 15;
             this.tipoAttaccoMostro = TipoAttaccoMostro.ARTIGLI_POSSENTI;
             return 1;
         }

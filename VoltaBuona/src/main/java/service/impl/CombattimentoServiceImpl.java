@@ -22,11 +22,18 @@ import service.PersonaggioService;
  */
 public class CombattimentoServiceImpl implements CombattimentoService {
 
-    private final MostroServiceImpl mostroService = new MostroServiceImpl();
+    private  MostroServiceImpl mostroService;
     private PersonaggioService personaggioService; // opzionale: injection
-    TurnoServiceImpl turnoService = new TurnoServiceImpl();
+    TurnoServiceImpl turnoService ;
     private static final Random RNG = new Random();
     private static final Scanner scanner = new Scanner(System.in);
+
+    public CombattimentoServiceImpl(MostroServiceImpl mostroService, PersonaggioService personaggioService, TurnoServiceImpl turnoService) {
+        this.mostroService = mostroService;
+        this.personaggioService = personaggioService;
+        this.turnoService = turnoService;
+    }
+
 
 
     /* =======================
@@ -55,17 +62,30 @@ public class CombattimentoServiceImpl implements CombattimentoService {
 
         System.out.println("\nInizia il combattimento: " + personaggio.getNomePersonaggio() + " VS " + mostro.getNomeMostro());
 
-        Evento evento = new Evento(
-                0, true, false,
-                "Incontro con " + mostro.getNomeMostro(),
-                "Combattimento_" + mostro.getNomeMostro(),
-                stanza
-        );
-
-        // Aggancio l'evento alla stanza (così l'arciere può "percepirlo" nelle stanze adiacenti)
-        if(stanza != null && stanza.getListaEventiAttivi() != null){
-            stanza.getListaEventiAttivi().add(evento);
-            evento.setPosizioneCorrente(stanza);
+        // se il Mostro è un Evento (tipico quando è stato creato come evento in stanza),
+        // riusalo invece di crearne uno nuovo per evitare mismatch di id.
+        Evento evento;
+        if (mostro instanceof Evento) {
+            evento = (Evento) mostro;
+            // assicurati che la posizione sia impostata
+            if (evento.getPosizioneCorrente() == null && stanza != null) {
+                evento.setPosizioneCorrente(stanza);
+            }
+            // se non è già presente nella lista eventi della stanza, aggiungilo
+            if (stanza != null && stanza.getListaEventiAttivi() != null && !stanza.getListaEventiAttivi().contains(evento)) {
+                stanza.getListaEventiAttivi().add(evento);
+            }
+        } else {
+            evento = new Evento(
+                    0, true, false,
+                    "Incontro con " + mostro.getNomeMostro(),
+                    "Combattimento_" + mostro.getNomeMostro(),
+                    stanza
+            );
+            if (stanza != null && stanza.getListaEventiAttivi() != null) {
+                stanza.getListaEventiAttivi().add(evento);
+                evento.setPosizioneCorrente(stanza);
+            }
         }
 
         Combattimento combattimento = new Combattimento(
@@ -138,7 +158,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
 
         if (scelta == 1) {
             System.out.println("Hai scelto di attaccare.");
-            applicaECalcolaDanno(combattimento, scanner);
+            applicaECalcolaDanno(combattimento, personaggio);
         } else if (scelta == 2) {
 
             turnoService.gestisciUsoOggettoDaZaino(personaggio, scanner);
@@ -199,10 +219,8 @@ public boolean terminaCombattimento(Combattimento combattimento, Object vincitor
         int danno = 0;
 
         if (attaccante instanceof Mostro) {
-            int dannoBase = MostroServiceImpl.dannoBase(mostro, personaggio);
-            danno = mostroService.attaccoDelMostro(mostro, personaggio, dannoBase);
-            aggiornaStatistiche(combattimento, danno);
-            if (personaggio.getPuntiVita() <= 0) {
+            danno = mostroService.attaccoDelMostro(mostro, personaggio);
+             if (personaggio.getPuntiVita() <= 0) {
                 terminaCombattimento(combattimento, mostro);
             }
             return  danno;
@@ -210,21 +228,26 @@ public boolean terminaCombattimento(Combattimento combattimento, Object vincitor
 
         if (attaccante instanceof Personaggio) {
             Personaggio personaggioAttaccante = (Personaggio) attaccante;
-            PersonaggioService ps = getServicePerPersonaggio(personaggioAttaccante);
-            danno = ps.attacca(personaggioAttaccante, mostro, combattimento);
-            aggiornaStatistiche(combattimento, danno);
+            PersonaggioService personaggioService = getServicePerPersonaggio(personaggioAttaccante);
+            danno = personaggioService.attacca(personaggioAttaccante, mostro, combattimento);
+        
             if (mostro.getPuntiVitaMostro() <= 0) {
                 terminaCombattimento(combattimento, personaggioAttaccante);
+                aggiornaStatistiche(combattimento, danno);
                
             }
             return danno;
         }
+       /*  if(mostro.getPuntiVitaMostro()<=0 || personaggio.getPuntiVita()<=0){
+            terminaCombattimento(combattimento, mostro.getPuntiVitaMostro()<=0 ? personaggio : mostro);
+             aggiornaStatistiche(combattimento, danno);*/
+        
 
         return 0;
     }
 
-    /// aggiornare personaggi e mostri vedere in seguito
-    private void aggiornaStatistiche(Combattimento c, int danno) {
+    // aggiornare personaggi e mostri vedere in seguito
+    public void aggiornaStatistiche(Combattimento c, int danno) {
         if (c == null) {
             return;
         }
