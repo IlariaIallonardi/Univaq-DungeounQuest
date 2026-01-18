@@ -12,8 +12,8 @@ import service.CombattimentoService;
 import service.PersonaIncontrataService;
 
 public class MostroServiceImpl implements PersonaIncontrataService {
+
     private static final AtomicInteger ID_COUNTER = new AtomicInteger(1);
-    
 
     private CombattimentoService combattimentoService;
 
@@ -29,13 +29,13 @@ public class MostroServiceImpl implements PersonaIncontrataService {
      * Compatibile: costruttore di default che usa l'implementazione concreta.
      * Mantiene retrocompatibilità ma favorisce l'injection via costruttore.
      */
-    
     /**
-     * Calcolo del danno che il mostro 
-     * infligge al personaggio.
+     * Calcolo del danno che il mostro infligge al personaggio.
      */
     public static int dannoBase(Mostro mostro, Personaggio personaggio) {
-        if (mostro == null || personaggio == null) return 0;
+        if (mostro == null || personaggio == null) {
+            return 0;
+        }
         int attaccoMostro = mostro.getDannoMostro();
         int difesaPersonaggio = personaggio.getDifesa();
         return Math.max(1, attaccoMostro - difesaPersonaggio);
@@ -52,10 +52,9 @@ public class MostroServiceImpl implements PersonaIncontrataService {
     }
 
     /**
-     * Esecuzione dell'attacco del mostro
-     * sul personaggio bersaglio.
+     * Esecuzione dell'attacco del mostro sul personaggio bersaglio.
      */
-  /*   public int attaccoDelMostro(Mostro mostro, Personaggio bersaglio,int dannoBase) {
+    /*   public int attaccoDelMostro(Mostro mostro, Personaggio bersaglio,int dannoBase) {
 
 
         Mostro.TipoAttaccoMostro tipoAttacco = mostro.getTipoAttaccoMostro();
@@ -69,19 +68,25 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         int dannoApplicato = bersaglio.subisciDanno(danno);
         return dannoApplicato;  
     }*/
-
     /**
      * Calcola solo il danno aggiuntivo in base al tipo di attacco.
      * L'applicazione degli effetti sul bersaglio è separata.
      */
     public int calcolaDannoPerTipo(Mostro.TipoAttaccoMostro tipoAttacco, int base) {
-        if (tipoAttacco == null) return base;
+        if (tipoAttacco == null) {
+            return base;
+        }
         return switch (tipoAttacco) {
-            case MORSO -> base + 2;
-            case RUGGITO_DI_FUOCO -> base + 5;
-            case URLO_ASSORDANTE -> base + 3;
-            case RAGNATELA_IMMOBILIZZANTE -> base + 4;
-            case ARTIGLI_POSSENTI -> base + 4;
+            case MORSO ->
+                base + 2;
+            case RUGGITO_DI_FUOCO ->
+                base + 5;
+            case URLO_ASSORDANTE ->
+                base + 3;
+            case RAGNATELA_FURTO ->
+                base + 4;
+            case ARTIGLI_POSSENTI ->
+                base + 4;
         };
     }
 
@@ -90,17 +95,25 @@ public class MostroServiceImpl implements PersonaIncontrataService {
      * Restituisce null se non c'è effetto.
      */
     public Effetto.TipoEffetto effettoPerTipo(Mostro.TipoAttaccoMostro tipoAttacco) {
-        if (tipoAttacco == null) return null;
+        if (tipoAttacco == null) {
+            return null;
+        }
         return switch (tipoAttacco) {
-            case RUGGITO_DI_FUOCO, URLO_ASSORDANTE -> Effetto.TipoEffetto.STORDIMENTO;
-            case RAGNATELA_IMMOBILIZZANTE -> Effetto.TipoEffetto.IMMOBILIZZATO;
-            case ARTIGLI_POSSENTI -> Effetto.TipoEffetto.AVVELENAMENTO;
-            default -> null;
+            case RUGGITO_DI_FUOCO, URLO_ASSORDANTE ->
+                Effetto.TipoEffetto.STORDIMENTO;
+            case RAGNATELA_FURTO ->
+                Effetto.TipoEffetto.FURTO;
+            case ARTIGLI_POSSENTI ->
+                Effetto.TipoEffetto.AVVELENAMENTO;
+            default ->
+                null;
         };
     }
 
     public int attaccoDelMostro(Mostro mostro, Personaggio bersaglio) {
-        if (mostro == null || bersaglio == null) return 0;
+        if (mostro == null || bersaglio == null) {
+            return 0;
+        }
 
         Mostro.TipoAttaccoMostro tipoAttacco = mostro.getTipoAttaccoMostro();
 
@@ -145,11 +158,11 @@ public class MostroServiceImpl implements PersonaIncontrataService {
                     bersaglio.setTurniAvvelenato(3);
                     bersaglio.setStatoPersonaggio(STATO_AVVELENATO);
                 }
-                case IMMOBILIZZATO -> {
-                    bersaglio.setTurniCongelato(2);
+                case FURTO -> {
                     bersaglio.setStatoPersonaggio(STATO_IMMOBILIZZATO);
                 }
-                default -> bersaglio.setStatoPersonaggio(effetto.name().toLowerCase());
+                default ->
+                    bersaglio.setStatoPersonaggio(effetto.name().toLowerCase());
             }
             System.out.println(mostro.getNomeMostro() + " applica effetto " + effetto + " a " + bersaglio.getNomePersonaggio());
         }
@@ -161,11 +174,11 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         return dannoApplicato;
     }
 
-    
-
     @Override
     public boolean attivaEvento(Personaggio personaggio, Evento e) {
-        if (personaggio == null || e == null) return false;
+        if (personaggio == null || e == null) {
+            return false;
+        }
 
         if (e instanceof Mostro mostro) {
             Stanza stanza = mostro.getPosizioneCorrente() != null ? mostro.getPosizioneCorrente() : personaggio.getPosizioneCorrente();
@@ -193,7 +206,10 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         List<Evento> snapshot = List.copyOf(stanza.getListaEventiAttivi());
         for (Evento e : snapshot) {
             boolean termina = attivaEvento(personaggio, e);
-            if (termina) return; // interrompe la catena di eventi e termina il turno
+            if (termina) {
+                return; // interrompe la catena di eventi e termina il turno
+
+            }
         }
     }
 
@@ -206,12 +222,18 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         String nomeMostro = nomi[rnd.nextInt(nomi.length)];
 
         String descrizione = switch (nomeMostro) {
-            case "Spiritello" -> "un pericoloso " + nomeMostro + " ti attacca con morso";
-            case "Drago" -> "un pericoloso " + nomeMostro + " ti attacca con ruggito di fuoco";
-            case "Golem" -> "un pericoloso " + nomeMostro + " ti attacca con urlo assordante";
-            case "Ragno Gigante" -> "un pericoloso " + nomeMostro + " ti attacca con ragnatela immobilizzante";
-            case "Troll" -> "un pericoloso " + nomeMostro + " ti attacca con artigli possenti";
-            default -> "un pericoloso mostro ti attacca";
+            case "Spiritello" ->
+                "un pericoloso " + nomeMostro + " ti attacca con morso";
+            case "Drago" ->
+                "un pericoloso " + nomeMostro + " ti attacca con ruggito di fuoco";
+            case "Golem" ->
+                "un pericoloso " + nomeMostro + " ti attacca con urlo assordante";
+            case "Ragno Gigante" ->
+                "un pericoloso " + nomeMostro + " ti attacca con ragnatela immobilizzante";
+            case "Troll" ->
+                "un pericoloso " + nomeMostro + " ti attacca con artigli possenti";
+            default ->
+                "un pericoloso mostro ti attacca";
         };
 
         Mostro mostro = new Mostro(id, false, false, descrizione, "mostro", 0, 0, nomeMostro, null, null, 0);

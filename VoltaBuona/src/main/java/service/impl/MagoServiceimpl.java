@@ -72,7 +72,6 @@ public class MagoServiceImpl implements PersonaggioService {
         // ===== DANNO (dadi + bonus fissi, critico raddoppia SOLO i dadi) =====
         // Scegli il dado base: esempio 1d10
         int dadoDanno = random.nextInt(1, 11); // 1..10
-    
 
         // Bonus fissi (stile guerriero): qui puoi usare costanti analoghe alle tue
         // esempio: bonusAttaccoMago + livello * bonusDannoLivello
@@ -89,9 +88,9 @@ public class MagoServiceImpl implements PersonaggioService {
                     + ANSI.RESET
             );
         }
-      
+
         int dannoPerMagia = calcolaDannoPerMagia(tipo, mago, mostro);
-        int dannoNetto = Math.max(1, dadiTotali + bonusFissi+ dannoPerMagia);
+        int dannoNetto = Math.max(1, dadiTotali + bonusFissi + dannoPerMagia);
 
         // ===== EFFETTI SPECIALI PER TIPO MAGIA =====
         switch (tipo) {
@@ -103,7 +102,7 @@ public class MagoServiceImpl implements PersonaggioService {
             }
             case AMMALIAMENTO -> {
                 // esempio semplice: riduci attacco o difesa del mostro (se hai stat adatte)
-                 mostro.setDifesaMostro(Math.max(0, mostro.getDifesaMostro() - 3));
+                mostro.setDifesaMostro(Math.max(0, mostro.getDifesaMostro() - 3));
                 System.out.println("Il mostro è ammaliato!");
             }
             case MALATTIA -> {
@@ -171,7 +170,7 @@ public class MagoServiceImpl implements PersonaggioService {
         return lanciaIncantesimo(mago, mostro, magiaScelta);
     }
 
-   ///probabilmente utile per i bot
+    ///probabilmente utile per i bot
    /*  public TipoMagiaSacra scegliMagia(Mago mago ,Mostro mostro){
         if(mago.getPuntiMana() >= TipoMagiaSacra.MALATTIA.getCostoMana()){
             return TipoMagiaSacra.MALATTIA;
@@ -185,23 +184,23 @@ public class MagoServiceImpl implements PersonaggioService {
     }*/
 
      private int calcolaDannoPerMagia(TipoMagiaSacra tipo, Mago mago, Mostro mostro) {
-    return switch (tipo) {
-        case MALATTIA -> 4;
-        case RUBAVITA -> 5;
-        case AMMALIAMENTO -> 6;
-    };
-}
-
+        return switch (tipo) {
+            case MALATTIA ->
+                4;
+            case RUBAVITA ->
+                5;
+            case AMMALIAMENTO ->
+                6;
+        };
+    }
 
     @Override
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
         Stanza stanza = null;
         Zaino zaino = new Zaino();
-        return new Mago("abilità", null, 15, 300, 0, 2, 
-        nome, stanza, false, 100, 20, "normale", 0, 0, 0, 0, zaino, 0, null);
+        return new Mago("abilità", null, 15, 300, 0, 2,
+                nome, stanza, false, 100, 20, "normale", 0, 0, 0, 0, zaino, 0, null);
     }
-
-
 
     @Override
     public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {

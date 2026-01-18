@@ -3,8 +3,8 @@ package service;
 import java.lang.reflect.Method;
 import java.util.Random;
 
+import domain.Computer;
 import domain.Personaggio;
-import domain.TipoGiocatore;
 import service.impl.ArciereServiceImpl;
 import service.impl.GuerrieroServiceImpl;
 import service.impl.MagoServiceImpl;
@@ -40,34 +40,14 @@ public class GiocatoreService {
             Method setter = botBase.getClass().getMethod("setNome", String.class);
             setter.invoke(botBase, "Bot-" + botBase.getClass().getSimpleName());
         } catch (Exception ignored) {
+            return null;
         }
 
         // converte il Personaggio in una vera istanza domain.Computer
-        domain.Computer c = new domain.Computer(
-            TipoGiocatore.COMPUTER,
-            botBase.getAbilitàSpeciale(),
-            botBase.getArmaEquippaggiata(),
-            botBase.getDifesa(),
-            botBase.getEsperienza(),
-            botBase.getId(),
-            botBase.getLivello(),
-            botBase.getNomePersonaggio(),
-            botBase.getPosizioneCorrente(),
-            false, // protetto
-            botBase.getPuntiMana(),
-            botBase.getPuntiVita(),
-            botBase.getStatoPersonaggio(),
-            botBase.getTurniAvvelenato(),
-            botBase.getTurniCongelato(),
-            botBase.getTurniStordito(),
-            botBase.getTurnoProtetto(),
-            botBase.getZaino(),
-            botBase.getPortafoglioPersonaggio()
-        );
+        domain.Computer c = new Computer(null, null, null, scelta, scelta, scelta, scelta, null, null, false, scelta, scelta, null, scelta, scelta, scelta, scelta, null, scelta);
 
         System.out.println("🤖 Il computer giocherà come: " + botBase.getClass().getSimpleName() + " (nome: " + c.getNomePersonaggio() + ")");
 
         return c;
     }
-
 }

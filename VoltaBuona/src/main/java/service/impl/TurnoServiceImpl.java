@@ -42,6 +42,7 @@ public class TurnoServiceImpl implements TurnoService {
     public TurnoServiceImpl(PersonaggioService ps) {
         this.personaggioService = ps;
     }
+
     public TurnoServiceImpl() {
         return;
     }
@@ -179,26 +180,12 @@ public class TurnoServiceImpl implements TurnoService {
             return;
         }
         if (personaggio.getTurniAvvelenato() > 0) {
-            int dannoVeleno = 3; // puoi cambiare
-            personaggio.subisciDanno(dannoVeleno);
             personaggio.setTurniAvvelenato(personaggio.getTurniAvvelenato() - 1);
-            System.out.println("Il veleno infligge " + dannoVeleno + " danni a " + personaggio.getNomePersonaggio());
+            System.out.println("Sarai avvelenato per i prossimi " + personaggio.getTurniAvvelenato());
 
             if (personaggio.getTurniAvvelenato() == 0 && "AVVELENATO".equalsIgnoreCase(personaggio.getStatoPersonaggio())) {
                 personaggio.setStatoPersonaggio("NORMALE");
                 System.out.println("Il veleno ha perso effetto su " + personaggio.getNomePersonaggio());
-            }
-        }
-
-        // 2 CONGELAMENTO: dura N turni, qui puoi gestire eventuali penalità
-        if (personaggio.getTurniCongelato() > 0) {
-            personaggio.setTurniCongelato(personaggio.getTurniCongelato() - 1);
-            System.out.println(" " + personaggio.getNomePersonaggio() + " è ancora congelato ("
-                    + personaggio.getTurniCongelato() + " turni rimanenti)");
-
-            if (personaggio.getTurniCongelato() == 0 && "CONGELATO".equalsIgnoreCase(personaggio.getStatoPersonaggio())) {
-                personaggio.setStatoPersonaggio("NORMALE");
-                System.out.println(personaggio.getNomePersonaggio() + " si è scongelato.");
             }
         }
 
@@ -384,14 +371,14 @@ public class TurnoServiceImpl implements TurnoService {
         Evento e = visibili.get(index);
         EventoService svc = servicePerEvento(e);
         boolean termina = svc.attivaEvento(personaggio, e);
-       try {
-    if (e.isFineEvento() || !e.èRiutilizzabile()) {
-        if (stanza != null) {
-            stanza.rimuoviEvento(e);
+        try {
+            if (e.isFineEvento() || !e.èRiutilizzabile()) {
+                if (stanza != null) {
+                    stanza.rimuoviEvento(e);
+                }
+            }
+        } catch (Exception ignored) {
         }
-    }
-} catch (Exception ignored) {
-}
         if (termina) {
             terminaTurnoCorrente(personaggio);
             return true;

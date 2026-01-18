@@ -17,17 +17,16 @@ public class TrappolaServiceImpl implements EventoService {
 
     private static final AtomicInteger ID_COUNTER = new AtomicInteger(1);
 
-  
     @Override
     public boolean attivaEvento(Personaggio personaggio, Evento e) {
         if (!(e instanceof Trappola trappola)) {
             return false;
         }
 
-       Stanza stanza = trappola.getPosizioneCorrente();
-if (stanza == null && personaggio != null) {
-    stanza = personaggio.getPosizioneCorrente();
-}
+        Stanza stanza = trappola.getPosizioneCorrente();
+        if (stanza == null && personaggio != null) {
+            stanza = personaggio.getPosizioneCorrente();
+        }
         System.out.println("[DEBUG] Hai trovato una trappola (id=" + trappola.getId() + ", descrizione=" + trappola.getDescrizione() + ")");
         boolean disinnescata = trappola.checkDiDisinnesco(personaggio);
 
@@ -70,23 +69,22 @@ if (stanza == null && personaggio != null) {
 
         switch (tipo) {
             case DISARMA -> {
-    personaggio.setStatoPersonaggio("DISARMATO");
-    personaggio.setDisarmato(true);
+                personaggio.setStatoPersonaggio("DISARMATO");
+                personaggio.setDisarmato(true);
 
-    Arma arma = personaggio.getArmaEquippaggiata();
-     System.out.println("[DEBUG] Arma equipaggiata: " + (arma != null ? arma.getNome() : "nessuna"));
-     System.out.println("[DEBUG] Attacco attuale: " + personaggio.getAttacco());
-    if (arma == null) {
-        System.out.println(" La trappola scatta, ma non hai armi equipaggiate.");
-        return;
-    }
-    personaggio.setArmaEquippaggiata(null);
+                Arma arma = personaggio.getArmaEquippaggiata();
+                System.out.println("[DEBUG] Arma equipaggiata: " + (arma != null ? arma.getNome() : "nessuna"));
+                System.out.println("[DEBUG] Attacco attuale: " + personaggio.getAttacco());
+                if (arma == null) {
+                    System.out.println(" La trappola scatta, ma non hai armi equipaggiate.");
+                    return;
+                }
+                personaggio.setArmaEquippaggiata(null);
 
-    
-    personaggio.setAttacco(personaggio.getAttacco() - arma.getDannoBonus());
-    System.out.println("[DEBUG] Attacco ridotto di " +  personaggio.getAttacco());
-    System.out.println(" La trappola ti disarma! Hai perso definitivamente: " + arma.getNome());
-}
+                personaggio.setAttacco(personaggio.getAttacco() - arma.getDannoBonus());
+                System.out.println("[DEBUG] Attacco ridotto di " + personaggio.getAttacco());
+                System.out.println(" La trappola ti disarma! Hai perso definitivamente: " + arma.getNome());
+            }
             //subisce solo il danno immediato
             case FURIA -> {
                 personaggio.setStatoPersonaggio("FURIA");
@@ -95,56 +93,56 @@ if (stanza == null && personaggio != null) {
             }
             //ogni turno toglie dei punti vita finchè non finisce la durata
             case AVVELENAMENTO -> {
-    personaggio.setStatoPersonaggio("AVVELENATO");
+                personaggio.setStatoPersonaggio("AVVELENATO");
 
-    // 3 turni totali
-    personaggio.setTurniAvvelenato(3);
+                // 3 turni totali
+                personaggio.setTurniAvvelenato(3);
 
-    //  DANNO IMMEDIATO (turno 1)
-    personaggio.subisciDanno(5);
+                //  DANNO IMMEDIATO (turno 1)
+                personaggio.subisciDanno(5);
 
-    System.out.println(
-        " Sei stato avvelenato! -5 HP (turni rimanenti: 3)"
-    );
-}
+                System.out.println(
+                        " Sei stato avvelenato! -5 HP (turni rimanenti: 3)"
+                );
+            }
             //ogni turno toglie dei punti difesa finchè non finisce la durata
             case STORDIMENTO -> {
+                System.out.println("[DEBUG] Soldi attuali:" + personaggio.getDifesa());
                 personaggio.setStatoPersonaggio("STORDITO");
                 personaggio.setTurniStordito(Math.max(durata, 2));
-                personaggio.subisciDanno(5);
-                System.out.println(" Sei stordito! -5 HP");
+                personaggio.subisciDannoDifesa(5);
+                System.out.println(" Sei stordito! -5 punti difesa");
+                System.out.println("[DEBUG] Soldi attuali:" + personaggio.getDifesa());
             }
 
-           case FURTO -> {
-    personaggio.setStatoPersonaggio("DERUBATO");
+            case FURTO -> {
+                personaggio.setStatoPersonaggio("DERUBATO");
 
-    int soldiAttuali = personaggio.getPortafoglioPersonaggio();
-    System.out.println("[DEBUG] Soldi attuali: " + soldiAttuali);
-    if (soldiAttuali <= 0) {
-        System.out.println(" La trappola tenta di derubarti, ma non hai denaro!");
-        return;
-    }
+                int soldiAttuali = personaggio.getPortafoglioPersonaggio();
+                System.out.println("[DEBUG] Soldi attuali: " + soldiAttuali);
+                if (soldiAttuali <= 0) {
+                    System.out.println(" La trappola tenta di derubarti, ma non hai denaro!");
+                    return;
+                }
 
-    //  Random tra 3 e 10
-    int rubati = ThreadLocalRandom.current().nextInt(3, 11);
+                //  Random tra 3 e 10
+                int rubati = ThreadLocalRandom.current().nextInt(3, 11);
 
-    // non può rubare più di quanto hai
+                // non può rubare più di quanto hai
+                personaggio.setPortafoglioPersonaggio(soldiAttuali - rubati);
+                System.out.println("[DEBUG] Soldi dopo furto: " + personaggio.getPortafoglioPersonaggio());
+                System.out.println(
+                        " Sei stato derubato! -" + rubati
+                        + " monete (rimaste: " + personaggio.getPortafoglioPersonaggio() + ")"
+                );
 
+            }
 
-    personaggio.setPortafoglioPersonaggio(soldiAttuali - rubati);
-  System.out.println("[DEBUG] Soldi dopo furto: " + personaggio.getPortafoglioPersonaggio());
-    System.out.println(
-        " Sei stato derubato! -" + rubati +
-        " monete (rimaste: " + personaggio.getPortafoglioPersonaggio() + ")"
-    );
-    
-}
+            case SALTA_TURNO -> {
+                personaggio.aggiungiTurniDaSaltare(1);
+                System.out.println(" Una trappola ti colpisce! Salterai il prossimo turno.");
+            }
 
-           case SALTA_TURNO -> {
-    personaggio.aggiungiTurniDaSaltare(1);
-    System.out.println(" Una trappola ti colpisce! Salterai il prossimo turno.");}
-
-    
             default -> {
                 System.out.println(" La trappola non ha effetto visibile.");
             }
@@ -175,7 +173,6 @@ if (stanza == null && personaggio != null) {
         return trappola.checkDiDisinnesco(personaggio);
     }
 
-   
     @Override
     public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza) {
         if (stanza == null || stanza.getListaEventiAttivi() == null || stanza.getListaEventiAttivi().isEmpty()) {
@@ -223,9 +220,9 @@ if (stanza == null && personaggio != null) {
             default ->
                 "Trappola senza effetto";
         };
-        
+
         Effetto effetto = new Effetto(tipoEffetto, descrizione, 0);
-        Trappola trappola = new  Trappola(effetto,id,false,false,descrizione,"Trappola",null);
+        Trappola trappola = new Trappola(effetto, id, false, false, descrizione, "Trappola", null);
         return trappola;
     }
 

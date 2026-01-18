@@ -2,18 +2,15 @@ package domain;
 
 public class Mostro extends PersonaIncontrata {
 
-    private int puntiVitaMostro ;
-    private int difesaMostro ;
+    private int puntiVitaMostro;
+    private int difesaMostro;
     private int dannoMostro;
     private String nomeMostro;
     private TipoAttaccoMostro tipoAttaccoMostro;
-    
+
     private int dannoTipoMostro;
 
-   
-
-   
-    public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, String tipoPersonaIncontrata, int puntiVitaMostro, int difesaMostro, String nomeMostro, TipoAttaccoMostro tipoAttaccoMostro, Stanza posizioneCorrenteMostro,int dannoTipoMostro) {
+    public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, String tipoPersonaIncontrata, int puntiVitaMostro, int difesaMostro, String nomeMostro, TipoAttaccoMostro tipoAttaccoMostro, Stanza posizioneCorrenteMostro, int dannoTipoMostro) {
         super(id, inizioEvento, fineEvento, descrizione, tipoPersonaIncontrata);
         this.puntiVitaMostro = puntiVitaMostro;
         this.difesaMostro = difesaMostro;
@@ -21,14 +18,15 @@ public class Mostro extends PersonaIncontrata {
         this.tipoAttaccoMostro = tipoAttaccoMostro;
         this.dannoTipoMostro = dannoTipoMostro;
     }
-     public enum TipoAttaccoMostro {
+
+    public enum TipoAttaccoMostro {
         MORSO(30),
         RUGGITO_DI_FUOCO(40),
         URLO_ASSORDANTE(45),
-        RAGNATELA_IMMOBILIZZANTE(20),
+        RAGNATELA_FURTO(20),
         ARTIGLI_POSSENTI(48);
 
-         private final int dannoTipoMostro;
+        private final int dannoTipoMostro;
         private TipoAttaccoMostro tipoAttaccoMostro;
 
         TipoAttaccoMostro(int dannoTipoMostro) {
@@ -151,48 +149,49 @@ public class Mostro extends PersonaIncontrata {
         return super.attivo();
     }
 
-
     public int settareVitaeDifesaMostro() {
-    if (this.nomeMostro == null) return 0;
-    switch (this.nomeMostro) {
-        case "Spiritello" -> {
-            this.puntiVitaMostro = 15;
-            this.difesaMostro = 15;
-            this.tipoAttaccoMostro = TipoAttaccoMostro.MORSO;
-            return 1;
-        }
-        case "Drago" -> {
-            this.puntiVitaMostro = 15;
-            this.difesaMostro = 15;
-            this.tipoAttaccoMostro = TipoAttaccoMostro.RUGGITO_DI_FUOCO;
-            return 1;
-        }
-        case "Golem" -> {
-            this.puntiVitaMostro = 15;
-            this.difesaMostro = 15;
-            this.tipoAttaccoMostro = TipoAttaccoMostro.URLO_ASSORDANTE;
-            return 1;
-        }
-        case "Ragno Gigante" -> {
-            this.puntiVitaMostro = 15;
-            this.difesaMostro = 15;
-            this.tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA_IMMOBILIZZANTE;
-            return 1;
-        }
-        case "Troll" -> {
-            this.puntiVitaMostro = 15;
-            this.difesaMostro = 15;
-            this.tipoAttaccoMostro = TipoAttaccoMostro.ARTIGLI_POSSENTI;
-            return 1;
-        }
-        default -> {
-            this.dannoTipoMostro = (this.tipoAttaccoMostro != null) ? this.tipoAttaccoMostro.getDannoTipoMostro() : this.dannoTipoMostro;
+        if (this.nomeMostro == null) {
             return 0;
-            // mantiene i valori passati nel costruttore
         }
+        switch (this.nomeMostro) {
+            case "Spiritello" -> {
+                this.puntiVitaMostro = 15;
+                this.difesaMostro = 15;
+                this.tipoAttaccoMostro = TipoAttaccoMostro.MORSO;
+                return 1;
+            }
+            case "Drago" -> {
+                this.puntiVitaMostro = 15;
+                this.difesaMostro = 15;
+                this.tipoAttaccoMostro = TipoAttaccoMostro.RUGGITO_DI_FUOCO;
+                return 1;
+            }
+            case "Golem" -> {
+                this.puntiVitaMostro = 15;
+                this.difesaMostro = 15;
+                this.tipoAttaccoMostro = TipoAttaccoMostro.URLO_ASSORDANTE;
+                return 1;
+            }
+            case "Ragno Gigante" -> {
+                this.puntiVitaMostro = 15;
+                this.difesaMostro = 15;
+                this.tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA_FURTO;
+                return 1;
+            }
+            case "Troll" -> {
+                this.puntiVitaMostro = 15;
+                this.difesaMostro = 15;
+                this.tipoAttaccoMostro = TipoAttaccoMostro.ARTIGLI_POSSENTI;
+                return 1;
+            }
+            default -> {
+                this.dannoTipoMostro = (this.tipoAttaccoMostro != null) ? this.tipoAttaccoMostro.getDannoTipoMostro() : this.dannoTipoMostro;
+                return 0;
+                // mantiene i valori passati nel costruttore
+            }
+        }
+
     }
-   
-}
 
     public void attaccoDelMostro(Personaggio personaggio) {
         Mostro mostro = this;
@@ -204,17 +203,13 @@ public class Mostro extends PersonaIncontrata {
         } else if (mostro.getNomeMostro().equals("Golem")) {
             tipoAttaccoMostro = TipoAttaccoMostro.URLO_ASSORDANTE;
         } else if (mostro.getNomeMostro().equals("Ragno Gigante")) {
-            tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA_IMMOBILIZZANTE;
+            tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA_FURTO;
         } else if (mostro.getNomeMostro().equals("Troll")) {
             tipoAttaccoMostro = TipoAttaccoMostro.ARTIGLI_POSSENTI;
         } else {
             tipoAttaccoMostro = null;
         }
     }
-
-
-
-
 
     @Override
     public String toString() {
