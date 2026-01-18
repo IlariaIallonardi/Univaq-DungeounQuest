@@ -7,21 +7,21 @@ public class Effetto {
  * Tipi di effetto che una sorgente (es. Trappola, Pozione, Incantesimo) può applicare.
  *
  * Significato dei tipi:
- *  - CONGELAMENTO: imposta stato CONGELATO; durata predefinita 3 turni; applica danno immediato (es. -5 HP).
+ *  - DISARMA: imposta stato DISARMATO--> se l'arma è equipaggiata la toglie.
  *  - FURIA: imposta stato FURIA; può applicare danno maggiore o buff temporanei.
  *  - STORDIMENTO: imposta stato STORDITO; penalizza azioni/attacchi; durata predefinita 2 turni.
  *  - AVVELENAMENTO: imposta stato AVVELENATO; infligge danno periodico (es. 3 HP/turno); durata predefinita 3 turni.
- *  - IMMOBILIZZATO: imposta stato IMMOBILIZZATO; impedisce movimento finché attivo.
+ *  - FURTO: imposta stato FURTO, si tolgono delle monete dal portafoglio.
  *  - SALTA_TURNO: causa turni da saltare (gestiti tramite `turniDaSaltare`).
  *  - NESSUN_EFFETTO: nessuna conseguenza.
  */
 
     public enum TipoEffetto {
-        CONGELAMENTO,
+        DISARMA,
         FURIA,
         STORDIMENTO,
         AVVELENAMENTO,
-        IMMOBILIZZATO,
+        FURTO,
         SALTA_TURNO,
         NESSUN_EFFETTO
     }

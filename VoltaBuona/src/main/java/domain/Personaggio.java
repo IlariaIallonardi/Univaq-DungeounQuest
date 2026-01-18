@@ -13,19 +13,21 @@ public class Personaggio {
     private int difesa;
     private String statoPersonaggio;
     private Zaino zaino;
-    private int attacco = 5;
+    private int attacco ;
     private int livello;
     private int esperienza;
     private Stanza posizioneCorrente;
     private boolean protettoProssimoTurno;
     private int turnoProtetto;
     private int turniAvvelenato;
-    private int turniCongelato;
+    private boolean disarmato;
+    private int furto;
     private int turniStordito;
     private int turniDaSaltare;
     private Arma armaEquippaggiata;
     // private Armatura armaturaEquippaggiata;
     private String abilitàSpeciale;
+
     private int portafoglioPersonaggio;
 
     public Personaggio(String abilitàSpeciale, Arma armaEquippaggiata, int difesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, boolean protetto, int puntiMana, int puntiVita, String statoPersonaggio, int turniAvvelenato, int turniCongelato, int turniStordito, int turnoProtetto, Zaino zaino, int portafoglioPersonaggio) {
@@ -42,9 +44,10 @@ public class Personaggio {
         this.puntiVita = puntiVita;
         this.statoPersonaggio = statoPersonaggio;
         this.turniAvvelenato = turniAvvelenato;
-        this.turniCongelato = turniCongelato;
+        this.disarmato = disarmato;
         this.turniStordito = turniStordito;
         this.turnoProtetto = turnoProtetto;
+        this.furto = furto;
         this.zaino = zaino;
         this.portafoglioPersonaggio = portafoglioPersonaggio;
     }
@@ -144,14 +147,21 @@ public class Personaggio {
     public void setTurniAvvelenato(int turniAvvelenato) {
         this.turniAvvelenato = turniAvvelenato;
     }
-
-    public int getTurniCongelato() {
-        return turniCongelato;
+    public boolean isDisarmato() {
+        return disarmato;
+    }
+    public void setDisarmato(boolean disarmato) {
+        this.disarmato = disarmato;
+    }
+    public int getFurto() {
+        return furto;
+    }
+    public void setFurto(int furto) {
+        this.furto = furto;
     }
 
-    public void setTurniCongelato(int turniCongelato) {
-        this.turniCongelato = turniCongelato;
-    }
+
+   
 
     public int getTurniStordito() {
         return turniStordito;
@@ -254,17 +264,18 @@ public class Personaggio {
     // protezione attiva: annulla danno
     if (this.turnoProtetto > 0) return 0;
 
-    int dannoNetto = danno - this.difesa;
-    if (dannoNetto <= 0) dannoNetto = 1;
 
-    this.puntiVita -= dannoNetto;
-    return dannoNetto;
+    this.puntiVita -= danno;
+    return danno;
 }
 
     public Arma getArmaEquippaggiata() {
         return armaEquippaggiata;
     }
 
+    public void setArmaEquippaggiata(Arma armaEquippaggiata) {
+        this.armaEquippaggiata = armaEquippaggiata;
+    }
     public boolean puoRaccogliere(Arma.TipoArma tipo) {
 
         return true;
