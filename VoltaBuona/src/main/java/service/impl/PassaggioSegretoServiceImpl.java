@@ -7,6 +7,7 @@ import domain.Evento;
 import domain.PassaggioSegreto;
 import domain.Personaggio;
 import domain.Stanza;
+import service.Direzione;
 import service.EventoService;
 
 public class PassaggioSegretoServiceImpl implements EventoService {
@@ -26,8 +27,7 @@ public class PassaggioSegretoServiceImpl implements EventoService {
 
         if (ps.isScoperto()) {
             System.out.println("Hai già scoperto un passaggio segreto qui.");
-            return false;
-        }
+        } else{
 
         System.out.println("Hai trovato un possibile passaggio segreto...");
 
@@ -66,7 +66,7 @@ public class PassaggioSegretoServiceImpl implements EventoService {
             ps.setScoperto(true);
             System.out.println("Hai scoperto un passaggio segreto!");
         }
-
+    }
         // Offri al giocatore la possibilità di spostarsi e esplorare immediatamente
         if (stanzaCorrente != null && stanzaCorrente.getStanzaAdiacente() != null && !stanzaCorrente.getStanzaAdiacente().isEmpty()) {
 
@@ -90,7 +90,7 @@ public class PassaggioSegretoServiceImpl implements EventoService {
                     System.out.println("\nVuoi muoverti in una delle stanze adiacenti adesso?");
                     System.out.println("0) Annulla");
                     stanzaCorrente.getStanzaAdiacente().forEach((chiave, s) -> {
-                        if (s != null && s != stanzaCorrente && s.isBloccata()) {
+                        if (s != null && s != stanzaCorrente) {
                             String stato = (s.isBloccata() ? " [BLOCCATA]" : "");
                             System.out.println(chiave + " " + s.getId() + stato);
                         }
@@ -106,8 +106,32 @@ public class PassaggioSegretoServiceImpl implements EventoService {
                         return false;
                     }
 
+                    Direzione dir;
+                    try {
+                        dir = Direzione.valueOf(sceltaKey);
+                    } catch (IllegalArgumentException ex) {
+                        System.out.println("Direzione non valida. Nessuno spostamento effettuato.");
+                        return false;
+                    }
+
+                    // QUI la modifica: niente setPosizioneCorrente a mano, richiami muoviPersonaggio
+                    boolean mosso = new GiocoServiceImpl().muoviPersonaggio(personaggio, dir);
+                    if (!mosso) {
+                        System.out.println("Non riesci a muoverti verso " + dir.name() + ".");
+                        return false;
+                    }
+
+                    System.out.println("Ti sei spostato. La stanza viene esplorata:");
+                    new TurnoServiceImpl((service.PersonaggioService) null).scegliAzione(personaggio, scanner);
+                }
+            }
+            return true;
+            }
+
+            /*
+
 // lookup case-insensitive della chiave direzione
-                    Stanza destinazioneScelta = null;
+                 /*    Stanza destinazioneScelta = null;
                     for (java.util.Map.Entry<String, Stanza> en : stanzaCorrente.getStanzaAdiacente().entrySet()) {
                         String key = en.getKey();
                         Stanza s = en.getValue();
@@ -121,10 +145,11 @@ public class PassaggioSegretoServiceImpl implements EventoService {
                         System.out.println("Scelta non valida. Nessuno spostamento effettuato.");
                         return false;
                     }
+
                     if (destinazioneScelta.isBloccata()) {
-                        destinazioneScelta.sblocca();
+                      //  destinazioneScelta.sblocca();
                         System.out.println("Hai usato la chiave e hai sbloccato la stanza " + destinazioneScelta.getId() + "!");
-                    } else {
+                    }else {
                         System.out.println("La stanza " + destinazioneScelta.getId() + " è bloccata. Ti serve una chiave.");
                         return false; // non ti muovi
                     }
@@ -134,48 +159,49 @@ public class PassaggioSegretoServiceImpl implements EventoService {
                     new TurnoServiceImpl((service.PersonaggioService) null).scegliAzione(personaggio, scanner);
                 }
             }
-        }
-
-        // il passaggio segreto non consuma il turno di default
+        }*/
         return false;
-    }
-
-    @Override
-    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza
-    ) {
+}
+            // il passaggio segreto non consuma il turno di default
+            @Override
+            public void eseguiEventiInStanza
+            (Personaggio personaggio, Stanza stanza
+            
+                ) {
         for (Evento e : stanza.getListaEventiAttivi()) {
-            boolean termina = attivaEvento(personaggio, e);
-            if (termina) {
+                    boolean termina = attivaEvento(personaggio, e);
+                    if (termina) {
+                        return;
+                    }
+                }
                 return;
+            };
+
+            @Override
+            public Evento aggiungiEventoCasuale
+                
+            () {
+        int id = ID_COUNTER.getAndIncrement();
+                Stanza destinazione = null;
+                boolean rebusApertura = true;
+                boolean scoperto = false;
+
+                PassaggioSegreto passaggioSegreto = new PassaggioSegreto(destinazione, "", scoperto, id, false, false, null, "");
+
+                // serie di rebus semplici - scegli uno casuale
+                List<String[]> qa = List.of(
+                        new String[]{"L'inizio dell'eternità. La fine di ogni fine.L'inizio di un'epoca. E la fine di ogni paese.", "E"},
+                        new String[]{"Se lo alimenti vive,se gli dai da bere muore", "Fuoco"},
+                        new String[]{"Chi ha ucciso l'uomo ragno?", "non si sa"},
+                        new String[]{"Quanti giorni ci sono in una settimana?", "7"},
+                        new String[]{"Qual è il contrario di 'caldo'?", "Freddo"}
+                );
+                var rnd = java.util.concurrent.ThreadLocalRandom.current();
+                var pair = qa.get(rnd.nextInt(qa.size()));
+                passaggioSegreto.setRebusApertura(pair[0]);
+                passaggioSegreto.setRispostaRebus(pair[1]);
+
+                return passaggioSegreto;
             }
         }
-        return;
-    }
-
-    ;
-
-        @Override
-    public Evento aggiungiEventoCasuale() {
-        int id = ID_COUNTER.getAndIncrement();
-        Stanza destinazione = null;
-        boolean rebusApertura = true;
-        boolean scoperto = false;
-
-        PassaggioSegreto passaggioSegreto = new PassaggioSegreto(destinazione, "", scoperto, id, false, false, null, "");
-
-        // serie di rebus semplici - scegli uno casuale
-        List<String[]> qa = List.of(
-                new String[]{"L'inizio dell'eternità. La fine di ogni fine.L'inizio di un'epoca. E la fine di ogni paese.", "E"},
-                new String[]{"Se lo alimenti vive,se gli dai da bere muore", "Fuoco"},
-                new String[]{"Chi ha ucciso l'uomo ragno?", "non si sa"},
-                new String[]{"Quanti giorni ci sono in una settimana?", "7"},
-                new String[]{"Qual è il contrario di 'caldo'?", "Freddo"}
-        );
-        var rnd = java.util.concurrent.ThreadLocalRandom.current();
-        var pair = qa.get(rnd.nextInt(qa.size()));
-        passaggioSegreto.setRebusApertura(pair[0]);
-        passaggioSegreto.setRispostaRebus(pair[1]);
-
-        return passaggioSegreto;
-    }
-}
+    

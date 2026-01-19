@@ -16,7 +16,6 @@ import service.GiocatoreService;
 import service.GiocoService;
 import service.TurnoService;
 
-
 public class GiocoServiceImpl implements GiocoService {
 
     private List<Giocatore> giocatori;
@@ -85,30 +84,11 @@ public class GiocoServiceImpl implements GiocoService {
         }
 
         Stanza destinazione = corrente.getStanzaAdiacente().get(direzione.name());
-        
-    
+
         if (destinazione == null) {
             System.out.println("Non esiste una direzione/varco chiamato: " + direzione.name());
             return false;
         }
-       if (destinazione.getListaEventiAttivi() != null) {
-    List<Trappola> trappole = new ArrayList<>();
-    for (Evento e : new ArrayList<>(destinazione.getListaEventiAttivi())) {
-        if (e instanceof Trappola t) {
-            trappole.add(t);
-        }
-    }
-    if (!trappole.isEmpty()) {
-        var rnd = java.util.concurrent.ThreadLocalRandom.current();
-        Trappola scelta = trappole.get(rnd.nextInt(trappole.size()));
-        boolean consumaTurno = new TrappolaServiceImpl().attivaEvento(personaggio, scelta);
-        if (consumaTurno) {
-            System.out.println("La trappola ha attivato un effetto che consuma il turno.");
-        }
-    }
-}
-
-
         // controllo stanza bloccata come nel metodo esistente
         if (destinazione.isBloccata()) {
             domain.Chiave richiesta = destinazione.getChiaveRichiesta();
@@ -137,7 +117,6 @@ public class GiocoServiceImpl implements GiocoService {
                 return false;
             }
         }
-
         if (corrente.getListaPersonaggi() != null) {
             corrente.getListaPersonaggi().remove(personaggio);
         }
@@ -148,10 +127,69 @@ public class GiocoServiceImpl implements GiocoService {
         personaggio.setPosizioneCorrente(destinazione);
         destinazione.setStatoStanza(true);
 
+        if (destinazione.getListaEventiAttivi() != null) {
+            List<Trappola> trappole = new ArrayList<>();
+            for (Evento e : new ArrayList<>(destinazione.getListaEventiAttivi())) {
+                if (e instanceof Trappola t) {
+                    trappole.add(t);
+                }
+            }
+            if (!trappole.isEmpty()) {
+                var rnd = java.util.concurrent.ThreadLocalRandom.current();
+                Trappola scelta = trappole.get(rnd.nextInt(trappole.size()));
+                boolean consumaTurno = new TrappolaServiceImpl().attivaEvento(personaggio, scelta);
+                if (consumaTurno) {
+                    System.out.println("La trappola ha attivato un effetto che consuma il turno.");
+                }
+            }
+
+        }
         return true;
     }
 
-    /*  public boolean muoviPersonaggio(Personaggio personaggio, Direzione direzione) {
+    // controllo stanza bloccata come nel metodo esistente
+    /*  if (destinazione.isBloccata()) {
+            domain.Chiave richiesta = destinazione.getChiaveRichiesta();
+            if (richiesta == null) {
+                System.out.println("La stanza in " + direzione.name() + " è bloccata ma non ha chiave associata.");
+                return false;
+            }
+            System.out.println("La stanza in " + direzione.name() + " è bloccata. Chiave richiesta: id="
+                    + richiesta.getId() + " nome=" + richiesta.getNome());
+
+            Zaino zaino = personaggio.getZaino();
+            boolean trovato = false;
+            if (zaino != null && zaino.getListaOggetti() != null) {
+                for (Oggetto o : new ArrayList<>(zaino.getListaOggetti())) {
+                    if (o instanceof domain.Chiave && ((domain.Chiave) o).getId() == richiesta.getId()) {
+                        System.out.println("Hai la chiave richiesta (" + o.getNome() + "). Sblocco la stanza e consumo la chiave.");
+                        destinazione.sblocca();
+                        zaino.rimuoviOggettoDaZaino(o);
+                        trovato = true;
+                        break;
+                    }
+                }
+            }
+            if (!trovato) {
+                System.out.println("Non possiedi la chiave richiesta nello zaino. Impossibile entrare.");
+                return false;
+            }
+        }*/
+
+ /*  if (corrente.getListaPersonaggi() != null) {
+            corrente.getListaPersonaggi().remove(personaggio);
+        }
+        if (destinazione.getListaPersonaggi() != null) {
+            destinazione.getListaPersonaggi().add(personaggio);
+        }
+
+        personaggio.setPosizioneCorrente(destinazione);
+        destinazione.setStatoStanza(true);
+
+        return true;
+    }*/
+
+ /*  public boolean muoviPersonaggio(Personaggio personaggio, Direzione direzione) {
         if (personaggio == null) {
             return false;
         }
@@ -219,7 +257,6 @@ public class GiocoServiceImpl implements GiocoService {
 
         return true;
     }*/
-
     @Override
     public Dungeon getDungeon() {
         return null;

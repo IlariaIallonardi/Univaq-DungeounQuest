@@ -182,23 +182,25 @@ public class TurnoServiceImpl implements TurnoService {
         if (personaggio.getTurniAvvelenato() > 0) {
             personaggio.setTurniAvvelenato(personaggio.getTurniAvvelenato() - 1);
             System.out.println("Sarai avvelenato per i prossimi " + personaggio.getTurniAvvelenato());
-
+            System.out.println(personaggio.getPuntiVita());
             if (personaggio.getTurniAvvelenato() == 0 && "AVVELENATO".equalsIgnoreCase(personaggio.getStatoPersonaggio())) {
                 personaggio.setStatoPersonaggio("NORMALE");
                 System.out.println("Il veleno ha perso effetto su " + personaggio.getNomePersonaggio());
             }
         }
+        System.out.println(personaggio.getPuntiVita());
 
-        // 3 STORDIMENTO: penalizza per N turni (es. non può attaccare)
+        //  STORDIMENTO: penalizza per N turni (es. non può attaccare)
         if (personaggio.getTurniStordito() > 0) {
             personaggio.setTurniStordito(personaggio.getTurniStordito() - 1);
             System.out.println(personaggio.getNomePersonaggio() + " è ancora stordito ("
                     + personaggio.getTurniStordito() + " turni rimanenti)");
-
+             System.out.println(personaggio.getDifesa());
             if (personaggio.getTurniStordito() == 0 && "STORDITO".equalsIgnoreCase(personaggio.getStatoPersonaggio())) {
                 personaggio.setStatoPersonaggio("NORMALE");
                 System.out.println(personaggio.getNomePersonaggio() + " non è più stordito.");
             }
+            System.out.println(personaggio.getDifesa());
         }
     }
 

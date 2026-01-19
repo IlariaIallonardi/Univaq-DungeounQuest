@@ -508,6 +508,10 @@ public class Personaggio {
             }
             return false;
         }
+        System.out.println("[DEBUG] raccogliereOggetto: person=" + this.getClass().getSimpleName() + " nome=" + this.getNomePersonaggio());
+       if (oggetto instanceof Arma) {
+        System.out.println("[DEBUG] arma nome=" + oggetto.getNome() + " tipo=" + ((Arma) oggetto).getTipoArma());
+        }
 
         // ARMA: controllo se può raccoglierla
         if (oggetto instanceof Arma) {

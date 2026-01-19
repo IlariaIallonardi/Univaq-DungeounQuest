@@ -18,6 +18,7 @@ import service.StanzaFactory;
 import service.impl.ArciereServiceImpl;
 import service.impl.GiocoServiceImpl;
 import service.impl.GuerrieroServiceImpl;
+import service.impl.MagoServiceImpl;
 import service.impl.PaladinoServiceImpl;
 import service.impl.PassaggioSegretoServiceImpl;
 import service.impl.TurnoServiceImpl;
@@ -249,7 +250,7 @@ public class Main {
                 p = new GuerrieroServiceImpl().creaPersonaggio(nome, null);
                 break;
             case 2:
-                p = new ArciereServiceImpl().creaPersonaggio(nome, null);
+                p = new MagoServiceImpl().creaPersonaggio(nome, null);
                 break;
             case 3:
                 p = new ArciereServiceImpl().creaPersonaggio(nome, null);
