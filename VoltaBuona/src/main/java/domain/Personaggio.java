@@ -268,6 +268,12 @@ public class Personaggio {
         }
 
         this.puntiVita -= danno;
+
+        // se gli HP scendono a zero o meno, aggiorna stato e azzera gli HP
+        if (this.èMorto(this)) {
+            this.statoPersonaggio = "MORTO";
+        }
+
         return danno;
     }
 
@@ -280,10 +286,14 @@ public class Personaggio {
         if (this.turnoProtetto > 0) {
             return 0;
         }
-
+        if(this.difesa<=0){
+            this.difesa=0;
+            return this.subisciDanno(dannoDifesa);
+        }else{
         this.difesa -= dannoDifesa;
         return difesa;
-    }
+
+    }}
 
     public Arma getArmaEquippaggiata() {
         return armaEquippaggiata;

@@ -13,7 +13,7 @@ import service.PersonaIncontrataService;
 
 public class MostroServiceImpl implements PersonaIncontrataService {
 
-    private static final AtomicInteger ID_COUNTER = new AtomicInteger(1);
+    private static final AtomicInteger ID_COUNTER = new AtomicInteger(200);
 
     private CombattimentoService combattimentoService;
 

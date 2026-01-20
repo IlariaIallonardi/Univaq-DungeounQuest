@@ -129,6 +129,10 @@ public class TurnoServiceImpl implements TurnoService {
             // Inizio turno: gestioni generali del personaggio (es. consumo protezione)
             p.onTurnStart();
 
+            // Stampa informazioni dello stato all'inizio del turno
+            System.out.println("\n===== TURNO DI " + p.getNomePersonaggio() + " =====");
+            System.out.println("Punti vita: " + p.getPuntiVita() + " | Difesa: " + p.getDifesa());
+
             // Se il personaggio deve saltare il turno, consumiamo il salto e passiamo oltre
             if (p.consumeSaltoTurno()) {
                 System.out.println(p.getNomePersonaggio() + " salta questo turno.");
@@ -180,28 +184,15 @@ public class TurnoServiceImpl implements TurnoService {
             return;
         }
         if (personaggio.getTurniAvvelenato() > 0) {
-            personaggio.setTurniAvvelenato(personaggio.getTurniAvvelenato() - 1);
-            System.out.println("Sarai avvelenato per i prossimi " + personaggio.getTurniAvvelenato());
-            System.out.println(personaggio.getPuntiVita());
-            if (personaggio.getTurniAvvelenato() == 0 && "AVVELENATO".equalsIgnoreCase(personaggio.getStatoPersonaggio())) {
-                personaggio.setStatoPersonaggio("NORMALE");
-                System.out.println("Il veleno ha perso effetto su " + personaggio.getNomePersonaggio());
-            }
+            // delega l'applicazione del danno periodico alle trappole
+            service.impl.TrappolaServiceImpl.applicaEffettiFineTurno(personaggio);
         }
-        System.out.println(personaggio.getPuntiVita());
 
         //  STORDIMENTO: penalizza per N turni (es. non può attaccare)
         if (personaggio.getTurniStordito() > 0) {
-            personaggio.setTurniStordito(personaggio.getTurniStordito() - 1);
-            System.out.println(personaggio.getNomePersonaggio() + " è ancora stordito ("
-                    + personaggio.getTurniStordito() + " turni rimanenti)");
-             System.out.println(personaggio.getDifesa());
-            if (personaggio.getTurniStordito() == 0 && "STORDITO".equalsIgnoreCase(personaggio.getStatoPersonaggio())) {
-                personaggio.setStatoPersonaggio("NORMALE");
-                System.out.println(personaggio.getNomePersonaggio() + " non è più stordito.");
-            }
-            System.out.println(personaggio.getDifesa());
+            service.impl.TrappolaServiceImpl.applicaEffettiFineTurno(personaggio);
         }
+        
     }
 
     // N.B. mantenuta solo l'implementazione che accetta uno Scanner esterno

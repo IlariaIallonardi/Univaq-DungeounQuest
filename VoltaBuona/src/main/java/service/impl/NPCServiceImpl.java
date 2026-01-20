@@ -17,7 +17,7 @@ import service.PersonaIncontrataService;
 
 public class NPCServiceImpl implements PersonaIncontrataService {
 
-    private static final AtomicInteger ID_COUNTER = new AtomicInteger(1);
+    private static final AtomicInteger ID_COUNTER = new AtomicInteger(300);
     private final Scanner scanner = new Scanner(System.in);
 
     private boolean isNomeVenditore(String nome) {

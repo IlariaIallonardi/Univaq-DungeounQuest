@@ -137,85 +137,9 @@ public class Trappola extends Evento {
             return true;
         }
 
-        System.out.println(" Disinnesco fallito! La trappola si attiva!");
+        System.out.println("Disinnesco fallito! La trappola si attiva!\nRicorda se sei avvelenato o stordito e decidi di usare un passaggio segreto\ngli effetti saranno accelerati!\n");
         return false;
     }
 
-    //main funzionante per testare trappola
-    /*public static void main(String[] args) {
-
-        // 1️⃣ Creazione personaggio di test
-        Personaggio p = new Personaggio(0, 0, 0, 0, 0, null, null, 0, 0, null, null);
-        p.setNomePersonaggio("Eroe");
-        p.setPuntiVita(40);
-        p.setStatoPersonaggio("NORMALE");
-
-        System.out.println("=== TEST TRAPPOLA ===");
-        System.out.println("Personaggio: " + p.getNomePersonaggio());
-        System.out.println("HP iniziali: " + p.getPuntiVita());
-        System.out.println();
-
-        // 2️⃣ Creazione Effetto (non usato direttamente nel tuo metodo)
-        Effetto effetto = new Effetto(null, null, 0);  // Se usi costruttori diversi, dimmelo e lo correggo
-
-        // 3️⃣ Creazione Trappola
-        Trappola t = new Trappola(
-                1, // id
-                true, // inizioEvento
-                false, // fineEvento
-                "Trappola nascosta", // descrizione
-                10, // danno
-                effetto // effetto
-        );
-
-        // 4️⃣ Test: tentativi multipli per vedere esiti diversi
-        boolean disinnescata = false;
-
-        for (int i = 1; i <= 5 && !disinnescata; i++) {
-
-            System.out.println("\n--- Tentativo " + i + " di disinnesco ---");
-
-            boolean disinnescata1 = t.checkDiDisinnesco(p);
-
-            if (!disinnescata1) {
-                System.out.println("⚠ ATTIVAZIONE TRAPPOLA!");
-                attiva(p);
-            } else {
-                disinnescata = true;
-            }
-
-            System.out.println("HP attuali: " + p.getPuntiVita());
-            System.out.println("Stato attuale: " + p.getStatoPersonaggio());
-        }
-
-        System.out.println("\n=== TEST COMPLETATO ===");
-    }
-
-    /* 
-    public static void main(String[] args) {
-        // crea Personaggio con il costruttore che usi nel progetto
-        Personaggio p = new Personaggio(0, 34, 0, 0, 1, "EroeTest", null, 10, 40, "NORMALE", null);
-
-        System.out.println("HP iniziali: " + p.getPuntiVita());
-        System.out.println("Stato iniziale: " + p.getStatoPersonaggio());
-        System.out.println();
-
-        // trappola di prova con effetto AVVELENAMENTO
-        Effetto effetto = new Effetto(Effetto.TipoEffetto.AVVELENAMENTO, "Veleno", 3);
-        Trappola tr = new Trappola(1, true, false, "Trappola di prova", 10, effetto);
-
-        // tentativo di disinnesco e possibile attivazione
-        boolean disinnescata = tr.checkDiDisinnesco(p);
-        if (!disinnescata) {
-            System.out.println("➡ La trappola SI ATTIVA!");
-            tr.attiva(p);
-        } else {
-            System.out.println("➡ Trappola disinnescata.");
-        }
-
-        System.out.println();
-        System.out.println("HP finali: " + p.getPuntiVita());
-        System.out.println("Stato finale: " + p.getStatoPersonaggio());
-    } */
-   
+    
 }

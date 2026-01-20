@@ -2,6 +2,7 @@ package service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import domain.Dungeon;
 import domain.Evento;
@@ -135,9 +136,20 @@ public class GiocoServiceImpl implements GiocoService {
                 }
             }
             if (!trappole.isEmpty()) {
+                // debug: elenco trappole trovate
+                StringBuilder sb = new StringBuilder();
+                for (Trappola t : trappole) {
+                    sb.append("[").append(t.getId()).append(":").append(t.getDescrizione()).append("]");
+                }
+                System.out.println("[DEBUG] Entrata stanza: " + destinazione + " - Personaggio: " + (personaggio != null ? personaggio.getNomePersonaggio() : "<null>") );
+                System.out.println("[DEBUG] Trappole presenti: " + trappole.size() + " -> " + sb.toString());
+
                 var rnd = java.util.concurrent.ThreadLocalRandom.current();
                 Trappola scelta = trappole.get(rnd.nextInt(trappole.size()));
+                System.out.println("[DEBUG] Trappola scelta id=" + scelta.getId() + " descrizione=" + scelta.getDescrizione());
                 boolean consumaTurno = new TrappolaServiceImpl().attivaEvento(personaggio, scelta);
+                System.out.println("[DEBUG] attivaEvento -> consumaTurno=" + consumaTurno + " per trappolaId=" + scelta.getId());
+                System.out.println("[DEBUG] Stato personaggio dopo trappola: nome=" + (personaggio != null ? personaggio.getNomePersonaggio() : "<null>") + " | HP=" + (personaggio != null ? personaggio.getPuntiVita() : 0) + " | stato=" + (personaggio != null ? personaggio.getStatoPersonaggio() : "<null>"));
                 if (consumaTurno) {
                     System.out.println("La trappola ha attivato un effetto che consuma il turno.");
                 }

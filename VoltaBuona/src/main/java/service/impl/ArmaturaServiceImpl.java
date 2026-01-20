@@ -9,7 +9,7 @@ import domain.Stanza;
 import service.OggettoService;
 
 public class ArmaturaServiceImpl implements   OggettoService {
-    private static final AtomicInteger ID_COUNTER = new AtomicInteger(1);
+    private static final AtomicInteger ID_COUNTER = new AtomicInteger(100);
    @Override
       public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza){
         if (stanza == null || oggetto == null) return;
