@@ -171,36 +171,10 @@ public class GuerrieroServiceImpl implements PersonaggioService {
         " (HP rimasti: " + mostro.getPuntiVitaMostro() + ")"
     );
 
-    if (mostro.getPuntiVitaMostro() <= 0) {
-        gestisciVittoria(guerriero, mostro);
-    }
 
     return dannoNetto;
 }
-    /* =======================
-       GESTIONE VITTORIA
-       ======================= */
-
-    private void gestisciVittoria(Guerriero guerriero, Mostro mostro) {
-
-        System.out.println(
-                ANSI.BRIGHT_GREEN +
-                mostro.getNomeMostro() + " è stato sconfitto!" +
-                ANSI.RESET
-        );
-
-        guerriero.setEsperienza(guerriero.getEsperienza() + xpVittoria);
-
-        if (guerriero.getEsperienza() >= xpLivello) {
-            guerriero.setLivello(guerriero.getLivello() + 1);
-            guerriero.setEsperienza(0);
-
-            System.out.println(
-                    guerriero.getNomePersonaggio() +
-                    " sale al livello " + guerriero.getLivello() + "!"
-            );
-        }
-    }
+    
 
     /* =======================
        CREAZIONE PERSONAGGIO

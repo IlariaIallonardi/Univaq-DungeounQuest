@@ -123,6 +123,7 @@ public class MagoServiceImpl implements PersonaggioService {
                 mago.getNomePersonaggio()
                 + " infligge " + dannoNetto
                 + " danni magici a " + mostro.getNomeMostro()
+                + "danno base" + dadiTotali + " + bonus " + bonusFissi + " + danno magia " + dannoPerMagia
                 + " (HP rimasti: " + mostro.getPuntiVitaMostro()
                 + ", Mana rimasto: " + mago.getPuntiMana() + ")"
         );
@@ -198,8 +199,24 @@ public class MagoServiceImpl implements PersonaggioService {
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
         Stanza stanza = null;
         Zaino zaino = new Zaino();
-        return new Mago("abilità", null, 15, 300, 0, 2,
-                nome, stanza, false, 100, 20, "normale", 0, 0, 0, 0, zaino, 0, null);
+        return new Mago("abilità", null,
+                15,
+                90,
+                0,
+                2,
+                nome,
+                stanza, 
+                false, 
+                50, 
+                20, 
+                "normale", 
+                0, 
+                0,
+                 0,
+                  0,
+                   zaino,
+                    0, 
+                    null);
     }
 
     @Override

@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import domain.Combattimento;
 import domain.Evento;
+import domain.Mago;
 import domain.Mostro;
 import domain.Personaggio;
 import domain.Stanza;
@@ -61,6 +62,11 @@ public class CombattimentoServiceImpl implements CombattimentoService {
         }
 
         System.out.println("\nInizia il combattimento: " + personaggio.getNomePersonaggio() + " VS " + mostro.getNomeMostro());
+        // stampa XP del personaggio prima del combattimento
+        try {
+            System.out.println("Esperienza prima combattimento (" + personaggio.getNomePersonaggio() + "): " + personaggio.getEsperienza());
+        } catch (Exception ignored) {
+        }
 
         // se il Mostro è un Evento (tipico quando è stato creato come evento in stanza),
         // riusalo invece di crearne uno nuovo per evitare mismatch di id.
@@ -158,6 +164,38 @@ public class CombattimentoServiceImpl implements CombattimentoService {
 
         if (scelta == 1) {
             System.out.println("Hai scelto di attaccare.");
+
+            // Se il personaggio è un Mago, chiedi quale magia usare
+            if (personaggio instanceof Mago mago ) {
+                System.out.println("Scegli la magia da lanciare:");
+                Mago.TipoMagiaSacra[] magie = Mago.TipoMagiaSacra.values();
+                for (int i = 0; i < magie.length; i++) {
+                    System.out.println((i + 1) + ") " + magie[i] + " (costo mana: " + magie[i].getCostoMana() + ")");
+                }
+                System.out.println("0) Annulla attacco");
+
+                String line = scanner.nextLine().trim();
+                int sceltaMagia;
+                try {
+                    sceltaMagia = Integer.parseInt(line);
+                } catch (NumberFormatException e) {
+                    System.out.println("Scelta non valida. Attacco annullato.");
+                    return;
+                }
+
+                if (sceltaMagia == 0) {
+                    System.out.println("Attacco annullato.");
+                    return;
+                }
+
+                if (sceltaMagia < 1 || sceltaMagia > magie.length) {
+                    System.out.println("Scelta magia non valida. Attacco annullato.");
+                    return;
+                }
+
+                mago.setMagiaSelezionata(magie[sceltaMagia - 1]);
+            }
+
             applicaECalcolaDanno(combattimento, personaggio);
         } else if (scelta == 2) {
 
@@ -217,7 +255,7 @@ public boolean terminaCombattimento(Combattimento combattimento, Object vincitor
         }
 
         int danno = 0;
-
+        
         if (attaccante instanceof Mostro) {
             danno = mostroService.attaccoDelMostro(mostro, personaggio);
              if (personaggio.getPuntiVita() <= 0) {
@@ -231,20 +269,32 @@ public boolean terminaCombattimento(Combattimento combattimento, Object vincitor
             PersonaggioService personaggioService = getServicePerPersonaggio(personaggioAttaccante);
             danno = personaggioService.attacca(personaggioAttaccante, mostro, combattimento);
         
+            System.out.println("[DEBUG] Esperienza prima vittoria (" + personaggioAttaccante.getNomePersonaggio() + "): "+"esperienza:" + personaggioAttaccante.getEsperienza()+
+            " "+"livello:"+ personaggioAttaccante.getLivello()+" "+"punti vita:"+personaggioAttaccante.getPuntiVita()+" "+"punti mana:"+personaggioAttaccante.getPuntiMana()+" "+"difesa:"+personaggioAttaccante.getDifesa()+" "+"attacco:"+personaggioAttaccante.getAttacco());
+            System.out.println("difesa del mostro: " + mostro.getDifesaMostro());
             if (mostro.getPuntiVitaMostro() <= 0) {
-                terminaCombattimento(combattimento, personaggioAttaccante);
-                aggiornaStatistiche(combattimento, danno);
+               // terminaCombattimento(combattimento, personaggioAttaccante);
+                //aggiornaStatistiche(combattimento, danno);
+                // assegna XP al vincitore: mostra prima e dopo
+            
+    
                
+                personaggioAttaccante.aggiungiEsperienza();
+            
+                   System.out.println("[DEBUG] Esperienza dopo vittoria (" + personaggioAttaccante.getNomePersonaggio() + "): " + personaggioAttaccante.getEsperienza()+
+            " "+"livello:"+ personaggioAttaccante.getLivello()+" "+"punti vita:"+personaggioAttaccante.getPuntiVita()+" "+"punti mana:"+personaggioAttaccante.getPuntiMana()+" "+"difesa:"+personaggioAttaccante.getDifesa()+" "+"attacco:"+personaggioAttaccante.getAttacco());
+            
+                 terminaCombattimento(combattimento, personaggioAttaccante);
+                aggiornaStatistiche(combattimento, danno);
             }
             return danno;
         }
-       /*  if(mostro.getPuntiVitaMostro()<=0 || personaggio.getPuntiVita()<=0){
-            terminaCombattimento(combattimento, mostro.getPuntiVitaMostro()<=0 ? personaggio : mostro);
-             aggiornaStatistiche(combattimento, danno);*/
+       
         
 
         return 0;
     }
+
 
     // aggiornare personaggi e mostri vedere in seguito
     public void aggiornaStatistiche(Combattimento c, int danno) {
