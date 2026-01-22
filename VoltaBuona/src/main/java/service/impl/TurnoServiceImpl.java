@@ -192,7 +192,7 @@ public class TurnoServiceImpl implements TurnoService {
         if (personaggio.getTurniStordito() > 0) {
             service.impl.TrappolaServiceImpl.applicaEffettiFineTurno(personaggio);
         }
-        
+
     }
 
     // N.B. mantenuta solo l'implementazione che accetta uno Scanner esterno
@@ -423,52 +423,6 @@ public class TurnoServiceImpl implements TurnoService {
         }
     }
 
-    // Movimento gestito tramite input
-    /*public void gestisciMovimento(Personaggio personaggio, Scanner scanner) {
-
-    Stanza stanza = personaggio.getPosizioneCorrente();
-    if (stanza == null) {
-        System.out.println("Posizione del personaggio non definita. Saltando movimento.");
-        return;
-    }
-
-    Map<String, Stanza> adiacenti = stanza.getStanzaAdiacente();
-    if (adiacenti == null || adiacenti.isEmpty()) {
-        System.out.println("Nessuna direzione disponibile da questa stanza.");
-        return;
-    }
-
-    System.out.println("Direzioni disponibili:");
-    for (Map.Entry<String, Stanza> entry : adiacenti.entrySet()) {
-        String nomeDir = entry.getKey(); // es. "NORD"
-        Stanza s = entry.getValue();
-        String abbreviazione = nomeDir.length() > 0 ? nomeDir.substring(0, 1) : nomeDir;
-        System.out.println(" - " + abbreviazione + " / " + nomeDir + " -> stanza id " + (s != null ? s.getId() : "null"));
-    }
-
-    System.out.print("Scegli una direzione (lettera o nome): ");
-    String input = scanner.nextLine().trim().toUpperCase();
-
-    Direzione direzione = Direzione.fromString(input);
-    if (direzione == null) {
-        System.out.println("Direzione non valida.");
-        return;
-    }
-
-    String dirKey = direzione.name(); // "NORD","SUD",...
-    if (!adiacenti.containsKey(dirKey)) {
-        System.out.println("Non puoi andare in quella direzione da qui.");
-        return;
-    }
-
-    boolean mosso = giocoService.muoviPersonaggio(personaggio, direzione);
-
-    if (mosso) {
-        System.out.println("Ti sei mosso verso " + direzione);
-    } else {
-        System.out.println("Non puoi muoverti in quella direzione.");
-    }
-}*/
     public void gestisciMovimento(Personaggio personaggio, Scanner scanner) {
 
         Stanza stanza = personaggio.getPosizioneCorrente();
@@ -522,26 +476,6 @@ public class TurnoServiceImpl implements TurnoService {
         }
     }
 
-    // 🔧 Metodo: esegue UN evento scelto
-    /*    public void eseguiEvento(Personaggio personaggio, Stanza stanza, List<Evento> eventi, Scanner scanner) {
-
-        System.out.println("Scegli l'evento da eseguire:");
-        int index = Integer.parseInt(scanner.nextLine()) - 1;
-
-        if (index < 0 || index >= eventi.size()) {
-            System.out.println("Indice non valido.");
-            return;
-        }
-
-        Evento e = eventi.get(index);
-        if (e instanceof Mostro mostro) {
-            System.out.println("Stai per affrontare il mostro: " + mostro.getNomeMostro());
-            gestisciUsoOggettoDaZaino(personaggio, scanner);
-            combattimentoService.iniziaCombattimento(personaggio, mostro, stanza);
-        }
-        eventoService.eseguiEventiInStanza(personaggio, stanza);
-        eventi.remove(index);
-    } */
     //  Metodo: raccoglie UN oggetto scelto
     @Override
     public void raccogliUnOggetto(Personaggio personaggio, Stanza stanza, List<Oggetto> oggetti, Scanner scanner) {

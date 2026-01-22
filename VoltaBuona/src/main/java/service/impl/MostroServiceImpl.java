@@ -57,17 +57,7 @@ public class MostroServiceImpl implements PersonaIncontrataService {
     /*   public int attaccoDelMostro(Mostro mostro, Personaggio bersaglio,int dannoBase) {
 
 
-        Mostro.TipoAttaccoMostro tipoAttacco = mostro.getTipoAttaccoMostro();
-
-         dannoBase = dannoBase(mostro, bersaglio);
-        int danno = calcolaDannoPerTipo(tipoAttacco, dannoBase,bersaglio);
-
-        System.out.println(mostro.getNomeMostro() + " usa " + tipoAttacco +
-                " infliggendo " + danno + " danni a " + bersaglio.getNomePersonaggio());
-
-        int dannoApplicato = bersaglio.subisciDanno(danno);
-        return dannoApplicato;  
-    }*/
+       
     /**
      * Calcola solo il danno aggiuntivo in base al tipo di attacco.
      * L'applicazione degli effetti sul bersaglio è separata.
@@ -120,9 +110,9 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
         int bonusAttacco = Math.max(0, mostro.getDannoMostro() / 2);
         int totale = tiro + bonusAttacco;
-        int classeArmatura = bersaglio.getDifesa();
+        int difesaP = bersaglio.getDifesa();
 
-        System.out.println(mostro.getNomeMostro() + " tiro attacco: " + tiro + " + bonus " + bonusAttacco + " = " + totale + " (CA bersaglio: " + classeArmatura + ")");
+        System.out.println(mostro.getNomeMostro() + " tiro attacco: " + tiro + " + bonus " + bonusAttacco + " = " + totale + " (CA bersaglio: " + difesaP + ")");
 
         if (tiro == 1) {
             System.out.println("Tiro 1: fallimento critico del mostro!");
@@ -131,7 +121,7 @@ public class MostroServiceImpl implements PersonaIncontrataService {
 
         boolean critico = (tiro == 20);
 
-        if (totale < classeArmatura && !critico) {
+        if (totale < difesaP && !critico) {
             System.out.println(mostro.getNomeMostro() + " manca il bersaglio.");
             return 0;
         }
