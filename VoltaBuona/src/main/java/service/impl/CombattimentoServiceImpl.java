@@ -278,7 +278,7 @@ public boolean terminaCombattimento(Combattimento combattimento, Object vincitor
                 // assegna XP al vincitore: mostra prima e dopo
             
     
-               
+               //l'esperienza e i danni del mostro crescono quando muore il mostro
                 personaggioAttaccante.aggiungiEsperienza();
             
                    System.out.println("[DEBUG] Esperienza dopo vittoria (" + personaggioAttaccante.getNomePersonaggio() + "): " + personaggioAttaccante.getEsperienza()+
