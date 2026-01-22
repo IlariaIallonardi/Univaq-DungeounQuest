@@ -10,6 +10,7 @@ import domain.Personaggio;
 import domain.Stanza;
 import service.CombattimentoService;
 import service.PersonaIncontrataService;
+import service.EffettoService;
 
 public class MostroServiceImpl implements PersonaIncontrataService {
 
@@ -17,9 +18,7 @@ public class MostroServiceImpl implements PersonaIncontrataService {
 
     private CombattimentoService combattimentoService;
 
-    private static final String STATO_STORDITO = "stordito";
-    private static final String STATO_IMMOBILIZZATO = "immobilizzato";
-    private static final String STATO_AVVELENATO = "avvelenato";
+   
 
     public MostroServiceImpl(CombattimentoService combattimentoService) {
         this.combattimentoService = combattimentoService;
@@ -40,58 +39,34 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         int difesaPersonaggio = personaggio.getDifesa();
         return Math.max(1, attaccoMostro - difesaPersonaggio);
     }
-
+  public EffettoService effettoService;
     public MostroServiceImpl() {
         // crea un CombattimentoServiceImpl che usa questa istanza di MostroServiceImpl
         // in modo da evitare NPE quando il servizio viene costruito con il costruttore di default
         this.combattimentoService = new CombattimentoServiceImpl(this, null, new TurnoServiceImpl());
+        this.effettoService = new EffettoService();
     }
 
     public void setCombattimentoService(CombattimentoService combattimentoService) {
         this.combattimentoService = combattimentoService;
     }
 
-    /**
-     * Esecuzione dell'attacco del mostro sul personaggio bersaglio.
-     */
-    /*   public int attaccoDelMostro(Mostro mostro, Personaggio bersaglio,int dannoBase) {
-
-
-       
-    /**
-     * Calcola solo il danno aggiuntivo in base al tipo di attacco.
-     * L'applicazione degli effetti sul bersaglio è separata.
-     */
-    public int calcolaDannoPerTipo(Mostro.TipoAttaccoMostro tipoAttacco, int base) {
-        if (tipoAttacco == null) {
-            return base;
-        }
-        return switch (tipoAttacco) {
-            case MORSO ->
-                base + 2;
-            case RUGGITO_DI_FUOCO ->
-                base + 5;
-            case URLO_ASSORDANTE ->
-                base + 3;
-            case RAGNATELA_FURTO ->
-                base + 4;
-            case ARTIGLI_POSSENTI ->
-                base + 4;
-        };
-    }
 
     /**
      * Determina il tipo di effetto applicabile al bersaglio, se presente.
      * Restituisce null se non c'è effetto.
      */
+        //// da unire con il metodo attaccoDelMostro che si trova nel domain.Mostro
+        /// //ricordiamoci che deve essere intero il tipo di ritorno
     public Effetto.TipoEffetto effettoPerTipo(Mostro.TipoAttaccoMostro tipoAttacco) {
         if (tipoAttacco == null) {
             return null;
         }
+        
         return switch (tipoAttacco) {
             case RUGGITO_DI_FUOCO, URLO_ASSORDANTE ->
                 Effetto.TipoEffetto.STORDIMENTO;
-            case RAGNATELA_FURTO ->
+            case RAGNATELA ->
                 Effetto.TipoEffetto.FURTO;
             case ARTIGLI_POSSENTI ->
                 Effetto.TipoEffetto.AVVELENAMENTO;
@@ -127,7 +102,9 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         }
 
         int baseDanno = Math.max(1, dannoBase(mostro, bersaglio));
-        int dannoGrezzo = calcolaDannoPerTipo(tipoAttacco, baseDanno);
+
+        //ci richiamiamo il metodo che dobbiamo fare
+        int dannoGrezzo = effettoPerTipo(tipoAttacco);
 
         if (critico) {
             dannoGrezzo = Math.max(1, dannoGrezzo * 2);
@@ -137,33 +114,23 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         int dannoApplicato = bersaglio.subisciDanno(dannoGrezzo);
 
         // applica eventuale effetto (mappa su campi specifici del personaggio)
-        Effetto.TipoEffetto effetto = effettoPerTipo(tipoAttacco);
-        if (effetto != null) {
-            switch (effetto) {
-                case STORDIMENTO -> {
-                    bersaglio.setTurniStordito(2);
-                    bersaglio.setStatoPersonaggio(STATO_STORDITO);
-                }
-                case AVVELENAMENTO -> {
-                    bersaglio.setTurniAvvelenato(3);
-                    bersaglio.setStatoPersonaggio(STATO_AVVELENATO);
-                }
-                case FURTO -> {
-                    bersaglio.setStatoPersonaggio(STATO_IMMOBILIZZATO);
-                }
-                default ->
-                    bersaglio.setStatoPersonaggio(effetto.name().toLowerCase());
-            }
-            System.out.println(mostro.getNomeMostro() + " applica effetto " + effetto + " a " + bersaglio.getNomePersonaggio());
-        }
+      /*  Effetto.TipoEffetto tipoEffetto = switch (tipoAttacco) {
+    case RUGGITO_DI_FUOCO -> Effetto.TipoEffetto.STORDIMENTO;
+    case URLO_ASSORDANTE -> Effetto.TipoEffetto.STORDIMENTO;
+    case RAGNATELA-> Effetto.TipoEffetto.STORDIMENTO;
+    case MORSO -> Effetto.TipoEffetto.FURTO;
+    case ARTIGLI_POSSENTI -> Effetto.TipoEffetto.AVVELENAMENTO;
+    
+    default -> null;
+};*/
 
-        System.out.println(mostro.getNomeMostro() + " usa " + tipoAttacco
-                + " infliggendo " + dannoGrezzo + " danni a " + bersaglio.getNomePersonaggio()
-                + " (HP rimanenti: " + bersaglio.getPuntiVita() + ")");
 
-        return dannoApplicato;
-    }
+    System.out.println(mostro.getNomeMostro() + " usa " + tipoAttacco
+            + " infliggendo " + dannoGrezzo + " danni a " + bersaglio.getNomePersonaggio()
+            + " (HP rimanenti: " + bersaglio.getPuntiVita() + ")");
 
+    return dannoApplicato;
+}
     @Override
     public boolean attivaEvento(Personaggio personaggio, Evento e) {
         if (personaggio == null || e == null) {

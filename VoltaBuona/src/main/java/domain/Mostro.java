@@ -1,5 +1,7 @@
 package domain;
 
+import service.EffettoService;
+
 public class Mostro extends PersonaIncontrata {
 
     private int puntiVitaMostro;
@@ -23,7 +25,7 @@ public class Mostro extends PersonaIncontrata {
         MORSO(30),
         RUGGITO_DI_FUOCO(40),
         URLO_ASSORDANTE(45),
-        RAGNATELA_FURTO(20),
+        RAGNATELA(20),
         ARTIGLI_POSSENTI(48);
 
         private final int dannoTipoMostro;
@@ -175,7 +177,7 @@ public class Mostro extends PersonaIncontrata {
             case "Ragno Gigante" -> {
                 this.puntiVitaMostro = 15;
                 this.difesaMostro = 15;
-                this.tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA_FURTO;
+                this.tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA;
                 return 1;
             }
             case "Troll" -> {
@@ -192,18 +194,19 @@ public class Mostro extends PersonaIncontrata {
         }
 
     }
-
+  //// da mettere nel mostro service impl!!!!!!
     public void attaccoDelMostro(Personaggio personaggio) {
         Mostro mostro = this;
 
         if (mostro.getNomeMostro().equals("Spiritello")) {
             tipoAttaccoMostro = TipoAttaccoMostro.MORSO;
+             effettoService.applicaEffetto(personaggio, effetto);
         } else if (mostro.getNomeMostro().equals("Drago")) {
             tipoAttaccoMostro = TipoAttaccoMostro.RUGGITO_DI_FUOCO;
         } else if (mostro.getNomeMostro().equals("Golem")) {
             tipoAttaccoMostro = TipoAttaccoMostro.URLO_ASSORDANTE;
         } else if (mostro.getNomeMostro().equals("Ragno Gigante")) {
-            tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA_FURTO;
+            tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA;
         } else if (mostro.getNomeMostro().equals("Troll")) {
             tipoAttaccoMostro = TipoAttaccoMostro.ARTIGLI_POSSENTI;
         } else {

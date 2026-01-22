@@ -2,15 +2,14 @@ package service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import domain.Arma;
 import domain.Effetto;
 import domain.Evento;
 import domain.Personaggio;
 import domain.Stanza;
 import domain.Trappola;
+import service.EffettoService;
 import service.EventoService;
 
 public class TrappolaServiceImpl implements EventoService {
@@ -41,20 +40,20 @@ public class TrappolaServiceImpl implements EventoService {
                 System.out.println("[DEBUG] Effetto definito nella trappola: " + effettoTrappola.getTipo() + " (durata=" + effettoTrappola.getDurataTurni() + ")");
             }
 
-                scattaTrappola(trappola, personaggio, effettoTrappola);
+            scattaTrappola(trappola, personaggio, effettoTrappola);
 
-                System.out.println("[DEBUG] Stato personaggio dopo trappola -> stato=" + personaggio.getStatoPersonaggio()
+            System.out.println("[DEBUG] Stato personaggio dopo trappola -> stato=" + personaggio.getStatoPersonaggio()
                     + " | HP=" + personaggio.getPuntiVita()
                     + " | avvel=" + personaggio.getTurniAvvelenato()
                     + " | disarm=" + personaggio.isDisarmato()
                     + " | stord=" + personaggio.getTurniStordito()
                     + " | turniDaSaltare=" + personaggio.getTurniDaSaltare());
-                System.out.println("[DEBUG] Rimuovo evento trappola id=" + e.getId() + " dalla stanza id=" + (stanza != null ? stanza.getId() : -1));
-                stanza.rimuoviEvento(e);
+            System.out.println("[DEBUG] Rimuovo evento trappola id=" + e.getId() + " dalla stanza id=" + (stanza != null ? stanza.getId() : -1));
+            stanza.rimuoviEvento(e);
             return true; // consuma turno
         } else {
-                System.out.println("La trappola è stata disinnescata.");
-                System.out.println("[DEBUG] Non attivata: rimuovo evento trappola id=" + e.getId() + " dalla stanza id=" + (stanza != null ? stanza.getId() : -1));
+            System.out.println("La trappola è stata disinnescata.");
+            System.out.println("[DEBUG] Non attivata: rimuovo evento trappola id=" + e.getId() + " dalla stanza id=" + (stanza != null ? stanza.getId() : -1));
             stanza.rimuoviEvento(e);
             return false;
         }
@@ -65,126 +64,16 @@ public class TrappolaServiceImpl implements EventoService {
             return;
         }
 
-        System.out.println("[DEBUG] scattaTrappola -> trappolaId=" + trappola.getId() + " personaggio=" + (personaggio != null ? personaggio.getNomePersonaggio() : "<null>"));
+        System.out.println("[DEBUG] scattaTrappola -> trappolaId=" + trappola.getId()
+                + " personaggio=" + (personaggio != null ? personaggio.getNomePersonaggio() : "<null>"));
 
-        Effetto.TipoEffetto tipo = effetto.getTipo();
-        int durata = effetto.getDurataTurni();
+        System.out.println("[DEBUG] Scatta trappola -> effetto=" + effetto.getTipo() + " durata=" + effetto.getDurataTurni());
 
-        System.out.println("[DEBUG] Scatta trappola -> effetto=" + tipo + " durata=" + durata);
-
-        switch (tipo) {
-            case DISARMA -> {
-                personaggio.setStatoPersonaggio("DISARMATO");
-                personaggio.setDisarmato(true);
-
-                Arma arma = personaggio.getArmaEquippaggiata();
-                System.out.println("[DEBUG] Arma equipaggiata: " + (arma != null ? arma.getNome() : "nessuna"));
-                System.out.println("[DEBUG] Attacco attuale: " + personaggio.getAttacco());
-                if (arma == null) {
-                    System.out.println(" La trappola scatta, ma non hai armi equipaggiate.");
-                    return;
-                }
-                personaggio.setArmaEquippaggiata(null);
-
-                personaggio.setAttacco(personaggio.getAttacco() - arma.getDannoBonus());
-                System.out.println("[DEBUG] Attacco ridotto di " + personaggio.getAttacco());
-                System.out.println(" La trappola ti disarma! Hai perso definitivamente: " + arma.getNome());
-            }
-            //subisce solo il danno immediato
-            case FURIA -> {
-                personaggio.setStatoPersonaggio("FURIA");
-                personaggio.subisciDanno(15);
-                System.out.println(" La trappola causa un danno grave! -15 HP");
-            }
-            //ogni turno toglie dei punti vita finchè non finisce la durata
-            case AVVELENAMENTO -> {
-                personaggio.setStatoPersonaggio("AVVELENATO");
-
-                // 3 turni totali
-                personaggio.setTurniAvvelenato(2);
-
-                //  DANNO IMMEDIATO (turno 1)
-                personaggio.subisciDanno(5);
-
-                System.out.println(
-                        " Sei stato avvelenato! -5 HP (turni rimanenti: 3)"
-                );
-            }
-            //ogni turno toglie dei punti difesa finchè non finisce la durata
-            case STORDIMENTO -> {
-                System.out.println("[DEBUG] Soldi attuali:" + personaggio.getDifesa());
-                personaggio.setStatoPersonaggio("STORDITO");
-                personaggio.setTurniStordito(2);
-                personaggio.subisciDannoDifesa(5);
-                System.out.println(" Sei stordito! -5 punti difesa");
-                System.out.println("[DEBUG] Soldi attuali:" + personaggio.getDifesa());
-            }
-
-            case FURTO -> {
-                personaggio.setStatoPersonaggio("DERUBATO");
-
-                int soldiAttuali = personaggio.getPortafoglioPersonaggio();
-                System.out.println("[DEBUG] Soldi attuali: " + soldiAttuali);
-                if (soldiAttuali <= 0) {
-                    System.out.println(" La trappola tenta di derubarti, ma non hai denaro!");
-                    return;
-                }
-
-                //  Random tra 3 e 10
-                int rubati = ThreadLocalRandom.current().nextInt(3, 11);
-
-                // non può rubare più di quanto hai
-                personaggio.setPortafoglioPersonaggio(soldiAttuali - rubati);
-                System.out.println("[DEBUG] Soldi dopo furto: " + personaggio.getPortafoglioPersonaggio());
-                System.out.println(
-                        " Sei stato derubato! -" + rubati
-                        + " monete (rimaste: " + personaggio.getPortafoglioPersonaggio() + ")"
-                );
-
-            }
-
-            case SALTA_TURNO -> {
-                personaggio.aggiungiTurniDaSaltare(1);
-                System.out.println(" Una trappola ti colpisce! Salterai il prossimo turno.");
-            }
-
-            default -> {
-                System.out.println(" La trappola non ha effetto visibile.");
-            }
-        }
+        EffettoService effettoService = new EffettoService();
+        effettoService.applicaEffetto(personaggio, effetto);
     }
 
-    /**
-     * Applicare eventuali effetti di fine turno legati alle trappole (es: avvelenamento).
-     * Questo permette di centralizzare il danno periodico nella logica della trappola.
-     */
-    public static void applicaEffettiFineTurno(Personaggio personaggio) {
-        if (personaggio == null) return;
-
-        if (personaggio.getTurniAvvelenato() > 0) {
-            int dannoAvvel = 5;
-            int applicato = personaggio.subisciDanno(dannoAvvel);
-
-            personaggio.setTurniAvvelenato(personaggio.getTurniAvvelenato() - 1);
-
-            if (personaggio.getTurniAvvelenato() == 0 && "AVVELENATO".equalsIgnoreCase(personaggio.getStatoPersonaggio())) {
-                personaggio.setStatoPersonaggio("NORMALE");
-                System.out.println("Il veleno ha perso effetto su " + personaggio.getNomePersonaggio());
-            }
-        }
-        if (personaggio.getTurniStordito() > 0) {
-            int dannoAvvel = 5;
-                        int applicato = personaggio.subisciDannoDifesa(dannoAvvel);
-
-                        personaggio.setTurniStordito(personaggio.getTurniStordito() - 1);
-
-            if (personaggio.getTurniStordito() == 0 && "STORDITO".equalsIgnoreCase(personaggio.getStatoPersonaggio())) {
-                personaggio.setStatoPersonaggio("NORMALE");
-                System.out.println("Lo stordimento ha perso effetto su " + personaggio.getNomePersonaggio());
-            }
-        }
-    }
-
+    
     private Effetto.TipoEffetto tiraDado() {
         int dado = (int) (Math.random() * 6) + 1;
 
@@ -240,7 +129,7 @@ public class TrappolaServiceImpl implements EventoService {
         // scegli un effetto casuale
         Effetto.TipoEffetto[] tipiEffetto = Effetto.TipoEffetto.values();
         Effetto.TipoEffetto tipoEffetto = tipiEffetto[rnd.nextInt(tipiEffetto.length)];
-       
+
         String descrizione
                 = switch (tipoEffetto) {
             case DISARMA ->

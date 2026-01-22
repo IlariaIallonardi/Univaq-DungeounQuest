@@ -20,6 +20,7 @@ import service.EventoService;
 import service.GiocoService;
 import service.PersonaggioService;
 import service.TurnoService;
+import service.EffettoService;
 
 public class TurnoServiceImpl implements TurnoService {
 
@@ -185,12 +186,12 @@ public class TurnoServiceImpl implements TurnoService {
         }
         if (personaggio.getTurniAvvelenato() > 0) {
             // delega l'applicazione del danno periodico alle trappole
-            service.impl.TrappolaServiceImpl.applicaEffettiFineTurno(personaggio);
+            EffettoService.applicaEffettiFineTurno(personaggio);
         }
 
         //  STORDIMENTO: penalizza per N turni (es. non può attaccare)
         if (personaggio.getTurniStordito() > 0) {
-            service.impl.TrappolaServiceImpl.applicaEffettiFineTurno(personaggio);
+            EffettoService.applicaEffettiFineTurno(personaggio);
         }
 
     }
