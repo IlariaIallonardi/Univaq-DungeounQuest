@@ -4,9 +4,12 @@ public class Mostro extends PersonaIncontrata {
 
     private int puntiVitaMostro;
     private int difesaMostro;
-    private int dannoMostro;///valutare se serve
+    private int dannoMostro;
+    ///valutare se serve
     private String nomeMostro;
     private TipoAttaccoMostro tipoAttaccoMostro;
+    private int esperienza;
+    private int livelloMostro;
 
     private int dannoTipoMostro;
 
@@ -26,7 +29,7 @@ public class Mostro extends PersonaIncontrata {
         RAGNATELA(13),
         ARTIGLI_POSSENTI(18);
 
-        public final int dannoTipoMostro;
+        public int dannoTipoMostro;
         public TipoAttaccoMostro tipoAttaccoMostro;
 
         TipoAttaccoMostro(int dannoTipoMostro) {
@@ -35,6 +38,10 @@ public class Mostro extends PersonaIncontrata {
 
         public int getDannoTipoMostro() {
             return dannoTipoMostro;
+        }
+
+        public void setDannoTipoMostro(int dannoTipoMostro) {
+            this.dannoTipoMostro = dannoTipoMostro;
         }
 
     }
@@ -192,6 +199,42 @@ public class Mostro extends PersonaIncontrata {
         }
 
     }
+
+    public int aggiungiEsperienzaMostro() {
+        //se muore il mostro aumenta leggermente i parametri
+        if (this.èMortoilMostro()) {
+            this.esperienza += 3;
+            this.puntiVitaMostro += 3; // esempio: +10 HP per livello
+            this.dannoTipoMostro += 2;    // esempio: +2 Attacco per livello
+            this.difesaMostro += 1;
+            //se sopravvive aumenta di più i parametri
+        } else {
+            this.esperienza += 20;
+            this.puntiVitaMostro += 20; // esempio: +10 HP per livello
+            this.dannoTipoMostro += 15;    // esempio: +2 Attacco per livello
+            this.difesaMostro += 21;
+        }
+
+        int xpPerLivello = 10;
+        while (this.esperienza >= xpPerLivello) {
+            this.livelloMostro = this.livelloMostro + 1;
+            this.puntiVitaMostro += 10; // esempio: +10 HP per livello
+            this.dannoTipoMostro += 2;    // esempio: +2 Attacco per livello
+            this.difesaMostro += 1;     // esempio: +1 Difesa per livello
+
+            this.esperienza -= xpPerLivello;
+            System.out.println(this.nomeMostro + " sale al livello " + this.livelloMostro + "!");
+        }
+        return this.livelloMostro;
+    }
+    public int getEsperienza() {
+        return esperienza;
+    }
+    public int getLivelloMostro() {
+        return livelloMostro;
+    }
+
+
 
     @Override
     public String toString() {

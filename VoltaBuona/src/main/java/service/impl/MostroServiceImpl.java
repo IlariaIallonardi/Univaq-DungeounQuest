@@ -102,11 +102,11 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         return 0;
     }
 
-    Mostro.TipoAttaccoMostro tipoAttacco = mostro.getTipoAttaccoMostro();
-
-    int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
-    int bonusAttacco = Math.max(0, mostro.getDannoMostro() / 2);
-    int totale = tiro + bonusAttacco;
+     int tipoAttacco = mostro.getTipoAttaccoMostro().getDannoTipoMostro();
+   
+    int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21); 
+    int bonusAttacco = Math.max(0, tipoAttacco / 2); 
+    int totale = tiro + bonusAttacco; 
     int difesaP = bersaglio.getDifesa();
 
     System.out.println("[DEBUG] Inizio attaccoDelMostro - Mostro: " + mostro.getNomeMostro()
@@ -128,16 +128,13 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         return 0;
     }
 
-    // calcolo danno base
-    int baseDanno = Math.max(1, dannoBase(mostro, bersaglio));
-    System.out.println("[DEBUG] baseDanno calcolato = " + baseDanno);
-
+   
     // applica tipo/effect (side-effect: imposta tipo sul mostro e applica effetto al bersaglio)
     System.out.println("[DEBUG] chiamata a impostaTipoAttaccoEApplicaEffetto...");
     impostaTipoAttaccoEApplicaEffetto(mostro, bersaglio);
     System.out.println("[DEBUG] dopo impostaTipoAttaccoEApplicaEffetto - tipoAttacco attuale = " + mostro.getTipoAttaccoMostro());
 
-    int dannoGrezzo = baseDanno;
+    int dannoGrezzo = Math.max(1, dannoBase(mostro, bersaglio));
 
     if (critico) {
         dannoGrezzo = Math.max(1, dannoGrezzo * 2);
@@ -220,10 +217,8 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         Mostro mostro = new Mostro(id, false, false, descrizione, "mostro", 0, 0, nomeMostro, null, null, 0);
         // imposta vita/difesa/tipo in base al nome
         mostro.settareVitaeDifesaMostro();
-        // assegna danno in modo semplice e riproducibile
-        int dannoMostro = Math.max(1, rnd.nextInt(5, 21)); // 5..20
-        mostro.setDannoMostro(dannoMostro);
-        System.out.println("Creato mostro " + nomeMostro + " con danno=" + dannoMostro);
+        
+        System.out.println("Creato mostro " + nomeMostro );
         return mostro;
     }
 }
