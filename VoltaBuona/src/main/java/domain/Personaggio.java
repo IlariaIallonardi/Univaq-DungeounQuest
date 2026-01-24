@@ -199,6 +199,7 @@ public class Personaggio {
     }
 
     public boolean èMorto(Personaggio personaggio) {
+        
         return personaggio.getPuntiVita() <= 0;
     }
 
@@ -292,6 +293,9 @@ public class Personaggio {
         // se gli HP scendono a zero o meno, aggiorna stato e azzera gli HP
         if (this.èMorto(this)) {
             this.statoPersonaggio = "MORTO";
+
+            
+            System.out.println("[DEBUG] Il personaggio " + this.getNomePersonaggio() + " è morto (HP=" + this.getPuntiVita() + ")");
         }
 
         return danno;

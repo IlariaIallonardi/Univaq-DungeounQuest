@@ -1,12 +1,10 @@
 package domain;
 
-import service.EffettoService;
-
 public class Mostro extends PersonaIncontrata {
 
     private int puntiVitaMostro;
     private int difesaMostro;
-    private int dannoMostro;
+    private int dannoMostro;///valutare se serve
     private String nomeMostro;
     private TipoAttaccoMostro tipoAttaccoMostro;
 
@@ -22,14 +20,14 @@ public class Mostro extends PersonaIncontrata {
     }
 
     public enum TipoAttaccoMostro {
-        MORSO(30),
-        RUGGITO_DI_FUOCO(40),
-        URLO_ASSORDANTE(45),
-        RAGNATELA(20),
-        ARTIGLI_POSSENTI(48);
+        MORSO(15),
+        RUGGITO_DI_FUOCO(16),
+        URLO_ASSORDANTE(14),
+        RAGNATELA(13),
+        ARTIGLI_POSSENTI(18);
 
-        private final int dannoTipoMostro;
-        private TipoAttaccoMostro tipoAttaccoMostro;
+        public final int dannoTipoMostro;
+        public TipoAttaccoMostro tipoAttaccoMostro;
 
         TipoAttaccoMostro(int dannoTipoMostro) {
             this.dannoTipoMostro = dannoTipoMostro;
@@ -157,32 +155,32 @@ public class Mostro extends PersonaIncontrata {
         }
         switch (this.nomeMostro) {
             case "Spiritello" -> {
-                this.puntiVitaMostro = 15;
-                this.difesaMostro = 15;
+                this.puntiVitaMostro = 25;
+                this.difesaMostro = 25;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.MORSO;
                 return 1;
             }
             case "Drago" -> {
-                this.puntiVitaMostro = 15;
-                this.difesaMostro = 15;
+                this.puntiVitaMostro = 25;
+                this.difesaMostro = 25;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.RUGGITO_DI_FUOCO;
                 return 1;
             }
             case "Golem" -> {
-                this.puntiVitaMostro = 15;
-                this.difesaMostro = 15;
+                this.puntiVitaMostro = 25;
+                this.difesaMostro = 25;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.URLO_ASSORDANTE;
                 return 1;
             }
             case "Ragno Gigante" -> {
-                this.puntiVitaMostro = 15;
-                this.difesaMostro = 15;
+                this.puntiVitaMostro = 25;
+                this.difesaMostro = 25;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA;
                 return 1;
             }
             case "Troll" -> {
-                this.puntiVitaMostro = 15;
-                this.difesaMostro = 15;
+                this.puntiVitaMostro = 25;
+                this.difesaMostro = 25;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.ARTIGLI_POSSENTI;
                 return 1;
             }
@@ -193,25 +191,6 @@ public class Mostro extends PersonaIncontrata {
             }
         }
 
-    }
-  //// da mettere nel mostro service impl!!!!!!
-    public void attaccoDelMostro(Personaggio personaggio) {
-        Mostro mostro = this;
-
-        if (mostro.getNomeMostro().equals("Spiritello")) {
-            tipoAttaccoMostro = TipoAttaccoMostro.MORSO;
-             effettoService.applicaEffetto(personaggio, effetto);
-        } else if (mostro.getNomeMostro().equals("Drago")) {
-            tipoAttaccoMostro = TipoAttaccoMostro.RUGGITO_DI_FUOCO;
-        } else if (mostro.getNomeMostro().equals("Golem")) {
-            tipoAttaccoMostro = TipoAttaccoMostro.URLO_ASSORDANTE;
-        } else if (mostro.getNomeMostro().equals("Ragno Gigante")) {
-            tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA;
-        } else if (mostro.getNomeMostro().equals("Troll")) {
-            tipoAttaccoMostro = TipoAttaccoMostro.ARTIGLI_POSSENTI;
-        } else {
-            tipoAttaccoMostro = null;
-        }
     }
 
     @Override

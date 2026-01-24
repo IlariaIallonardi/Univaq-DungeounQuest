@@ -149,7 +149,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
         System.out.println("\nScegli azione in combattimento per " + personaggio.getNomePersonaggio());
         System.out.println("1) Attacca");
         System.out.println("2) Usa un oggetto");
-        System.out.println("0) Annulla");
+        
         // System.out.print("> ");
 
         int scelta;
@@ -172,7 +172,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
                 for (int i = 0; i < magie.length; i++) {
                     System.out.println((i + 1) + ") " + magie[i] + " (costo mana: " + magie[i].getCostoMana() + ")");
                 }
-                System.out.println("0) Annulla attacco");
+                
 
                 String line = scanner.nextLine().trim();
                 int sceltaMagia;
@@ -200,6 +200,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
         } else if (scelta == 2) {
 
             turnoService.gestisciUsoOggettoDaZaino(personaggio, scanner);
+            
 
         }
         return;

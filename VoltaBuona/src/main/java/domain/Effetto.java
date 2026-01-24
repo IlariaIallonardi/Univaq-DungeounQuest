@@ -36,6 +36,12 @@ public class Effetto {
         this.durataTurni = durataTurni;
 
     }
+     public Effetto(TipoEffetto tipo, String descrizione) {
+        this.tipo = tipo;
+        this.descrizione = descrizione;
+    
+
+    }
    /**
  * Restituisce true se la durata dell'effetto è ancora > 0.
  */

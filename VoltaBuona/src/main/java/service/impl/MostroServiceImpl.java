@@ -6,11 +6,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import domain.Effetto;
 import domain.Evento;
 import domain.Mostro;
+import domain.Mostro.TipoAttaccoMostro;
 import domain.Personaggio;
 import domain.Stanza;
 import service.CombattimentoService;
-import service.PersonaIncontrataService;
 import service.EffettoService;
+import service.PersonaIncontrataService;
+
 
 public class MostroServiceImpl implements PersonaIncontrataService {
 
@@ -35,9 +37,9 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         if (mostro == null || personaggio == null) {
             return 0;
         }
-        int attaccoMostro = mostro.getDannoMostro();
-        int difesaPersonaggio = personaggio.getDifesa();
-        return Math.max(1, attaccoMostro - difesaPersonaggio);
+        int attaccoMostro = mostro.getTipoAttaccoMostro().getDannoTipoMostro();
+    
+        return Math.max(1, attaccoMostro );
     }
   public EffettoService effettoService;
     public MostroServiceImpl() {
@@ -58,74 +60,96 @@ public class MostroServiceImpl implements PersonaIncontrataService {
      */
         //// da unire con il metodo attaccoDelMostro che si trova nel domain.Mostro
         /// //ricordiamoci che deve essere intero il tipo di ritorno
-    public Effetto.TipoEffetto effettoPerTipo(Mostro.TipoAttaccoMostro tipoAttacco) {
-        if (tipoAttacco == null) {
-            return null;
+    public void   impostaTipoAttaccoEApplicaEffetto(Mostro mostro, Personaggio personaggio) {
+    if (mostro == null) return ;
+
+    String nome = mostro.getNomeMostro();
+    Mostro.TipoAttaccoMostro tipo = null;
+    if (nome != null) {
+        switch (nome) {
+            case "Spiritello" -> tipo = TipoAttaccoMostro.MORSO;
+            case "Drago" -> tipo = TipoAttaccoMostro.RUGGITO_DI_FUOCO;
+            case "Golem" -> tipo = TipoAttaccoMostro.URLO_ASSORDANTE;
+            case "Ragno Gigante" -> tipo = TipoAttaccoMostro.RAGNATELA;
+            case "Troll" -> tipo = TipoAttaccoMostro.ARTIGLI_POSSENTI;
+            default -> tipo = null;
         }
-        
-        return switch (tipoAttacco) {
-            case RUGGITO_DI_FUOCO, URLO_ASSORDANTE ->
-                Effetto.TipoEffetto.STORDIMENTO;
-            case RAGNATELA ->
-                Effetto.TipoEffetto.FURTO;
-            case ARTIGLI_POSSENTI ->
-                Effetto.TipoEffetto.AVVELENAMENTO;
-            default ->
-                null;
-        };
+    }
+    mostro.setTipoAttaccoMostro(tipo);
+
+    Effetto.TipoEffetto tipoEffetto = null;
+    if (tipo != null) {
+        switch (tipo) {
+            case RUGGITO_DI_FUOCO, URLO_ASSORDANTE -> tipoEffetto = Effetto.TipoEffetto.STORDIMENTO;
+            case RAGNATELA -> tipoEffetto = Effetto.TipoEffetto.FURTO;
+            case ARTIGLI_POSSENTI -> tipoEffetto = Effetto.TipoEffetto.AVVELENAMENTO;
+            case MORSO -> tipoEffetto = Effetto.TipoEffetto.FURTO;
+            default -> tipoEffetto = null;
+        }
     }
 
-    public int attaccoDelMostro(Mostro mostro, Personaggio bersaglio) {
-        if (mostro == null || bersaglio == null) {
-            return 0;
-        }
-
-        Mostro.TipoAttaccoMostro tipoAttacco = mostro.getTipoAttaccoMostro();
-
-        int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
-        int bonusAttacco = Math.max(0, mostro.getDannoMostro() / 2);
-        int totale = tiro + bonusAttacco;
-        int difesaP = bersaglio.getDifesa();
-
-        System.out.println(mostro.getNomeMostro() + " tiro attacco: " + tiro + " + bonus " + bonusAttacco + " = " + totale + " (CA bersaglio: " + difesaP + ")");
-
-        if (tiro == 1) {
-            System.out.println("Tiro 1: fallimento critico del mostro!");
-            return 0;
-        }
-
-        boolean critico = (tiro == 20);
-
-        if (totale < difesaP && !critico) {
-            System.out.println(mostro.getNomeMostro() + " manca il bersaglio.");
-            return 0;
-        }
-
-        int baseDanno = Math.max(1, dannoBase(mostro, bersaglio));
-
-        //ci richiamiamo il metodo che dobbiamo fare
-        int dannoGrezzo = effettoPerTipo(tipoAttacco);
-
-        if (critico) {
-            dannoGrezzo = Math.max(1, dannoGrezzo * 2);
-            System.out.println("Colpo critico del mostro! Danno raddoppiato.");
-        }
-
-        int dannoApplicato = bersaglio.subisciDanno(dannoGrezzo);
-
-        // applica eventuale effetto (mappa su campi specifici del personaggio)
-      /*  Effetto.TipoEffetto tipoEffetto = switch (tipoAttacco) {
-    case RUGGITO_DI_FUOCO -> Effetto.TipoEffetto.STORDIMENTO;
-    case URLO_ASSORDANTE -> Effetto.TipoEffetto.STORDIMENTO;
-    case RAGNATELA-> Effetto.TipoEffetto.STORDIMENTO;
-    case MORSO -> Effetto.TipoEffetto.FURTO;
-    case ARTIGLI_POSSENTI -> Effetto.TipoEffetto.AVVELENAMENTO;
-    
-    default -> null;
-};*/
+        Effetto effetto = new Effetto(tipoEffetto, "Effetto da " + mostro.getNomeMostro());
+        System.out.println(mostro.getNomeMostro() + " applica " + tipoEffetto + " a " + personaggio.getNomePersonaggio());
+     this.effettoService.applicaEffetto(personaggio, effetto);
+    }
 
 
-    System.out.println(mostro.getNomeMostro() + " usa " + tipoAttacco
+
+
+   public int attaccoDelMostro(Mostro mostro, Personaggio bersaglio) {
+    if (mostro == null || bersaglio == null) {
+        System.out.println("[DEBUG] attaccoDelMostro: mostro o bersaglio null");
+        return 0;
+    }
+
+    Mostro.TipoAttaccoMostro tipoAttacco = mostro.getTipoAttaccoMostro();
+
+    int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
+    int bonusAttacco = Math.max(0, mostro.getDannoMostro() / 2);
+    int totale = tiro + bonusAttacco;
+    int difesaP = bersaglio.getDifesa();
+
+    System.out.println("[DEBUG] Inizio attaccoDelMostro - Mostro: " + mostro.getNomeMostro()
+            + ", Bersaglio: " + bersaglio.getNomePersonaggio()
+            + ", HP bersaglio prima: " + bersaglio.getPuntiVita());
+    System.out.println("[DEBUG] tiro=" + tiro + ", bonusAttacco=" + bonusAttacco
+            + ", totale=" + totale + ", difesaBersaglio=" + difesaP
+            + ", tipoAttaccoPrecedente=" + tipoAttacco);
+
+    if (tiro == 1) {
+        System.out.println("[DEBUG] Tiro 1: fallimento critico del mostro!");
+        return 0;
+    }
+
+    boolean critico = (tiro == 20);
+
+    if (totale < difesaP && !critico) {
+        System.out.println("[DEBUG] Mancato: totale < difesa e non critico");
+        return 0;
+    }
+
+    // calcolo danno base
+    int baseDanno = Math.max(1, dannoBase(mostro, bersaglio));
+    System.out.println("[DEBUG] baseDanno calcolato = " + baseDanno);
+
+    // applica tipo/effect (side-effect: imposta tipo sul mostro e applica effetto al bersaglio)
+    System.out.println("[DEBUG] chiamata a impostaTipoAttaccoEApplicaEffetto...");
+    impostaTipoAttaccoEApplicaEffetto(mostro, bersaglio);
+    System.out.println("[DEBUG] dopo impostaTipoAttaccoEApplicaEffetto - tipoAttacco attuale = " + mostro.getTipoAttaccoMostro());
+
+    int dannoGrezzo = baseDanno;
+
+    if (critico) {
+        dannoGrezzo = Math.max(1, dannoGrezzo * 2);
+        System.out.println("[DEBUG] Colpo critico! dannoGrezzo raddoppiato a " + dannoGrezzo);
+    }
+
+    System.out.println("[DEBUG] prima subisciDanno: dannoGrezzo=" + dannoGrezzo);
+    int dannoApplicato = bersaglio.subisciDanno(dannoGrezzo);
+    System.out.println("[DEBUG] dopo subisciDanno: dannoApplicato=" + dannoApplicato
+            + ", HP rimanenti bersaglio=" + bersaglio.getPuntiVita());
+
+    System.out.println(mostro.getNomeMostro() + " usa " + mostro.getTipoAttaccoMostro()
             + " infliggendo " + dannoGrezzo + " danni a " + bersaglio.getNomePersonaggio()
             + " (HP rimanenti: " + bersaglio.getPuntiVita() + ")");
 

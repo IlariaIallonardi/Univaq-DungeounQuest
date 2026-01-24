@@ -8,14 +8,14 @@ import domain.Personaggio;
 
 public class EffettoService {
 
-    public int applicaEffetto(Personaggio personaggio, Effetto effetto) {
-        if (personaggio != null || effetto != null) {
+    public void applicaEffetto(Personaggio personaggio, Effetto effetto) {
+        if (personaggio != null && effetto != null) {
 
             Effetto.TipoEffetto tipo = effetto.getTipo();
             int durata = effetto.getDurataTurni();
 
             if (tipo == null) {
-                return 0;
+                return ;
             }
 
             switch (tipo) {
@@ -38,10 +38,10 @@ public class EffettoService {
                     // comportamento di default (nessuna azione)
                     break;
             }
-            return 1;
+        
 
         }
-        return 0;
+    
     }
 
     public void applicaDisarma(Personaggio personaggio) {
@@ -86,7 +86,8 @@ public class EffettoService {
         int soldiAttuali = personaggio.getPortafoglioPersonaggio();
         System.out.println("[DEBUG] Soldi attuali: " + soldiAttuali);
         if (soldiAttuali <= 0) {
-            System.out.println(" La trappola tenta di derubarti, ma non hai denaro!");
+            System.out.println("Non hai denaro!");
+            personaggio.setPortafoglioPersonaggio(0);
             return;
         }
 
