@@ -131,9 +131,9 @@ public class Personaggio {
     }
 
     /**
-     * Aggiunge esperienza al personaggio e gestisce l'eventuale level-up.
-     * Usa una soglia di 100 XP per livello. Se l'esperienza supera la soglia
-     * si effettua il level-up ripetutamente consumando la soglia.
+     * Aggiunge esperienza al personaggio e gestisce l'eventuale level-up. Usa
+     * una soglia di 100 XP per livello. Se l'esperienza supera la soglia si
+     * effettua il level-up ripetutamente consumando la soglia.
      */
     public int aggiungiEsperienza() {
         this.esperienza += 25;
@@ -199,7 +199,7 @@ public class Personaggio {
     }
 
     public boolean èMorto(Personaggio personaggio) {
-        
+
         return personaggio.getPuntiVita() <= 0;
     }
 
@@ -294,7 +294,6 @@ public class Personaggio {
         if (this.èMorto(this)) {
             this.statoPersonaggio = "MORTO";
 
-            
             System.out.println("[DEBUG] Il personaggio " + this.getNomePersonaggio() + " è morto (HP=" + this.getPuntiVita() + ")");
         }
 
@@ -310,14 +309,15 @@ public class Personaggio {
         if (this.turnoProtetto > 0) {
             return 0;
         }
-        if(this.difesa<=0){
-            this.difesa=0;
+        if (this.difesa <= 0) {
+            this.difesa = 0;
             return this.subisciDanno(dannoDifesa);
-        }else{
-        this.difesa -= dannoDifesa;
-        return difesa;
+        } else {
+            this.difesa -= dannoDifesa;
+            return difesa;
 
-    }}
+        }
+    }
 
     public Arma getArmaEquippaggiata() {
         return armaEquippaggiata;
@@ -403,7 +403,6 @@ public class Personaggio {
         return false;
     }
 
-    
     public boolean raccogliereOggetto(Personaggio personaggio, Oggetto oggetto) {
 
         if (personaggio == null || oggetto == null) {
@@ -434,8 +433,8 @@ public class Personaggio {
             return false;
         }
         System.out.println("[DEBUG] raccogliereOggetto: person=" + this.getClass().getSimpleName() + " nome=" + this.getNomePersonaggio());
-       if (oggetto instanceof Arma) {
-        System.out.println("[DEBUG] arma nome=" + oggetto.getNome() + " tipo=" + ((Arma) oggetto).getTipoArma());
+        if (oggetto instanceof Arma) {
+            System.out.println("[DEBUG] arma nome=" + oggetto.getNome() + " tipo=" + ((Arma) oggetto).getTipoArma());
         }
 
         // ARMA: controllo se può raccoglierla

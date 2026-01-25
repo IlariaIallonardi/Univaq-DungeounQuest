@@ -107,21 +107,6 @@ public class StanzaFactory {
     }
 
     // restituisce true se la stanza deve richiedere una chiave, false altrimenti
-    /*   private boolean generaRichiestaChiave(int x, int y) {
-        boolean bloccataProva;
-        if(x==0 && y==0) {
-            bloccataProva = false;
-            return bloccataProva;
-        }
-        int randomBloccata= rnd.nextInt(2) ;
-        if(randomBloccata == 1) {
-        bloccataProva = true;
-        } else {
-            bloccataProva = false;
-        }
-        return bloccataProva;
-    }*/
-    // restituisce true se la stanza deve richiedere una chiave, false altrimenti
     private boolean generaRichiestaChiave(int x, int y) {
         // start (0,0) e le stanze adiacenti (distanza Manhattan = 1) NON devono essere bloccate
         if (x == 0 && y == 0) {

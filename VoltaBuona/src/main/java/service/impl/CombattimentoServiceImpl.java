@@ -7,6 +7,7 @@ import domain.Combattimento;
 import domain.Evento;
 import domain.Mago;
 import domain.Mostro;
+import domain.Paladino;
 import domain.Personaggio;
 import domain.Stanza;
 import domain.Zaino;
@@ -116,7 +117,6 @@ public class CombattimentoServiceImpl implements CombattimentoService {
                 scegliAzioneCombattimentoInterna(combattimento, personaggio, zaino);
             }
 
-            ///forse il termina combattimento va messo qui
             // se qualcuno ha vinto, chiudi e esci
             if (!combattimento.isInCorso()) {
                 break;
@@ -193,6 +193,54 @@ public class CombattimentoServiceImpl implements CombattimentoService {
                 mago.setMagiaSelezionata(magie[sceltaMagia - 1]);
             }
 
+            // Se il personaggio è un Paladino, chiedi se attacco fisico o colpo sacro
+            if (personaggio instanceof Paladino paladino) {
+                System.out.println("Scegli come attaccare:");
+                System.out.println("1) Attacco fisico");
+                System.out.println("2) Colpo sacro");
+
+                String lineP = scanner.nextLine().trim();
+                int sceltaStile;
+                try {
+                    sceltaStile = Integer.parseInt(lineP);
+                } catch (NumberFormatException e) {
+                    System.out.println("Scelta non valida. Attacco fisico di default.");
+                    sceltaStile = 1;
+                }
+
+                if (sceltaStile == 2) {
+                    System.out.println("Scegli il colpo sacro:");
+                    Paladino.TipoMagiaSacra[] magie = Paladino.TipoMagiaSacra.values();
+                    for (int i = 0; i < magie.length; i++) {
+                        System.out.println((i + 1) + ") " + magie[i] + " (costo mana: " + magie[i].getCostoMana() + ")");
+                    }
+
+                    String line = scanner.nextLine().trim();
+                    int sceltaMagia;
+                    try {
+                        sceltaMagia = Integer.parseInt(line);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Scelta non valida. Attacco annullato.");
+                        return;
+                    }
+
+                    if (sceltaMagia == 0) {
+                        System.out.println("Attacco annullato.");
+                        return;
+                    }
+
+                    if (sceltaMagia < 1 || sceltaMagia > magie.length) {
+                        System.out.println("Scelta magia non valida. Attacco annullato.");
+                        return;
+                    }
+
+                    paladino.setMagiaSelezionata(magie[sceltaMagia - 1]);
+                } else {
+                    // stile fisico: nessuna magia selezionata
+                    paladino.setMagiaSelezionata(null);
+                }
+            }
+
             applicaECalcolaDanno(combattimento, personaggio);
         } else if (scelta == 2) {
 
@@ -205,8 +253,8 @@ public class CombattimentoServiceImpl implements CombattimentoService {
     /* =======================
        TERMINA COMBATTIMENTO
        ======================= */
-    ///controllare con chiudi combattimento --> li ho uniti
-   @Override
+    //controllare con chiudi combattimento --> li ho uniti
+    @Override
     public boolean terminaCombattimento(Combattimento combattimento, Object vincitore) {
         if (combattimento == null || !combattimento.isInCorso()) {
             return false;
@@ -219,7 +267,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
         if (evento != null) {
             evento.setFineEvento(true);
             evento.setInizioEvento(false);
-
+            System.out.println("[DEBUG] HA VINTOOOO!! IL VINCITORE è:" + vincitore);
         }
 
         return true;

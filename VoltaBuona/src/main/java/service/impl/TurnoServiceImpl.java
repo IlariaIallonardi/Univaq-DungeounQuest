@@ -227,24 +227,6 @@ public class TurnoServiceImpl implements TurnoService {
             System.out.println(" La stanza è tranquilla...");
         }
 
-        /*  if (!ciSonoEventi && !ciSonoOggetti) {
-            System.out.println("La stanza è vuota.");
-            return;
-        } 
-
-         if (ciSonoEventi) {
-            System.out.println("\nEventi presenti:");
-            for (int i = 0; i < eventi.size(); i++) {
-                System.out.println(" [" + (i + 1) + "] " + eventi.get(i).getDescrizione());
-            }
-        }
-
-        if (ciSonoOggetti) {
-            System.out.println("\nOggetti presenti:");
-            for (int i = 0; i < oggetti.size(); i++) {
-                System.out.println(" [" + (i + 1) + "] " + oggetti.get(i).getNome());
-            }
-        } */
         // 3 scelta dell'azione
         System.out.println("\nCosa vuoi fare?");
         System.out.println("1) Fare un evento");
@@ -368,7 +350,19 @@ public class TurnoServiceImpl implements TurnoService {
         try {
             if (e.isFineEvento() || !e.èRiutilizzabile()) {
                 if (stanza != null) {
-                    stanza.rimuoviEvento(e);
+                    if (e instanceof Mostro m) {
+                        if (m.èMortoilMostro()) {
+                            stanza.rimuoviEvento(e);
+                        } else {
+                            e.setFineEvento(false);
+                            e.setInizioEvento(true);
+                        }
+                    } else {
+                        if (e.isFineEvento() || !e.èRiutilizzabile()) {
+                            stanza.rimuoviEvento(e);
+                        }
+                    }
+
                 }
             }
         } catch (Exception ignored) {
@@ -499,65 +493,65 @@ public class TurnoServiceImpl implements TurnoService {
 
     //metodo nuovo 
     public boolean gestisciUsoOggettoDaZaino(Personaggio personaggio, Scanner scanner) {
-    System.out.println("[DEBUG] gestisciUsoOggettoDaZaino called for: " + (personaggio != null ? personaggio.getNomePersonaggio() : "null"));
-    Zaino zaino = personaggio == null ? null : personaggio.getZaino();
-    if (zaino == null) {
-        System.out.println("[DEBUG] zaino == null");
-        System.out.println("Lo zaino è vuoto.");
-        return false;
+        System.out.println("[DEBUG] gestisciUsoOggettoDaZaino called for: " + (personaggio != null ? personaggio.getNomePersonaggio() : "null"));
+        Zaino zaino = personaggio == null ? null : personaggio.getZaino();
+        if (zaino == null) {
+            System.out.println("[DEBUG] zaino == null");
+            System.out.println("Lo zaino è vuoto.");
+            return false;
+        }
+
+        List<Oggetto> inventario = zaino.getListaOggetti();
+        if (inventario == null) {
+            System.out.println("[DEBUG] zaino.getListaOggetti() == null");
+            System.out.println("Lo zaino è vuoto.");
+            return false;
+        }
+
+        if (inventario.isEmpty()) {
+            System.out.println("[DEBUG] inventario.isEmpty() == true");
+            System.out.println("Lo zaino è vuoto.");
+            return false;
+        }
+
+        System.out.println("[DEBUG] inventario.size() = " + inventario.size());
+        System.out.println("\n--- Zaino ---");
+        for (int i = 0; i < inventario.size(); i++) {
+            System.out.println((i + 1) + ") " + inventario.get(i).getNome());
+        }
+        System.out.println("0) Annulla");
+
+        System.out.print("Scegli un oggetto da usare: ");
+        int scelta;
+        try {
+            scelta = Integer.parseInt(scanner.nextLine());
+            System.out.println("[DEBUG] scelta utente = " + scelta);
+        } catch (NumberFormatException e) {
+            System.out.println("Input non valido.");
+            return false;
+        }
+
+        if (scelta == 0) {
+            System.out.println("Hai annullato.");
+            return false;
+        }
+
+        if (scelta < 1 || scelta > inventario.size()) {
+            System.out.println("Scelta non valida.");
+            return false;
+        }
+
+        Oggetto oggetto = inventario.get(scelta - 1);
+
+        boolean ok = personaggio.usaOggetto(personaggio, oggetto);
+
+        if (ok) {
+            System.out.println("Hai usato: " + oggetto.getNome());
+        } else {
+            System.out.println("Non puoi usare questo oggetto.");
+        }
+        return true;
     }
-
-    List<Oggetto> inventario = zaino.getListaOggetti();
-    if (inventario == null) {
-        System.out.println("[DEBUG] zaino.getListaOggetti() == null");
-        System.out.println("Lo zaino è vuoto.");
-        return false;
-    }
-
-    if (inventario.isEmpty()) {
-        System.out.println("[DEBUG] inventario.isEmpty() == true");
-        System.out.println("Lo zaino è vuoto.");
-        return false;
-    }
-
-    System.out.println("[DEBUG] inventario.size() = " + inventario.size());
-    System.out.println("\n--- Zaino ---");
-    for (int i = 0; i < inventario.size(); i++) {
-        System.out.println((i + 1) + ") " + inventario.get(i).getNome());
-    }
-    System.out.println("0) Annulla");
-
-    System.out.print("Scegli un oggetto da usare: ");
-    int scelta;
-    try {
-        scelta = Integer.parseInt(scanner.nextLine());
-        System.out.println("[DEBUG] scelta utente = " + scelta);
-    } catch (NumberFormatException e) {
-        System.out.println("Input non valido.");
-        return false;
-    }
-
-    if (scelta == 0) {
-        System.out.println("Hai annullato.");
-        return false;
-    }
-
-    if (scelta < 1 || scelta > inventario.size()) {
-        System.out.println("Scelta non valida.");
-        return false;
-    }
-
-    Oggetto oggetto = inventario.get(scelta - 1);
-
-    boolean ok = personaggio.usaOggetto(personaggio, oggetto);
-
-    if (ok) {
-        System.out.println("Hai usato: " + oggetto.getNome());
-    } else {
-        System.out.println("Non puoi usare questo oggetto.");
-    }
-    return true;
-}
 
     public boolean esploraStanza(Personaggio personaggio) {
 
@@ -568,37 +562,6 @@ public class TurnoServiceImpl implements TurnoService {
 
         System.out.println("\n Stanza: " + stanza.getId());
 
-        // Mostra oggetti visibili
-        /*   if (!stanza.getOggettiPresenti().isEmpty()) {
-            System.out.println("Oggetti trovati:");
-            mostraOggetti(stanza.getOggettiPresenti());
-          //  stanza.getOggettiPresenti().forEach(o -> System.out.println(" - " + o.getNome()));
-        } else {
-            System.out.println(" Nessun oggetto nella stanza.");
-        }
-         //gestione eventi 
-        List<Evento> eventi = stanza.getListaEventiAttivi();
-        if (eventi != null && !eventi.isEmpty()) {
-            System.out.println(" Eventi presenti:");
-            mostraEventi(eventi);
-        } else {
-            System.out.println(" La stanza è tranquilla...");
-        }
-
-        // Gestione eventi
-           if (!stanza.getListaEventiAttivi().isEmpty()) {
-            System.out.println(" Eventi attivi:");
-            for (Evento e : stanza.getListaEventiAttivi()) {
-                boolean termina = eventoService.attivaEvento(personaggio, e);
-                if (termina) {
-                    // se l'evento ha consumato il turno (es. combattimento), terminiamo il turno
-                    terminaTurnoCorrente(personaggio);
-                    return true;
-                }
-            }
-        } else {
-            System.out.println(" La stanza è tranquilla...");
-        }*/
         // Segna la stanza come visitata
         stanza.setStatoStanza(true);
         return false;
