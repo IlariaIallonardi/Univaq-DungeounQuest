@@ -4,13 +4,12 @@ public class Mostro extends PersonaIncontrata {
 
     private int puntiVitaMostro;
     private int difesaMostro;
-    private int dannoMostro;
-    ///valutare se serve
+    private boolean aggiornamento=false; //aggornare i parametri del mostro dopo il combattimento
     private String nomeMostro;
     private TipoAttaccoMostro tipoAttaccoMostro;
     private int esperienza;
     private int livelloMostro;
-
+    
     private int dannoTipoMostro;
 
     public Mostro(int id, boolean inizioEvento, boolean fineEvento, String descrizione, String tipoPersonaIncontrata, int puntiVitaMostro, int difesaMostro, String nomeMostro, TipoAttaccoMostro tipoAttaccoMostro, Stanza posizioneCorrenteMostro, int dannoTipoMostro) {
@@ -23,11 +22,11 @@ public class Mostro extends PersonaIncontrata {
     }
 
     public enum TipoAttaccoMostro {
-        MORSO(15),
-        RUGGITO_DI_FUOCO(16),
-        URLO_ASSORDANTE(14),
-        RAGNATELA(13),
-        ARTIGLI_POSSENTI(18);
+        MORSO(1),
+        RUGGITO_DI_FUOCO(1),
+        URLO_ASSORDANTE(1),
+        RAGNATELA(1),
+        ARTIGLI_POSSENTI(1);
 
         public int dannoTipoMostro;
         public TipoAttaccoMostro tipoAttaccoMostro;
@@ -65,14 +64,15 @@ public class Mostro extends PersonaIncontrata {
     public Boolean alterareStato() {
         return true;
     }
-
-    public void setDannoMostro(int danno) {
-        this.dannoMostro = danno;
+     ///getter e setter aggiornamento
+    public Boolean isAggiornamento() {
+        return aggiornamento;
+    }
+    public void setAggiornamento(Boolean aggiornamento) {
+        this.aggiornamento = aggiornamento;
     }
 
-    public int getDannoMostro() {
-        return dannoMostro;
-    }
+   
 
     public String getNomeMostro() {
         return nomeMostro;
@@ -87,6 +87,16 @@ public class Mostro extends PersonaIncontrata {
         return this.puntiVitaMostro <= 0;
 
     }
+    public void setEsperienza(int esperienza) {
+        this.esperienza = esperienza;
+    }
+    public int getEsperienzaMostro() {
+        return esperienza;
+    }
+    public void setLivelloMostro(int livelloMostro) {
+        this.livelloMostro = livelloMostro;
+    }
+   
 
     public TipoAttaccoMostro getTipoAttaccoMostro() {
         return tipoAttaccoMostro;
@@ -162,32 +172,42 @@ public class Mostro extends PersonaIncontrata {
         }
         switch (this.nomeMostro) {
             case "Spiritello" -> {
-                this.puntiVitaMostro = 25;
-                this.difesaMostro = 25;
+                this.esperienza = 0;
+                this.livelloMostro = 0;
+                this.puntiVitaMostro = 3;
+                this.difesaMostro = 3;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.MORSO;
                 return 1;
             }
             case "Drago" -> {
-                this.puntiVitaMostro = 25;
-                this.difesaMostro = 25;
+                this.esperienza = 0;
+                this.livelloMostro = 0;
+                this.puntiVitaMostro = 3;
+                this.difesaMostro = 3;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.RUGGITO_DI_FUOCO;
                 return 1;
             }
             case "Golem" -> {
-                this.puntiVitaMostro = 25;
-                this.difesaMostro = 25;
+                this.esperienza = 0;
+                this.livelloMostro = 0;
+                this.puntiVitaMostro = 3;
+                this.difesaMostro = 3;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.URLO_ASSORDANTE;
                 return 1;
             }
             case "Ragno Gigante" -> {
-                this.puntiVitaMostro = 25;
-                this.difesaMostro = 25;
+                this.esperienza = 0;
+                this.livelloMostro = 0;
+                this.puntiVitaMostro = 3;
+                this.difesaMostro = 3;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA;
                 return 1;
             }
             case "Troll" -> {
-                this.puntiVitaMostro = 25;
-                this.difesaMostro = 25;
+                this.esperienza = 0;
+                this.livelloMostro = 0;
+                this.puntiVitaMostro = 3;
+                this.difesaMostro = 3;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.ARTIGLI_POSSENTI;
                 return 1;
             }
@@ -201,32 +221,30 @@ public class Mostro extends PersonaIncontrata {
     }
 
     public int aggiungiEsperienzaMostro() {
-        //se muore il mostro aumenta leggermente i parametri
-        if (this.èMortoilMostro()) {
-            this.esperienza += 3;
-            this.puntiVitaMostro += 3; // esempio: +10 HP per livello
-            this.dannoTipoMostro += 2;    // esempio: +2 Attacco per livello
-            this.difesaMostro += 1;
-            //se sopravvive aumenta di più i parametri
-        } else {
+        
+        if (!this.èMortoilMostro()) {
             this.esperienza += 20;
-            this.puntiVitaMostro += 20; // esempio: +10 HP per livello
-            this.dannoTipoMostro += 15;    // esempio: +2 Attacco per livello
-            this.difesaMostro += 21;
+            this.puntiVitaMostro += 5; 
+            this.dannoTipoMostro += 4;    
+            this.difesaMostro += 5;
+            
         }
 
         int xpPerLivello = 10;
         while (this.esperienza >= xpPerLivello) {
             this.livelloMostro = this.livelloMostro + 1;
-            this.puntiVitaMostro += 10; // esempio: +10 HP per livello
-            this.dannoTipoMostro += 2;    // esempio: +2 Attacco per livello
-            this.difesaMostro += 1;     // esempio: +1 Difesa per livello
+            this.puntiVitaMostro += 10; 
+            this.dannoTipoMostro += 2;    
+            this.difesaMostro += 1;     
 
             this.esperienza -= xpPerLivello;
             System.out.println(this.nomeMostro + " sale al livello " + this.livelloMostro + "!");
         }
         return this.livelloMostro;
     }
+
+
+
     public int getEsperienza() {
         return esperienza;
     }
@@ -241,7 +259,6 @@ public class Mostro extends PersonaIncontrata {
         return "Mostro{"
                 + "nome=" + getTipoPersonaIncontrata()
                 + ", hp=" + puntiVitaMostro
-                + ", danno=" + dannoMostro
                 + ", difesa=" + difesaMostro
                 + ", tipoAttacco=" + tipoAttaccoMostro
                 + '}';

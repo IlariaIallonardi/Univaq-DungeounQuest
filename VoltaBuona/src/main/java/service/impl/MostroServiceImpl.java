@@ -169,10 +169,12 @@ public class MostroServiceImpl implements PersonaIncontrataService {
             Stanza stanza = mostro.getPosizioneCorrente() != null ? mostro.getPosizioneCorrente() : personaggio.getPosizioneCorrente();
             mostro.setPosizioneCorrente(stanza);
             System.out.println("Hai incontrato: " + mostro.getNomeMostro());
-
+            System.out.println("Prima:"+ "  " + "pv" +mostro.getPuntiVitaMostro() + " difesa"+mostro.getDifesaMostro()+ " danno"+mostro.getTipoAttaccoMostro().getDannoTipoMostro()+ " exp"+mostro.getEsperienzaMostro()+ " liv"+mostro.getLivelloMostro());
+        
             try {
+                applicaDifficoltaMostro(mostro);
                 Object vincitore = combattimentoService.iniziaCombattimento(personaggio, mostro, stanza);
-
+                System.out.println("Dopo:"+ "  " + "pv"+mostro.getPuntiVitaMostro() + " difesa"+mostro.getDifesaMostro()+ " danno"+mostro.getTipoAttaccoMostro().getDannoTipoMostro()+ " exp"+mostro.getEsperienzaMostro()+ " liv"+mostro.getLivelloMostro());
                 if (vincitore instanceof Personaggio) {
                     System.out.println("Hai sconfitto " + mostro.getNomeMostro() + "!");
                 }
@@ -196,6 +198,23 @@ public class MostroServiceImpl implements PersonaIncontrataService {
 
             }
         }
+    }
+
+///quando il mostro è morto....da capire dove chiamare questo metodo
+    public void applicaDifficoltaMostro(Mostro mostro) {
+        if (mostro == null) {
+            return;
+        }
+        
+        int difficolta = ((CombattimentoServiceImpl) combattimentoService).getDifficoltaMostro();
+         System.out.println("Applicazione difficoltà al mostro..."+ difficolta);
+        mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() + difficolta * 2);
+        mostro.setDifesaMostro(mostro.getDifesaMostro() +  difficolta * 2);
+        mostro.getTipoAttaccoMostro().setDannoTipoMostro(mostro.getTipoAttaccoMostro().getDannoTipoMostro() +  difficolta * 2);
+        mostro.setEsperienza(mostro.getEsperienza() +  difficolta * 2);
+        if(mostro.getEsperienza() >= mostro.getLivelloMostro())
+            {mostro.setLivelloMostro(mostro.getLivelloMostro()+1);}
+        mostro.setAggiornamento(true);
     }
 
     @Override
@@ -222,10 +241,8 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         };
 
         Mostro mostro = new Mostro(id, false, false, descrizione, "mostro", 0, 0, nomeMostro, null, null, 0);
-        // imposta vita/difesa/tipo in base al nome
         mostro.settareVitaeDifesaMostro();
 
-        System.out.println("Creato mostro " + nomeMostro);
         return mostro;
     }
 }
