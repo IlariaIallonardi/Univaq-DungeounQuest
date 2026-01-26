@@ -2,7 +2,6 @@ package service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import domain.Dungeon;
 import domain.Evento;
@@ -141,7 +140,7 @@ public class GiocoServiceImpl implements GiocoService {
                 for (Trappola t : trappole) {
                     sb.append("[").append(t.getId()).append(":").append(t.getDescrizione()).append("]");
                 }
-                System.out.println("[DEBUG] Entrata stanza: " + destinazione + " - Personaggio: " + (personaggio != null ? personaggio.getNomePersonaggio() : "<null>") );
+                System.out.println("[DEBUG] Entrata stanza: " + destinazione + " - Personaggio: " + (personaggio != null ? personaggio.getNomePersonaggio() : "<null>"));
                 System.out.println("[DEBUG] Trappole presenti: " + trappole.size() + " -> " + sb.toString());
 
                 var rnd = java.util.concurrent.ThreadLocalRandom.current();
@@ -159,116 +158,6 @@ public class GiocoServiceImpl implements GiocoService {
         return true;
     }
 
-    // controllo stanza bloccata come nel metodo esistente
-    /*  if (destinazione.isBloccata()) {
-            domain.Chiave richiesta = destinazione.getChiaveRichiesta();
-            if (richiesta == null) {
-                System.out.println("La stanza in " + direzione.name() + " è bloccata ma non ha chiave associata.");
-                return false;
-            }
-            System.out.println("La stanza in " + direzione.name() + " è bloccata. Chiave richiesta: id="
-                    + richiesta.getId() + " nome=" + richiesta.getNome());
-
-            Zaino zaino = personaggio.getZaino();
-            boolean trovato = false;
-            if (zaino != null && zaino.getListaOggetti() != null) {
-                for (Oggetto o : new ArrayList<>(zaino.getListaOggetti())) {
-                    if (o instanceof domain.Chiave && ((domain.Chiave) o).getId() == richiesta.getId()) {
-                        System.out.println("Hai la chiave richiesta (" + o.getNome() + "). Sblocco la stanza e consumo la chiave.");
-                        destinazione.sblocca();
-                        zaino.rimuoviOggettoDaZaino(o);
-                        trovato = true;
-                        break;
-                    }
-                }
-            }
-            if (!trovato) {
-                System.out.println("Non possiedi la chiave richiesta nello zaino. Impossibile entrare.");
-                return false;
-            }
-        }*/
-
- /*  if (corrente.getListaPersonaggi() != null) {
-            corrente.getListaPersonaggi().remove(personaggio);
-        }
-        if (destinazione.getListaPersonaggi() != null) {
-            destinazione.getListaPersonaggi().add(personaggio);
-        }
-
-        personaggio.setPosizioneCorrente(destinazione);
-        destinazione.setStatoStanza(true);
-
-        return true;
-    }*/
-
- /*  public boolean muoviPersonaggio(Personaggio personaggio, Direzione direzione) {
-        if (personaggio == null) {
-            return false;
-        }
-
-        Stanza corrente = personaggio.getPosizioneCorrente();
-        if (corrente == null) {
-            System.out.println("Il personaggio non è in nessuna stanza.");
-            return false;
-        }
-
-        Stanza destinazione = null;
-        switch (direzione) {
-            case NORD ->
-                destinazione = corrente.getStanzaAdiacente().get("NORD");
-            case SUD ->
-                destinazione = corrente.getStanzaAdiacente().get("SUD");
-            case EST ->
-                destinazione = corrente.getStanzaAdiacente().get("EST");
-            case OVEST ->
-                destinazione = corrente.getStanzaAdiacente().get("OVEST");
-        }
-
-        if (destinazione == null) {
-            System.out.println("Non puoi andare in quella direzione.");
-            return false;
-        }
-
-        if (destinazione.isBloccata()) {
-            Chiave richiesta = destinazione.getChiaveRichiesta();
-            if (richiesta == null) {
-                System.out.println("La stanza in " + direzione + " è bloccata ma non ha chiave associata.");
-                return false;
-            }
-            System.out.println("La stanza in " + direzione + " è bloccata. Chiave richiesta: id="
-                    + richiesta.getId() + " nome=" + richiesta.getNome());
-
-            Zaino zaino = personaggio.getZaino();
-            boolean trovato = false;
-            if (zaino != null && zaino.getListaOggetti() != null) {
-                for (Oggetto o : new ArrayList<>(zaino.getListaOggetti())) {
-                    if (o instanceof Chiave && ((Chiave) o).getId() == richiesta.getId()) {
-                        System.out.println("Hai la chiave richiesta (" + o.getNome() + "). Sblocco la stanza e consumo la chiave.");
-                        destinazione.sblocca();
-                        zaino.rimuoviOggettoDaZaino(o);
-                        trovato = true;
-                        break;
-                    }
-                }
-            }
-            if (!trovato) {
-                System.out.println("Non possiedi la chiave richiesta nello zaino. Impossibile entrare.");
-                return false;
-            }
-        }
-
-        if (corrente.getListaPersonaggi() != null) {
-            corrente.getListaPersonaggi().remove(personaggio);
-        }
-        if (destinazione.getListaPersonaggi() != null) {
-            destinazione.getListaPersonaggi().add(personaggio);
-        }
-
-        personaggio.setPosizioneCorrente(destinazione);
-        destinazione.setStatoStanza(true);
-
-        return true;
-    }*/
     @Override
     public Dungeon getDungeon() {
         return null;
