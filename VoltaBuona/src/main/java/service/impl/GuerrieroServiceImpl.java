@@ -129,12 +129,7 @@ public class GuerrieroServiceImpl implements PersonaggioService {
     // Bonus fissi: i tuoi bonus (restano uguali)
     int bonusFissi = bonusAttaccoGuerriero + guerriero.getLivello() * bonusDannoLivello;
 
-    /* ?????
-    Arma arma = guerriero.getArmaEquippaggiata();
-    if (arma != null) {
-        bonusFissi += arma.getDannoBonus();
-        System.out.println("[ARMA] " + arma.getNome() + " (+" + arma.getDannoBonus() + " danni)");
-    }*/
+   
 
     if (guerriero.getPuntiVita() <= sogliaFuria) {
         bonusFissi += bonusFuria;
@@ -193,7 +188,7 @@ public class GuerrieroServiceImpl implements PersonaggioService {
                 null,
                 false,
                 50,
-                20,
+                10,
                 "normale",
                 0,
                 0,

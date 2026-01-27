@@ -3,7 +3,7 @@ package domain;
 public class Combattimento {
 
     private int id;
-    //private int ordineDiIniziativa; --> service
+
     private Stanza stanza;
     private int turnoCorrenteCombattimento;//durata combattimento
     private boolean inCorso;

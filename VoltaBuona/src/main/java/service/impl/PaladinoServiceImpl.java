@@ -173,7 +173,7 @@ public class PaladinoServiceImpl implements PersonaggioService {
         return dannoNetto;
     }
 
-    ///giusto
+    
         public int attaccoFisicoPaladino(Paladino paladino, Mostro mostro) {
 
         ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -210,12 +210,7 @@ public class PaladinoServiceImpl implements PersonaggioService {
         // Bonus fissi: i tuoi bonus (restano uguali)
         int bonusFissi = bonusAttaccoFisico + paladino.getLivello() * bonusDannoLivello;
 
-        /* ?????
-    Arma arma = paladino.getArmaEquippaggiata();
-    if (arma != null) {
-        bonusFissi += arma.getDannoBonus();
-        System.out.println("[ARMA] " + arma.getNome() + " (+" + arma.getDannoBonus() + " danni)");
-    }*/
+  
         int dadiTotali = dadoDanno;
 
         // Critico: raddoppia SOLO i dadi

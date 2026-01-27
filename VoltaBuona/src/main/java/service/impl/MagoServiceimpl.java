@@ -171,18 +171,7 @@ public class MagoServiceImpl implements PersonaggioService {
         return lanciaIncantesimo(mago, mostro, magiaScelta);
     }
 
-    ///probabilmente utile per i bot
-   /*  public TipoMagiaSacra scegliMagia(Mago mago ,Mostro mostro){
-        if(mago.getPuntiMana() >= TipoMagiaSacra.MALATTIA.getCostoMana()){
-            return TipoMagiaSacra.MALATTIA;
-        } else if (mago.getPuntiMana() >= TipoMagiaSacra.RUBAVITA.getCostoMana()){
-            return TipoMagiaSacra.RUBAVITA;
-        } else if (mago.getPuntiMana() >= TipoMagiaSacra.AMMALIAMENTO.getCostoMana()){
-            return TipoMagiaSacra.AMMALIAMENTO;
-        }
-        //logica per scegliere la magia
-        return TipoMagiaSacra.RUBAVITA; //esempio
-    }*/
+  
 
      private int calcolaDannoPerMagia(TipoMagiaSacra tipo, Mago mago, Mostro mostro) {
         return switch (tipo) {

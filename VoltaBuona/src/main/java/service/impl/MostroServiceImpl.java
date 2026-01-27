@@ -24,10 +24,6 @@ public class MostroServiceImpl implements PersonaIncontrataService {
     }
 
     /**
-     * Compatibile: costruttore di default che usa l'implementazione concreta.
-     * Mantiene retrocompatibilità ma favorisce l'injection via costruttore.
-     */
-    /**
      * Calcolo del danno che il mostro infligge al personaggio.
      */
     public static int dannoBase(Mostro mostro, Personaggio personaggio) {
@@ -55,8 +51,7 @@ public class MostroServiceImpl implements PersonaIncontrataService {
      * Determina il tipo di effetto applicabile al bersaglio, se presente.
      * Restituisce null se non c'è effetto.
      */
-    //// da unire con il metodo attaccoDelMostro che si trova nel domain.Mostro
-        /// //ricordiamoci che deve essere intero il tipo di ritorno
+
     public void impostaTipoAttaccoEApplicaEffetto(Mostro mostro, Personaggio personaggio) {
         if (mostro == null) {
             return;
@@ -160,34 +155,71 @@ public class MostroServiceImpl implements PersonaIncontrataService {
     }
 
     @Override
-    public boolean attivaEvento(Personaggio personaggio, Evento e) {
-        if (personaggio == null || e == null) {
-            return false;
-        }
-
-        if (e instanceof Mostro mostro) {
-            Stanza stanza = mostro.getPosizioneCorrente() != null ? mostro.getPosizioneCorrente() : personaggio.getPosizioneCorrente();
-            mostro.setPosizioneCorrente(stanza);
-            System.out.println("Hai incontrato: " + mostro.getNomeMostro());
-            System.out.println("Prima:"+ "  " + "pv" +mostro.getPuntiVitaMostro() + " difesa"+mostro.getDifesaMostro()+ " danno"+mostro.getTipoAttaccoMostro().getDannoTipoMostro()+ " exp"+mostro.getEsperienzaMostro()+ " liv"+mostro.getLivelloMostro());
-        
-            try {
-                applicaDifficoltaMostro(mostro);
-                Object vincitore = combattimentoService.iniziaCombattimento(personaggio, mostro, stanza);
-                System.out.println("Dopo:"+ "  " + "pv"+mostro.getPuntiVitaMostro() + " difesa"+mostro.getDifesaMostro()+ " danno"+mostro.getTipoAttaccoMostro().getDannoTipoMostro()+ " exp"+mostro.getEsperienzaMostro()+ " liv"+mostro.getLivelloMostro());
-                if (vincitore instanceof Personaggio) {
-                    System.out.println("Hai sconfitto " + mostro.getNomeMostro() + "!");
-                }
-            } catch (RuntimeException ex) {
-                System.out.println("Errore durante il combattimento: " + ex.getMessage());
-                ex.printStackTrace();
-            }
-
-            return true;
-        }
+public boolean attivaEvento(Personaggio personaggio, Evento e) {
+    if (personaggio == null || e == null) {
         return false;
     }
 
+    if (e instanceof Mostro mostro) {
+        Stanza stanza = mostro.getPosizioneCorrente() != null ? mostro.getPosizioneCorrente() : personaggio.getPosizioneCorrente();
+        mostro.setPosizioneCorrente(stanza);
+
+        System.out.println("Hai incontrato: " + mostro.getNomeMostro());
+        System.out.println("Prima: pv=" + mostro.getPuntiVitaMostro()
+                + " difesa=" + mostro.getDifesaMostro()
+                + " danno=" + (mostro.getTipoAttaccoMostro() != null ? mostro.getTipoAttaccoMostro().getDannoTipoMostro() : 0)
+                + " exp=" + mostro.getEsperienzaMostro()
+                + " liv=" + mostro.getLivelloMostro());
+
+        try {
+            // ottieni difficoltà corrente (fallback a 1 se non disponibile)
+            int difficolta = 1;
+            if (combattimentoService instanceof service.impl.CombattimentoServiceImpl) {
+                difficolta = ((service.impl.CombattimentoServiceImpl) combattimentoService).getDifficoltaMostro();
+            }
+
+            System.out.println("[DEBUG] Applico difficoltà " + difficolta + " al mostro prima del combattimento");
+
+            // applica direttamente l'effetto della difficoltà al mostro (evita dipendenze su istanze dei service)
+            int delta = difficolta * 2;
+            mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() + delta);
+            mostro.setDifesaMostro(mostro.getDifesaMostro() + delta);
+            if (mostro.getTipoAttaccoMostro() != null) {
+                mostro.getTipoAttaccoMostro().setDannoTipoMostro(
+                        mostro.getTipoAttaccoMostro().getDannoTipoMostro() + delta);
+            }
+            mostro.setEsperienza(mostro.getEsperienza() + delta);
+            if (mostro.getEsperienza() >= mostro.getLivelloMostro()) {
+                mostro.setLivelloMostro(mostro.getLivelloMostro() + 1);
+            }
+            mostro.setAggiornamento(true);
+
+            System.out.println("[DEBUG] Dopo applicazione difficoltà: pv=" + mostro.getPuntiVitaMostro()
+                    + " difesa=" + mostro.getDifesaMostro()
+                    + " danno=" + (mostro.getTipoAttaccoMostro() != null ? mostro.getTipoAttaccoMostro().getDannoTipoMostro() : 0)
+                    + " exp=" + mostro.getEsperienzaMostro()
+                    + " liv=" + mostro.getLivelloMostro());
+
+            Object vincitore = combattimentoService.iniziaCombattimento(personaggio, mostro, stanza);
+
+            System.out.println("Dopo: pv=" + mostro.getPuntiVitaMostro()
+                    + " difesa=" + mostro.getDifesaMostro()
+                    + " danno=" + (mostro.getTipoAttaccoMostro() != null ? mostro.getTipoAttaccoMostro().getDannoTipoMostro() : 0)
+                    + " exp=" + mostro.getEsperienzaMostro()
+                    + " liv=" + mostro.getLivelloMostro());
+
+            if (vincitore instanceof Personaggio) {
+                System.out.println("Hai sconfitto " + mostro.getNomeMostro() + "!");
+            }
+        } catch (RuntimeException ex) {
+            System.out.println("Errore durante il combattimento: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+
+        return true;
+    }
+    return false;
+}
     @Override
     public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza) {
         List<Evento> snapshot = List.copyOf(stanza.getListaEventiAttivi());
@@ -212,8 +244,7 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         mostro.setDifesaMostro(mostro.getDifesaMostro() +  difficolta * 2);
         mostro.getTipoAttaccoMostro().setDannoTipoMostro(mostro.getTipoAttaccoMostro().getDannoTipoMostro() +  difficolta * 2);
         mostro.setEsperienza(mostro.getEsperienza() +  difficolta * 2);
-        if(mostro.getEsperienza() >= mostro.getLivelloMostro())
-            {mostro.setLivelloMostro(mostro.getLivelloMostro()+1);}
+        mostro.normalizzaEsperienzaMostro();
         mostro.setAggiornamento(true);
     }
 

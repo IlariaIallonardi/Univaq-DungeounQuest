@@ -14,14 +14,6 @@ import domain.Zaino;
 import service.CombattimentoService;
 import service.PersonaggioService;
 
-/**
- * Versione completa + robusta di CombattimentoServiceImpl. - Risolve il
- * PersonaggioService corretto in base al tipo (Guerriero/Mago/Arciere/Paladino)
- * - Gestisce correttamente l'Evento del combattimento (chiusura e rimozione
- * opzionale) - Evita new sparsi e bug su remove() di Mostro dentro lista Eventi
- * - Tiene traccia di turni e danni inflitti - Supporta scelta azione reale per
- * il turno del personaggio (attacco / oggetto / annulla)
- */
 public class CombattimentoServiceImpl implements CombattimentoService {
 
     private MostroServiceImpl mostroService;
@@ -29,7 +21,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
     TurnoServiceImpl turnoService;
     private static final Random RNG = new Random();
     private static final Scanner scanner = new Scanner(System.in);
-    private int difficoltaMostro=1;
+    private int difficoltaMostro = 0;
 
     public CombattimentoServiceImpl(MostroServiceImpl mostroService, PersonaggioService personaggioService, TurnoServiceImpl turnoService) {
         this.mostroService = mostroService;
@@ -49,6 +41,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
     public boolean èInCorso(Combattimento combattimento) {
         return combattimento.isInCorso();
     }
+
     public int getDifficoltaMostro() {
         return difficoltaMostro;
     }
@@ -114,8 +107,6 @@ public class CombattimentoServiceImpl implements CombattimentoService {
         while (combattimento.isInCorso()) {
 
             if (iniziativa == 0) {
-                mostroService.applicaDifficoltaMostro(mostro);
-                             System.out.println("dopo MOSTRO:"+ "  " + "pv"+mostro.getPuntiVitaMostro() + " difesa"+mostro.getDifesaMostro()+ " danno"+mostro.getTipoAttaccoMostro().getDannoTipoMostro()+ " exp"+mostro.getEsperienzaMostro()+ " liv"+mostro.getLivelloMostro());
 
                 applicaECalcolaDanno(combattimento, mostro);
             } else {
@@ -299,11 +290,9 @@ public class CombattimentoServiceImpl implements CombattimentoService {
 
         if (attaccante instanceof Mostro) {
             danno = mostroService.attaccoDelMostro(mostro, personaggio);
-            System.out.println("[DEBUG] Esperienza del mostro prima della vittoria (" + mostro.getNomeMostro() + "): " + mostro.getEsperienza()
-                    + " " + "livello:" + mostro.getLivelloMostro() + " " + "punti vita:" + mostro.getPuntiVitaMostro() + " " + "difesa:" + mostro.getDifesaMostro());
+            System.out.println("[DEBUG] Attacco mostro -> " + mostro.getNomeMostro() + " danno=" + danno);
             if (personaggio.èMorto(personaggio)) {
                 mostro.aggiungiEsperienzaMostro();
-            
                 terminaCombattimento(combattimento, mostro);
             }
             return danno;
@@ -314,25 +303,56 @@ public class CombattimentoServiceImpl implements CombattimentoService {
             PersonaggioService personaggioService = getServicePerPersonaggio(personaggioAttaccante);
             danno = personaggioService.attacca(personaggioAttaccante, mostro, combattimento);
 
-            System.out.println("[DEBUG] Esperienza prima vittoria (" + personaggioAttaccante.getNomePersonaggio() + "): " + "esperienza:" + personaggioAttaccante.getEsperienza()
-                    + " " + "livello:" + personaggioAttaccante.getLivello() + " " + "punti vita:" + personaggioAttaccante.getPuntiVita() + " " + "punti mana:" + personaggioAttaccante.getPuntiMana() + " " + "difesa:" + personaggioAttaccante.getDifesa() + " " + "attacco:" + personaggioAttaccante.getAttacco());
+            System.out.println("[DEBUG] Attacco player -> " + personaggioAttaccante.getNomePersonaggio() + " inflitti=" + danno);
+
             if (mostro.èMortoilMostro()) {
+                System.out.println("[DEBUG] Mostro ucciso: id=" + mostro.getId() + " nome=" + mostro.getNomeMostro());
+                System.out.println("[DEBUG] difficoltaMostro prima = " + difficoltaMostro);
                 difficoltaMostro++;
+                System.out.println("[DEBUG] difficoltaMostro dopo = " + difficoltaMostro);
+
                 Evento evento = combattimento.getEventoMostro();
-        
-                
                 Stanza stanza = combattimento.getStanza();
+
                 if (stanza != null) {
-                    // usa il metodo sicuro presente in Stanza per rimuovere l'evento
-                    stanza.rimuoviEvento(evento);
+                    System.out.println("[DEBUG] Aggiorno mostri in stanza id=" + stanza.getId());
+                    for (Evento ev : new java.util.ArrayList<>(stanza.getListaEventiAttivi())) {
+                        if (ev instanceof Mostro m && !m.èMortoilMostro() && m.getId() != mostro.getId()) {
+                            int primaPv = m.getPuntiVitaMostro();
+                            int primaDif = m.getDifesaMostro();
+                            int primaDanno = (m.getTipoAttaccoMostro() != null) ? m.getTipoAttaccoMostro().getDannoTipoMostro() : 0;
+                            int primaExp = m.getEsperienza();
 
+                            System.out.println("[DEBUG] Prima update -> id=" + m.getId() + " nome=" + m.getNomeMostro()
+                                    + " pv=" + primaPv + " dif=" + primaDif + " danno=" + primaDanno + " exp=" + primaExp);
+
+                            try {
+                                mostroService.applicaDifficoltaMostro(m);
+                            } catch (Exception ex) {
+                                System.out.println("[DEBUG] Errore applicaDifficoltaMostro su mostro id=" + m.getId() + ": " + ex.getMessage());
+                            }
+
+                            int dopoPv = m.getPuntiVitaMostro();
+                            int dopoDif = m.getDifesaMostro();
+                            int dopoDanno = (m.getTipoAttaccoMostro() != null) ? m.getTipoAttaccoMostro().getDannoTipoMostro() : 0;
+                            int dopoExp = m.getEsperienza();
+
+                            System.out.println("[DEBUG] Dopo update -> id=" + m.getId() + " nome=" + m.getNomeMostro()
+                                    + " pv=" + dopoPv + " dif=" + dopoDif + " danno=" + dopoDanno + " exp=" + dopoExp);
+                        }
+                    }
+                } else {
+                    System.out.println("[DEBUG] Stanza null: non posso aggiornare i mostri in stanza.");
                 }
-                //l'esperienza e i danni del mostro crescono quando muore il mostro
-                personaggioAttaccante.aggiungiEsperienza();
 
-                System.out.println("[DEBUG] Esperienza dopo vittoria (" + personaggioAttaccante.getNomePersonaggio() + "): " + personaggioAttaccante.getEsperienza()
-                        + " " + "livello:" + personaggioAttaccante.getLivello() + " " + "punti vita:" + personaggioAttaccante.getPuntiVita() + " " + "punti mana:" + personaggioAttaccante.getPuntiMana() + " " + "difesa:" + personaggioAttaccante.getDifesa() + " " + "attacco:" + personaggioAttaccante.getAttacco());
-                 System.out.println("DOPO MOSTRO:"+ "  " + "pv"+mostro.getPuntiVitaMostro() + " difesa"+mostro.getDifesaMostro()+ " danno"+mostro.getTipoAttaccoMostro().getDannoTipoMostro()+ " exp"+mostro.getEsperienzaMostro()+ " liv"+mostro.getLivelloMostro());
+                if (stanza != null && evento != null) {
+                    stanza.rimuoviEvento(evento);
+                }
+
+                personaggioAttaccante.aggiungiEsperienza();
+                System.out.println("[DEBUG] Player XP dopo vittoria: " + personaggioAttaccante.getEsperienza()
+                        + " livello:" + personaggioAttaccante.getLivello());
+
                 terminaCombattimento(combattimento, personaggioAttaccante);
                 aggiornaStatistiche(combattimento, danno);
             }

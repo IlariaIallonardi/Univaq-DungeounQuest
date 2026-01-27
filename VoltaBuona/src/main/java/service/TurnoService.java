@@ -9,8 +9,7 @@ import domain.Stanza;
 
 public interface TurnoService {
 
-    //public Personaggio getTurnoCorrente(); -> da implementare in turnoserviceimpl
-    //public void passaProssimoTurno(); -> da implementare in turnoserviceimpl
+   
     public void iniziaNuovoTurno(List<Personaggio> partecipanti, Scanner scanner);
 
     public List<Personaggio> calcolaOrdineIniziativa(List<Personaggio> partecipanti);

@@ -2,27 +2,17 @@ package domain;
 
 public class Trappola extends Evento {
 
-    
     private Effetto effetto;
 
     public Trappola(Effetto effetto, int id, boolean inizioEvento, boolean fineEvento, String descrizione, String nomeEvento, Stanza posizioneCorrente) {
-        super(id, inizioEvento, fineEvento, descrizione, nomeEvento,posizioneCorrente);
+        super(id, inizioEvento, fineEvento, descrizione, nomeEvento, posizioneCorrente);
         this.effetto = effetto;
     }
-    
-
-    
-
-   
 
     public boolean alterareStato() {
         // cambia stato stanza/giocatore
         return true;
     }
-
-   
-
-    
 
     public Effetto getEffettoTrappola() {
         return effetto;
@@ -116,13 +106,12 @@ public class Trappola extends Evento {
     }
 
     /**
- * Tenta di disinnescare la trappola per il `personaggio` passato.
- *
- * Comportamento corrente:
- *  - Usa un tiro d6 casuale confrontato con una difficoltà fissa (CD = 4).
- *  - Stampa il risultato del tiro e ritorna true se il disinnesco ha successo.
- */
-
+     * Tenta di disinnescare la trappola per il `personaggio` passato.
+     *
+     * Comportamento corrente: - Usa un tiro d6 casuale confrontato con una
+     * difficoltà fissa (CD = 4). - Stampa il risultato del tiro e ritorna true
+     * se il disinnesco ha successo.
+     */
     public boolean checkDiDisinnesco(Personaggio personaggio) {
 
         // difficoltà della trappola (puoi modificarla come attributo)
@@ -141,5 +130,4 @@ public class Trappola extends Evento {
         return false;
     }
 
-    
 }

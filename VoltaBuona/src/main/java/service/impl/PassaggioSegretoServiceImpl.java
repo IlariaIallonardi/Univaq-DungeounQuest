@@ -128,38 +128,7 @@ public class PassaggioSegretoServiceImpl implements EventoService {
             return true;
             }
 
-            /*
-
-// lookup case-insensitive della chiave direzione
-                 /*    Stanza destinazioneScelta = null;
-                    for (java.util.Map.Entry<String, Stanza> en : stanzaCorrente.getStanzaAdiacente().entrySet()) {
-                        String key = en.getKey();
-                        Stanza s = en.getValue();
-                        if (key != null && s != null && !s.equals(stanzaCorrente) && key.equalsIgnoreCase(sceltaKey)) {
-                            destinazioneScelta = s;
-                            break;
-                        }
-                    }
-
-                    if (destinazioneScelta == null) {
-                        System.out.println("Scelta non valida. Nessuno spostamento effettuato.");
-                        return false;
-                    }
-
-                    if (destinazioneScelta.isBloccata()) {
-                      //  destinazioneScelta.sblocca();
-                        System.out.println("Hai usato la chiave e hai sbloccato la stanza " + destinazioneScelta.getId() + "!");
-                    }else {
-                        System.out.println("La stanza " + destinazioneScelta.getId() + " è bloccata. Ti serve una chiave.");
-                        return false; // non ti muovi
-                    }
-
-                    personaggio.setPosizioneCorrente(destinazioneScelta);
-                    System.out.println("Ti sei spostato nella stanza id=" + destinazioneScelta.getId() + ". La stanza viene esplorata:");
-                    new TurnoServiceImpl((service.PersonaggioService) null).scegliAzione(personaggio, scanner);
-                }
-            }
-        }*/
+    
         return false;
 }
             // il passaggio segreto non consuma il turno di default
