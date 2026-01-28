@@ -15,7 +15,7 @@ public class EffettoService {
             int durata = effetto.getDurataTurni();
 
             if (tipo == null) {
-                return ;
+                return;
             }
 
             switch (tipo) {
@@ -38,10 +38,9 @@ public class EffettoService {
                     // comportamento di default (nessuna azione)
                     break;
             }
-        
 
         }
-    
+
     }
 
     public void applicaDisarma(Personaggio personaggio) {
@@ -49,8 +48,8 @@ public class EffettoService {
         personaggio.setDisarmato(true);
 
         Arma arma = personaggio.getArmaEquippaggiata();
-        System.out.println("[DEBUG] Arma equipaggiata: " + (arma != null ? arma.getNome() : "nessuna"));
-        System.out.println("[DEBUG] Attacco attuale: " + personaggio.getAttacco());
+        System.out.println(" Arma equipaggiata: " + (arma != null ? arma.getNome() : "nessuna"));
+      //  System.out.println(" Attacco attuale: " + personaggio.getAttacco());
         if (arma == null) {
             System.out.println("Non hai armi equipaggiate.");
             return;
@@ -58,7 +57,7 @@ public class EffettoService {
         personaggio.setArmaEquippaggiata(null);
 
         personaggio.setAttacco(personaggio.getAttacco() - arma.getDannoBonus());
-        System.out.println("[DEBUG] Attacco ridotto di " + personaggio.getAttacco());
+        System.out.println(" Attacco ridotto di " + personaggio.getAttacco());
         System.out.println("Hai perso definitivamente: " + arma.getNome());
     }
 
@@ -68,25 +67,24 @@ public class EffettoService {
         personaggio.setTurniAvvelenato(2);
         //  DANNO IMMEDIATO (turno 1)
         personaggio.subisciDanno(5);
-        System.out.println(" Sei stato avvelenato! -5 HP (turni rimanenti: 3)");
+        System.out.println(" Sei stato avvelenato! -5 punti vita.Sarai avvelenato per altri due turni.");
     }
 
     private void applicaStordimento(Personaggio personaggio, int durata) {
-        System.out.println("[DEBUG] Soldi attuali:" + personaggio.getDifesa());
         personaggio.setStatoPersonaggio("STORDITO");
         personaggio.setTurniStordito(2);
         personaggio.subisciDannoDifesa(5);
-        System.out.println(" Sei stordito! -5 punti difesa");
-        System.out.println("[DEBUG] Difesa Attuale:" + personaggio.getDifesa());
+        System.out.println(" Sei stordito! -5 punti difesa.Sarai stordito per altri due turni.");
+       // System.out.println("Difesa Attuale:" + personaggio.getDifesa());
     }
 
     private void applicaFurto(Personaggio personaggio) {
-        personaggio.setStatoPersonaggio("DERUBATO");
+        //  personaggio.setStatoPersonaggio("DERUBATO");
 
         int soldiAttuali = personaggio.getPortafoglioPersonaggio();
-        System.out.println("[DEBUG] Soldi attuali: " + soldiAttuali);
+        System.out.println("Soldi attuali: " + soldiAttuali);
         if (soldiAttuali <= 0) {
-            System.out.println("Non hai denaro!");
+            System.out.println("Non perdi nessuna moneta!");
             personaggio.setPortafoglioPersonaggio(0);
             return;
         }
@@ -96,7 +94,7 @@ public class EffettoService {
 
         // non può rubare più di quanto hai
         personaggio.setPortafoglioPersonaggio(soldiAttuali - rubati);
-        System.out.println("[DEBUG] Soldi dopo furto: " + personaggio.getPortafoglioPersonaggio());
+        System.out.println("Soldi dopo furto: " + personaggio.getPortafoglioPersonaggio());
         System.out.println(
                 " Sei stato derubato! -" + rubati
                 + " monete (rimaste: " + personaggio.getPortafoglioPersonaggio() + ")"
@@ -106,15 +104,17 @@ public class EffettoService {
 
     private void applicaSaltaTurno(Personaggio personaggio) {
         personaggio.aggiungiTurniDaSaltare(1);
-        System.out.println(" Una trappola ti colpisce! Salterai il prossimo turno.");
+     //   System.out.println("Una trappola ti colpisce! Salterai il prossimo turno.");
     }
 
     public static void applicaEffettiFineTurno(Personaggio personaggio) {
-        if (personaggio == null) return;
+        if (personaggio == null) {
+            return;
+        }
 
         if (personaggio.getTurniAvvelenato() > 0) {
-            int dannoAvvel = 5;
-            int applicato = personaggio.subisciDanno(dannoAvvel);
+           // int dannoAvvel = 5;
+            //int applicato = personaggio.subisciDanno(dannoAvvel);
 
             personaggio.setTurniAvvelenato(personaggio.getTurniAvvelenato() - 1);
 
@@ -124,10 +124,10 @@ public class EffettoService {
             }
         }
         if (personaggio.getTurniStordito() > 0) {
-            int dannoAvvel = 5;
-                        int applicato = personaggio.subisciDannoDifesa(dannoAvvel);
+            //int dannoAvvel = 5;
+            //int applicato = personaggio.subisciDannoDifesa(dannoAvvel);
 
-                        personaggio.setTurniStordito(personaggio.getTurniStordito() - 1);
+            personaggio.setTurniStordito(personaggio.getTurniStordito() - 1);
 
             if (personaggio.getTurniStordito() == 0 && "STORDITO".equalsIgnoreCase(personaggio.getStatoPersonaggio())) {
                 personaggio.setStatoPersonaggio("NORMALE");

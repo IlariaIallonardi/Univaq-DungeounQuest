@@ -160,11 +160,11 @@ public class Stanza {
                 Stanza pos = evento.getPosizioneCorrente();
                 if (pos == null || pos.getId() == this.id) {
                     it.remove();
-                    System.out.println("[DEBUG] Evento rimosso dalla stanza id=" + this.id + " eventoId=" + e.getId());
+                  //  System.out.println("[DEBUG] Evento rimosso dalla stanza id=" + this.id + " eventoId=" + e.getId());
                     return true;
                 } else {
-                    System.out.println("[DEBUG] Non rimuovere: evento dichiarato in altra stanza (stanzaId="
-                            + this.id + " posEventoId=" + pos.getId() + ")");
+                   // System.out.println("[DEBUG] Non rimuovere: evento dichiarato in altra stanza (stanzaId="
+                         //   + this.id + " posEventoId=" + pos.getId() + ")");
                     return false;
                 }
             }
@@ -178,13 +178,13 @@ public class Stanza {
                 Evento e2 = it2.next();
                 if (e2 != null && e2.getId() == evento.getId()) {
                     it2.remove();
-                    System.out.println("[DEBUG] Evento rimosso dalla stanza posizione id=" + pos.getId() + " eventoId=" + evento.getId());
+                   // System.out.println("[DEBUG] Evento rimosso dalla stanza posizione id=" + pos.getId() + " eventoId=" + evento.getId());
                     return true;
                 }
             }
         }
 
-        System.out.println("[DEBUG] Evento non trovato in stanza id=" + this.id + " eventoId=" + evento.getId());
+       // System.out.println("[DEBUG] Evento non trovato in stanza id=" + this.id + " eventoId=" + evento.getId());
         return false;
     }
 

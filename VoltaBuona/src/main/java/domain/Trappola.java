@@ -109,7 +109,7 @@ public class Trappola extends Evento {
      * Tenta di disinnescare la trappola per il `personaggio` passato.
      *
      * Comportamento corrente: - Usa un tiro d6 casuale confrontato con una
-     * difficoltà fissa (CD = 4). - Stampa il risultato del tiro e ritorna true
+     * difficoltà fissa (Difficoltà = 4). - Stampa il risultato del tiro e ritorna true
      * se il disinnesco ha successo.
      */
     public boolean checkDiDisinnesco(Personaggio personaggio) {
@@ -119,10 +119,10 @@ public class Trappola extends Evento {
 
         int dado = (int) (Math.random() * 6) + 1;
 
-        System.out.println(" Tiro per disinnescare: " + dado + " (CD = " + difficolta + ")");
+        System.out.println("Tiro per disinnescare: " + dado + " (Difficoltà = " + difficolta + ")");
 
         if (dado >= difficolta) {
-            System.out.println(" Hai disinnescato la trappola!");
+            System.out.println(" "+"Hai disinnescato la trappola!");
             return true;
         }
 
