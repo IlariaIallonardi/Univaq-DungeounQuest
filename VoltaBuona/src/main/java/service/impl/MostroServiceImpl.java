@@ -155,7 +155,7 @@ public class MostroServiceImpl implements PersonaIncontrataService {
     }
 
     @Override
-public boolean attivaEvento(Personaggio personaggio, Evento e) {
+     public boolean attivaEvento(Personaggio personaggio, Evento e) {
     if (personaggio == null || e == null) {
         return false;
     }
@@ -172,27 +172,10 @@ public boolean attivaEvento(Personaggio personaggio, Evento e) {
                 + " liv=" + mostro.getLivelloMostro());
 
         try {
-            // ottieni difficoltà corrente (fallback a 1 se non disponibile)
-            int difficolta = 1;
-            if (combattimentoService instanceof service.impl.CombattimentoServiceImpl) {
-                difficolta = ((service.impl.CombattimentoServiceImpl) combattimentoService).getDifficoltaMostro();
-            }
-
-            System.out.println("[DEBUG] Applico difficoltà " + difficolta + " al mostro prima del combattimento");
-
-            // applica direttamente l'effetto della difficoltà al mostro (evita dipendenze su istanze dei service)
-            int delta = difficolta * 2;
-            mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() + delta);
-            mostro.setDifesaMostro(mostro.getDifesaMostro() + delta);
-            if (mostro.getTipoAttaccoMostro() != null) {
-                mostro.getTipoAttaccoMostro().setDannoTipoMostro(
-                        mostro.getTipoAttaccoMostro().getDannoTipoMostro() + delta);
-            }
-            mostro.setEsperienza(mostro.getEsperienza() + delta);
-            if (mostro.getEsperienza() >= mostro.getLivelloMostro()) {
-                mostro.setLivelloMostro(mostro.getLivelloMostro() + 1);
-            }
-            mostro.setAggiornamento(true);
+                    
+            
+           applicaDifficoltaMostro(mostro);
+            
 
             System.out.println("[DEBUG] Dopo applicazione difficoltà: pv=" + mostro.getPuntiVitaMostro()
                     + " difesa=" + mostro.getDifesaMostro()

@@ -30,11 +30,11 @@ public class ArciereServiceImpl implements PersonaggioService {
         if (mostro == null) {
             System.out.println("Nessun bersaglio valido.");
             return 0;
-        }
+        }   
 
         Stanza stanzaArciere = arciere.getPosizioneCorrente();
         Stanza stanzaMostro  = mostro.getPosizioneCorrente();
-        mostraStanzeAdiacentiConMostro(stanzaArciere);
+        //mostraStanzeAdiacentiConMostro(stanzaArciere,mostro);
 
         if (stanzaArciere == null || stanzaMostro == null) {
             System.out.println("Errore di posizione.");
@@ -42,7 +42,7 @@ public class ArciereServiceImpl implements PersonaggioService {
         }
 
         //  Regola Arciere: stessa stanza O stanza adiacente
-        if (!stanzaArciere.equals(stanzaMostro) && !mostraStanzeAdiacentiConMostro(stanzaArciere)) {
+        if (!stanzaArciere.equals(stanzaMostro) && !mostraStanzeAdiacentiConMostro(stanzaArciere,mostro)) {
             System.out.println("Bersaglio troppo lontano: puoi colpire solo stanza corrente o adiacenti.");
             return 0;
         }
@@ -54,11 +54,9 @@ public class ArciereServiceImpl implements PersonaggioService {
      * Attacco a distanza: l'arciere può colpire solo stanze adiacenti; Se nella
      * stanza bersaglio ci sono personaggi, attacca il primo valido incontrato.
      *
-     * Nota: questo metodo assume che: - Arciere abbia getPosizioneCorrente() -
-     * Stanza esponga getStanzaAdiacente(): Map<String, Stanza>
-     * - Stanza esponga getPersonaggi(): List<Personaggio>
+     * 
      *
-     * Adatta i nomi dei metodi se nella tua implementazione differiscono.
+     * @param arciere
      */
    public int attaccoDistanzaArciere(Arciere arciere, Mostro mostro) {
 
@@ -122,7 +120,7 @@ public class ArciereServiceImpl implements PersonaggioService {
     }
 
 
-  private boolean stanzaHaMostro(Stanza stanza) {
+  public  boolean stanzaHaMostro(Stanza stanza) {
         if (stanza == null) return false;
 
         List<Evento> eventi = stanza.getListaEventiAttivi();
@@ -136,14 +134,15 @@ public class ArciereServiceImpl implements PersonaggioService {
         return false;
     }
 
-    private boolean  mostraStanzeAdiacentiConMostro(Stanza stanzaArciere) {
+    public  boolean  mostraStanzeAdiacentiConMostro(Stanza stanzaArciere,Mostro mostro) {
         if (stanzaArciere == null) return false;
 
         Map<String, Stanza> adiacenti = stanzaArciere.getStanzaAdiacente();
         if (adiacenti == null || adiacenti.isEmpty()) return false;
         adiacenti.forEach((direzione, stanza) -> {
             if (stanza != null && stanzaHaMostro(stanza)) {
-                System.out.println(" Mostro avvistato in " + direzione + " " + stanza);
+               // System.out.println(" Mostro avvistato in " + direzione + " " + stanza);
+               System.out.println(")"+" Hai incontrato un mostro(arciere):" + mostro.getNomeMostro()+" nella stanza " + direzione);
             }
         });
         return true;

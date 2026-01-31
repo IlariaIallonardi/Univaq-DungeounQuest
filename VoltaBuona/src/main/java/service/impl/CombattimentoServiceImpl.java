@@ -21,7 +21,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
     TurnoServiceImpl turnoService;
     private static final Random RNG = new Random();
     private static final Scanner scanner = new Scanner(System.in);
-    private int difficoltaMostro = 0;
+    private static int difficoltaMostro = 0;
 
     public CombattimentoServiceImpl(MostroServiceImpl mostroService, PersonaggioService personaggioService, TurnoServiceImpl turnoService) {
         this.mostroService = mostroService;
@@ -44,6 +44,9 @@ public class CombattimentoServiceImpl implements CombattimentoService {
 
     public int getDifficoltaMostro() {
         return difficoltaMostro;
+    }
+    public void setDifficoltaMostro(int difficoltaMostro) {
+        this.difficoltaMostro = difficoltaMostro;
     }
 
     /* =======================
@@ -237,6 +240,8 @@ public class CombattimentoServiceImpl implements CombattimentoService {
                     // stile fisico: nessuna magia selezionata
                     paladino.setMagiaSelezionata(null);
                 }
+
+                
             }
 
             applicaECalcolaDanno(combattimento, personaggio);
@@ -309,6 +314,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
                 System.out.println("[DEBUG] Mostro ucciso: id=" + mostro.getId() + " nome=" + mostro.getNomeMostro());
                 System.out.println("[DEBUG] difficoltaMostro prima = " + difficoltaMostro);
                 difficoltaMostro++;
+              //  CombattimentoServiceImpl.setDifficoltaMostro(difficoltaMostro);
                 System.out.println("[DEBUG] difficoltaMostro dopo = " + difficoltaMostro);
 
                 Evento evento = combattimento.getEventoMostro();

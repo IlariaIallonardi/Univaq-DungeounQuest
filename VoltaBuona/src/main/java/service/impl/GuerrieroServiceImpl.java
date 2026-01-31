@@ -180,7 +180,7 @@ public class GuerrieroServiceImpl implements PersonaggioService {
         return new Guerriero(
                 "abilità",
                 null,
-                10,
+                50,
                 0,
                 0,
                 0,
@@ -188,7 +188,7 @@ public class GuerrieroServiceImpl implements PersonaggioService {
                 null,
                 false,
                 50,
-                10,
+                50,
                 "normale",
                 0,
                 0,

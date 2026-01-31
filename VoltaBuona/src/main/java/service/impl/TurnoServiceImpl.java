@@ -222,7 +222,7 @@ public class TurnoServiceImpl implements TurnoService {
 
         if (eventi != null && !eventi.isEmpty()) {
             //   System.out.println(" Eventi presenti:");
-            mostraEventi(eventi);
+            mostraEventi(personaggio, eventi);
         } else {
             System.out.println(" La stanza è tranquilla...");
         }
@@ -327,7 +327,7 @@ public class TurnoServiceImpl implements TurnoService {
             visibili.add(ev);
         }
 
-        mostraEventi(visibili);
+        mostraEventi(personaggio, visibili);
         System.out.print("Scegli l'evento da eseguire (0 = annulla): ");
         int index;
         try {
@@ -375,23 +375,30 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     /// mostra gli eventi nella stanza 
-   private void mostraEventi(List<Evento> eventi) {
+   public void mostraEventi(Personaggio personaggio, List<Evento> eventi) {
+
         System.out.println("\nEventi disponibili:");
+        /*  if (personaggio instanceof Arciere arciere) {
+
+            new ArciereServiceImpl().mostraStanzeAdiacentiConMostro(arciere.getPosizioneCorrente());
+        }*/
 
         int sceltaIndex = 1; // numerazione visibile al giocatore
 
         for (Evento e : eventi) {
             if (e instanceof Mostro mostro) {
-                System.out.println(sceltaIndex + ") Hai incontrato un mostro:" + mostro.getNomeMostro());
+                // verifica se il mostro è nella stessa stanza del personaggio
+                    System.out.println(sceltaIndex + ") Hai incontrato un mostro: " + mostro.getNomeMostro());
+               
                 sceltaIndex++;
                 continue;
             }
-
             if (e instanceof NPC npc) {
                 System.out.println(sceltaIndex + ") Hai incontrato un NPC:" + npc.getNomeNPC());
                 sceltaIndex++;
                 continue;
             }
+
             // NON mostrare le trappole: scattano automaticamente all'ingresso
             if (e instanceof Trappola) {
                 continue;
@@ -400,12 +407,7 @@ public class TurnoServiceImpl implements TurnoService {
             System.out.println(sceltaIndex + ") " + e.getNomeEvento());
             sceltaIndex++;
         }
-
-        // opzionale: se non c'è nulla da mostrare
-        if (sceltaIndex == 1) {
-            System.out.println("(Nessun evento selezionabile in questa stanza)");
-        }
-    }
+   }
     // mostra gli oggetti nella stanza 
 
     private void mostraOggetti(List<Oggetto> oggetti) {
