@@ -1,5 +1,6 @@
 package service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
@@ -41,11 +42,7 @@ public class ArciereServiceImpl implements PersonaggioService {
             return 0;
         }
 
-        //  Regola Arciere: stessa stanza O stanza adiacente
-        if (!stanzaArciere.equals(stanzaMostro) && !mostraStanzeAdiacentiConMostro(stanzaArciere,mostro)) {
-            System.out.println("Bersaglio troppo lontano: puoi colpire solo stanza corrente o adiacenti.");
-            return 0;
-        }
+    
 
         return attaccoDistanzaArciere(arciere, mostro);
     }
@@ -134,19 +131,26 @@ public class ArciereServiceImpl implements PersonaggioService {
         return false;
     }
 
-    public  boolean  mostraStanzeAdiacentiConMostro(Stanza stanzaArciere,Mostro mostro) {
-        if (stanzaArciere == null) return false;
-
-        Map<String, Stanza> adiacenti = stanzaArciere.getStanzaAdiacente();
-        if (adiacenti == null || adiacenti.isEmpty()) return false;
-        adiacenti.forEach((direzione, stanza) -> {
-            if (stanza != null && stanzaHaMostro(stanza)) {
-               // System.out.println(" Mostro avvistato in " + direzione + " " + stanza);
-               System.out.println(")"+" Hai incontrato un mostro(arciere):" + mostro.getNomeMostro()+" nella stanza " + direzione);
+    
+    public Map<String, Mostro> trovaMostriAdiacenti(Stanza stanzaArciere) {
+    Map<String, Mostro> result = new HashMap<>();
+    if (stanzaArciere == null) return result;
+    Map<String, Stanza> adiacenti = stanzaArciere.getStanzaAdiacente();
+    if (adiacenti == null) return result;
+    for (Map.Entry<String, Stanza> en : adiacenti.entrySet()) {
+        Stanza s = en.getValue();
+        if (s == null) continue;
+        List<Evento> evs = s.getListaEventiAttivi();
+        if (evs == null) continue;
+        for (Evento ev : evs) {
+            if (ev instanceof Mostro m) {
+                result.put(en.getKey(), m);
+                break;
             }
-        });
-        return true;
+        }
     }
+    return result;
+}
  
 
     @Override
@@ -155,7 +159,8 @@ Stanza stanza = null;
 Zaino zaino = new Zaino();
 return new Arciere("abilità", null, 15, 
 300, 
-0, 2, nome, stanza, false, 100, 20, "normale", 0, 0, 0, 0, zaino, 0);
+0, 2, nome, stanza, false, 100, 40, 
+"normale", 0, 0, 0, 0, zaino, 0);
 }
 
 

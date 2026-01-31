@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 
+import domain.Arciere;
 import domain.Evento;
 import domain.Mostro;
 import domain.NPC;
@@ -291,7 +292,7 @@ public class TurnoServiceImpl implements TurnoService {
     }
 
     // restituisce il service corretto per il tipo di evento
-    private EventoService servicePerEvento(Evento e) {
+    public EventoService servicePerEvento(Evento e) {
         if (e == null) {
             return eventoService;
         }
@@ -310,12 +311,12 @@ public class TurnoServiceImpl implements TurnoService {
         return eventoService != null ? eventoService : new PassaggioSegretoServiceImpl();
     }
 
-    private boolean eseguiSingoloEvento(Personaggio personaggio, Stanza stanza, List<Evento> eventi, Scanner scanner) {
+    public boolean eseguiSingoloEvento(Personaggio personaggio, Stanza stanza, List<Evento> eventi, Scanner scanner) {
         if (eventi == null || eventi.isEmpty()) {
             System.out.println("Nessun evento disponibile.");
             return false;
         }
-        // costruisci lista visibile coerente con mostraEventi (esclude Trappola)
+
         List<Evento> visibili = new ArrayList<>();
         for (Evento ev : eventi) {
             if (ev == null) {
@@ -327,7 +328,35 @@ public class TurnoServiceImpl implements TurnoService {
             visibili.add(ev);
         }
 
-        mostraEventi(personaggio, visibili);
+        List<Evento> display = new ArrayList<>();
+        // aggiungo mostri adiacenti (per Arciere) evitando duplicati
+        if (personaggio instanceof Arciere arciere) {
+            Map<String, Mostro> adj = new ArciereServiceImpl().trovaMostriAdiacenti(arciere.getPosizioneCorrente());
+            for (Mostro m : adj.values()) {
+                if (m != null) {
+                    display.add(m);
+                }
+            }
+        }
+        // aggiungo eventi visibili saltando eventuali mostri già inseriti (stesso id)
+        for (Evento ev : visibili) {
+            if (ev instanceof Mostro m) {
+                boolean found = false;
+                for (Evento d : display) {
+                    if (d instanceof Mostro dm && dm.getId() == m.getId()) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
+                    continue;
+                }
+            }
+            display.add(ev);
+        }
+
+        mostraEventi(personaggio, display);
+
         System.out.print("Scegli l'evento da eseguire (0 = annulla): ");
         int index;
         try {
@@ -336,17 +365,20 @@ public class TurnoServiceImpl implements TurnoService {
             System.out.println("Input non valido.");
             return false;
         }
+
         if (index < 0) {
             System.out.println("Operazione annullata.");
             return false;
         }
-        if (index >= visibili.size()) {
+        if (index >= display.size()) {
             System.out.println("Indice non valido.");
             return false;
         }
-        Evento e = visibili.get(index);
+
+        Evento e = display.get(index);
         EventoService svc = servicePerEvento(e);
         boolean termina = svc.attivaEvento(personaggio, e);
+
         try {
             if (e.isFineEvento() || !e.èRiutilizzabile()) {
                 if (stanza != null) {
@@ -362,11 +394,11 @@ public class TurnoServiceImpl implements TurnoService {
                             stanza.rimuoviEvento(e);
                         }
                     }
-
                 }
             }
         } catch (Exception ignored) {
         }
+
         if (termina) {
             terminaTurnoCorrente(personaggio);
             return true;
@@ -376,41 +408,55 @@ public class TurnoServiceImpl implements TurnoService {
 
     /// mostra gli eventi nella stanza 
    public void mostraEventi(Personaggio personaggio, List<Evento> eventi) {
-
         System.out.println("\nEventi disponibili:");
-        /*  if (personaggio instanceof Arciere arciere) {
+        int sceltaIndex = 1;
 
-            new ArciereServiceImpl().mostraStanzeAdiacentiConMostro(arciere.getPosizioneCorrente());
-        }*/
+        java.util.Set<Integer> printedIds = new java.util.HashSet<>();
 
-        int sceltaIndex = 1; // numerazione visibile al giocatore
+        if (personaggio instanceof Arciere arciere) {
+            Map<String, Mostro> adj = new ArciereServiceImpl().trovaMostriAdiacenti(arciere.getPosizioneCorrente());
+            for (Map.Entry<String, Mostro> en : adj.entrySet()) {
+                Mostro m = en.getValue();
+                if (m == null) {
+                    continue;
+                }
+                System.out.println(sceltaIndex + ") Mostro avvistato in " + en.getKey()
+                        + " (stanza " + (m.getPosizioneCorrente() != null ? m.getPosizioneCorrente().getId() : "n/a")
+                        + "): " + m.getNomeMostro());
+                printedIds.add(m.getId());
+                sceltaIndex++;
+            }
+        }
 
         for (Evento e : eventi) {
             if (e instanceof Mostro mostro) {
-                // verifica se il mostro è nella stessa stanza del personaggio
-                    System.out.println(sceltaIndex + ") Hai incontrato un mostro: " + mostro.getNomeMostro());
-               
+                if (printedIds.contains(mostro.getId())) {
+                    continue; // evita duplicato
+                }
+                System.out.println(sceltaIndex + ") Hai incontrato un mostro: " + mostro.getNomeMostro());
+                printedIds.add(mostro.getId());
                 sceltaIndex++;
                 continue;
             }
             if (e instanceof NPC npc) {
-                System.out.println(sceltaIndex + ") Hai incontrato un NPC:" + npc.getNomeNPC());
+                System.out.println(sceltaIndex + ") Hai incontrato un NPC: " + npc.getNomeNPC());
                 sceltaIndex++;
                 continue;
             }
-
-            // NON mostrare le trappole: scattano automaticamente all'ingresso
             if (e instanceof Trappola) {
                 continue;
             }
-
             System.out.println(sceltaIndex + ") " + e.getNomeEvento());
             sceltaIndex++;
         }
-   }
+
+        if (sceltaIndex == 1) {
+            System.out.println("(Nessun evento selezionabile in questa stanza)");
+        }
+    }
     // mostra gli oggetti nella stanza 
 
-    private void mostraOggetti(List<Oggetto> oggetti) {
+    public void mostraOggetti(List<Oggetto> oggetti) {
         System.out.println("\nOggetti presenti nella stanza:");
 
         for (int i = 0; i < oggetti.size(); i++) {
