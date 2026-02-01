@@ -174,40 +174,40 @@ public class Mostro extends PersonaIncontrata {
             case "Spiritello" -> {
                 this.esperienza = 0;
                 this.livelloMostro = 0;
-                this.puntiVitaMostro = 5;
-                this.difesaMostro = 5;
+                this.puntiVitaMostro = 50;
+                this.difesaMostro = 50;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.MORSO;
                 return 1;
             }
             case "Drago" -> {
                 this.esperienza = 0;
                 this.livelloMostro = 0;
-                this.puntiVitaMostro = 5;
-                this.difesaMostro = 5;
+                this.puntiVitaMostro = 50;
+                this.difesaMostro = 50;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.RUGGITO_DI_FUOCO;
                 return 1;
             }
             case "Golem" -> {
                 this.esperienza = 0;
                 this.livelloMostro = 0;
-                this.puntiVitaMostro = 5;
-                this.difesaMostro = 5;
+                this.puntiVitaMostro = 50;
+                this.difesaMostro = 50;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.URLO_ASSORDANTE;
                 return 1;
             }
             case "Ragno Gigante" -> {
                 this.esperienza = 0;
                 this.livelloMostro = 0;
-                this.puntiVitaMostro = 5;
-                this.difesaMostro = 5;
+                this.puntiVitaMostro = 50;
+                this.difesaMostro = 50;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA;
                 return 1;
             }
             case "Troll" -> {
                 this.esperienza = 0;
                 this.livelloMostro = 0;
-                this.puntiVitaMostro = 5;
-                this.difesaMostro = 5;
+                this.puntiVitaMostro = 50;
+                this.difesaMostro = 50;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.ARTIGLI_POSSENTI;
                 return 1;
             }

@@ -14,6 +14,8 @@ public class Turno {
         this.id = id;
         this.indiceGiocatoreAttuale = indiceGiocatoreAttuale;
     }
+    public Turno() {
+    }
  public int getId() {
         return id;
     }
