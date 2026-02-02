@@ -50,7 +50,7 @@ public class ArciereServiceImpl implements PersonaggioService {
             return attaccoArciere(arciere, mostro);
         } else {
              
-            return attaccoDistanzaArciere(arciere, mostro,combattimento);
+            return attaccoDistanzaArciere(arciere, mostro);
         }
     }
 
@@ -122,7 +122,7 @@ public class ArciereServiceImpl implements PersonaggioService {
         return dannoNetto;
     }
 
-    public int attaccoDistanzaArciere(Arciere arciere, Mostro mostro,Combattimento combattimento) {
+    public int attaccoDistanzaArciere(Arciere arciere, Mostro mostro) {
 
         
         int puntiVitaMostro= mostro.getPuntiVitaMostro();
@@ -134,11 +134,6 @@ public class ArciereServiceImpl implements PersonaggioService {
                 + " (HP rimasti: " + mostro.getPuntiVitaMostro() + ")"
         );
         
-    
-         if (combattimento != null) {
-        combattimento.setInCorso(false);
-    
-    }
         turno.terminaTurno();
 
         return puntiVitaMostro;

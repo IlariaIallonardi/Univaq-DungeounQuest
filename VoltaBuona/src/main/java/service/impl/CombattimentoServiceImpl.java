@@ -14,6 +14,7 @@ import domain.Zaino;
 import service.CombattimentoService;
 import service.PersonaggioService;
 
+
 public class CombattimentoServiceImpl implements CombattimentoService {
 
     private MostroServiceImpl mostroService;
@@ -61,24 +62,18 @@ public class CombattimentoServiceImpl implements CombattimentoService {
         }
 
         System.out.println("\nInizia il combattimento: " + personaggio.getNomePersonaggio() + " VS " + mostro.getNomeMostro());
-        // stampa XP del personaggio prima del combattimento
         try {
             System.out.println("Esperienza prima combattimento (" + personaggio.getNomePersonaggio() + "): " + personaggio.getEsperienza());
         } catch (Exception ignored) {
         }
 
-        // se il Mostro è un Evento (tipico quando è stato creato come evento in stanza),
-        // riusalo invece di crearne uno nuovo per evitare mismatch di id.
-        Evento evento;
+
+        Evento evento = null;
         if (mostro instanceof Evento) {
             evento = (Evento) mostro;
             // assicurati che la posizione sia impostata
             if (evento.getPosizioneCorrente() == null && stanza != null) {
                 evento.setPosizioneCorrente(stanza);
-            }
-            // se non è già presente nella lista eventi della stanza, aggiungilo
-            if (stanza != null && stanza.getListaEventiAttivi() != null && !stanza.getListaEventiAttivi().contains(evento)) {
-                stanza.getListaEventiAttivi().add(evento);
             }
         } else {
             evento = new Evento(
@@ -92,6 +87,29 @@ public class CombattimentoServiceImpl implements CombattimentoService {
                 evento.setPosizioneCorrente(stanza);
             }
         }
+
+        // verifica posizione: stessa stanza obbligatoria, eccetto Arciere che può attaccare da stanza adiacente
+        Stanza posPersonaggio = personaggio.getPosizioneCorrente();
+        Stanza posMostro = (evento != null) ? evento.getPosizioneCorrente() : mostro.getPosizioneCorrente();
+
+        boolean stessaStanza = posPersonaggio != null && posMostro != null && posPersonaggio.getId() == posMostro.getId();
+        boolean arciereAdiacente = false;
+
+        if (!stessaStanza && posPersonaggio != null && posMostro != null) {
+            if (personaggio instanceof domain.Arciere) {
+                var adiacenti = posPersonaggio.getStanzaAdiacente();
+                if (adiacenti != null && adiacenti.containsValue(posMostro)) {
+                    arciereAdiacente = true;
+                }
+            }
+        }
+
+        if (!stessaStanza && !arciereAdiacente) {
+            System.out.println("Impossibile iniziare il combattimento: il mostro non è nella stessa stanza. Solo l'Arciere può attaccare da stanza adiacente.");
+            return false;
+        }
+
+
 
         Combattimento combattimento = new Combattimento(
                 null, 0, evento, 0, true, personaggio, stanza, 0, null, mostro
@@ -113,7 +131,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
 
                 applicaECalcolaDanno(combattimento, mostro);
             } else {
-                // Turno giocatore: qui la scelta influisce davvero
+        
                 Zaino zaino = personaggio.getZaino(); // se esiste getZaino()
                 scegliAzioneCombattimentoInterna(combattimento, personaggio, zaino);
             }
@@ -129,6 +147,8 @@ public class CombattimentoServiceImpl implements CombattimentoService {
 
         return combattimento.getVincitore();
     }
+
+
 
     /* =======================
        SCELTA AZIONE
@@ -241,7 +261,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
                     paladino.setMagiaSelezionata(null);
                 }
 
-                
+
             }
 
             applicaECalcolaDanno(combattimento, personaggio);

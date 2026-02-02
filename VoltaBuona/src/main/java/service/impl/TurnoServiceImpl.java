@@ -22,6 +22,7 @@ import service.EventoService;
 import service.GiocoService;
 import service.PersonaggioService;
 import service.TurnoService;
+import util.ANSI;
 
 public class TurnoServiceImpl implements TurnoService {
 
@@ -133,7 +134,9 @@ public class TurnoServiceImpl implements TurnoService {
 
             // Stampa informazioni dello stato all'inizio del turno
             System.out.println("\n===== TURNO DI " + p.getNomePersonaggio() + " =====");
-            System.out.println("Punti vita: " + p.getPuntiVita() + " | Difesa: " + p.getDifesa());
+            System.out.println("Punti vita: " + p.getPuntiVita() + " | Difesa: " + p.getDifesa()+" | Punti Mana: " + p.getPuntiMana() + " | Attacco: " + p.getAttacco()
+                    + " | Stato: " + p.getStatoPersonaggio()+ " | Turni avvelenato: " + p.getTurniAvvelenato()+ "Turni stordito: " + p.getTurniStordito()+ " | Salto turno rimanenti: " + p.getTurniDaSaltare()+ "\n"+" | Portafoglio: " + p.getPortafoglioPersonaggio()+ "\n"
+                +"Livello: " + p.getLivello() + " | Esperienza: " + p.getEsperienza() + "\n");
 
             // Se il personaggio deve saltare il turno, consumiamo il salto e passiamo oltre
             if (p.consumeSaltoTurno()) {
@@ -212,6 +215,7 @@ public class TurnoServiceImpl implements TurnoService {
         boolean ciSonoOggetti = oggetti != null && !oggetti.isEmpty();
 
         System.out.println("\n--- Esplorazione stanza ---");
+        //System.out.println(ANSI.BOLD + ANSI.RED + "Scorri in su il terminale per capire se sei caduto in una trappola!" + ANSI.RESET);
 
         if (!stanzaCorrente.getOggettiPresenti().isEmpty()) {
             // System.out.println("Oggetti trovati:");
@@ -229,7 +233,7 @@ public class TurnoServiceImpl implements TurnoService {
         }
 
         // 3 scelta dell'azione
-        System.out.println("\nCosa vuoi fare?");
+        System.out.println("\nCosa vuoi fare?" + ANSI.BOLD + ANSI.RED + "Scorri in su il terminale per capire se sei caduto in una trappola!" + ANSI.RESET);
         System.out.println("1) Fare un evento");
         System.out.println("2) Prendere un oggetto");
         if (ciSonoOggetti && ciSonoEventi) {
@@ -237,6 +241,9 @@ public class TurnoServiceImpl implements TurnoService {
         }
         System.out.println("4) usare un oggetto dallo zaino");
         System.out.println("5) Controlla il portafoglio");
+        if (personaggio instanceof Arciere) {
+            System.out.println("6) Sei un Arciere, puoi attaccare mostri in stanze adiacenti!");
+        }
         System.out.println("0) Passa il turno");
 
         int scelta;
@@ -278,6 +285,38 @@ public class TurnoServiceImpl implements TurnoService {
                 personaggio.getPortafoglioPersonaggio();
                 System.out.println("saldo attuale :" + personaggio.getPortafoglioPersonaggio());
                 break;
+            case 6:
+                if (personaggio instanceof Arciere arciere) {
+                    Map<String, Mostro> mostriAdiacenti = new ArciereServiceImpl().trovaMostriAdiacenti(personaggio.getPosizioneCorrente());
+                    if (mostriAdiacenti.isEmpty()) {
+                        System.out.println("Non ci sono mostri colpibili nelle stanze adiacenti.");
+                        break;
+                    } else {
+                        // altrimenti fai scegliere quale colpire
+                        System.out.println("Scegli il bersaglio:");
+                        List<String> keys = new java.util.ArrayList<>(mostriAdiacenti.keySet());
+                        for (int i = 0; i < keys.size(); i++) {
+                            Mostro m = mostriAdiacenti.get(keys.get(i));
+                            System.out.println(i + ") " + keys.get(i) + " -> " + m.getNomeMostro() + " (HP: " + m.getPuntiVitaMostro() + ")");
+                        }
+                        System.out.print("Inserisci il numero del bersaglio: ");
+                        int sceltaB;
+                        try {
+                            sceltaB = Integer.parseInt(scanner.nextLine());
+                        } catch (NumberFormatException e) {
+                            System.out.println("Input non valido.");
+                            break;
+                        }
+                        Mostro bersaglio = mostriAdiacenti.get(keys.get(sceltaB - 1));
+
+                        ArciereServiceImpl arciereService = new ArciereServiceImpl();
+                         arciereService.attaccoDistanzaArciere(arciere, bersaglio);
+                    }
+
+                    // fine turno immediata
+                    terminaTurnoCorrente(personaggio);
+                }
+                break;
             case 0:
                 System.out.println("Turno terminato.");
                 break;
@@ -287,10 +326,9 @@ public class TurnoServiceImpl implements TurnoService {
         }
 
         terminaTurnoCorrente(personaggio);
-
-        //   System.out.println("FINE TURNO DI " + personaggio.getNomePersonaggio() );
     }
 
+    //   System.out.println("FINE TURNO DI " + personaggio.getNomePersonaggio() );
     // restituisce il service corretto per il tipo di evento
     public EventoService servicePerEvento(Evento e) {
         if (e == null) {
