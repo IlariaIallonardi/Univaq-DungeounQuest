@@ -14,8 +14,7 @@ import util.ANSI;
 
 public class MagoServiceImpl implements PersonaggioService {
 
-    private static final int bonusDannoLivello = 4;
-    private static final int bonusAttaccoMago = 15;
+    private static final int BONUS_ATTACCO_MAGO = 15;
 
     /**
      * Metodo per utilizzare la magia del mago
@@ -31,157 +30,95 @@ public class MagoServiceImpl implements PersonaggioService {
 
         int costoMana = tipo.getCostoMana();
 
-        // Se non hai mana, non puoi lanciare
+        // Controllo manna prima di lanciare la magia.
         if (mago.getPuntiMana() < costoMana) {
             System.out.println(mago.getNomePersonaggio() + " non ha abbastanza mana per " + tipo + "!");
             return 0;
         }
 
-        // ===== TIRO PER COLPIRE (come il guerriero) =====
-        int tiro = random.nextInt(1, 21); // d20
+        int tiro = random.nextInt(1, 21); // dado di 20 facce
 
         int bonusAttacco = mago.getAttacco() + (mago.getLivello() / 2);
         int totale = tiro + bonusAttacco;
 
-        int difesaMostro = mostro.getDifesaMostro(); // usata come CA
+        int difesaMostro = mostro.getDifesaMostro(); // usata come difficoltà 
 
-        System.out.println(
-                mago.getNomePersonaggio()
-                + " lancia " + tipo
-                + " tiro: " + tiro + " + bonus " + bonusAttacco
-                + " = " + totale + " (difesa  mostro: " + difesaMostro + ")"
-        );
+        System.out.println(mago.getNomePersonaggio() + " lancia " + tipo + " tiro: " + tiro + " + bonus " + bonusAttacco + " = " + totale + " (difesa  mostro: " + difesaMostro + ")");
 
-        // 1 naturale: fallimento (ma consumo mana lo stesso? scelta tua)
-        // Qui: consumo mana anche se fallisce, perché l'incantesimo è stato tentato.
         if (tiro == 1) {
             System.out.println("Fallimento magico!");
-            mago.setPuntiMana(Math.max(0, mago.getPuntiMana() - costoMana));
             return 0;
         }
 
-        boolean critico = (tiro == 20);
+        boolean lancioMigliore = (tiro == 20);
 
-        // Se non critico e non supero la difesa del mostro, manca
-        if (!critico && totale < difesaMostro) {
-            System.out.println("L'incantesimo manca il bersaglio.");
-            mago.setPuntiMana(Math.max(0, mago.getPuntiMana() - costoMana));
-            return 0;
-        }
+        if (lancioMigliore || totale >= difesaMostro) {
 
-        // ===== DANNO (dadi + bonus fissi, critico raddoppia SOLO i dadi) =====
-        // Scegli il dado base: esempio 1d10
-        int dadoDanno = random.nextInt(1, 11); // 1..10
+            int dadoDanno = random.nextInt(1, 9); // dado da 8 facce
 
-        // Bonus fissi (stile guerriero): qui puoi usare costanti analoghe alle tue
-        // esempio: bonusAttaccoMago + livello * bonusDannoLivello
-        int bonusFissi = bonusAttaccoMago + mago.getLivello() * bonusDannoLivello;
-
-        int dadiTotali = dadoDanno;
-
-        if (critico) {
-            int dadoExtra = random.nextInt(1, 11);
-            dadiTotali += dadoExtra;
-            System.out.println(
-                    ANSI.BRIGHT_RED + ANSI.BOLD
-                    + "CRITICO MAGICO! Dadi danno raddoppiati!"
-                    + ANSI.RESET
-            );
-        }
-
-        int dannoPerMagia = calcolaDannoPerMagia(tipo, mago, mostro);
-        int dannoNetto = Math.max(1, dadiTotali + bonusFissi + dannoPerMagia);
-
-        // ===== EFFETTI SPECIALI PER TIPO MAGIA =====
-        switch (tipo) {
-            case RUBAVITA -> {
-                int cura = 10;
-                mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - cura);
-                mago.setPuntiVita(mago.getPuntiVita() + cura);
-                System.out.println(mago.getNomePersonaggio() + " assorbe " + cura + " PV!");
+            if (lancioMigliore) {
+                int dadoExtra = random.nextInt(1, 11);
+                dadoDanno += dadoExtra;
+                System.out.println(ANSI.BRIGHT_RED + ANSI.BOLD + "CRITICO MAGICO! Dadi danno raddoppiati!" + ANSI.RESET
+                );
             }
-            case AMMALIAMENTO -> {
-                // esempio semplice: riduci attacco o difesa del mostro (se hai stat adatte)
-                mostro.setDifesaMostro(Math.max(0, mostro.getDifesaMostro() - 3));
-                System.out.println("Il mostro è ammaliato!");
+
+            int dannoNetto = dadoDanno + BONUS_ATTACCO_MAGO;
+
+            TipoMagiaSacra magiaScelta = mago.getMagiaSelezionata();
+
+            switch (magiaScelta) {
+                case RUBAVITA -> {
+                    int cura = 10;
+                    mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - cura);
+                    mago.setPuntiVita(mago.getPuntiVita() + cura);
+                    System.out.println(mago.getNomePersonaggio() + " assorbe " + cura + " PV!");
+                }
+                case AMMALIAMENTO -> {
+
+                    mostro.setDifesaMostro(Math.max(0, mostro.getDifesaMostro() - 3));
+                    System.out.println("Il mostro è ammaliato!");
+                }
+                case MALATTIA -> {
+                    int extra = 4 + (mago.getLivello() / 2);
+                    dannoNetto += extra;
+                    System.out.println("Malattia! Danno extra: +" + extra);
+                }
             }
-            case MALATTIA -> {
-                // esempio: danno extra fisso o DOT futuro
-                int extra = 4 + (mago.getLivello() / 2);
-                dannoNetto += extra;
-                System.out.println("Malattia! Danno extra: +" + extra);
-            }
+            mago.setPuntiMana((mago.getPuntiMana() - costoMana));
+            mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
+
+            System.out.println(mago.getNomePersonaggio() + " infligge " + dannoNetto + " danni magici a " + mostro.getNomeMostro() + "danno base" + dadoDanno + " + bonus " + BONUS_ATTACCO_MAGO + " + danno magia " + "" + " (HP rimasti: " + mostro.getPuntiVitaMostro() + ", Mana rimasto: " + mago.getPuntiMana() + ")");
+
+            return dannoNetto;
         }
-
-        // ===== CONSUMO MANA =====
-        mago.setPuntiMana(Math.max(0, mago.getPuntiMana() - costoMana));
-
-        // ===== APPLICA DANNO =====
-        mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
-
-        System.out.println(
-                mago.getNomePersonaggio()
-                + " infligge " + dannoNetto
-                + " danni magici a " + mostro.getNomeMostro()
-                + "danno base" + dadiTotali + " + bonus " + bonusFissi + " + danno magia " + dannoPerMagia
-                + " (HP rimasti: " + mostro.getPuntiVitaMostro()
-                + ", Mana rimasto: " + mago.getPuntiMana() + ")"
-        );
-
-        return dannoNetto;
+        return 1;
     }
 
+    /**
+     * Attacca il mostro con la magia selezionata dal mago.
+     *
+     * @param personaggio
+     * @param mostro
+     * @param combattimento
+     * @return il danno inflitto al mostro
+     */
     @Override
     public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
-        if (!(personaggio instanceof Mago mago)) {
-            System.out.println("Solo un Mago può usare questo attacco.");
-            return 0;
+
+        Mago mago = (Mago) personaggio;
+
+        if (mago.getPosizioneCorrente().equals(mostro.getPosizioneCorrente())) {
+
+            TipoMagiaSacra magiaScelta = mago.getMagiaSelezionata();
+
+            if (magiaScelta == null) {
+                System.out.println("Nessuna magia selezionata.");
+                return 0;
+            }
+            return lanciaIncantesimo(mago, mostro, magiaScelta);
         }
-
-        if (mostro == null) {
-            System.out.println("Nessun bersaglio valido.");
-            return 0;
-        }
-
-        if (mago.getPosizioneCorrente() == null
-                || mostro.getPosizioneCorrente() == null) {
-            System.out.println("Errore di posizione.");
-            return 0;
-        }
-
-        if (!mago.getPosizioneCorrente()
-                .equals(mostro.getPosizioneCorrente())) {
-            System.out.println(" Devi essere nella stessa stanza del mostro.");
-            return 0;
-        }
-
-        if (mago == null) {
-            return 0;
-        }
-
-        TipoMagiaSacra magiaScelta = mago.getMagiaSelezionata();
-
-        // QUI: protezione se non è stata scelta alcuna magia
-        if (magiaScelta == null) {
-            System.out.println("Nessuna magia selezionata.");
-            return 0;
-        }
-
-        //  QUI: chiami il nuovo metodo con il terzo parametro
-        return lanciaIncantesimo(mago, mostro, magiaScelta);
-    }
-
-  
-
-     private int calcolaDannoPerMagia(TipoMagiaSacra tipo, Mago mago, Mostro mostro) {
-        return switch (tipo) {
-            case MALATTIA ->
-                4;
-            case RUBAVITA ->
-                5;
-            case AMMALIAMENTO ->
-                6;
-        };
+        return 0;
     }
 
     @Override
@@ -194,18 +131,18 @@ public class MagoServiceImpl implements PersonaggioService {
                 0,
                 2,
                 nome,
-                stanza, 
-                false, 
-                50, 
-                20, 
-                "normale", 
-                0, 
+                stanza,
+                false,
+                60,
+                100,
+                "normale",
                 0,
-                 0,
-                  0,
-                   zaino,
-                    0, 
-                    null);
+                0,
+                0,
+                0,
+                zaino,
+                0,
+                null);
     }
 
     @Override

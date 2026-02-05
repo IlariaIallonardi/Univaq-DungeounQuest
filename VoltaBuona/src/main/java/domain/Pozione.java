@@ -4,14 +4,13 @@ package domain;
 public class Pozione extends Oggetto {
 
 
-    private int valoreBonus;
+    
     private TipoPozione tipoPozione;
 
- public Pozione(TipoPozione tipoPozione, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato,int valoreBonus) {
+ public Pozione(TipoPozione tipoPozione, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
                 super(id, nome, descrizione, usabile, equipaggiabile, trovato);
-            
                 this.tipoPozione = tipoPozione;
-                this.valoreBonus = valoreBonus;
+                
             
             }
 
@@ -22,7 +21,7 @@ public class Pozione extends Oggetto {
         ANTIDOTO(20);
 
           private final int valoreBonus;
-        private TipoPozione tipoPozione;
+    
 
         TipoPozione(int valoreBonus) {
             this.valoreBonus = valoreBonus;
@@ -34,22 +33,12 @@ public class Pozione extends Oggetto {
 
     }
 
-
-
-   
-
-            
-
-   
-
     @Override
     public boolean eseguiEffetto(Personaggio personaggio) {
         if (personaggio == null) {
             return false;
         }
-        System.out.println("[POZIONE] Applicazione " + tipoPozione + " su " + personaggio.getNomePersonaggio()
-    + " (HP prima: " + personaggio.getPuntiVita() + ", Mana prima: " + personaggio.getPuntiMana() + ")");
-
+      
         switch (tipoPozione) {
             case CURA:
                 personaggio.setPuntiVita(personaggio.getPuntiVita() + tipoPozione.getValoreBonus());
@@ -60,16 +49,13 @@ public class Pozione extends Oggetto {
             case ANTIDOTO:
                 personaggio.setPuntiVita(personaggio.getPuntiVita() + tipoPozione.getValoreBonus());
                 personaggio.setStatoPersonaggio("NORMALE");
-                // azzera eventuali contatori (se usi turni)
                 personaggio.setTurniAvvelenato(0);
 
                 break;
             default:
                 return false;
         }
-        System.out.println("[POZIONE] Risultato -> HP: " + personaggio.getPuntiVita()
-    + " | Mana: " + personaggio.getPuntiMana()
-    + " | Stato: " + personaggio.getStatoPersonaggio());
+       
         return true;
     }
 

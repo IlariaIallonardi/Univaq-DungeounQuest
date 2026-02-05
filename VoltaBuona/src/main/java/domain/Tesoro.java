@@ -11,11 +11,6 @@ public class Tesoro extends Oggetto {
     } 
 
    
-
-
-
-
-
     public int getValore() {
         return valore;
     }
@@ -26,8 +21,7 @@ public class Tesoro extends Oggetto {
 
    @Override
    public boolean eseguiEffetto(Personaggio personaggio) {
-    if (personaggio == null) return false;
-    personaggio.addMonete(this.valore);
+    personaggio.aggiungiMonete(this.valore);
     return true;
 }
 }

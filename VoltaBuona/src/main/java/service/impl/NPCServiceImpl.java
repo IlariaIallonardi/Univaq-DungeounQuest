@@ -193,10 +193,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             return;
         }
 
-        System.out.println("DEBUG donaTesoro: npc identity=" + System.identityHashCode(npc) + " nome=" + npc.getNomeNPC());
-        System.out.println("DEBUG donaTesoro: personaggio identity=" + System.identityHashCode(personaggio));
-        System.out.println("DEBUG donaTesoro: oggetto param 'o' identity=" + System.identityHashCode(o) + " classe=" + (o == null ? "null" : o.getClass().getName()));
-
+        
         Tesoro tesoro = npc.daOggetto(o);
 
         System.out.println("DEBUG donaTesoro: dono restituito = " + tesoro + " | identity=" + (tesoro == null ? "null" : System.identityHashCode(tesoro)) + " classe=" + (tesoro == null ? "null" : tesoro.getClass().getName()));
@@ -209,19 +206,12 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             if (applicato) {
                 System.out.println("L’NPC ti dona: " + tesoro.getNome());
                 System.out.println("Hai guadagnato " + tesoro.getValore() + " monete. Saldo ora: " + personaggio.getPortafoglioPersonaggio());
-                if (npc.getOggettiDaDonare() != null) {
-                    npc.getOggettiDaDonare().remove(o);
-                }
+             
                 npc.setHaInteragito(true);
-            } else {
-                System.out.println("Errore: effetto del tesoro non applicato.");
             }
-        } else {
-            System.out.println("L’NPC non ti può donare questo oggetto.");
         }
-    }
 
-   
+    }
 
     @Override
     public boolean attivaEvento(Personaggio personaggio, Evento e) {

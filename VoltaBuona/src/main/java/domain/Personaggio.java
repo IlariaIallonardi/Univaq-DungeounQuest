@@ -1,14 +1,12 @@
 package domain;
 
-import java.util.List;
-
 public class Personaggio {
 
     private int id;
     private String nomePersonaggio;
     private int puntiVita;
     private int puntiMana;
-    private int difesa;
+    private int puntiDifesa;
     private String statoPersonaggio;
     private Zaino zaino;
     private int attacco;
@@ -23,15 +21,13 @@ public class Personaggio {
     private int turniStordito;
     private int turniDaSaltare;
     private Arma armaEquippaggiata;
-    // private Armatura armaturaEquippaggiata;
     private String abilitàSpeciale;
-
     private int portafoglioPersonaggio;
 
-    public Personaggio(String abilitàSpeciale, Arma armaEquippaggiata, int difesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, boolean protetto, int puntiMana, int puntiVita, String statoPersonaggio, int turniAvvelenato, int turniCongelato, int turniStordito, int turnoProtetto, Zaino zaino, int portafoglioPersonaggio) {
+    public Personaggio(String abilitàSpeciale, Arma armaEquippaggiata, int puntiDifesa,int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, boolean protetto, int puntiMana, int puntiVita, String statoPersonaggio, int turniAvvelenato, int turniCongelato, int turniStordito, int turnoProtetto, Zaino zaino, int portafoglioPersonaggio) {
         this.abilitàSpeciale = abilitàSpeciale;
         this.armaEquippaggiata = armaEquippaggiata;
-        this.difesa = difesa;
+        this.puntiDifesa= puntiDifesa;
         this.esperienza = esperienza;
         this.id = id;
         this.livello = livello;
@@ -82,12 +78,10 @@ public class Personaggio {
         this.puntiMana = puntiMana;
     }
 
-    public int getDifesa() {
-        return difesa;
-    }
+    public int getPuntiDifesa() { return puntiDifesa;}
 
-    public void setDifesa(int difesa) {
-        this.difesa = difesa;
+    public void setPuntiDifesa(int puntiDifesa) {
+        this.puntiDifesa= puntiDifesa;
     }
 
     public String getStatoPersonaggio() {
@@ -140,10 +134,10 @@ public class Personaggio {
         int xpPerLivello = 100;
         while (this.esperienza >= xpPerLivello) {
             this.livello = this.livello + 1;
-            this.puntiVita += 10; // esempio: +10 HP per livello
-            this.attacco += 2;    // esempio: +2 Attacco per livello
-            this.difesa += 1;     // esempio: +1 Difesa per livello
-            this.puntiMana += 5; // esempio: +5 Mana per livello
+            this.puntiVita += 10; 
+            this.attacco += 2;    
+            this.puntiDifesa += 1;
+            this.puntiMana += 5;
             this.esperienza -= xpPerLivello;
             System.out.println(this.nomePersonaggio + " sale al livello " + this.livello + "!");
         }
@@ -203,9 +197,7 @@ public class Personaggio {
         return personaggio.getPuntiVita() <= 0;
     }
 
-    /**
-     * Verifica se il personaggio è attualmente protetto.
-     */
+   
     public boolean isProtetto() {
         return this.protettoProssimoTurno && this.turnoProtetto > 0;
     }
@@ -222,16 +214,15 @@ public class Personaggio {
      * Chiamare all'inizio del turno del personaggio. Si occupa di consumare la
      * protezione (durata = 1) quando "tocca di nuovo" al personaggio.
      */
-    public void onTurnStart() {
-        // se era stata programmata una protezione per il prossimo turno,
-        // assicurati che abbia durata minima
+    public void calcolaProtezione() {
+        
         if (this.protettoProssimoTurno) {
             this.protettoProssimoTurno = false;
             this.turnoProtetto = 1;
             return;
         }
 
-        // consuma la protezione attiva
+        
         if (this.turnoProtetto > 0) {
             this.turnoProtetto--;
             if (this.turnoProtetto <= 0) {
@@ -239,8 +230,6 @@ public class Personaggio {
                 this.turnoProtetto = 0;
             }
         }
-
-        // qui puoi mettere altre cose da eseguire all'inizio del turno, mantenute centralizzate
     }
 
     /**
@@ -264,7 +253,7 @@ public class Personaggio {
      * Consuma un turno di salto all'inizio del turno. Restituisce true se il
      * turno deve essere saltato (prima del normale flusso di azione).
      */
-    public boolean consumeSaltoTurno() {
+    public boolean consumaSaltoTurno() {
         if (this.turniDaSaltare > 0) {
             this.turniDaSaltare--;
             return true;
@@ -273,7 +262,8 @@ public class Personaggio {
     }
 
     /**
-     * Applica danno al personaggio rispettando la difesa e la protezione. - Se
+     * Applica danno al personaggio rispettando la punti 
+    De la protezione. - Se
      * il personaggio è protetto, il danno viene ignorato (la protezione NON
      * viene consumata qui). - Restituisce true se il personaggio è morto (PV <=
      * 0).
@@ -300,7 +290,7 @@ public class Personaggio {
         return danno;
     }
 
-    public int subisciDannoDifesa(int dannoDifesa) {
+    public int subisciDannoPuntiDifesa(int dannoDifesa) {
         if (dannoDifesa <= 0) {
             return 0;
         }
@@ -309,15 +299,15 @@ public class Personaggio {
         if (this.turnoProtetto > 0) {
             return 0;
         }
-        if (this.difesa <= 0) {
-            this.difesa = 0;
+        if (this.puntiDifesa <=0) {
+            this.puntiDifesa=0;
             return this.subisciDanno(dannoDifesa);
         } else {
-            this.difesa -= dannoDifesa;
-            return difesa;
-
+            this.puntiDifesa -=dannoDifesa;
+        //  return puntiDifesa;
         }
-    }
+      return puntiDifesa;
+    } 
 
     public Arma getArmaEquippaggiata() {
         return armaEquippaggiata;
@@ -337,13 +327,9 @@ public class Personaggio {
     }
 
     public boolean usaOggetto(Personaggio personaggio, Oggetto oggetto) {
-        if (personaggio == null || oggetto == null) {
-            return false;
-        }
+       
         Zaino zaino = personaggio.getZaino();
-        if (zaino == null || !zaino.getListaOggetti().contains(oggetto)) {
-            return false;
-        }
+        if ( !zaino.getListaOggetti().contains(oggetto)) { return false; }
 
         // Pozione: l'oggetto applica l'effetto sul personaggio
         if (oggetto instanceof Pozione) {
@@ -382,13 +368,9 @@ public class Personaggio {
 
         // Armatura: indossa (metodo service indossaArmatura)
         if (oggetto instanceof Armatura) {
-            System.out.println("[EQUIP] " + personaggio.getNomePersonaggio()
-                    + " sta per indossare: " + oggetto.getNome()
-                    + " (difesa prima: " + personaggio.getDifesa() + ")");
+          
             ((Armatura) oggetto).eseguiEffetto(personaggio);
-            System.out.println("[EQUIP] " + personaggio.getNomePersonaggio()
-                    + " ha indossato: " + oggetto.getNome()
-                    + " (difesa dopo: " + personaggio.getDifesa() + ")");
+            
             zaino.rimuoviOggettoDaZaino(oggetto);
             return true;
         }
@@ -405,16 +387,10 @@ public class Personaggio {
 
     public boolean raccogliereOggetto(Personaggio personaggio, Oggetto oggetto) {
 
-        if (personaggio == null || oggetto == null) {
-            return false;
-        }
-
         Zaino zaino = personaggio.getZaino();
         Stanza stanza = personaggio.getPosizioneCorrente();
 
-        if (zaino == null || stanza == null) {
-            return false;
-        }
+        
 
         if (!stanza.getOggettiPresenti().contains(oggetto)) {
             return false;
@@ -432,10 +408,8 @@ public class Personaggio {
             }
             return false;
         }
-        System.out.println("[DEBUG] raccogliereOggetto: person=" + this.getClass().getSimpleName() + " nome=" + this.getNomePersonaggio());
-        if (oggetto instanceof Arma) {
-            System.out.println("[DEBUG] arma nome=" + oggetto.getNome() + " tipo=" + ((Arma) oggetto).getTipoArma());
-        }
+       
+      
 
         // ARMA: controllo se può raccoglierla
         if (oggetto instanceof Arma) {
@@ -502,26 +476,26 @@ public class Personaggio {
         return true;
     }
 
-    public void addMonete(int amount) {
-        if (amount <= 0) {
+    public void aggiungiMonete(int sommaMonete) {
+        if (sommaMonete <= 0) {
             return;
         }
-        this.portafoglioPersonaggio += amount;
+        this.portafoglioPersonaggio += sommaMonete;
     }
 
-    public boolean removeMonete(int amount) {
-        if (amount <= 0) {
+    public boolean rimuoviMonete(int sommaMonete) {
+        if (sommaMonete <= 0) {
             return false;
         }
-        if (this.portafoglioPersonaggio < amount) {
+        if (this.portafoglioPersonaggio < sommaMonete) {
             return false;
         }
-        this.portafoglioPersonaggio -= amount;
+        this.portafoglioPersonaggio -= sommaMonete;
         return true;
     }
 
-    public boolean hasMonete(int amount) {
-        return this.portafoglioPersonaggio >= amount;
+    public boolean haMonete(int sommaMonete) {
+        return this.portafoglioPersonaggio >= sommaMonete;
     }
 
     @Override
@@ -532,7 +506,7 @@ public class Personaggio {
         sb.append(", nomePersonaggio=").append(nomePersonaggio);
         sb.append(", puntiVita=").append(puntiVita);
         sb.append(", puntiMana=").append(puntiMana);
-        sb.append(", difesa=").append(difesa);
+        sb.append(", puntiDifesa=").append(puntiDifesa);
         sb.append(", statoPersonaggio=").append(statoPersonaggio);
         sb.append(", zaino=").append(zaino);
         sb.append(", attacco=").append(attacco);
@@ -551,12 +525,7 @@ public class Personaggio {
         this.turnoProtetto = turnoProtetto;
     }
 
-    public void scegliEquipaggiamento(Personaggio personaggio) {
-        Zaino zaino = personaggio.getZaino();
-        List<Oggetto> oggetti = zaino.getListaOggetti();
-
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    
 
     public String getAbilitàSpeciale() {
         return abilitàSpeciale;

@@ -2,14 +2,14 @@ package domain;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 public class Stanza {
 
     private int id;
     private int[][] coordinate;
-    private boolean statoStanza; //visitata o non visitata ed è enum in GiocoService
+    private boolean statoStanza;
     private List<Oggetto> oggettiPresenti = new ArrayList<>();
     private List<Personaggio> listaPersonaggi = new ArrayList<>();
     private Map<String, Stanza> stanzaAdiacente = new HashMap<>();
@@ -22,9 +22,9 @@ public class Stanza {
         this.id = id;
         this.coordinate = coordinate;
         this.statoStanza = statoStanza;
-        this.oggettiPresenti = inventario != null ? new ArrayList<>(inventario) : new ArrayList<>();
-        this.stanzaAdiacente = (stanzaAdiacente != null) ? stanzaAdiacente : new HashMap<>();
-        this.listaEventi = listaEventi != null ? new ArrayList<>(listaEventi) : new ArrayList<>();
+        this.oggettiPresenti = inventario;
+        this.stanzaAdiacente = stanzaAdiacente;
+        this.listaEventi = listaEventi;
         this.chiaveRichiesta = chiaveRichiesta;
         this.bloccata = bloccata;
 
@@ -145,47 +145,23 @@ public class Stanza {
     }
 
     public boolean rimuoviEvento(Evento evento) {
-        if (evento == null || listaEventi == null) {
-            return false;
-        }
-
-        // prova a rimuovere dalla stanza corrente
-        java.util.Iterator<Evento> it = listaEventi.iterator();
-        while (it.hasNext()) {
-            Evento e = it.next();
-            if (e == null) {
-                continue;
-            }
-            if (e == evento || e.getId() == evento.getId()) {
-                Stanza pos = evento.getPosizioneCorrente();
-                if (pos == null || pos.getId() == this.id) {
-                    it.remove();
-                  //  System.out.println("[DEBUG] Evento rimosso dalla stanza id=" + this.id + " eventoId=" + e.getId());
+    
+        Iterator <Evento> iteratore = listaEventi.iterator();
+        while (iteratore.hasNext()) {
+            Evento eventoCorrente = iteratore.next();
+           
+            if (eventoCorrente == evento || eventoCorrente.getId() == evento.getId()) {
+                Stanza posizioneEvento = evento.getPosizioneCorrente();
+                if (posizioneEvento == null || posizioneEvento.getId() == this.id) {
+                    iteratore.remove();
+                 
                     return true;
-                } else {
-                   // System.out.println("[DEBUG] Non rimuovere: evento dichiarato in altra stanza (stanzaId="
-                         //   + this.id + " posEventoId=" + pos.getId() + ")");
-                    return false;
+            
+                  
                 }
             }
         }
 
-        // se l'evento dichiara una stanza di posizione diversa, prova a rimuoverlo lì
-        Stanza pos = evento.getPosizioneCorrente();
-        if (pos != null && pos.getListaEventiAttivi() != null) {
-            java.util.Iterator<Evento> it2 = pos.getListaEventiAttivi().iterator();
-            while (it2.hasNext()) {
-                Evento e2 = it2.next();
-                if (e2 != null && e2.getId() == evento.getId()) {
-                    it2.remove();
-                   // System.out.println("[DEBUG] Evento rimosso dalla stanza posizione id=" + pos.getId() + " eventoId=" + evento.getId());
-                    return true;
-                }
-            }
-        }
-
-       // System.out.println("[DEBUG] Evento non trovato in stanza id=" + this.id + " eventoId=" + evento.getId());
-        return false;
+       return false;
     }
-
 }

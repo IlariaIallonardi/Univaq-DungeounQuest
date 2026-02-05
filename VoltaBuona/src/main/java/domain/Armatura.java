@@ -3,12 +3,11 @@ package domain;
 public class Armatura extends Oggetto {
 
     private TipoArmatura tipoArmatura;
-    private int difesaBonus;
-    private Armatura armaturaEquippaggiata;
+
 
     public Armatura(int difesaBonus, TipoArmatura tipoArmatura, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
         super(id, nome, descrizione, usabile, equipaggiabile, trovato);
-        this.difesaBonus = difesaBonus;
+        
     
         this.tipoArmatura = tipoArmatura;
     }
@@ -19,7 +18,7 @@ public class Armatura extends Oggetto {
         FORTE(8);
 
         private final int difesaBonus;
-        private TipoArmatura tipoArmatura;
+    
 
         TipoArmatura(int difesaBonus) {
             this.difesaBonus = difesaBonus;
@@ -39,9 +38,7 @@ public class Armatura extends Oggetto {
         return tipoArmatura;
     }
 
-    public void setDifesaBonus(int difesaBonus) {
-        this.difesaBonus = difesaBonus;
-    }
+   
 
 
     @Override
@@ -55,8 +52,8 @@ public class Armatura extends Oggetto {
     }
 
     @Override
-    public boolean isTrovato() {
-        return super.isTrovato();
+    public boolean èTrovato() {
+        return super.èTrovato();
     }
 
     @Override
@@ -65,8 +62,8 @@ public class Armatura extends Oggetto {
     }
 
     @Override
-    public boolean isEquipaggiabile() {
-        return super.isEquipaggiabile();
+    public boolean èEquipaggiabile() {
+        return super.èEquipaggiabile();
     }
 
     @Override
@@ -75,8 +72,8 @@ public class Armatura extends Oggetto {
     }
 
     @Override
-    public boolean isUsabile() {
-        return super.isUsabile();
+    public boolean èUsabile() {
+        return super.èUsabile();
     }
 
     @Override
@@ -119,7 +116,7 @@ public class Armatura extends Oggetto {
     if (personaggio == null || tipoArmatura == null) {
         return false;
     }
-    personaggio.setDifesa(personaggio.getDifesa() + tipoArmatura.getDifesaBonus());
+    personaggio.setPuntiDifesa(personaggio.getPuntiDifesa() + tipoArmatura.getDifesaBonus());
     return true;
 }
         

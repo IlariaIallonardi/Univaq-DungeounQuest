@@ -24,9 +24,7 @@ public class Mago extends Personaggio {
 
     @Override
     public boolean puoRaccogliere(Arma.TipoArma tipo) {
-        if (tipo == null) {
-            return false;
-        }
+
 
         return tipo == Arma.TipoArma.BACCHETTA_MAGICA;
     }

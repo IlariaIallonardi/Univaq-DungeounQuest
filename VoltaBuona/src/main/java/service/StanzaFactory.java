@@ -15,6 +15,7 @@ import service.impl.NPCServiceImpl;
 import service.impl.PozioneServiceImpl;
 import service.impl.TesoroServiceImpl;
 import service.impl.TrappolaServiceImpl;
+import service.impl.MostroServiceImpl;
 
 public class StanzaFactory {
 
@@ -88,13 +89,13 @@ public class StanzaFactory {
                     eventi.add(new TrappolaServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 1:
-                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 2:
-                    eventi.add(new TrappolaServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 3:
-                    eventi.add(new TrappolaServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
                     break;
                 default:
                     eventi.add(new TrappolaServiceImpl().aggiungiEventoCasuale());

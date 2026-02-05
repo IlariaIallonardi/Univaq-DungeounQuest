@@ -42,15 +42,15 @@ public Oggetto creaOggettoCasuale() {
     var rnd = java.util.concurrent.ThreadLocalRandom.current();
 
     Pozione.TipoPozione tipo = Pozione.TipoPozione.values()[rnd.nextInt(Pozione.TipoPozione.values().length)];
-    int valoreBonus = tipo.getValoreBonus();
+
     String nome = "Pozione " + tipo.name() ;
     String descrizione = switch (tipo) {
         case CURA -> "Pozione curativa";
         case MANA -> "Pozione di mana";
         case ANTIDOTO -> "Pozione antidoto";
     };
-    Pozione p = new Pozione(tipo, id, nome, descrizione, false, false, false, valoreBonus);
-    p.setPrezzo(15); // <--- imposta qui il prezzo che desideri per le pozioni
+    Pozione p = new Pozione(tipo, id, nome, descrizione, false, false, false);
+    p.setPrezzo(15);
     return p;
 }
 }

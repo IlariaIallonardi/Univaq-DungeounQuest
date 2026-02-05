@@ -11,12 +11,11 @@ import domain.Zaino;
 import service.PersonaggioService;
 import util.ANSI;
 
+
 public class PaladinoServiceImpl implements PersonaggioService {
 
-    private static final int bonusAttaccoFisico = 6;
-    private static final int bonusAttaccoMagico = 3;
-    private static final int bonusAttaccoPaladino = 7;
-    private static final int bonusDannoLivello = 2;
+    private static final int BONUS_ATTACCO_FISICO = 6;
+    private static final int BONUS_ATTACCO_MAGICO = 3;
 
     /**
      * Metodo per proteggere un altro giocatore
@@ -27,61 +26,47 @@ public class PaladinoServiceImpl implements PersonaggioService {
      */
     public boolean proteggiCompagno(Paladino paladino, Personaggio alleato) {
 
-        if (paladino == null || alleato == null) {
-            return false;
-        }
-
         if (paladino.getPuntiVita() <= 10) {
             System.out.println("Il paladino è troppo debole per proteggere qualcuno.");
             return false;
         }
 
-        if (!alleato.prenotaProtezione()) {
+        if (alleato.prenotaProtezione()) {
+            System.out.println(paladino.getNomePersonaggio() + " protegge " + alleato.getNomePersonaggio());
 
-            System.out.println(alleato.getNomePersonaggio() + " è già protetto.");
+            return true;
+        } else {
+            System.out.println(alleato.getNomePersonaggio() + " è già protetto da un altro paladino.");
             return false;
         }
-
-        System.out.println(
-                paladino.getNomePersonaggio() + " protegge "
-                + alleato.getNomePersonaggio()
-        );
-
-        return true;
     }
 
     @Override
     public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
 
-        if (!(personaggio instanceof Paladino paladino)) {
-            System.out.println("Solo un Paladino può attaccare.");
-            return 0;
-        }
+        Paladino paladino = (Paladino) personaggio;
 
-        if (mostro == null) {
-            System.out.println("Nessun bersaglio valido.");
-            return 0;
-        }
-
-        if (paladino.getPosizioneCorrente() == null
-                || mostro.getPosizioneCorrente() == null) {
-            System.out.println("Errore di posizione.");
-            return 0;
-        }
-
-        if (!paladino.getPosizioneCorrente()
-                .equals(mostro.getPosizioneCorrente())) {
-            System.out.println("Devi essere nella stessa stanza del mostro.");
-            return 0;
-        }
-
-        // IF SEMPLICE: decide lo stile
+        if (paladino.getPosizioneCorrente().equals(mostro.getPosizioneCorrente())) {
+    
         if (paladino.getMagiaSelezionata() != null) {
             return colpoSacroPaladino(paladino, mostro, paladino.getMagiaSelezionata());
         }
 
         return attaccoFisicoPaladino(paladino, mostro);
     }
+            else {
+                System.out.println(paladino.getNomePersonaggio() + " è troppo lontano per attaccare " + mostro.getNomeMostro() + "!");
+                return 0;
+            }
+}
+
+    /**
+     * Metodo per lanciare una magia  del paladino
+     * @param paladino Il paladino che esegue l'attacco
+     * @param mostro Il mostro bersaglio
+     * @param tipo Il tipo di magia sacra da usare
+     * @return il danno totale inflitto al mostro
+     */
 
     public int colpoSacroPaladino(Paladino paladino, Mostro mostro, Paladino.TipoMagiaSacra tipo) {
 
@@ -96,43 +81,35 @@ public class PaladinoServiceImpl implements PersonaggioService {
 
         int tiro = random.nextInt(1, 21);
 
-        int bonusAttacco = paladino.getAttacco() + (paladino.getLivello() / 2);
+        int bonusAttacco = paladino.getAttacco() + (paladino.getLivello() * 2);
         int totale = tiro + bonusAttacco;
 
         int difesaMostro = mostro.getDifesaMostro();
 
-        System.out.println(
-                paladino.getNomePersonaggio()
-                + " (sacro) lancia " + tipo
-                + " tiro: " + tiro + " + bonus " + bonusAttacco
-                + " = " + totale + " (difesa mostro: " + difesaMostro + ")"
+        System.out.println(  paladino.getNomePersonaggio()   + " (sacro) lancia " + tipo + " tiro: " + tiro + " + bonus " + bonusAttacco + " = " + totale + " (difesa mostro: " + difesaMostro + ")"
         );
 
-        // Consuma mana comunque, anche se fallisce (coerente col tuo mago)
-        paladino.setPuntiMana(Math.max(0, paladino.getPuntiMana() - costoMana));
+
 
         if (tiro == 1) {
             System.out.println("Fallimento magico!");
             return 0;
         }
 
-        boolean critico = (tiro == 20);
+        boolean lancioMigliore = (tiro == 20);
 
-        if (!critico && totale < difesaMostro) {
-            System.out.println("L'incantesimo manca il bersaglio.");
-            return 0;
-        }
+        if (lancioMigliore || totale >= difesaMostro) {
+        
 
-        // Paladino: 1d6 o 1d8 sacro (io farei 1d8 per feeling, ma bilanciamento tuo)
-        int dadoDanno = random.nextInt(1, 9);
+        int dadoDanno = random.nextInt(1, 9);//dado da 8 facce
 
-        int bonusFissi = bonusAttaccoMagico + paladino.getLivello() * bonusDannoLivello;
+        int bonusFissi = BONUS_ATTACCO_MAGICO;
 
-        int dadiTotali = dadoDanno;
+        
 
-        if (critico) {
+        if (lancioMigliore) {
             int dadoExtra = random.nextInt(1, 9);
-            dadiTotali += dadoExtra;
+            dadoDanno += dadoExtra;
             System.out.println(
                     ANSI.BRIGHT_RED + ANSI.BOLD
                     + "CRITICO SACRO! Dadi danno raddoppiati!"
@@ -140,12 +117,12 @@ public class PaladinoServiceImpl implements PersonaggioService {
             );
         }
 
-        int dannoNetto = Math.max(1, dadiTotali + bonusFissi);
+        int dannoNetto = dadoDanno + bonusFissi;
 
-        // Effetti per tipo 
+        // Effetti per tipo minori danni rispetto al mago
         switch (tipo) {
             case RUBAVITA -> {
-                int cura = Math.max(1, dannoNetto / 3); // paladino cura meno del mago
+                int cura = Math.max(1, dannoNetto / 3); 
                 paladino.setPuntiVita(paladino.getPuntiVita() + cura);
                 System.out.println(paladino.getNomePersonaggio() + " recupera " + cura + " PV (luce sacra).");
             }
@@ -167,66 +144,63 @@ public class PaladinoServiceImpl implements PersonaggioService {
                 + " infligge " + dannoNetto
                 + " danni sacri a " + mostro.getNomeMostro()
                 + " (HP rimasti: " + mostro.getPuntiVitaMostro()
-                + ", Mana rimasto: " + paladino.getPuntiMana() + ")"
-        );
+                + ", Mana rimasto: " + paladino.getPuntiMana() + ")" );
 
-        return dannoNetto;
+                 return dannoNetto;      
+
+             }        else {
+            System.out.println("L'incantesimo manca il bersaglio.");
+            return 0;
+        }
     }
 
-    
-        public int attaccoFisicoPaladino(Paladino paladino, Mostro mostro) {
+    public int attaccoFisicoPaladino(Paladino paladino, Mostro mostro) {
 
         ThreadLocalRandom random = ThreadLocalRandom.current();
 
         int tiro = random.nextInt(1, 21); // d20
 
-        // bonus
+        
         int bonusAttacco = paladino.getAttacco() + (paladino.getLivello() / 2);
         int totale = tiro + bonusAttacco;
 
-        int difesaMostroCombattimento = mostro.getDifesaMostro(); // qui la usi come Classe Armatura
+        int difesaMostroCombattimento = mostro.getDifesaMostro(); //difesa del mostro usata come difficoltà
 
-        System.out.println(
-                paladino.getNomePersonaggio()
-                + " tiro: " + tiro + " + bonus " + bonusAttacco
-                + " = " + totale + " (difesa mostro: " + difesaMostroCombattimento + ")"
-        );
+        System.out.println(  paladino.getNomePersonaggio()  + " tiro: " + tiro + " + bonus " + bonusAttacco  + " = " + totale + " (difesa mostro: " + difesaMostroCombattimento + ")" );
 
         if (tiro == 1) {
             System.out.println("Fallimento!");
             return 0;
         }
 
-        boolean critico = (tiro == 20);
+        boolean lancioMigliore = (tiro == 20);
 
-        if (!critico && totale < difesaMostroCombattimento) {
-            System.out.println("L'attacco manca il bersaglio.");
-            return 0;
-        }
+        if (lancioMigliore || totale >= difesaMostroCombattimento) {
+        
+        
 
-        // Parte a dadi: es. 1d8 (puoi cambiarla in base all'arma)
+
         int dadoDanno = random.nextInt(1, 9); // 1..8
 
-        // Bonus fissi: i tuoi bonus (restano uguali)
-        int bonusFissi = bonusAttaccoFisico + paladino.getLivello() * bonusDannoLivello;
+    
+        int bonusFissi = BONUS_ATTACCO_FISICO;
 
-  
-        int dadiTotali = dadoDanno;
+        
 
-        // Critico: raddoppia SOLO i dadi
-        if (critico) {
+        
+        if (lancioMigliore) {
             int dadoExtra = random.nextInt(1, 9);
-            dadiTotali += dadoExtra;
+            dadoDanno += dadoExtra;
             System.out.println(
                     ANSI.BRIGHT_RED + ANSI.BOLD
-                    + "COLPO CRITICO! Dadi danno raddoppiati!"
+                    + "COLPO CRITICO! Dadi  raddoppiati!"
                     + ANSI.RESET
             );
         }
 
-        int dannoNetto = Math.max(1, dadiTotali + bonusFissi);
+        int dannoNetto =  dadoDanno + bonusFissi;
 
-        /* ===== APPLICA DANNO ===== */
+        
         mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() - dannoNetto);
 
         System.out.println(
@@ -242,13 +216,18 @@ public class PaladinoServiceImpl implements PersonaggioService {
 
         return dannoNetto;
     }
+        else {
+            System.out.println("L'attacco manca il bersaglio.");
+            return 0;
+        }
+    }
 
     @Override
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
         Stanza stanza = null;
         Zaino zaino = new Zaino();
         return new Paladino("abilità", null, 15, 300, 0, 2,
-         nome, stanza, false, 100, 20, "normale", 0, 0, 0, 0, zaino, 0, null);
+                nome, stanza, false, 100, 20, "normale", 0, 0, 0, 0, zaino, 0, null);
     }
 
     public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {

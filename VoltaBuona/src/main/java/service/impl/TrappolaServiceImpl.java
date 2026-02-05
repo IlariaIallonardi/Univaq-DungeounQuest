@@ -42,7 +42,7 @@ public class TrappolaServiceImpl implements EventoService {
             System.out.println("Stato personaggio dopo trappola:"+" " 
                     + "\n Stato=" + personaggio.getStatoPersonaggio()
                     + "\n Punti vita=" + personaggio.getPuntiVita()
-                    + "\n Punti difesa=" + personaggio.getDifesa()
+                    + "\n Punti difesa=" + personaggio.getPuntiDifesa()
                     + "\n Soldi=" + personaggio.getPortafoglioPersonaggio()
                     + "\n Avvelenato=" + personaggio.getTurniAvvelenato()
                     + "\n Disarmato=" + personaggio.isDisarmato()

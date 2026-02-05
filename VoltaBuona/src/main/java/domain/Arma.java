@@ -1,5 +1,4 @@
 package domain;
-import domain.Personaggio;
 
 public class Arma extends Oggetto {
 
@@ -51,8 +50,8 @@ public class Arma extends Oggetto {
     }
 
     @Override
-    public boolean isTrovato() {
-        return super.isTrovato();
+    public boolean èTrovato() {
+        return super.èTrovato();
     }
 
     @Override
@@ -61,8 +60,8 @@ public class Arma extends Oggetto {
     }
 
     @Override
-    public boolean isEquipaggiabile() {
-        return super.isEquipaggiabile();
+    public boolean èEquipaggiabile() {
+        return super.èEquipaggiabile();
     }
 
     @Override
@@ -71,8 +70,8 @@ public class Arma extends Oggetto {
     }
 
     @Override
-    public boolean isUsabile() {
-        return super.isUsabile();
+    public boolean èUsabile() {
+        return super.èUsabile();
     }
 
     @Override

@@ -130,16 +130,16 @@ public class TurnoServiceImpl implements TurnoService {
             }
 
             // Inizio turno: gestioni generali del personaggio (es. consumo protezione)
-            p.onTurnStart();
+            p.calcolaProtezione();
 
             // Stampa informazioni dello stato all'inizio del turno
             System.out.println("\n===== TURNO DI " + p.getNomePersonaggio() + " =====");
-            System.out.println("Punti vita: " + p.getPuntiVita() + " | Difesa: " + p.getDifesa()+" | Punti Mana: " + p.getPuntiMana() + " | Attacco: " + p.getAttacco()
+            System.out.println("Punti vita: " + p.getPuntiVita() + " | Difesa: " + p.getPuntiDifesa()+" | Punti Mana: " + p.getPuntiMana() + " | Attacco: " + p.getAttacco()
                     + " | Stato: " + p.getStatoPersonaggio()+ " | Turni avvelenato: " + p.getTurniAvvelenato()+ "Turni stordito: " + p.getTurniStordito()+ " | Salto turno rimanenti: " + p.getTurniDaSaltare()+ "\n"+" | Portafoglio: " + p.getPortafoglioPersonaggio()+ "\n"
                 +"Livello: " + p.getLivello() + " | Esperienza: " + p.getEsperienza() + "\n");
 
             // Se il personaggio deve saltare il turno, consumiamo il salto e passiamo oltre
-            if (p.consumeSaltoTurno()) {
+            if (p.consumaSaltoTurno()) {
                 System.out.println(p.getNomePersonaggio() + " salta questo turno.");
                 // applichiamo comunque eventuali effetti di fine turno
                 terminaTurnoCorrente(p);

@@ -109,7 +109,7 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
         int bonusAttacco = Math.max(0, tipoAttacco / 2);
         int totale = tiro + bonusAttacco;
-        int difesaP = bersaglio.getDifesa();
+        int difesaP = bersaglio.getPuntiDifesa();
 
         System.out.println("[DEBUG] Inizio attaccoDelMostro - Mostro: " + mostro.getNomeMostro()
                 + ", Bersaglio: " + bersaglio.getNomePersonaggio()

@@ -15,9 +15,7 @@ public class Arciere extends Personaggio {
 
     @Override
     public boolean puoRaccogliere(Arma.TipoArma tipo) {
-        if (tipo == null) {
-            return false;
-        }
+        
 
         return tipo == Arma.TipoArma.FRECCIA_E_ARCO;
     }

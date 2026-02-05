@@ -50,7 +50,7 @@ public class PassaggioSegreto extends Evento {
     }
 
     public boolean èRiutilizzabile() {
-        // se deve aprirsi una sola volta
+    
         return true;
     }
 

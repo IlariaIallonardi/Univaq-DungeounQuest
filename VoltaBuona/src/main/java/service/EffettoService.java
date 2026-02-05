@@ -70,15 +70,15 @@ public class EffettoService {
         System.out.println(" Sei stato avvelenato! -5 punti vita.Sarai avvelenato per altri due turni.");
     }
 
-    private void applicaStordimento(Personaggio personaggio, int durata) {
+    public void applicaStordimento(Personaggio personaggio, int durata) {
         personaggio.setStatoPersonaggio("STORDITO");
         personaggio.setTurniStordito(2);
-        personaggio.subisciDannoDifesa(5);
+        personaggio.subisciDannoPuntiDifesa(5);
         System.out.println(" Sei stordito! -5 punti difesa.Sarai stordito per altri due turni.");
        // System.out.println("Difesa Attuale:" + personaggio.getDifesa());
     }
 
-    private void applicaFurto(Personaggio personaggio) {
+    public void applicaFurto(Personaggio personaggio) {
         //  personaggio.setStatoPersonaggio("DERUBATO");
 
         int soldiAttuali = personaggio.getPortafoglioPersonaggio();

@@ -2,25 +2,22 @@ package domain;
 
 public class Chiave extends Oggetto {
 
-    int idStanzaTarget; // id della stanza che sblocca
+   private int idStanzaDaAprire;
 
-    public Chiave(int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato, int idStanzaTarget) {
+    public Chiave(int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato, int idStanzaDaAprire) {
         super(id, nome, descrizione, usabile, equipaggiabile, trovato);
-        this.idStanzaTarget = idStanzaTarget;
+        this.idStanzaDaAprire = idStanzaDaAprire;
     }
 
-    public boolean unicaApertura() {
-        // se la chiave si consuma
-        return true;
-    }
+   
 
     
-    public int getIdStanzaTarget() {
-        return idStanzaTarget;
+    public int getIdStanzaDaAprire() {
+        return idStanzaDaAprire;
     }
 
-    public void setIdStanzaTarget(int idStanzaTarget) {
-        this.idStanzaTarget = idStanzaTarget;
+    public void setIdStanzaDaAprire(int idStanzaDaAprire) {
+        this.idStanzaDaAprire = idStanzaDaAprire;
     }
 
     @Override
@@ -30,19 +27,18 @@ public class Chiave extends Oggetto {
             return false;
         }
 
-        // 1 Se la stanza non è bloccata → inutile usare la chiave
+        
         if (!stanza.isBloccata()) {
             System.out.println("La stanza non è bloccata.");
             return false;
         }
-        // 2 Verifica che la chiave corrisponda: prima confronto targetStanzaName (se impostato), altrimenti confronto con la chiave richiesta della stanza (nome)
 
         Chiave richiesta = stanza.getChiaveRichiesta();
         if (richiesta == null) {
             return false;
         }
 
-        if (this.getIdStanzaTarget() == stanza.getId()) {
+        if (this.getIdStanzaDaAprire() == stanza.getId()) {
             stanza.sblocca();
             System.out.println("Hai sbloccato la stanza con la chiave id " + getId());
             return true;

@@ -11,38 +11,23 @@ public class Gioco {
     private List<Evento> listaEventi = new ArrayList<>();
     private List<Oggetto> listaOggetti = new ArrayList<>();
     private int turnoCorrente = 0;
-    private StatoGioco statoG = StatoGioco.IN_ATTESA;
-    private String logGioco = "";
+    private StatoGioco statoGioco;
+
 
     
 
-// ...existing code...
-    public Gioco(int id,
-                 int dado,
-                 List<Stanza> listaStanze,
-                 List<Giocatore> listaGiocatori,
-                 List<Evento> listaEventi,
-                 List<Oggetto> listaOggetti,
-                 int turnoCorrente,
-                 StatoGioco statoG,
-                 String logGioco) {
+    public Gioco(int id,int dado,List<Stanza> listaStanze,List<Giocatore> listaGiocatori,List<Evento> listaEventi,List<Oggetto> listaOggetti,int turnoCorrente,StatoGioco statoGioco) {
         this.id = id;
         this.dado = dado;
-        this.listaStanze = listaStanze != null ? new ArrayList<>(listaStanze) : new ArrayList<>();
-        this.listaGiocatori = listaGiocatori != null ? new ArrayList<>(listaGiocatori) : new ArrayList<>();
-        this.listaEventi = listaEventi != null ? new ArrayList<>(listaEventi) : new ArrayList<>();
-        this.listaOggetti = listaOggetti != null ? new ArrayList<>(listaOggetti) : new ArrayList<>();
+        this.listaStanze = listaStanze; 
+        this.listaGiocatori = listaGiocatori; 
+        this.listaEventi = listaEventi; 
+        this.listaOggetti = listaOggetti; 
         this.turnoCorrente = turnoCorrente;
-        this.statoG = statoG != null ? statoG : StatoGioco.IN_ATTESA;
-        this.logGioco = logGioco != null ? logGioco : "";
+        this.statoGioco = statoGioco; 
+        
     }
-// ...existing code...
 
-
-
-    
-
-    // Getter e Setter
     public int getId() {
         return id;
     }
@@ -99,23 +84,15 @@ public class Gioco {
         this.turnoCorrente = turnoCorrente;
     }
 
-    public StatoGioco getStatoG() {
-        return statoG;
+    public StatoGioco getStatoGioco() {
+        return statoGioco;
     }
 
-    public void setStatoG(StatoGioco statoG) {
-        this.statoG = statoG;
+    public void setStatoGioco(StatoGioco statoGioco) {
+        this.statoGioco = statoGioco;
     }
 
-    public String getLogGioco() {
-        return logGioco;
-    }
-
-    public void setLogGioco(String logGioco) {
-        this.logGioco = logGioco;
-    }
-
-
+   
 
 
 

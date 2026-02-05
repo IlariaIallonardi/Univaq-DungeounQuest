@@ -10,7 +10,7 @@ public class Trappola extends Evento {
     }
 
     public boolean alterareStato() {
-        // cambia stato stanza/giocatore
+    
         return true;
     }
 
@@ -105,17 +105,11 @@ public class Trappola extends Evento {
         this.effetto = effetto;
     }
 
-    /**
-     * Tenta di disinnescare la trappola per il `personaggio` passato.
-     *
-     * Comportamento corrente: - Usa un tiro d6 casuale confrontato con una
-     * difficoltà fissa (Difficoltà = 4). - Stampa il risultato del tiro e ritorna true
-     * se il disinnesco ha successo.
-     */
+    
     public boolean checkDiDisinnesco(Personaggio personaggio) {
 
-        // difficoltà della trappola (puoi modificarla come attributo)
-        int difficolta = 4; // esempio: serve un tiro >= 4
+    
+        int difficolta = 4; 
 
         int dado = (int) (Math.random() * 6) + 1;
 
