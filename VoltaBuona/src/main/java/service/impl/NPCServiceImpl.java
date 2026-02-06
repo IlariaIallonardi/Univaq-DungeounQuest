@@ -14,46 +14,47 @@ import domain.Stanza;
 import domain.Tesoro;
 import domain.Zaino;
 import service.PersonaIncontrataService;
+import service.ZainoService;
 
 public class NPCServiceImpl implements PersonaIncontrataService {
 
     private static final AtomicInteger ID_COUNTER = new AtomicInteger(300);
     private final Scanner scanner = new Scanner(System.in);
 
-    private boolean isNomeVenditore(String nome) {
+    public boolean nomeVenditore(String nome) {
         if (nome == null) {
             return false;
         }
-        String n = nome.trim().toLowerCase();
-        return n.equals("il confuso") || n.equals("borin");
+        String nomeNpc = nome.trim().toLowerCase();
+        return nomeNpc.equals("il confuso") || nomeNpc.equals("borin");
     }
 
-    private void popolaArticoliVenditore(NPC venditore) {
-        if (venditore == null) {
-            return;
-        }
+    /**
+     *Lista di oggetti che potrà vendere l'npc 
+     */
+
+    public void popolaArticoliVenditore(NPC venditore) {
+    
         if (venditore.getArticoli().isEmpty()) {
-            int n = ThreadLocalRandom.current().nextInt(1, 4);
-            for (int i = 0; i < n; i++) {
-                int tipo = ThreadLocalRandom.current().nextInt(3);
-                Oggetto o;
-                switch (tipo) {
+            int numeroCasualeOggetti = ThreadLocalRandom.current().nextInt(1, 4);
+            for (int i = 0; i < numeroCasualeOggetti; i++) {
+                int tipoOggetto = ThreadLocalRandom.current().nextInt(3);
+                Oggetto oggettoVenditore;
+                switch (tipoOggetto) {
                     case 0 ->
-                        o = new PozioneServiceImpl().creaOggettoCasuale();
+                        oggettoVenditore = new PozioneServiceImpl().creaOggettoCasuale();
                     case 1 ->
-                        o = new ArmaServiceImpl().creaOggettoCasuale();
+                        oggettoVenditore = new ArmaServiceImpl().creaOggettoCasuale();
                     default ->
-                        o = new ArmaturaServiceImpl().creaOggettoCasuale();
+                        oggettoVenditore = new ArmaturaServiceImpl().creaOggettoCasuale();
                 }
-                venditore.getArticoli().add(o);
+                venditore.getArticoli().add(oggettoVenditore);
             }
         }
     }
 
     public String parla(Personaggio personaggio, NPC npc) {
-        if (npc == null || personaggio == null) {
-            return null;
-        }
+        
         if (npc.haInteragito()) {
             System.out.println("\nL'NPC " + npc.getNomeNPC() + " ti ha già parlato.");
             return null;
@@ -72,8 +73,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             System.out.println("L’NPC ti dona: " + oggetto.getNome());
 
             if (oggetto instanceof Tesoro tesoro) {
-                int prima = personaggio.getPortafoglioPersonaggio();
-                System.out.println("Saldo prima della donazione: " + prima);
+                
                 boolean applicato = tesoro.eseguiEffetto(personaggio);
                 if (applicato) {
                     System.out.println("Hai guadagnato " + tesoro.getValore() + " monete. Saldo ora: " + personaggio.getPortafoglioPersonaggio());
@@ -83,9 +83,12 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             } else {
                 Zaino zaino = personaggio.getZaino();
                 if (zaino != null) {
-                    boolean added = zaino.aggiungiOggettoAZaino(oggetto);
-                    if (!added) {
+                    ZainoService zainoService = new ZainoService();
+                    boolean oggettoAggiunto = zainoService.aggiungiOggettoAZaino(zaino, oggetto);
+                    if (!oggettoAggiunto) {
                         System.out.println("Zaino pieno: il dono non è stato aggiunto.");
+                        Stanza stanza = npc.getPosizioneCorrente();
+                        zainoService.èPieno(zaino, stanza, oggetto, personaggio);
                     }
                 } else {
                     System.out.println("Errore: zaino non disponibile per il personaggio.");
@@ -168,8 +171,8 @@ public class NPCServiceImpl implements PersonaIncontrataService {
                 System.out.println("Zaino pieno o non disponibile. Non puoi comprare.");
                 continue;
             }
-
-            boolean added = z.aggiungiOggettoAZaino(scelto);
+             ZainoService zainoService = new ZainoService();
+            boolean added = zainoService.aggiungiOggettoAZaino(z, scelto);
             if (added) {
                 p.setPortafoglioPersonaggio(portafoglio - prezzo);
                 venditore.getArticoli().remove(idx);
@@ -222,7 +225,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
         Stanza stanza = npc.getPosizioneCorrente();
         System.out.println("Incontri un NPC: " + npc.getNomeNPC());
 
-        if (npc.isVenditore() || isNomeVenditore(npc.getNomeNPC())) {
+        if (npc.isVenditore() || nomeVenditore(npc.getNomeNPC())) {
             System.out.println("Questo NPC è un venditore.");
             vendiConVenditore(personaggio, npc);
         } else {
@@ -267,7 +270,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
         String rispostaCorretta = scelta.risposta();
 
         NPC npc = new NPC(id, "NPC", rebus, rispostaCorretta, null, nomeNPC);
-        if (isNomeVenditore(nomeNPC)) {
+        if (nomeVenditore(nomeNPC)) {
             npc.setVenditore(true);
             popolaArticoliVenditore(npc);
         }

@@ -9,10 +9,10 @@ import domain.Stanza;
 import service.OggettoService;
 
 public class PozioneServiceImpl implements  OggettoService {
-    private static final AtomicInteger ID_COUNTER = new AtomicInteger(400);
+    private static final AtomicInteger ID_CONTATORE= new AtomicInteger(400);
     @Override
       public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza){
-        if (stanza == null || oggetto == null) return;
+        
         stanza.aggiungiOggetto(oggetto);}
 
 
@@ -32,13 +32,13 @@ public class PozioneServiceImpl implements  OggettoService {
 
     @Override
     public void salvaOggettiSuFile(List<Oggetto> oggetti, String filePath){
-        // serializzazione da implementare (JSON, XML, ecc.)
+        
     }
     
 
 @Override
 public Oggetto creaOggettoCasuale() {
-    int id = ID_COUNTER.getAndIncrement();
+    int id = ID_CONTATORE.getAndIncrement();
     var rnd = java.util.concurrent.ThreadLocalRandom.current();
 
     Pozione.TipoPozione tipo = Pozione.TipoPozione.values()[rnd.nextInt(Pozione.TipoPozione.values().length)];

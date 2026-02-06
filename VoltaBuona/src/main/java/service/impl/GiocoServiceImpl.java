@@ -15,6 +15,7 @@ import service.Direzione;
 import service.GiocatoreService;
 import service.GiocoService;
 import service.TurnoService;
+import service.ZainoService;
 import util.ANSI;
 
 public class GiocoServiceImpl implements GiocoService {
@@ -107,7 +108,8 @@ public class GiocoServiceImpl implements GiocoService {
                     if (o instanceof domain.Chiave && ((domain.Chiave) o).getId() == richiesta.getId()) {
                         System.out.println("Hai la chiave richiesta (" + o.getNome() + "). Sblocco la stanza e consumo la chiave.");
                         destinazione.sblocca();
-                        zaino.rimuoviOggettoDaZaino(o);
+                        ZainoService zainoService = new ZainoService();
+                        zainoService.rimuoviOggettoDaZaino(zaino, o);
                         trovato = true;
                         break;
                     }

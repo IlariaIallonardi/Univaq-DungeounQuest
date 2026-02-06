@@ -9,10 +9,10 @@ import domain.Stanza;
 import service.OggettoService;
 
 public class ArmaturaServiceImpl implements   OggettoService {
-    private static final AtomicInteger ID_COUNTER = new AtomicInteger(100);
+    private static final AtomicInteger ID_CONTATORE = new AtomicInteger(100);
+
    @Override
       public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza){
-        if (stanza == null || oggetto == null) return;
         stanza.aggiungiOggetto(oggetto);}
 
 
@@ -29,17 +29,17 @@ public class ArmaturaServiceImpl implements   OggettoService {
 
     @Override
     public void salvaOggettiSuFile(List<Oggetto> oggetti, String filePath){
-        // serializzazione da implementare (JSON, XML, ecc.)
+
     }
 
 
 
 @Override
 public Oggetto creaOggettoCasuale() {
-    int id = ID_COUNTER.getAndIncrement();
+    int id = ID_CONTATORE.getAndIncrement();
     var rnd = java.util.concurrent.ThreadLocalRandom.current();
     Armatura.TipoArmatura tipo = Armatura.TipoArmatura.values()[rnd.nextInt(Armatura.TipoArmatura.values().length)];
-    int difesa = tipo.getDifesaBonus();
+    
   
     String nome = "Armatura " + tipo.name() ;
     String descrizione = switch (tipo) {
@@ -48,8 +48,8 @@ public Oggetto creaOggettoCasuale() {
         case FORTE -> "Armatura forte";
         
     };
-    Armatura ar = new Armatura(difesa, tipo, id, nome, descrizione, true, true, false);
-    ar.setPrezzo(30); // <--- imposta qui il prezzo che desideri per le armature
+    Armatura ar = new Armatura(tipo, id, nome, descrizione, true, true, false);
+    ar.setPrezzo(30);
     return ar;
 }
 }

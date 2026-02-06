@@ -5,7 +5,7 @@ public class Armatura extends Oggetto {
     private TipoArmatura tipoArmatura;
 
 
-    public Armatura(int difesaBonus, TipoArmatura tipoArmatura, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
+    public Armatura(TipoArmatura tipoArmatura, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato) {
         super(id, nome, descrizione, usabile, equipaggiabile, trovato);
         
     

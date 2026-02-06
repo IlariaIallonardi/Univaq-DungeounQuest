@@ -1,4 +1,5 @@
 package domain;
+import service.ZainoService;
 
 public class Personaggio {
 
@@ -17,7 +18,6 @@ public class Personaggio {
     private int turnoProtetto;
     private int turniAvvelenato;
     private boolean disarmato;
-    private int furto;
     private int turniStordito;
     private int turniDaSaltare;
     private Arma armaEquippaggiata;
@@ -41,10 +41,11 @@ public class Personaggio {
         this.disarmato = disarmato;
         this.turniStordito = turniStordito;
         this.turnoProtetto = turnoProtetto;
-        this.furto = furto;
         this.zaino = zaino;
         this.portafoglioPersonaggio = portafoglioPersonaggio;
     }
+
+    private ZainoService zainoService = new ZainoService();
 
     public int getId() {
         return id;
@@ -125,9 +126,9 @@ public class Personaggio {
     }
 
     /**
-     * Aggiunge esperienza al personaggio e gestisce l'eventuale level-up. Usa
-     * una soglia di 100 XP per livello. Se l'esperienza supera la soglia si
-     * effettua il level-up ripetutamente consumando la soglia.
+     * Aumenta esperienza al personaggio per aumentare di livello, se raggiunge esperienza =100
+     * passa al livello successivo incrementando i paramentri vitali,di difesa,attacco,i mana
+     * 
      */
     public int aggiungiEsperienza() {
         this.esperienza += 25;
@@ -168,13 +169,7 @@ public class Personaggio {
         this.disarmato = disarmato;
     }
 
-    public int getFurto() {
-        return furto;
-    }
-
-    public void setFurto(int furto) {
-        this.furto = furto;
-    }
+   
 
     public int getTurniStordito() {
         return turniStordito;
@@ -210,10 +205,7 @@ public class Personaggio {
         return true;
     }
 
-    /**
-     * Chiamare all'inizio del turno del personaggio. Si occupa di consumare la
-     * protezione (durata = 1) quando "tocca di nuovo" al personaggio.
-     */
+    
     public void calcolaProtezione() {
         
         if (this.protettoProssimoTurno) {
@@ -232,9 +224,7 @@ public class Personaggio {
         }
     }
 
-    /**
-     * Aggiunge N turni da saltare per questo personaggio.
-     */
+    
     public void aggiungiTurniDaSaltare(int n) {
         if (n <= 0) {
             return;
@@ -242,17 +232,11 @@ public class Personaggio {
         this.turniDaSaltare += n;
     }
 
-    /**
-     * Restituisce quanti turni rimangono da saltare.
-     */
     public int getTurniDaSaltare() {
         return this.turniDaSaltare;
     }
 
-    /**
-     * Consuma un turno di salto all'inizio del turno. Restituisce true se il
-     * turno deve essere saltato (prima del normale flusso di azione).
-     */
+    
     public boolean consumaSaltoTurno() {
         if (this.turniDaSaltare > 0) {
             this.turniDaSaltare--;
@@ -261,30 +245,24 @@ public class Personaggio {
         return false;
     }
 
-    /**
-     * Applica danno al personaggio rispettando la punti 
-    De la protezione. - Se
-     * il personaggio è protetto, il danno viene ignorato (la protezione NON
-     * viene consumata qui). - Restituisce true se il personaggio è morto (PV <=
-     * 0).
-     */
+    
     public int subisciDanno(int danno) {
         if (danno <= 0) {
             return 0;
         }
 
-        // protezione attiva: annulla danno
+    
         if (this.turnoProtetto > 0) {
             return 0;
         }
 
         this.puntiVita -= danno;
 
-        // se gli HP scendono a zero o meno, aggiorna stato e azzera gli HP
+        
         if (this.èMorto(this)) {
             this.statoPersonaggio = "MORTO";
 
-            System.out.println("[DEBUG] Il personaggio " + this.getNomePersonaggio() + " è morto (HP=" + this.getPuntiVita() + ")");
+            System.out.println("Il personaggio " + this.getNomePersonaggio() + " è morto (HP=" + this.getPuntiVita() + ")");
         }
 
         return danno;
@@ -295,7 +273,7 @@ public class Personaggio {
             return 0;
         }
 
-        // protezione attiva: annulla danno
+    
         if (this.turnoProtetto > 0) {
             return 0;
         }
@@ -304,7 +282,7 @@ public class Personaggio {
             return this.subisciDanno(dannoDifesa);
         } else {
             this.puntiDifesa -=dannoDifesa;
-        //  return puntiDifesa;
+    
         }
       return puntiDifesa;
     } 
@@ -331,87 +309,79 @@ public class Personaggio {
         Zaino zaino = personaggio.getZaino();
         if ( !zaino.getListaOggetti().contains(oggetto)) { return false; }
 
-        // Pozione: l'oggetto applica l'effetto sul personaggio
+    
         if (oggetto instanceof Pozione) {
-            System.out.println("[USO OGGETTO] " + personaggio.getNomePersonaggio() + " usa " + oggetto.getNome()
-                    + " (HP prima: " + personaggio.getPuntiVita() + ", Mana prima: " + personaggio.getPuntiMana() + ")");
+           
             boolean risultato = ((Pozione) oggetto).eseguiEffetto(personaggio);
+             System.out.println(personaggio.getNomePersonaggio() + " usa " +  oggetto.getNome()
+                    + " (Punti vita:" + personaggio.getPuntiVita() + ", Mana: " + personaggio.getPuntiMana() + ")");
             if (risultato) {
-                zaino.rimuoviOggettoDaZaino(oggetto);
-                System.out.println(personaggio.getNomePersonaggio() + " usa una pozione: " + ((Pozione) oggetto).getNome());
+                zainoService.rimuoviOggettoDaZaino(zaino, oggetto);
+        
             }
             return risultato;
         }
 
-        // Arma: equipaggia / usa (metodo service usa Oggetto)
+        
         if (oggetto instanceof Arma) {
             if (zaino == null || !zaino.getListaOggetti().contains(oggetto)) {
-                return false; // L'arma non è nello zaino
+                return false;
             }
             if (personaggio.puoEquipaggiare(((Arma) oggetto).getTipoArma())) {
-                System.out.println("[EQUIP] " + personaggio.getNomePersonaggio()
-                        + " sta per equipaggiare: " + oggetto.getNome()
-                        + " (attacco prima: " + personaggio.getAttacco()
-                        + ", dannoBonus arma=" + ((Arma) oggetto).getDannoBonus() + ")");
+              
+                ((Arma) oggetto).eseguiEffetto(this);
 
-                ((Arma) oggetto).eseguiEffetto(personaggio);
-
-                System.out.println("[EQUIP] " + personaggio.getNomePersonaggio()
-                        + " ha equipaggiato: " + oggetto.getNome()
-                        + " (attacco dopo: " + personaggio.getAttacco() + ")");
-                // decidere se rimuovere dall'inventario o mantenerla come equip
-                zaino.rimuoviOggettoDaZaino(oggetto);
+                System.out.println(this.getNomePersonaggio()  + " ha equipaggiato: " + oggetto.getNome()+ " (attacco dopo: " + this.getAttacco() + ")");
+        
+                zainoService.rimuoviOggettoDaZaino(zaino, oggetto);
                 return true;
             }
-            return false; // Non può equipaggiare questo tipo di arma
+            return false; 
         }
 
-        // Armatura: indossa (metodo service indossaArmatura)
+    
         if (oggetto instanceof Armatura) {
           
             ((Armatura) oggetto).eseguiEffetto(personaggio);
             
-            zaino.rimuoviOggettoDaZaino(oggetto);
+            zainoService.rimuoviOggettoDaZaino(zaino, oggetto);
             return true;
         }
 
         if (oggetto instanceof Chiave) {
             ((Chiave) oggetto).eseguiEffetto(personaggio);
-            zaino.rimuoviOggettoDaZaino(oggetto);
+            zainoService.rimuoviOggettoDaZaino(zaino, oggetto);
             return true;
         }
 
-        // oggetto non gestito:  mettere eccezione
+    
         return false;
     }
 
-    public boolean raccogliereOggetto(Personaggio personaggio, Oggetto oggetto) {
+    public boolean raccogliereOggetto(Oggetto oggetto) {
 
-        Zaino zaino = personaggio.getZaino();
-        Stanza stanza = personaggio.getPosizioneCorrente();
-
-        
+        Zaino zaino = this.getZaino();
+        Stanza stanza = this.getPosizioneCorrente();
 
         if (!stanza.getOggettiPresenti().contains(oggetto)) {
             return false;
         }
 
-        // TESORO: applica subito, non va nello zaino
+
+        // Tesoro non va nello zaino ma direttamente nel portafoglio.
         if (oggetto instanceof Tesoro) {
-            boolean applicato = ((Tesoro) oggetto).eseguiEffetto(personaggio);
+            boolean applicato = ((Tesoro) oggetto).eseguiEffetto(this);
             if (applicato) {
                 stanza.rimuoviOggetto(oggetto);
-                System.out.println(personaggio.getNomePersonaggio()
+                System.out.println(this.getNomePersonaggio()
                         + " raccoglie " + oggetto.getNome()
                         + " e ottiene " + ((Tesoro) oggetto).getValore() + " monete.");
                 return true;
             }
             return false;
         }
-       
-      
 
-        // ARMA: controllo se può raccoglierla
+        // L'arma controlliamo prima se può raccoglierla.
         if (oggetto instanceof Arma) {
             Arma.TipoArma tipo = ((Arma) oggetto).getTipoArma();
             if (!this.puoRaccogliere(tipo)) {
@@ -420,60 +390,9 @@ public class Personaggio {
                 return false;
             }
         }
+        
 
-        // CASO NORMALE: zaino NON pieno
-        if (!zaino.isPieno()) {
-            zaino.aggiungiOggettoAZaino(oggetto);
-            stanza.rimuoviOggetto(oggetto);
-            System.out.println(personaggio.getNomePersonaggio()
-                    + " raccoglie " + oggetto.getNome());
-            return true;
-        }
-
-        //  ZAINO PIENO
-        System.out.println("Zaino pieno! Oggetti presenti:");
-        for (int i = 0; i < zaino.getListaOggetti().size(); i++) {
-            System.out.println((i + 1) + ") "
-                    + zaino.getListaOggetti().get(i).getNome());
-        }
-
-        java.util.Scanner scanner = new java.util.Scanner(System.in);
-        System.out.print("Vuoi eliminare un oggetto per fare spazio? (s/n): ");
-        String risposta = scanner.nextLine().trim().toLowerCase();
-
-        if (!risposta.equals("s")) {
-            System.out.println("Oggetto non raccolto.");
-            return false;
-        }
-
-        System.out.print("Scegli il numero dell'oggetto da eliminare (0 annulla): ");
-        int scelta;
-
-        try {
-            scelta = Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            System.out.println("Input non valido.");
-            return false;
-        }
-
-        if (scelta <= 0 || scelta > zaino.getListaOggetti().size()) {
-            System.out.println("Scelta annullata.");
-            return false;
-        }
-
-        Oggetto daRimuovere = zaino.getListaOggetti().get(scelta - 1);
-
-        zaino.rimuoviOggettoDaZaino(daRimuovere);
-        stanza.aggiungiOggetto(daRimuovere);
-
-        zaino.aggiungiOggettoAZaino(oggetto);
-        stanza.rimuoviOggetto(oggetto);
-
-        System.out.println(personaggio.getNomePersonaggio()
-                + " lascia " + daRimuovere.getNome()
-                + " e raccoglie " + oggetto.getNome());
-
-        return true;
+        return new ZainoService().èPieno(zaino, stanza, oggetto, this);
     }
 
     public void aggiungiMonete(int sommaMonete) {

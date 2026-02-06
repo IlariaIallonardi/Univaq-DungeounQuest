@@ -86,19 +86,19 @@ public class StanzaFactory {
             //switch per tipi di evento da implementare
             switch (tipo) {
                 case 0:
-                    eventi.add(new TrappolaServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 1:
-                    eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 2:
-                    eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 3:
-                    eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
                     break;
                 default:
-                    eventi.add(new TrappolaServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
                     break;
             }
         }

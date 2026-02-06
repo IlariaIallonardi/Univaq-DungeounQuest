@@ -5,6 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import domain.Arma;
 import domain.Effetto;
 import domain.Personaggio;
+import domain.Arma.TipoArma;
 
 public class EffettoService {
 
@@ -55,9 +56,12 @@ public class EffettoService {
             return;
         }
         personaggio.setArmaEquippaggiata(null);
+        
+        TipoArma tipoArma = arma.getTipoArma();
 
-        personaggio.setAttacco(personaggio.getAttacco() - arma.getDannoBonus());
-        System.out.println(" Attacco ridotto di " + personaggio.getAttacco());
+        int dannoArma = tipoArma.getDannoBonus();
+        personaggio.setAttacco(personaggio.getAttacco() - dannoArma);
+        System.out.println(dannoArma + " Attacco ridotto di ");
         System.out.println("Hai perso definitivamente: " + arma.getNome());
     }
 

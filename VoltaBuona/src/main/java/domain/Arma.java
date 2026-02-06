@@ -2,23 +2,17 @@ package domain;
 
 public class Arma extends Oggetto {
 
-    private int dannoBonus;
+    
     private TipoArma tipoArma;
 
-    public Arma(int dannoBonus, int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato, TipoArma tipoArma) {
+    public Arma( int id, String nome, String descrizione, boolean usabile, boolean equipaggiabile, boolean trovato, TipoArma tipoArma) {
         super(id, nome, descrizione, usabile, equipaggiabile, trovato);
-        this.dannoBonus = dannoBonus;
+    
         this.tipoArma = tipoArma;
 
     }
 
-    public int getDannoBonus() {
-        return dannoBonus;
-    }
-
-    public void setDannoBonus(int dannoBonus) {
-        this.dannoBonus = dannoBonus;
-    }
+    
 
     public TipoArma getTipoArma() {
         return tipoArma;

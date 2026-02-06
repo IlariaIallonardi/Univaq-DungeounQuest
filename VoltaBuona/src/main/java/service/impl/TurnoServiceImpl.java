@@ -570,7 +570,7 @@ public class TurnoServiceImpl implements TurnoService {
         }
 
         Oggetto o = oggetti.get(index);
-        boolean ok = personaggio.raccogliereOggetto(personaggio, o);
+        boolean ok = personaggio.raccogliereOggetto( o);
 
         if (!ok) {
             System.out.println("Non puoi raccogliere l'oggetto.");
@@ -580,7 +580,7 @@ public class TurnoServiceImpl implements TurnoService {
     //metodo nuovo 
     public boolean gestisciUsoOggettoDaZaino(Personaggio personaggio, Scanner scanner) {
         System.out.println("[DEBUG] gestisciUsoOggettoDaZaino called for: " + (personaggio != null ? personaggio.getNomePersonaggio() : "null"));
-        Zaino zaino = personaggio == null ? null : personaggio.getZaino();
+        Zaino zaino =  personaggio.getZaino();
         if (zaino == null) {
             System.out.println("[DEBUG] zaino == null");
             System.out.println("Lo zaino è vuoto.");

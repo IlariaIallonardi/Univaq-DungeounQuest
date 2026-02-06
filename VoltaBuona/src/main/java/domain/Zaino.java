@@ -15,25 +15,7 @@ public class Zaino {
         
     }
 
-      public boolean aggiungiOggettoAZaino(Oggetto oggetto) {
-        if (oggetto == null) return false;
-        if (getCapienza() <= 0) { return false;}
-        listaOggetti.add(oggetto);
-        return true;
-    }
-
-   public boolean rimuoviOggettoDaZaino(Oggetto oggetto) {
-        if (oggetto == null) {
-
-            return false;
-        }
-        boolean removed = listaOggetti.remove(oggetto);
-        if (removed) {
-            return true;
-        }
-           
-        return removed;
-    }
+    
 
     public int getId() {
         return id;
@@ -44,10 +26,8 @@ public class Zaino {
     }
 
     public int getCapienza() {
-        if(listaOggetti.size() >= capienza){
-            return 0;
-        }
-        return  capienza - listaOggetti.size();
+
+        return capienza;
     }
 
     public void setCapienza(int nuovaCapacitaTotale) {
@@ -61,8 +41,6 @@ public class Zaino {
     public void setListaOggetti(List<Oggetto> listaOggetti) {
         this.listaOggetti = listaOggetti;
     }
-    public boolean isPieno() {
-    return listaOggetti.size() >= capienza;
-}
+  
 
 }

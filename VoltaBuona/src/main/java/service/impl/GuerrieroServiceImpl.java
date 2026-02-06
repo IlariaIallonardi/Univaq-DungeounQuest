@@ -141,7 +141,7 @@ public class GuerrieroServiceImpl implements PersonaggioService {
                 0,
                 0,
                 new Zaino(),
-                0
+                150
         );
     }
 
