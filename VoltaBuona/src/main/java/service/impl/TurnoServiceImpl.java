@@ -42,8 +42,8 @@ public class TurnoServiceImpl implements TurnoService {
         this.eventoService = eventoService;
     }
 
-    public TurnoServiceImpl(PersonaggioService ps) {
-        this.personaggioService = ps;
+    public TurnoServiceImpl(PersonaggioService personaggioService) {
+        this.personaggioService = personaggioService;
     }
 
     public TurnoServiceImpl() {
@@ -60,24 +60,24 @@ public class TurnoServiceImpl implements TurnoService {
 
         // 1 Ogni personaggio tira il dado
         // Ogni personaggio tira il dado (escludo i morti)
-        for (Personaggio p : partecipanti) {
-            if (p == null || p.èMorto(p)) {
+        for (Personaggio personaggio : partecipanti) {
+            if (personaggio == null || personaggio.èMorto(personaggio)) {
                 continue;
             }
             int tiro = random.nextInt(20) + 1; // dado d20
-            tiri.put(p, tiro);
+            tiri.put(personaggio, tiro);
         }
 
         // 2 Costruzione ordine turno SENZA sort
         while (!tiri.isEmpty()) {
 
             Personaggio migliore = null;
-            int max = -1;
+            int massimo = -1;
 
             // cerco il tiro più alto rimasto
             for (Map.Entry<Personaggio, Integer> entry : tiri.entrySet()) {
-                if (entry.getValue() > max) {
-                    max = entry.getValue();
+                if (entry.getValue() > massimo) {
+                    massimo = entry.getValue();
                     migliore = entry.getKey();
                 }
             }
@@ -106,64 +106,64 @@ public class TurnoServiceImpl implements TurnoService {
         List<Personaggio> ordine = calcolaOrdineIniziativa(partecipanti);
         //fino a qui è giusto 
 
-        for (Personaggio p : List.copyOf(ordine)) {
-            if (p == null) {
+        for (Personaggio personaggio : List.copyOf(ordine)) {
+            if (personaggio == null) {
                 continue;
             }
-            if (p.èMorto(p)) {
-                System.out.println(p.getNomePersonaggio() + " è morto. Rimosso dalla partita.");
+            if (personaggio.èMorto(personaggio)) {
+                System.out.println(personaggio.getNomePersonaggio() + " è morto. Rimosso dalla partita.");
                 // rimuovo il personaggio dalle liste per non ricomparire nei turni futuri
                 try {
-                    partecipanti.remove(p);
+                    partecipanti.remove(personaggio);
                 } catch (Exception ignored) {
                 }
-                ordineTurno.remove(p);
+                ordineTurno.remove(personaggio);
                 continue;
             }
 
             //1
             //   System.out.println("\n INIZIO TURNO DI " + p.getNomePersonaggio() );
-            Stanza stanza = p.getPosizioneCorrente();
+            Stanza stanza = personaggio.getPosizioneCorrente();
             if (stanza == null) {
                 System.out.println("Posizione del personaggio non definita. Saltando.");
                 continue;
             }
 
             // Inizio turno: gestioni generali del personaggio (es. consumo protezione)
-            p.calcolaProtezione();
+            personaggio.calcolaProtezione();
 
             // Stampa informazioni dello stato all'inizio del turno
-            System.out.println("\n===== TURNO DI " + p.getNomePersonaggio() + " =====");
-            System.out.println("Punti vita: " + p.getPuntiVita() + " | Difesa: " + p.getPuntiDifesa()+" | Punti Mana: " + p.getPuntiMana() + " | Attacco: " + p.getAttacco()
-                    + " | Stato: " + p.getStatoPersonaggio()+ " | Turni avvelenato: " + p.getTurniAvvelenato()+ "Turni stordito: " + p.getTurniStordito()+ " | Salto turno rimanenti: " + p.getTurniDaSaltare()+ "\n"+" | Portafoglio: " + p.getPortafoglioPersonaggio()+ "\n"
-                +"Livello: " + p.getLivello() + " | Esperienza: " + p.getEsperienza() + "\n");
+            System.out.println("\n===== TURNO DI " + personaggio.getNomePersonaggio() + " =====");
+            System.out.println("Punti vita: " + personaggio.getPuntiVita() + " | Difesa: " + personaggio.getPuntiDifesa() + " | Punti Mana: " + personaggio.getPuntiMana() + " | Attacco: " + personaggio.getAttacco()
+                    + " | Stato: " + personaggio.getStatoPersonaggio() + " | Turni avvelenato: " + personaggio.getTurniAvvelenato() + "Turni stordito: " + personaggio.getTurniStordito() + " | Salto turno rimanenti: " + personaggio.getTurniDaSaltare() + "\n" + " | Portafoglio: " + personaggio.getPortafoglioPersonaggio() + "\n"
+                    + "Livello: " + personaggio.getLivello() + " | Esperienza: " + personaggio.getEsperienza() + "\n");
 
             // Se il personaggio deve saltare il turno, consumiamo il salto e passiamo oltre
-            if (p.consumaSaltoTurno()) {
-                System.out.println(p.getNomePersonaggio() + " salta questo turno.");
+            if (personaggio.consumaSaltoTurno()) {
+                System.out.println(personaggio.getNomePersonaggio() + " salta questo turno.");
                 // applichiamo comunque eventuali effetti di fine turno
-                terminaTurnoCorrente(p);
+                terminaTurnoCorrente(personaggio);
                 continue;
             }
 
-            String nome = p.getNomePersonaggio();
+            String nome = personaggio.getNomePersonaggio();
             if (nome != null && (nome.startsWith("BOT_") || nome.startsWith("Bot-") || nome.toLowerCase().contains("bot"))) {
                 ComputerServiceImpl computerService = new ComputerServiceImpl();
-                computerService.agisciAutomatico(p, this, giocoService, eventoService, personaggioService);
+                computerService.agisciAutomatico(personaggio, this, giocoService, eventoService, personaggioService);
                 continue;
             }
 
             // 1) passo : chiedere al personaggio se vuole muoversi in un 'altra stanza
-            gestisciMovimento(p, scanner);
+            gestisciMovimento(personaggio, scanner);
             // 2) passo : esplorare la stanza (mostra eventi e oggetti)
-            boolean eventoHaConsumtoTurno = esploraStanza(p);
+            boolean eventoHaConsumtoTurno = esploraStanza(personaggio);
             if (eventoHaConsumtoTurno) {
                 System.out.println("Turno consumato da un evento.");
                 continue;
             }
             // 3) passo : scegliere azione (fare evento, prendere oggetto, usare oggetto)
-            scegliAzione(p, scanner);
-            System.out.println("FINE TURNO DI " + p.getNomePersonaggio());
+            scegliAzione(personaggio, scanner);
+            System.out.println("FINE TURNO DI " + personaggio.getNomePersonaggio());
 
         }
     }
@@ -310,7 +310,7 @@ public class TurnoServiceImpl implements TurnoService {
                         Mostro bersaglio = mostriAdiacenti.get(keys.get(sceltaB - 1));
 
                         ArciereServiceImpl arciereService = new ArciereServiceImpl();
-                         arciereService.attaccoDistanzaArciere(arciere, bersaglio);
+                        arciereService.attaccoDistanzaArciere(arciere, bersaglio);
                     }
 
                     // fine turno immediata
@@ -356,23 +356,23 @@ public class TurnoServiceImpl implements TurnoService {
         }
 
         List<Evento> visibili = new ArrayList<>();
-        for (Evento ev : eventi) {
-            if (ev == null) {
+        for (Evento evento : eventi) {
+            if (evento == null) {
                 continue;
             }
-            if (ev instanceof domain.Trappola) {
+            if (evento instanceof domain.Trappola) {
                 continue;
             }
-            visibili.add(ev);
+            visibili.add(evento);
         }
 
         List<Evento> display = new ArrayList<>();
         // aggiungo mostri adiacenti (per Arciere) evitando duplicati
         if (personaggio instanceof Arciere arciere) {
             Map<String, Mostro> adj = new ArciereServiceImpl().trovaMostriAdiacenti(arciere.getPosizioneCorrente());
-            for (Mostro m : adj.values()) {
-                if (m != null) {
-                    display.add(m);
+            for (Mostro mostro : adj.values()) {
+                if (mostro != null) {
+                    display.add(mostro);
                 }
             }
         }
@@ -570,7 +570,7 @@ public class TurnoServiceImpl implements TurnoService {
         }
 
         Oggetto o = oggetti.get(index);
-        boolean ok = personaggio.raccogliereOggetto( o);
+        boolean ok = personaggio.raccogliereOggetto(o);
 
         if (!ok) {
             System.out.println("Non puoi raccogliere l'oggetto.");
@@ -580,7 +580,7 @@ public class TurnoServiceImpl implements TurnoService {
     //metodo nuovo 
     public boolean gestisciUsoOggettoDaZaino(Personaggio personaggio, Scanner scanner) {
         System.out.println("[DEBUG] gestisciUsoOggettoDaZaino called for: " + (personaggio != null ? personaggio.getNomePersonaggio() : "null"));
-        Zaino zaino =  personaggio.getZaino();
+        Zaino zaino = personaggio.getZaino();
         if (zaino == null) {
             System.out.println("[DEBUG] zaino == null");
             System.out.println("Lo zaino è vuoto.");

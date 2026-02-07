@@ -6,6 +6,7 @@ import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import domain.Arma;
 import domain.Evento;
 import domain.NPC;
 import domain.Oggetto;
@@ -18,7 +19,7 @@ import service.ZainoService;
 
 public class NPCServiceImpl implements PersonaIncontrataService {
 
-    private static final AtomicInteger ID_COUNTER = new AtomicInteger(300);
+    private static final AtomicInteger ID_CONTATORE = new AtomicInteger(300);
     private final Scanner scanner = new Scanner(System.in);
 
     public boolean nomeVenditore(String nome) {
@@ -30,11 +31,10 @@ public class NPCServiceImpl implements PersonaIncontrataService {
     }
 
     /**
-     *Lista di oggetti che potrà vendere l'npc 
+     * Lista di oggetti che potrà vendere l'npc
      */
-
     public void popolaArticoliVenditore(NPC venditore) {
-    
+
         if (venditore.getArticoli().isEmpty()) {
             int numeroCasualeOggetti = ThreadLocalRandom.current().nextInt(1, 4);
             for (int i = 0; i < numeroCasualeOggetti; i++) {
@@ -54,7 +54,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
     }
 
     public String parla(Personaggio personaggio, NPC npc) {
-        
+
         if (npc.haInteragito()) {
             System.out.println("\nL'NPC " + npc.getNomeNPC() + " ti ha già parlato.");
             return null;
@@ -73,7 +73,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             System.out.println("L’NPC ti dona: " + oggetto.getNome());
 
             if (oggetto instanceof Tesoro tesoro) {
-                
+
                 boolean applicato = tesoro.eseguiEffetto(personaggio);
                 if (applicato) {
                     System.out.println("Hai guadagnato " + tesoro.getValore() + " monete. Saldo ora: " + personaggio.getPortafoglioPersonaggio());
@@ -103,14 +103,15 @@ public class NPCServiceImpl implements PersonaIncontrataService {
         return risposta;
     }
 
-    private void vendiConVenditore(Personaggio p, NPC venditore) {
-        if (p == null || venditore == null) {
+    public void vendiConVenditore(Personaggio personaggio, NPC venditore, Oggetto oggetto) {
+        if (personaggio == null || venditore == null) {
             return;
         }
         popolaArticoliVenditore(venditore);
 
+        ZainoService zainoService = new ZainoService();
         while (true) {
-            int portafoglio = p.getPortafoglioPersonaggio();
+            int portafoglio = personaggio.getPortafoglioPersonaggio();
 
             if (venditore.getArticoli().isEmpty()) {
                 System.out.println("Il venditore non ha nulla da vendere.");
@@ -126,14 +127,17 @@ public class NPCServiceImpl implements PersonaIncontrataService {
 
             System.out.println("Il venditore offre:");
             for (int i = 0; i < venditore.getArticoli().size(); i++) {
-                Oggetto oggetto = venditore.getArticoli().get(i);
+                oggetto = venditore.getArticoli().get(i);
                 int prezzo = oggetto.getPrezzo();
-                String nota = (prezzo > portafoglio) ? " (troppo caro)" : "";
+                String nota = "";
+                if (prezzo > portafoglio) {
+                    nota = "Non hai abbastanza monete per questo acquisto";
+                }
                 System.out.println((i + 1) + ") " + oggetto.getNome() + " - prezzo " + prezzo + nota);
             }
 
-            int viewIndex = venditore.getArticoli().size() + 1;
-            System.out.println(viewIndex + ") Visualizza saldo");
+            int indice = venditore.getArticoli().size() + 1;
+            System.out.println(indice + ") Visualizza saldo");
             System.out.println("0) Esci");
             System.out.print("Scegli il numero: ");
             String line = scanner.nextLine().trim();
@@ -144,39 +148,35 @@ public class NPCServiceImpl implements PersonaIncontrataService {
                 System.out.println("Scelta non valida.");
                 continue;
             }
-
+            Arma.TipoArma tipo = ((Arma) oggetto).getTipoArma();
+            if (!personaggio.puoRaccogliere(tipo)) {
+                System.out.println("Non puoi comprare" + tipo);
+            }
             if (scelta == 0) {
                 return;
             }
-            if (scelta == viewIndex) {
+            if (scelta == indice) {
                 System.out.println("Saldo: " + portafoglio + " monete.");
                 continue;
             }
-            if (scelta < 1 || scelta > venditore.getArticoli().size()) {
-                System.out.println("Scelta fuori range.");
-                continue;
-            }
-
-            int idx = scelta - 1;
-            Oggetto scelto = venditore.getArticoli().get(idx);
-            int prezzo = scelto.getPrezzo();
+            int indiceScelta = scelta - 1;
+            Oggetto oggettoScelto = venditore.getArticoli().get(indiceScelta);
+            int prezzo = oggettoScelto.getPrezzo();
             if (prezzo > portafoglio) {
                 System.out.println("Il tuo portafoglio: " + portafoglio);
-                System.out.println("Non hai abbastanza monete per questo oggetto.");
                 continue;
             }
 
-            Zaino z = p.getZaino();
-            if (z == null || z.getListaOggetti().size() >= z.getCapienza()) {
+            Zaino zaino = personaggio.getZaino();
+            if (zaino.getListaOggetti().size() >= zaino.getCapienza()) {
                 System.out.println("Zaino pieno o non disponibile. Non puoi comprare.");
                 continue;
             }
-             ZainoService zainoService = new ZainoService();
-            boolean added = zainoService.aggiungiOggettoAZaino(z, scelto);
-            if (added) {
-                p.setPortafoglioPersonaggio(portafoglio - prezzo);
-                venditore.getArticoli().remove(idx);
-                System.out.println("Acquisto effettuato. Saldo ora: " + p.getPortafoglioPersonaggio());
+            boolean aggiungi = zainoService.aggiungiOggettoAZaino(zaino, oggettoScelto);
+            if (aggiungi) {
+                personaggio.setPortafoglioPersonaggio(portafoglio - prezzo);
+                venditore.getArticoli().remove(indiceScelta);
+                System.out.println("Acquisto effettuato. Saldo ora: " + personaggio.getPortafoglioPersonaggio());
             } else {
                 System.out.println("Errore aggiunta oggetto allo zaino.");
             }
@@ -184,22 +184,18 @@ public class NPCServiceImpl implements PersonaIncontrataService {
     }
 
     public boolean risolviRebus(NPC npc, Personaggio personaggio, String risposta) {
-        if (npc == null) {
-            return false;
-        }
         return npc.verificaRisposta(risposta);
     }
 
-    public void donaTesoro(NPC npc, Personaggio personaggio, Oggetto o) {
-        if (npc == null || personaggio == null || o == null) {
+    public void donaTesoro(NPC npc, Personaggio personaggio, Oggetto oggetto) {
+        if (npc == null || personaggio == null || oggetto == null) {
             System.out.println("Parametri non validi per donaTesoro.");
             return;
         }
 
-        
-        Tesoro tesoro = npc.daOggetto(o);
+        Tesoro tesoro = npc.daOggetto(oggetto);
 
-        System.out.println("DEBUG donaTesoro: dono restituito = " + tesoro + " | identity=" + (tesoro == null ? "null" : System.identityHashCode(tesoro)) + " classe=" + (tesoro == null ? "null" : tesoro.getClass().getName()));
+        System.out.println("Dona Tesoro: " + tesoro);
 
         if (tesoro != null) {
             int saldoPrima = personaggio.getPortafoglioPersonaggio();
@@ -209,7 +205,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             if (applicato) {
                 System.out.println("L’NPC ti dona: " + tesoro.getNome());
                 System.out.println("Hai guadagnato " + tesoro.getValore() + " monete. Saldo ora: " + personaggio.getPortafoglioPersonaggio());
-             
+
                 npc.setHaInteragito(true);
             }
         }
@@ -217,55 +213,54 @@ public class NPCServiceImpl implements PersonaIncontrataService {
     }
 
     @Override
-    public boolean attivaEvento(Personaggio personaggio, Evento e) {
-        if (!(e instanceof NPC npc)) {
-            return false;
+    public boolean attivaEvento(Personaggio personaggio, Evento evento) {
+
+        if ((evento instanceof NPC npc)) {
+
+            Stanza stanza = npc.getPosizioneCorrente();
+            System.out.println("Incontri un NPC: " + npc.getNomeNPC());
+
+            List<Oggetto> oggetto = (((NPC) personaggio).getArticoli());
+            if (npc.isVenditore() || nomeVenditore(npc.getNomeNPC())) {
+                System.out.println("Questo NPC è un venditore.");
+                vendiConVenditore(personaggio, npc, oggetto);
+            } else {
+                parla(personaggio, npc);
+            }
         }
-
-        Stanza stanza = npc.getPosizioneCorrente();
-        System.out.println("Incontri un NPC: " + npc.getNomeNPC());
-
-        if (npc.isVenditore() || nomeVenditore(npc.getNomeNPC())) {
-            System.out.println("Questo NPC è un venditore.");
-            vendiConVenditore(personaggio, npc);
-        } else {
-            parla(personaggio, npc);
-        }
-
-    
         return true;
     }
 
     @Override
-    public void  eseguiEventiInStanza(Personaggio personaggio, Stanza stanza) {
+    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza) {
         if (stanza == null || stanza.getListaEventiAttivi() == null) {
-            return ;
+            return;
         }
-        for (Evento e : List.copyOf(stanza.getListaEventiAttivi())) {
-            boolean termina = attivaEvento(personaggio, e);
+        for (Evento evento : List.copyOf(stanza.getListaEventiAttivi())) {
+            boolean termina = attivaEvento(personaggio, evento);
             if (termina) {
-                return ;
+                return;
             }
         }
-        return ;
+        return;
     }
 
     @Override
     public Evento aggiungiEventoCasuale() {
-        int id = ID_COUNTER.getAndIncrement();
+        int id = ID_CONTATORE.getAndIncrement();
         String[] nomiBot = {"Il confuso", "Nonno Rebus", "L'indeciso", "Borin", "La Saggia"};
         Random rngBot = new Random();
         String nomeNPC = nomiBot[rngBot.nextInt(nomiBot.length)];
 
-        List<QA> domande = List.of(
-                new QA("Qual è la capitale d'Italia?", "Roma"),
-                new QA("Quanto fa 2 + 2?", "4"),
-                new QA("Di che colore è il cielo in una giornata serena?", "Blu"),
-                new QA("Quanti giorni ci sono in una settimana?", "7"),
-                new QA("Qual è il contrario di 'caldo'?", "Freddo")
+        List<DomandaRisposta> domande = List.of(
+                new DomandaRisposta("Qual è la capitale d'Italia?", "Roma"),
+                new DomandaRisposta("Quanto fa 2 + 2?", "4"),
+                new DomandaRisposta("Di che colore è il cielo in una giornata serena?", "Blu"),
+                new DomandaRisposta("Quanti giorni ci sono in una settimana?", "7"),
+                new DomandaRisposta("Qual è il contrario di 'caldo'?", "Freddo")
         );
 
-        QA scelta = domande.get(ThreadLocalRandom.current().nextInt(domande.size()));
+        DomandaRisposta scelta = domande.get(ThreadLocalRandom.current().nextInt(domande.size()));
         String rebus = scelta.domanda();
         String rispostaCorretta = scelta.risposta();
 
@@ -277,7 +272,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
         return npc;
     }
 
-    private record QA(String domanda, String risposta) {
+    public record DomandaRisposta(String domanda, String risposta) {
 
     }
 }
