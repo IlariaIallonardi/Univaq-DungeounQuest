@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import domain.Chiave;
 import domain.Evento;
 import domain.Oggetto;
+import domain.PassaggioSegreto;
 import domain.Stanza;
 import service.impl.ArmaServiceImpl;
 import service.impl.ArmaturaServiceImpl;
@@ -16,6 +17,7 @@ import service.impl.PozioneServiceImpl;
 import service.impl.TesoroServiceImpl;
 import service.impl.TrappolaServiceImpl;
 import service.impl.MostroServiceImpl;
+import service.impl.PassaggioSegretoServiceImpl;
 
 public class StanzaFactory {
 
@@ -86,19 +88,19 @@ public class StanzaFactory {
             //switch per tipi di evento da implementare
             switch (tipo) {
                 case 0:
-                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 1:
-                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 2:
-                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 3:
-                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
                     break;
                 default:
-                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
                     break;
             }
         }

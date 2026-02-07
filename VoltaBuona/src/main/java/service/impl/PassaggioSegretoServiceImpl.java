@@ -26,10 +26,7 @@ public class PassaggioSegretoServiceImpl implements EventoService {
             } else {
                 System.out.println("Hai trovato un possibile passaggio segreto...");
 
-                if (passaggioSegreto.getRebusApertura() != null) {
-                    passaggioSegreto.setRebusApertura("Qual è la capitale d'Italia?");
-                    passaggioSegreto.setRispostaRebus("Roma");
-                }
+              
 
                 System.out.println("Rebus: " + passaggioSegreto.getRebusApertura());
 
@@ -47,25 +44,25 @@ public class PassaggioSegretoServiceImpl implements EventoService {
                     System.out.print("Inserisci la soluzione: ");
                     String risposta = scanner.nextLine().trim();
                     if (risposta.equalsIgnoreCase(passaggioSegreto.getRispostaRebus().trim())) {
-                        passaggioSegreto.setScoperto(true);
+            
                         System.out.println("Hai risolto il rebus: il passaggio segreto si apre!");
                     } else {
                         System.out.println("Risposta errata. Non riesci a risolvere il rebus ora.");
                         return false;
                     }
                     passaggioSegreto.setScoperto(true);
-                    System.out.println("Hai scoperto un passaggio segreto!");
+                    
                 }
             }
 
             if (stanzaCorrente != null && stanzaCorrente.getStanzaAdiacente() != null && !stanzaCorrente.getStanzaAdiacente().isEmpty()) {
 
-                List<java.util.Map.Entry<String, Stanza>> entries = new java.util.ArrayList<>(stanzaCorrente.getStanzaAdiacente().entrySet());
+               /*  List<Map.Entry<String, Stanza>> entries = new ArrayList<>(stanzaCorrente.getStanzaAdiacente().entrySet());
                 entries.removeIf(en -> en.getValue() == null || en.getValue().getId() == stanzaCorrente.getId());
-
+                   
                 if (!entries.isEmpty()) {
                     if (personaggio instanceof domain.Computer) {
-                        // comportamento semplice per bot: 50% chance muoversi, scelta casuale
+                    
                         if (Math.random() < 0.5) {
                             var rnd = java.util.concurrent.ThreadLocalRandom.current();
                             var en = entries.get(rnd.nextInt(entries.size()));
@@ -75,12 +72,13 @@ public class PassaggioSegretoServiceImpl implements EventoService {
                         } else {
                             System.out.println(personaggio.getNomePersonaggio() + " (bot) rimane nella stanza corrente.");
                         }
-                    } else {
+                    } else {*/
+                     if(personaggio instanceof domain.Personaggio) {
                         System.out.println("\nVuoi muoverti in una delle stanze adiacenti adesso?");
                         System.out.println("0) Annulla");
                         stanzaCorrente.getStanzaAdiacente().forEach((chiave, s) -> {
                             if (s != null && s != stanzaCorrente) {
-                                String stato = (s.isBloccata() ? " [BLOCCATA]" : "");
+                                String stato = (s.isBloccata() ? " Bloccata" : "");
                                 System.out.println(chiave + " " + s.getId() + stato);
                             }
 
@@ -95,25 +93,25 @@ public class PassaggioSegretoServiceImpl implements EventoService {
                             return false;
                         }
 
-                        Direzione dir;
+                        Direzione direzione;
                         try {
-                            dir = Direzione.valueOf(sceltaKey);
+                            direzione = Direzione.valueOf(sceltaKey);
                         } catch (IllegalArgumentException ex) {
                             System.out.println("Direzione non valida. Nessuno spostamento effettuato.");
                             return false;
                         }
 
-                        // QUI la modifica: niente setPosizioneCorrente a mano, richiami muoviPersonaggio
-                        boolean mosso = new GiocoServiceImpl().muoviPersonaggio(personaggio, dir);
+                        
+                        boolean mosso = new GiocoServiceImpl().muoviPersonaggio(personaggio, direzione);
                         if (!mosso) {
-                            System.out.println("Non riesci a muoverti verso " + dir.name() + ".");
+                            System.out.println("Non riesci a muoverti verso " + direzione.name() + ".");
                             return false;
                         }
 
                         System.out.println("Ti sei spostato. La stanza viene esplorata:");
                         new TurnoServiceImpl((service.PersonaggioService) null).scegliAzione(personaggio, scanner);
                     }
-                }
+                
                 return true;
             }
 
@@ -121,7 +119,7 @@ public class PassaggioSegretoServiceImpl implements EventoService {
 
         return false;
     }
-    // il passaggio segreto non consuma il turno di default
+
 
     @Override
     public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza
@@ -135,13 +133,10 @@ public class PassaggioSegretoServiceImpl implements EventoService {
         return;
     }
 
-    ;
-
         @Override
     public Evento aggiungiEventoCasuale() {
         int id = ID_CONTATORE.getAndIncrement();
         Stanza destinazione = null;
-        boolean rebusApertura = true;
         boolean scoperto = false;
 
         PassaggioSegreto passaggioSegreto = new PassaggioSegreto(destinazione, "", scoperto, id, false, false, null, "");
@@ -155,8 +150,10 @@ public class PassaggioSegretoServiceImpl implements EventoService {
                 new String[]{"Qual è il contrario di 'caldo'?", "Freddo"}
         );
         var random = java.util.concurrent.ThreadLocalRandom.current();
-        var risposta = domandaRisposta.get(random.nextInt(domandaRisposta.size()));
+       var risposta = domandaRisposta.get(random.nextInt(domandaRisposta.size()));
+        /// Primo indice dell'array è la domanda.
         passaggioSegreto.setRebusApertura(risposta[0]);
+        //Secondo indice dell' array è la risposta.
         passaggioSegreto.setRispostaRebus(risposta[1]);
 
         return passaggioSegreto;

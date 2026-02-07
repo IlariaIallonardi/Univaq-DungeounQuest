@@ -6,7 +6,6 @@ import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import domain.Arma;
 import domain.Evento;
 import domain.NPC;
 import domain.Oggetto;
@@ -44,9 +43,9 @@ public class NPCServiceImpl implements PersonaIncontrataService {
                     case 0 ->
                         oggettoVenditore = new PozioneServiceImpl().creaOggettoCasuale();
                     case 1 ->
-                        oggettoVenditore = new ArmaServiceImpl().creaOggettoCasuale();
-                    default ->
                         oggettoVenditore = new ArmaturaServiceImpl().creaOggettoCasuale();
+                    default ->
+                        oggettoVenditore = new PozioneServiceImpl().creaOggettoCasuale();
                 }
                 venditore.getArticoli().add(oggettoVenditore);
             }
@@ -64,9 +63,10 @@ public class NPCServiceImpl implements PersonaIncontrataService {
         System.out.print("\nInserisci la tua risposta: ");
         String risposta = scanner.nextLine();
 
-        boolean corretta = risolviRebus(npc, personaggio, risposta);
+        
+        boolean rispostaCorretta = npc.verificaRisposta(risposta);
 
-        if (corretta) {
+        if (rispostaCorretta) {
             System.out.println("\nRisposta corretta!");
             TesoroServiceImpl tesoroService = new TesoroServiceImpl();
             Oggetto oggetto = tesoroService.creaOggettoCasuale();
@@ -102,8 +102,10 @@ public class NPCServiceImpl implements PersonaIncontrataService {
 
         return risposta;
     }
-
-    public void vendiConVenditore(Personaggio personaggio, NPC venditore, Oggetto oggetto) {
+/**
+ * Gli NPC 'borin e 'il confuso' sono dei venditori di pozioni e armature.
+ */
+    public void vendiConVenditore(Personaggio personaggio, NPC venditore) {
         if (personaggio == null || venditore == null) {
             return;
         }
@@ -127,7 +129,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
 
             System.out.println("Il venditore offre:");
             for (int i = 0; i < venditore.getArticoli().size(); i++) {
-                oggetto = venditore.getArticoli().get(i);
+                Oggetto oggetto = venditore.getArticoli().get(i);
                 int prezzo = oggetto.getPrezzo();
                 String nota = "";
                 if (prezzo > portafoglio) {
@@ -148,10 +150,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
                 System.out.println("Scelta non valida.");
                 continue;
             }
-            Arma.TipoArma tipo = ((Arma) oggetto).getTipoArma();
-            if (!personaggio.puoRaccogliere(tipo)) {
-                System.out.println("Non puoi comprare" + tipo);
-            }
+       
             if (scelta == 0) {
                 return;
             }
@@ -183,10 +182,11 @@ public class NPCServiceImpl implements PersonaIncontrataService {
         }
     }
 
-    public boolean risolviRebus(NPC npc, Personaggio personaggio, String risposta) {
-        return npc.verificaRisposta(risposta);
-    }
+    
 
+/***
+ * Per gli NPC che se rispondi ad una domanda giusta ti dona delle monete.
+ */
     public void donaTesoro(NPC npc, Personaggio personaggio, Oggetto oggetto) {
         if (npc == null || personaggio == null || oggetto == null) {
             System.out.println("Parametri non validi per donaTesoro.");
@@ -217,13 +217,13 @@ public class NPCServiceImpl implements PersonaIncontrataService {
 
         if ((evento instanceof NPC npc)) {
 
-            Stanza stanza = npc.getPosizioneCorrente();
+        
             System.out.println("Incontri un NPC: " + npc.getNomeNPC());
 
-            List<Oggetto> oggetto = (((NPC) personaggio).getArticoli());
+        
             if (npc.isVenditore() || nomeVenditore(npc.getNomeNPC())) {
                 System.out.println("Questo NPC è un venditore.");
-                vendiConVenditore(personaggio, npc, oggetto);
+                vendiConVenditore(personaggio, npc);
             } else {
                 parla(personaggio, npc);
             }
@@ -236,7 +236,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
         if (stanza == null || stanza.getListaEventiAttivi() == null) {
             return;
         }
-        for (Evento evento : List.copyOf(stanza.getListaEventiAttivi())) {
+        for (Evento evento : stanza.getListaEventiAttivi()) {
             boolean termina = attivaEvento(personaggio, evento);
             if (termina) {
                 return;
