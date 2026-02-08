@@ -1,4 +1,5 @@
 package domain;
+
 import service.ZainoService;
 
 public class Personaggio {
@@ -24,10 +25,10 @@ public class Personaggio {
     private String abilitàSpeciale;
     private int portafoglioPersonaggio;
 
-    public Personaggio(String abilitàSpeciale, Arma armaEquippaggiata, int puntiDifesa,int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, boolean protetto, int puntiMana, int puntiVita, String statoPersonaggio, int turniAvvelenato, int turniCongelato, int turniStordito, int turnoProtetto, Zaino zaino, int portafoglioPersonaggio) {
+    public Personaggio(String abilitàSpeciale, Arma armaEquippaggiata, int puntiDifesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, boolean protetto, int puntiMana, int puntiVita, String statoPersonaggio, int turniAvvelenato, int turniCongelato, int turniStordito, int turnoProtetto, Zaino zaino, int portafoglioPersonaggio) {
         this.abilitàSpeciale = abilitàSpeciale;
         this.armaEquippaggiata = armaEquippaggiata;
-        this.puntiDifesa= puntiDifesa;
+        this.puntiDifesa = puntiDifesa;
         this.esperienza = esperienza;
         this.id = id;
         this.livello = livello;
@@ -79,10 +80,12 @@ public class Personaggio {
         this.puntiMana = puntiMana;
     }
 
-    public int getPuntiDifesa() { return puntiDifesa;}
+    public int getPuntiDifesa() {
+        return puntiDifesa;
+    }
 
     public void setPuntiDifesa(int puntiDifesa) {
-        this.puntiDifesa= puntiDifesa;
+        this.puntiDifesa = puntiDifesa;
     }
 
     public String getStatoPersonaggio() {
@@ -126,17 +129,18 @@ public class Personaggio {
     }
 
     /**
-     * Aumenta esperienza al personaggio per aumentare di livello, se raggiunge esperienza =100
-     * passa al livello successivo incrementando i paramentri vitali,di difesa,attacco,i mana
-     * 
+     * Aumenta esperienza al personaggio per aumentare di livello, se raggiunge
+     * esperienza =100 passa al livello successivo incrementando i paramentri
+     * vitali,di difesa,attacco,i mana
+     *
      */
     public int aggiungiEsperienza() {
         this.esperienza += 25;
         int xpPerLivello = 100;
         while (this.esperienza >= xpPerLivello) {
             this.livello = this.livello + 1;
-            this.puntiVita += 10; 
-            this.attacco += 2;    
+            this.puntiVita += 10;
+            this.attacco += 2;
             this.puntiDifesa += 1;
             this.puntiMana += 5;
             this.esperienza -= xpPerLivello;
@@ -169,8 +173,6 @@ public class Personaggio {
         this.disarmato = disarmato;
     }
 
-   
-
     public int getTurniStordito() {
         return turniStordito;
     }
@@ -192,7 +194,6 @@ public class Personaggio {
         return personaggio.getPuntiVita() <= 0;
     }
 
-   
     public boolean isProtetto() {
         return this.protettoProssimoTurno && this.turnoProtetto > 0;
     }
@@ -205,16 +206,14 @@ public class Personaggio {
         return true;
     }
 
-    
     public void calcolaProtezione() {
-        
+
         if (this.protettoProssimoTurno) {
             this.protettoProssimoTurno = false;
             this.turnoProtetto = 1;
             return;
         }
 
-        
         if (this.turnoProtetto > 0) {
             this.turnoProtetto--;
             if (this.turnoProtetto <= 0) {
@@ -224,7 +223,6 @@ public class Personaggio {
         }
     }
 
-    
     public void aggiungiTurniDaSaltare(int n) {
         if (n <= 0) {
             return;
@@ -236,7 +234,6 @@ public class Personaggio {
         return this.turniDaSaltare;
     }
 
-    
     public boolean consumaSaltoTurno() {
         if (this.turniDaSaltare > 0) {
             this.turniDaSaltare--;
@@ -245,20 +242,17 @@ public class Personaggio {
         return false;
     }
 
-    
     public int subisciDanno(int danno) {
         if (danno <= 0) {
             return 0;
         }
 
-    
         if (this.turnoProtetto > 0) {
             return 0;
         }
 
         this.puntiVita -= danno;
 
-        
         if (this.èMorto(this)) {
             this.statoPersonaggio = "MORTO";
 
@@ -273,19 +267,18 @@ public class Personaggio {
             return 0;
         }
 
-    
         if (this.turnoProtetto > 0) {
             return 0;
         }
-        if (this.puntiDifesa <=0) {
-            this.puntiDifesa=0;
+        if (this.puntiDifesa <= 0) {
+            this.puntiDifesa = 0;
             return this.subisciDanno(dannoDifesa);
         } else {
-            this.puntiDifesa -=dannoDifesa;
-    
+            this.puntiDifesa -= dannoDifesa;
+
         }
-      return puntiDifesa;
-    } 
+        return puntiDifesa;
+    }
 
     public Arma getArmaEquippaggiata() {
         return armaEquippaggiata;
@@ -305,45 +298,44 @@ public class Personaggio {
     }
 
     public boolean usaOggetto(Personaggio personaggio, Oggetto oggetto) {
-       
-        Zaino zaino = personaggio.getZaino();
-        if ( !zaino.getListaOggetti().contains(oggetto)) { return false; }
 
-    
+        Zaino zaino = personaggio.getZaino();
+        if (!zaino.getListaOggetti().contains(oggetto)) {
+            return false;
+        }
+
         if (oggetto instanceof Pozione) {
-           
+
             boolean risultato = ((Pozione) oggetto).eseguiEffetto(personaggio);
-             System.out.println(personaggio.getNomePersonaggio() + " usa " +  oggetto.getNome()
+            System.out.println(personaggio.getNomePersonaggio() + " usa " + oggetto.getNome()
                     + " (Punti vita:" + personaggio.getPuntiVita() + ", Mana: " + personaggio.getPuntiMana() + ")");
             if (risultato) {
                 zainoService.rimuoviOggettoDaZaino(zaino, oggetto);
-        
+
             }
             return risultato;
         }
 
-        
         if (oggetto instanceof Arma) {
             if (zaino == null || !zaino.getListaOggetti().contains(oggetto)) {
                 return false;
             }
             if (personaggio.puoEquipaggiare(((Arma) oggetto).getTipoArma())) {
-              
+
                 ((Arma) oggetto).eseguiEffetto(this);
 
-                System.out.println(this.getNomePersonaggio()  + " ha equipaggiato: " + oggetto.getNome()+ " (attacco dopo: " + this.getAttacco() + ")");
-        
+                System.out.println(this.getNomePersonaggio() + " ha equipaggiato: " + oggetto.getNome() + " (attacco dopo: " + this.getAttacco() + ")");
+
                 zainoService.rimuoviOggettoDaZaino(zaino, oggetto);
                 return true;
             }
-            return false; 
+            return false;
         }
 
-    
         if (oggetto instanceof Armatura) {
-          
+
             ((Armatura) oggetto).eseguiEffetto(personaggio);
-            
+
             zainoService.rimuoviOggettoDaZaino(zaino, oggetto);
             return true;
         }
@@ -354,7 +346,6 @@ public class Personaggio {
             return true;
         }
 
-    
         return false;
     }
 
@@ -366,7 +357,6 @@ public class Personaggio {
         if (!stanza.getOggettiPresenti().contains(oggetto)) {
             return false;
         }
-
 
         // Tesoro non va nello zaino ma direttamente nel portafoglio.
         if (oggetto instanceof Tesoro) {
@@ -390,7 +380,6 @@ public class Personaggio {
                 return false;
             }
         }
-        
 
         return new ZainoService().èPieno(zaino, stanza, oggetto, this);
     }
@@ -443,8 +432,6 @@ public class Personaggio {
     public void setTurnoProtetto(int turnoProtetto) {
         this.turnoProtetto = turnoProtetto;
     }
-
-    
 
     public String getAbilitàSpeciale() {
         return abilitàSpeciale;

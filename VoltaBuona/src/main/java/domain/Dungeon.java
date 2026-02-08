@@ -51,10 +51,10 @@ public class Dungeon {
         }
     }
 
-    public void setStanza(int x, int y, Stanza stanza) {  //è il metodo che costruisce la mappa.
-        if (esiste(x, y)) { //→ controlla che la posizione sia dentro la mappa
-            stanzeMappa.put(key(x, y), stanza); //key → converte le coordinate in una stringa tipo "2,3"
-            //put → salva la stanza nella mappa nella posizione indicata
+    public void setStanza(int x, int y, Stanza stanza) {  //è il metodo che costruisce la mappa
+        if (esiste(x, y)) { //controlla che la posizione sia dentro la mappa
+            stanzeMappa.put(key(x, y), stanza); //converte le coordinate in una stringa tipo "2,3"
+            //salva la stanza nella mappa nella posizione indicata
         }
     }
 
@@ -70,20 +70,13 @@ public class Dungeon {
     }
 
     public void stampaMappa(int righe, int colonne) {
-        System.out.println("\n--- MAPPA DUNGEON ---");
+        System.out.println("MAPPA DUNGEON");
         for (int y = 0; y < righe; y++) {
             for (int x = 0; x < colonne; x++) {
                 Stanza s = getStanza(x, y);
-                if (s == null) {
-                    System.out.print("   ");
-                } else {
-                    System.out.print(s.getStatoStanza() == true ? " . " : " ? ");
-                }
+                System.out.print(s.getStatoStanza());
             }
-            System.out.println();
         }
-        System.out.println("---------------------\n");
+        System.out.println();
     }
 }
-
-
