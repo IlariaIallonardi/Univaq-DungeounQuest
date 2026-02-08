@@ -2,7 +2,6 @@ package service.impl;
 
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,7 +18,7 @@ import service.ZainoService;
 public class NPCServiceImpl implements PersonaIncontrataService {
 
     private static final AtomicInteger ID_CONTATORE = new AtomicInteger(300);
-    private final Scanner scanner = new Scanner(System.in);
+    private final ScannerSingleton scanner = ScannerSingleton.getInstance();
 
     public boolean nomeVenditore(String nome) {
         if (nome == null) {
@@ -61,7 +60,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
 
         System.out.println(npc.proponiRebus());
         System.out.print("\nInserisci la tua risposta: ");
-        String risposta = scanner.nextLine();
+        String risposta = scanner.leggiLinea();
 
         
         boolean rispostaCorretta = npc.verificaRisposta(risposta);
@@ -119,8 +118,8 @@ public class NPCServiceImpl implements PersonaIncontrataService {
                 System.out.println("Il venditore non ha nulla da vendere.");
                 System.out.println("0) Esci");
                 System.out.println("1) Visualizza saldo");
-                String lineEmpty = scanner.nextLine().trim();
-                if ("1".equals(lineEmpty)) {
+                String lineaEmpty = scanner.leggiLinea().trim();
+                if ("1".equals(lineaEmpty)) {
                     System.out.println("Saldo: " + portafoglio + " monete.");
                     continue;
                 }
@@ -142,10 +141,10 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             System.out.println(indice + ") Visualizza saldo");
             System.out.println("0) Esci");
             System.out.print("Scegli il numero: ");
-            String line = scanner.nextLine().trim();
+            String linea = scanner.leggiLinea().trim();
             int scelta;
             try {
-                scelta = Integer.parseInt(line);
+                scelta = Integer.parseInt(linea);
             } catch (NumberFormatException ex) {
                 System.out.println("Scelta non valida.");
                 continue;
