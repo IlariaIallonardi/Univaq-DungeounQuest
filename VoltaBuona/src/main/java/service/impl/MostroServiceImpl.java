@@ -15,13 +15,13 @@ import service.PersonaIncontrataService;
 
 public class MostroServiceImpl implements PersonaIncontrataService {
 
-    private static final AtomicInteger ID_COUNTER = new AtomicInteger(200);
+    private static final AtomicInteger ID_CONTATORE = new AtomicInteger(200);
+
+    private final RandomSingleton random = RandomSingleton.getInstance();
 
     private CombattimentoService combattimentoService;
 
-    public MostroServiceImpl(CombattimentoService combattimentoService) {
-        this.combattimentoService = combattimentoService;
-    }
+    
 
     /**
      * Calcolo del danno che il mostro infligge al personaggio.
@@ -32,24 +32,24 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         }
         int attaccoMostro = mostro.getTipoAttaccoMostro().getDannoTipoMostro();
 
-        return Math.max(1, attaccoMostro);
+        return attaccoMostro;
     }
+
     public EffettoService effettoService;
 
     public MostroServiceImpl() {
-        // crea un CombattimentoServiceImpl che usa questa istanza di MostroServiceImpl
-        // in modo da evitare NPE quando il servizio viene costruito con il costruttore di default
+        // Crea un CombattimentoServiceImpl che usa questa istanza di MostroServiceImpl,per evitare che il combattimento sia null.
         this.combattimentoService = new CombattimentoServiceImpl(this, null, new TurnoServiceImpl());
         this.effettoService = new EffettoService();
     }
 
-    public void setCombattimentoService(CombattimentoService combattimentoService) {
-        this.combattimentoService = combattimentoService;
-    }
+    
 
     /**
-     * Determina il tipo di effetto applicabile al bersaglio, se presente.
-     * Restituisce null se non c'è effetto.
+     * Determina il tipo di effetto del mostro sul personaggio.
+     * @param mostro Il mostro che attacca.
+     * @param personaggio Il personaggio bersaglio dell'attacco.
+     * 
      */
 
     public void impostaTipoAttaccoEApplicaEffetto(Mostro mostro, Personaggio personaggio) {
@@ -72,7 +72,7 @@ public class MostroServiceImpl implements PersonaIncontrataService {
                 case "Troll" ->
                     tipo = TipoAttaccoMostro.ARTIGLI_POSSENTI;
                 default ->
-                    tipo = null;
+                    tipo = TipoAttaccoMostro.MORSO;
             }
         }
         mostro.setTipoAttaccoMostro(tipo);
@@ -93,103 +93,88 @@ public class MostroServiceImpl implements PersonaIncontrataService {
             }
         }
 
-        Effetto effetto = new Effetto(tipoEffetto, "Effetto da " + mostro.getNomeMostro());
+        Effetto effetto = new Effetto(tipoEffetto, " " );
         System.out.println(mostro.getNomeMostro() + " applica " + tipoEffetto + " a " + personaggio.getNomePersonaggio());
         this.effettoService.applicaEffetto(personaggio, effetto);
     }
 
-    public int attaccoDelMostro(Mostro mostro, Personaggio bersaglio) {
-        if (mostro == null || bersaglio == null) {
+    /**
+     * Attacco del mostro generale.
+     * @param mostro
+     * @param bersaglio
+     * 
+     */
 
-            return 0;
-        }
+    public int attaccoDelMostro(Mostro mostro, Personaggio bersaglio) {
 
         int tipoAttacco = mostro.getTipoAttaccoMostro().getDannoTipoMostro();
-
-        int tiro = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
-        int bonusAttacco = Math.max(0, tipoAttacco / 2);
+        int tiro = random.prossimoNumero(1, 20);
+        int bonusAttacco =tipoAttacco / 2;
         int totale = tiro + bonusAttacco;
-        int difesaP = bersaglio.getPuntiDifesa();
+        int difesaPersonaggio = bersaglio.getPuntiDifesa();
 
-        System.out.println("[DEBUG] Inizio attaccoDelMostro - Mostro: " + mostro.getNomeMostro()
-                + ", Bersaglio: " + bersaglio.getNomePersonaggio()
-                + ", HP bersaglio prima: " + bersaglio.getPuntiVita());
-        System.out.println("[DEBUG] tiro=" + tiro + ", bonusAttacco=" + bonusAttacco
-                + ", totale=" + totale + ", difesaBersaglio=" + difesaP
-                + ", tipoAttaccoPrecedente=" + tipoAttacco);
+        System.out.println("Inizio attacco del mostro: " + mostro.getNomeMostro() + ", Bersaglio: " + bersaglio.getNomePersonaggio());
+        System.out.println("Tiro:" + tiro + ", bonus attacco:" + bonusAttacco
+                + ", totale:" + totale + ", difesa bersaglio:" + difesaPersonaggio
+                + ", tipo attacco:" + mostro.getTipoAttaccoMostro()+",danni attacco:" + tipoAttacco);
 
         if (tiro == 1) {
-            System.out.println("[DEBUG] Tiro 1: fallimento critico del mostro!");
+            System.out.println("Tiro 1: fallimento critico.");
             return 0;
         }
 
-        boolean critico = (tiro == 20);
+        boolean lancioMigliore = (tiro == 20);
 
-        if (totale < difesaP && !critico) {
-            System.out.println("[DEBUG] Mancato: totale < difesa e non critico");
+        if (totale < difesaPersonaggio && !lancioMigliore) {
+            System.out.println("Mancato:" + totale + " < " + difesaPersonaggio + " e non critico");
             return 0;
         }
 
-        // applica tipo/effect (side-effect: imposta tipo sul mostro e applica effetto al bersaglio)
-        System.out.println("[DEBUG] chiamata a impostaTipoAttaccoEApplicaEffetto...");
+        // Applica il tipo effetto relativo del mostro sul personaggio bersaglio.
         impostaTipoAttaccoEApplicaEffetto(mostro, bersaglio);
-        System.out.println("[DEBUG] dopo impostaTipoAttaccoEApplicaEffetto - tipoAttacco attuale = " + mostro.getTipoAttaccoMostro());
+        
 
-        int dannoGrezzo = Math.max(1, dannoBase(mostro, bersaglio));
+        int dannoGrezzo = dannoBase(mostro, bersaglio);
 
-        if (critico) {
-            dannoGrezzo = Math.max(1, dannoGrezzo * 2);
-            System.out.println("[DEBUG] Colpo critico! dannoGrezzo raddoppiato a " + dannoGrezzo);
+        if (lancioMigliore) {
+            dannoGrezzo *= 2;
+            System.out.println("Colpo critico!Danni raddoppiati" + dannoGrezzo);
         }
 
-        System.out.println("[DEBUG] prima subisciDanno: dannoGrezzo=" + dannoGrezzo);
+        
         int dannoApplicato = bersaglio.subisciDanno(dannoGrezzo);
-        System.out.println("[DEBUG] dopo subisciDanno: dannoApplicato=" + dannoApplicato
-                + ", HP rimanenti bersaglio=" + bersaglio.getPuntiVita());
-
         System.out.println(mostro.getNomeMostro() + " usa " + mostro.getTipoAttaccoMostro()
-                + " infliggendo " + dannoGrezzo + " danni a " + bersaglio.getNomePersonaggio()
+                + " infliggendo " + dannoApplicato + " danni a " + bersaglio.getNomePersonaggio()
                 + " (HP rimanenti: " + bersaglio.getPuntiVita() + ")");
 
         return dannoApplicato;
     }
 
     @Override
-     public boolean attivaEvento(Personaggio personaggio, Evento e) {
-    if (personaggio == null || e == null) {
-        return false;
-    }
+     public boolean attivaEvento(Personaggio personaggio, Evento evento) {
+    
 
-    if (e instanceof Mostro mostro) {
-        Stanza stanza = mostro.getPosizioneCorrente() != null ? mostro.getPosizioneCorrente() : personaggio.getPosizioneCorrente();
+    if (evento instanceof Mostro mostro) {
+        Stanza stanza = mostro.getPosizioneCorrente();
         mostro.setPosizioneCorrente(stanza);
-
-        System.out.println("Hai incontrato: " + mostro.getNomeMostro());
-        System.out.println("Prima: pv=" + mostro.getPuntiVitaMostro()
-                + " difesa=" + mostro.getDifesaMostro()
-                + " danno=" + (mostro.getTipoAttaccoMostro() != null ? mostro.getTipoAttaccoMostro().getDannoTipoMostro() : 0)
-                + " exp=" + mostro.getEsperienzaMostro()
-                + " liv=" + mostro.getLivelloMostro());
+           ///forse da cancellare
+        System.out.println("Hai incontrato: " + mostro.getNomeMostro()+ "\nPunti vita mostro:" + mostro.getPuntiVitaMostro()
+                + " difesa:" + mostro.getDifesaMostro()
+                + " danno:" + mostro.getTipoAttaccoMostro().getDannoTipoMostro()
+                + " esperienza:" + mostro.getEsperienzaMostro()
+                + " livello:" + mostro.getLivelloMostro());
 
         try {
                     
             
            applicaDifficoltaMostro(mostro);
-            
-
-            System.out.println("[DEBUG] Dopo applicazione difficoltà: pv=" + mostro.getPuntiVitaMostro()
-                    + " difesa=" + mostro.getDifesaMostro()
-                    + " danno=" + (mostro.getTipoAttaccoMostro() != null ? mostro.getTipoAttaccoMostro().getDannoTipoMostro() : 0)
-                    + " exp=" + mostro.getEsperienzaMostro()
-                    + " liv=" + mostro.getLivelloMostro());
+            System.out.println("Dopo applicazione difficoltà: punti vita:" + mostro.getPuntiVitaMostro()
+                    + " difesa:" + mostro.getDifesaMostro()
+                    + " danno:" + mostro.getTipoAttaccoMostro().getDannoTipoMostro()
+                    + " esperienza:" + mostro.getEsperienzaMostro()
+                    + " livello:" + mostro.getLivelloMostro());
 
             Object vincitore = combattimentoService.iniziaCombattimento(personaggio, mostro, stanza);
-
-            System.out.println("Dopo: pv=" + mostro.getPuntiVitaMostro()
-                    + " difesa=" + mostro.getDifesaMostro()
-                    + " danno=" + (mostro.getTipoAttaccoMostro() != null ? mostro.getTipoAttaccoMostro().getDannoTipoMostro() : 0)
-                    + " exp=" + mostro.getEsperienzaMostro()
-                    + " liv=" + mostro.getLivelloMostro());
 
             if (vincitore instanceof Personaggio) {
                 System.out.println("Hai sconfitto " + mostro.getNomeMostro() + "!");
@@ -203,26 +188,30 @@ public class MostroServiceImpl implements PersonaIncontrataService {
     }
     return false;
 }
-    @Override
-    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza) {
-        List<Evento> snapshot = List.copyOf(stanza.getListaEventiAttivi());
-        for (Evento e : snapshot) {
-            boolean termina = attivaEvento(personaggio, e);
-            if (termina) {
-                return; // interrompe la catena di eventi e termina il turno
 
+     @Override
+    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza ) {
+        for (Evento evento : stanza.getListaEventiAttivi()) {
+            boolean termina = attivaEvento(personaggio, evento);
+            if (termina) {
+                return;
             }
         }
+        return;
     }
 
-///quando il mostro è morto....da capire dove chiamare questo metodo
+
+/**
+ * Aumenta i parametri del mostro quando muore per renderlo leggermente più forte.
+ * @param mostro
+ */
     public void applicaDifficoltaMostro(Mostro mostro) {
         if (mostro == null) {
             return;
         }
-        
+        //prendiamo la difficoltà dal combattimento
         int difficolta = ((CombattimentoServiceImpl) combattimentoService).getDifficoltaMostro();
-         System.out.println("Applicazione difficoltà al mostro..."+ difficolta);
+         System.out.println("Applicazione difficoltà al mostro:"+ difficolta);
         mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() + difficolta * 2);
         mostro.setDifesaMostro(mostro.getDifesaMostro() +  difficolta * 2);
         mostro.getTipoAttaccoMostro().setDannoTipoMostro(mostro.getTipoAttaccoMostro().getDannoTipoMostro() +  difficolta * 2);
@@ -233,11 +222,10 @@ public class MostroServiceImpl implements PersonaIncontrataService {
 
     @Override
     public Evento aggiungiEventoCasuale() {
-        int id = ID_COUNTER.getAndIncrement();
-        var rnd = java.util.concurrent.ThreadLocalRandom.current();
+        int id = ID_CONTATORE.getAndIncrement();
 
-        String[] nomi = {"Spiritello", "Drago", "Golem", "Ragno Gigante", "Troll"};
-        String nomeMostro = nomi[rnd.nextInt(nomi.length)];
+        List<String> nomi = List.of("Spiritello", "Drago", "Golem", "Ragno Gigante", "Troll");
+        String nomeMostro = random.scegliRandomicamente(nomi);
 
         String descrizione = switch (nomeMostro) {
             case "Spiritello" ->

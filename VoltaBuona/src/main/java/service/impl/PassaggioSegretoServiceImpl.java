@@ -122,8 +122,7 @@ public class PassaggioSegretoServiceImpl implements EventoService {
 
 
     @Override
-    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza
-    ) {
+    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza ) {
         for (Evento evento : stanza.getListaEventiAttivi()) {
             boolean termina = attivaEvento(personaggio, evento);
             if (termina) {

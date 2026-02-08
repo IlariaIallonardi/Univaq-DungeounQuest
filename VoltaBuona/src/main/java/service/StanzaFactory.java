@@ -8,16 +8,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import domain.Chiave;
 import domain.Evento;
 import domain.Oggetto;
-import domain.PassaggioSegreto;
 import domain.Stanza;
 import service.impl.ArmaServiceImpl;
 import service.impl.ArmaturaServiceImpl;
-import service.impl.NPCServiceImpl;
-import service.impl.PozioneServiceImpl;
-import service.impl.TesoroServiceImpl;
-import service.impl.TrappolaServiceImpl;
 import service.impl.MostroServiceImpl;
 import service.impl.PassaggioSegretoServiceImpl;
+import service.impl.PozioneServiceImpl;
+import service.impl.TesoroServiceImpl;
 
 public class StanzaFactory {
 
@@ -91,13 +88,13 @@ public class StanzaFactory {
                     eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 1:
-                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 2:
-                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 3:
-                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
                     break;
                 default:
                     eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());

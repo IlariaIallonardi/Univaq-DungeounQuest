@@ -22,7 +22,11 @@ public class RandomSingleton {
     }
 
     
-
+/**
+ * Genera un numero randomicamente tra il minimo e il massimo inclusi.
+ * @param minimo
+ * @param massimo
+ */  
     public int prossimoNumero(int minimo, int massimo) {
         if (minimo > massimo) {
             throw new IllegalArgumentException("minimo dovrebbe essere minore del  massimo");

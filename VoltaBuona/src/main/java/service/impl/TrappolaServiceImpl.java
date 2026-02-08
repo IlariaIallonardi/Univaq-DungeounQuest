@@ -14,7 +14,8 @@ import service.EventoService;
 
 public class TrappolaServiceImpl implements EventoService {
 
-    private static final AtomicInteger ID_COUNTER = new AtomicInteger(600);
+    private static final AtomicInteger ID_CONTATORE= new AtomicInteger(600);
+    private final RandomSingleton random = RandomSingleton.getInstance();
 
     @Override
     public boolean attivaEvento(Personaggio personaggio, Evento e) {
@@ -23,12 +24,9 @@ public class TrappolaServiceImpl implements EventoService {
         }
 
         Stanza stanza = trappola.getPosizioneCorrente();
-        if (stanza == null && personaggio != null) {
-            stanza = personaggio.getPosizioneCorrente();
-        }
-      //  System.out.println(" Sei caduto in una trappola" + trappola.getDescrizione() + "!");
         boolean disinnescata = trappola.checkDiDisinnesco(personaggio);
-
+        EffettoService effettoService = new EffettoService();
+        
         if (!disinnescata) {
             Effetto effettoTrappola = trappola.getEffetto();
             if (effettoTrappola == null || effettoTrappola.getTipo() == Effetto.TipoEffetto.NESSUN_EFFETTO) {
@@ -37,7 +35,7 @@ public class TrappolaServiceImpl implements EventoService {
                 System.out.println("Effetto della trappola: " + effettoTrappola.getTipo() + " (durata=" + effettoTrappola.getDurataTurni() + ")");
             }
 
-            scattaTrappola(trappola, personaggio, effettoTrappola);
+             effettoService.applicaEffetto(personaggio, effettoTrappola);
 
             System.out.println("Stato personaggio dopo trappola:"+" " 
                     + "\n Stato=" + personaggio.getStatoPersonaggio()
@@ -48,32 +46,19 @@ public class TrappolaServiceImpl implements EventoService {
                     + "\n Disarmato=" + personaggio.isDisarmato()
                     + "\n Stordito=" + personaggio.getTurniStordito()
                     + "\n Turni da saltare=" + personaggio.getTurniDaSaltare());
-            //  System.out.println("[DEBUG] Rimuovo evento trappola id=" + e.getId() + " dalla stanza id=" + (stanza != null ? stanza.getId() : -1));
+        
             stanza.rimuoviEvento(e);
-            return true; // consuma turno
+            return true; 
         } else {
-           // System.out.println("La trappola è stata disinnescata.");
-            // System.out.println("[DEBUG] Non attivata: rimuovo evento trappola id=" + e.getId() + " dalla stanza id=" + (stanza != null ? stanza.getId() : -1));
             stanza.rimuoviEvento(e);
             return false;
         }
     }
 
-    public void scattaTrappola(Trappola trappola, Personaggio personaggio, Effetto effetto) {
-        if (personaggio == null || effetto == null) {
-            return;
-        }
+    
 
-        /*   System.out.println("[DEBUG] scattaTrappola -> trappolaId=" + trappola.getId()
-                + " personaggio=" + (personaggio != null ? personaggio.getNomePersonaggio() : "<null>"));
-
-        System.out.println("[DEBUG] Scatta trappola -> effetto=" + effetto.getTipo() + " durata=" + effetto.getDurataTurni());*/
-        EffettoService effettoService = new EffettoService();
-        effettoService.applicaEffetto(personaggio, effetto);
-    }
-
-    private Effetto.TipoEffetto tiraDado() {
-        int dado = (int) (Math.random() * 6) + 1;
+    public Effetto.TipoEffetto tiraDado() {
+        int dado = random.prossimoNumero(1, 6);
 
         return switch (dado) {
             case 1 ->
@@ -91,21 +76,16 @@ public class TrappolaServiceImpl implements EventoService {
         };
     }
 
-    public boolean esitoDisinnesco(Trappola trappola, Personaggio personaggio) {
-        // logica per calcolare esito disinnesco
-        return trappola.checkDiDisinnesco(personaggio);
-    }
+   
 
     @Override
     public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza) {
-        if (stanza == null || stanza.getListaEventiAttivi() == null || stanza.getListaEventiAttivi().isEmpty()) {
-            return;
-        }
-
+    
+        //Controlla se ci sono trappole nella stanza e le aggiunge ad una lista 'trappole'.
         List<Trappola> trappole = new ArrayList<>();
-        for (Evento e : new ArrayList<>(stanza.getListaEventiAttivi())) {
-            if (e instanceof Trappola t) {
-                trappole.add(t);
+        for (Evento evento : stanza.getListaEventiAttivi()) {
+            if (evento instanceof Trappola trappola) {
+                trappole.add(trappola);
             }
         }
 
@@ -113,23 +93,21 @@ public class TrappolaServiceImpl implements EventoService {
             return;
         }
 
-        // Scegliere una trappola a caso tra quelle presenti
-        Trappola scelta = trappole.get(java.util.concurrent.ThreadLocalRandom.current().nextInt(trappole.size()));
+        // Si sceglie una trappola a caso tra quelle presenti nella lista creata.
+        Trappola scelta = random.scegliRandomicamente(trappole);
         attivaEvento(personaggio, scelta);
 
     }
 
     @Override
     public Evento aggiungiEventoCasuale() {
-        int id = ID_COUNTER.getAndIncrement();
-        var rnd = java.util.concurrent.ThreadLocalRandom.current();
-
+        int id = ID_CONTATORE.getAndIncrement();
+        
         // scegli un effetto casuale
         Effetto.TipoEffetto[] tipiEffetto = Effetto.TipoEffetto.values();
-        Effetto.TipoEffetto tipoEffetto = tipiEffetto[rnd.nextInt(tipiEffetto.length)];
+        Effetto.TipoEffetto tipoEffetto = tipiEffetto[random.prossimoNumero(0, tipiEffetto.length - 1)];
 
-        String descrizione
-                = switch (tipoEffetto) {
+        String descrizione = switch (tipoEffetto) {
             case DISARMA ->
                 "Trappola di disarmo";
             case AVVELENAMENTO ->
