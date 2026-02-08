@@ -109,7 +109,7 @@ public class PassaggioSegretoServiceImpl implements EventoService {
                         }
 
                         System.out.println("Ti sei spostato. La stanza viene esplorata:");
-                        new TurnoServiceImpl((service.PersonaggioService) null).scegliAzione(personaggio, scanner);
+                        new TurnoServiceImpl((service.PersonaggioService) null).scegliAzione(personaggio);
                     }
                 
                 return true;

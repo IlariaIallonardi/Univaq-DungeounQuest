@@ -255,7 +255,7 @@ public class CombattimentoServiceImpl implements CombattimentoService {
 
         } else if (scelta == 2) {
 
-            turnoService.gestisciUsoOggettoDaZaino(personaggio, scanner);
+            turnoService.gestisciUsoOggettoDaZaino(personaggio);
 
         }
         return;
@@ -318,12 +318,8 @@ public class CombattimentoServiceImpl implements CombattimentoService {
 
                 Evento evento = combattimento.getEventoMostro();
                 Stanza stanza = combattimento.getStanza();
-
-
-                if (stanza != null && evento != null) {
                     stanza.rimuoviEvento(evento);
-                }
-
+            
                 personaggioAttaccante.aggiungiEsperienza();
                 System.out.println("Parametri personaggio dopo la vittoria: " + personaggioAttaccante.getEsperienza()
                         + " livello:" + personaggioAttaccante.getLivello());

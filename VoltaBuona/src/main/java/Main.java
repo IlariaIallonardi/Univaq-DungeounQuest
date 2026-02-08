@@ -199,7 +199,7 @@ public class Main {
                     continue;
                 }
                 System.out.println("\nTurno di: " + p.getNomePersonaggio());
-                turnoServiceImpl.iniziaNuovoTurno(java.util.List.of(p), scanner);
+                turnoServiceImpl.iniziaNuovoTurno(java.util.List.of(p));
             }
 
             System.out.print("Continuare altri turni? (S/N): ");
