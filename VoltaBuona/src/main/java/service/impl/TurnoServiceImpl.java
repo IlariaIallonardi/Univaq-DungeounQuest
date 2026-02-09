@@ -418,7 +418,7 @@ public class TurnoServiceImpl implements TurnoService {
         boolean terminaTurno = service.attivaEvento(personaggio, eventoScelto);
 
         // 6) Gestione fine evento
-        if (stanza != null) {
+        if (stanza != null && eventoScelto != null && eventoScelto != null) {
             if (eventoScelto.isFineEvento() || !eventoScelto.èRiutilizzabile()) {
                 eventoScelto.setFineEvento(true);
                 eventoScelto.setInizioEvento(false);
