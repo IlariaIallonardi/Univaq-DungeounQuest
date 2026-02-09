@@ -1,7 +1,5 @@
 package service.impl;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import domain.Combattimento;
 import domain.Mostro;
 import domain.Paladino;
@@ -16,6 +14,7 @@ public class PaladinoServiceImpl implements PersonaggioService {
 
     private static final int BONUS_ATTACCO_FISICO = 6;
     private static final int BONUS_ATTACCO_MAGICO = 3;
+    private RandomSingleton randomGenerale = RandomSingleton.getInstance();
 
     /**
      * Metodo per proteggere un altro giocatore
@@ -70,7 +69,7 @@ public class PaladinoServiceImpl implements PersonaggioService {
 
     public int colpoSacroPaladino(Paladino paladino, Mostro mostro, Paladino.TipoMagiaSacra tipo) {
 
-        ThreadLocalRandom random = ThreadLocalRandom.current();
+        
 
         int costoMana = tipo.getCostoMana();
 
@@ -79,7 +78,7 @@ public class PaladinoServiceImpl implements PersonaggioService {
             return 0;
         }
 
-        int tiro = random.nextInt(1, 21);
+        int tiro = randomGenerale.prossimoNumero(1, 21);
 
         int bonusAttacco = paladino.getAttacco() + (paladino.getLivello() * 2);
         int totale = tiro + bonusAttacco;
@@ -101,14 +100,14 @@ public class PaladinoServiceImpl implements PersonaggioService {
         if (lancioMigliore || totale >= difesaMostro) {
         
 
-        int dadoDanno = random.nextInt(1, 9);//dado da 8 facce
+        int dadoDanno = randomGenerale.prossimoNumero(1, 9);//dado da 8 facce
 
         int bonusFissi = BONUS_ATTACCO_MAGICO;
 
         
 
         if (lancioMigliore) {
-            int dadoExtra = random.nextInt(1, 9);
+            int dadoExtra = randomGenerale.prossimoNumero(1, 9);
             dadoDanno += dadoExtra;
             System.out.println(
                     ANSI.BRIGHT_RED + ANSI.BOLD
@@ -156,9 +155,9 @@ public class PaladinoServiceImpl implements PersonaggioService {
 
     public int attaccoFisicoPaladino(Paladino paladino, Mostro mostro) {
 
-        ThreadLocalRandom random = ThreadLocalRandom.current();
+        
 
-        int tiro = random.nextInt(1, 21); // d20
+        int tiro = randomGenerale.prossimoNumero(1, 21); // d20
 
         
         int bonusAttacco = paladino.getAttacco() + (paladino.getLivello() / 2);
@@ -180,7 +179,7 @@ public class PaladinoServiceImpl implements PersonaggioService {
         
 
 
-        int dadoDanno = random.nextInt(1, 9); // 1..8
+        int dadoDanno = randomGenerale.prossimoNumero(1, 9); // 1..8
 
     
         int bonusFissi = BONUS_ATTACCO_FISICO;
@@ -189,7 +188,7 @@ public class PaladinoServiceImpl implements PersonaggioService {
 
         
         if (lancioMigliore) {
-            int dadoExtra = random.nextInt(1, 9);
+            int dadoExtra = randomGenerale.prossimoNumero(1, 9);
             dadoDanno += dadoExtra;
             System.out.println(
                     ANSI.BRIGHT_RED + ANSI.BOLD

@@ -1,7 +1,5 @@
 package service.impl;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import domain.Combattimento;
 import domain.Mago;
 import domain.Mago.TipoMagiaSacra;
@@ -15,6 +13,7 @@ import util.ANSI;
 public class MagoServiceImpl implements PersonaggioService {
 
     private static final int BONUS_ATTACCO_MAGO = 15;
+    private RandomSingleton randomGenerale = RandomSingleton.getInstance();
 
     /**
      * Metodo per utilizzare la magia del mago
@@ -26,7 +25,7 @@ public class MagoServiceImpl implements PersonaggioService {
      */
     public int lanciaIncantesimo(Mago mago, Mostro mostro, Mago.TipoMagiaSacra tipo) {
 
-        ThreadLocalRandom random = ThreadLocalRandom.current();
+        
 
         int costoMana = tipo.getCostoMana();
 
@@ -36,7 +35,7 @@ public class MagoServiceImpl implements PersonaggioService {
             return 0;
         }
 
-        int tiro = random.nextInt(1, 21); // dado di 20 facce
+        int tiro = randomGenerale.prossimoNumero(1, 20); // dado di 20 facce
 
         int bonusAttacco = mago.getAttacco() + (mago.getLivello() / 2);
         int totale = tiro + bonusAttacco;
@@ -54,10 +53,10 @@ public class MagoServiceImpl implements PersonaggioService {
 
         if (lancioMigliore || totale >= difesaMostro) {
 
-            int dadoDanno = random.nextInt(1, 9); // dado da 8 facce
+            int dadoDanno = randomGenerale.prossimoNumero(1, 8); // dado da 8 facce
 
             if (lancioMigliore) {
-                int dadoExtra = random.nextInt(1, 11);
+                int dadoExtra = randomGenerale.prossimoNumero(1, 8);
                 dadoDanno += dadoExtra;
                 System.out.println(ANSI.BRIGHT_RED + ANSI.BOLD + "CRITICO MAGICO! Dadi danno raddoppiati!" + ANSI.RESET
                 );

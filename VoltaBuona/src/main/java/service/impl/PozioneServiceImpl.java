@@ -10,6 +10,7 @@ import service.OggettoService;
 
 public class PozioneServiceImpl implements  OggettoService {
     private static final AtomicInteger ID_CONTATORE= new AtomicInteger(400);
+    private RandomSingleton randomGenerale = RandomSingleton.getInstance();
     @Override
       public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza){
         
@@ -39,9 +40,9 @@ public class PozioneServiceImpl implements  OggettoService {
 @Override
 public Oggetto creaOggettoCasuale() {
     int id = ID_CONTATORE.getAndIncrement();
-    var rnd = java.util.concurrent.ThreadLocalRandom.current();
 
-    Pozione.TipoPozione tipo = Pozione.TipoPozione.values()[rnd.nextInt(Pozione.TipoPozione.values().length)];
+
+    Pozione.TipoPozione tipo = Pozione.TipoPozione.values()[randomGenerale.prossimoNumero(0, Pozione.TipoPozione.values().length-1)];
 
     String nome = "Pozione " + tipo.name() ;
     String descrizione = switch (tipo) {

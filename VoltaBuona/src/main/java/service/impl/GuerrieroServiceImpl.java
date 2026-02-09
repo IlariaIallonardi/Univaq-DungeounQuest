@@ -1,7 +1,5 @@
 package service.impl;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import domain.Combattimento;
 import domain.Guerriero;
 import domain.Mostro;
@@ -15,6 +13,7 @@ public class GuerrieroServiceImpl implements PersonaggioService {
     private static final int BONUS_ATTACCO_GUERRIERO = 15;
     private static final int SOGLIA_FURIA = 10;
     private static final int BONUS_FURIA = 5;
+    private RandomSingleton randomGenerale = RandomSingleton.getInstance();
 
     /**
      * Il guerriero può proteggere un suo compagno.
@@ -74,9 +73,9 @@ public class GuerrieroServiceImpl implements PersonaggioService {
      */
     public int attaccoFisicoGuerriero(Guerriero guerriero, Mostro mostro) {
 
-        ThreadLocalRandom random = ThreadLocalRandom.current();
+        int tiro = randomGenerale.prossimoNumero(1, 20); // dado da 20 facce 
 
-        int tiro = random.nextInt(1, 21); // dado da 20 facce 
+         
 
         int bonusAttacco = guerriero.getAttacco() + (guerriero.getLivello() / 2);
         int totale = tiro + bonusAttacco;
@@ -94,7 +93,7 @@ public class GuerrieroServiceImpl implements PersonaggioService {
 
         if (lancioMigliore || totale >= difesaMostroCombattimento) {
 
-            int dadoDanno = random.nextInt(1, 9); // dado da 8 facce
+            int dadoDanno = randomGenerale.prossimoNumero(1, 8); // dado da 8 facce
 
             int bonusFissi = BONUS_ATTACCO_GUERRIERO;
 
@@ -105,7 +104,7 @@ public class GuerrieroServiceImpl implements PersonaggioService {
 
             //se il lancio è 20 (il massimo), aggiungiamo dei danni in più.
             if (lancioMigliore) {
-                int dadoExtra = random.nextInt(1, 9);
+                int dadoExtra = randomGenerale.prossimoNumero(1, 8);
                 dadoDanno += dadoExtra;
                 System.out.println(ANSI.BRIGHT_RED + ANSI.BOLD + "COLPO CRITICO! Dadi  raddoppiati!" + ANSI.RESET);
             }

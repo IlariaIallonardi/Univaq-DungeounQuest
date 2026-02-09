@@ -95,15 +95,19 @@ public class CombattimentoServiceImpl implements CombattimentoService {
 
         if (!stessaStanza && posizionePersonaggio != null && posizioneMostro != null) {
     
-            if (personaggio instanceof Arciere) {
+            if (personaggio instanceof Arciere arciere) {
                 Map<String, Stanza> stanzeAdiacenti = posizionePersonaggio.getStanzaAdiacente();
                 if (stanzeAdiacenti != null && stanzeAdiacenti.containsValue(posizioneMostro)) {
+
                     arciereAdiacente = true;
+                        return arciere;
+                    }
                 }
             }
-        }
+        
 
         if (!stessaStanza && !arciereAdiacente) {
+
             System.out.println("Impossibile iniziare il combattimento: il mostro non è nella stessa stanza. Solo l'Arciere può attaccare da stanza adiacente.");
             return false;
         }
@@ -111,6 +115,14 @@ public class CombattimentoServiceImpl implements CombattimentoService {
         ///Inizia il vero e proprio combattimento
         Combattimento combattimento = new Combattimento( null, 0, evento, 0, true, personaggio, stanza, 0, null, mostro );
         combattimento.setInCorso(true);
+        
+        if (personaggio instanceof Arciere arciere) {
+            if(arciereAdiacente){
+                    ArciereServiceImpl arciereService = new ArciereServiceImpl();
+                    arciereService.attaccoDistanzaArciere(arciere, mostro);
+                    combattimento.setInCorso(false);
+                        return arciere;}}
+
 
         // Iniziativa: 0 = mostro, 1 = personaggio
         Integer iniziativa = combattimento.getIniziativa();

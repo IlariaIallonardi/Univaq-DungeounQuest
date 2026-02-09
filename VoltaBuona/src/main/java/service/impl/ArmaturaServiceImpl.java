@@ -10,7 +10,7 @@ import service.OggettoService;
 
 public class ArmaturaServiceImpl implements   OggettoService {
     private static final AtomicInteger ID_CONTATORE = new AtomicInteger(100);
-
+    private RandomSingleton randomGenerale = RandomSingleton.getInstance();
    @Override
       public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza){
         stanza.aggiungiOggetto(oggetto);}
@@ -37,8 +37,7 @@ public class ArmaturaServiceImpl implements   OggettoService {
 @Override
 public Oggetto creaOggettoCasuale() {
     int id = ID_CONTATORE.getAndIncrement();
-    var rnd = java.util.concurrent.ThreadLocalRandom.current();
-    Armatura.TipoArmatura tipo = Armatura.TipoArmatura.values()[rnd.nextInt(Armatura.TipoArmatura.values().length)];
+    Armatura.TipoArmatura tipo = Armatura.TipoArmatura.values()[randomGenerale.prossimoNumero(0, Armatura.TipoArmatura.values().length - 1)];
     
   
     String nome = "Armatura " + tipo.name() ;

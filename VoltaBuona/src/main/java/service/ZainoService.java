@@ -1,12 +1,15 @@
 package service;
-import java.util.Scanner;
-
 import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
 import domain.Zaino;
+import service.impl.RandomSingleton;
+import service.impl.ScannerSingleton;
 
 public class ZainoService {
+        private RandomSingleton randomGenerale = RandomSingleton.getInstance();
+        private ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
+
 
 
       public boolean aggiungiOggettoAZaino(Zaino zaino, Oggetto oggetto) {
@@ -47,9 +50,9 @@ public class ZainoService {
          System.out.println((i + 1) + ") "  + zaino.getListaOggetti().get(i).getNome());
         }
 
-        Scanner scanner = new Scanner(System.in);
+        
         System.out.print("Vuoi eliminare un oggetto per fare spazio? (si/no): ");
-        String risposta = scanner.nextLine().trim().toLowerCase();
+        String risposta = scannerGenerale.leggiLinea().trim().toLowerCase();
 
         if (risposta.equals("no")) {
             System.out.println("Oggetto non raccolto.");
@@ -60,7 +63,7 @@ public class ZainoService {
         int scelta;
 
         try {
-            scelta = Integer.parseInt(scanner.nextLine());
+            scelta = Integer.parseInt(scannerGenerale.leggiLinea());
         } catch (NumberFormatException e) {
             System.out.println("Input non valido.");
             return false;

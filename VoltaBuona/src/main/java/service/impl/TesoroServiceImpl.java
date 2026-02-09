@@ -9,6 +9,7 @@ import service.OggettoService;
 
 public class TesoroServiceImpl implements OggettoService {
     private static final AtomicInteger ID_CONTATORE = new AtomicInteger(500);
+    private RandomSingleton randomGenerale = RandomSingleton.getInstance();
     @Override
       public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza){
         stanza.aggiungiOggetto(oggetto);}
@@ -33,8 +34,7 @@ public class TesoroServiceImpl implements OggettoService {
 @Override
 public Oggetto creaOggettoCasuale() {
     int id = ID_CONTATORE.getAndIncrement();
-    var rnd = java.util.concurrent.ThreadLocalRandom.current();
-    int valore = rnd.nextInt(10, 201); // 10..200
+    int valore = randomGenerale.prossimoNumero(10, 201); // 10..200
     String nome = "Tesoro del valore di " + valore;
     String descrizione = "Un tesoro dal valore di " + valore;
     

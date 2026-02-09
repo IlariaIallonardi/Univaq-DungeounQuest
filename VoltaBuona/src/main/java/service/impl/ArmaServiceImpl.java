@@ -10,6 +10,7 @@ import service.OggettoService;
 
 public class ArmaServiceImpl implements OggettoService {
        private static final AtomicInteger ID_CONTATORE = new AtomicInteger(1);
+       private RandomSingleton randomGenerale = RandomSingleton.getInstance();
 
     @Override
       public void posizionaOggettoInStanza(Oggetto oggetto, Stanza stanza){
@@ -34,8 +35,8 @@ public class ArmaServiceImpl implements OggettoService {
 @Override
 public Oggetto creaOggettoCasuale() {
     int id = ID_CONTATORE.getAndIncrement();
-    var random = java.util.concurrent.ThreadLocalRandom.current();
-    Arma.TipoArma tipo = Arma.TipoArma.values()[random.nextInt(Arma.TipoArma.values().length)];
+
+    Arma.TipoArma tipo = Arma.TipoArma.values()[randomGenerale.prossimoNumero(0, Arma.TipoArma.values().length-1)];
     String nome = tipo.name() ;
     String descrizione = switch (tipo) {
         case FRECCIA_E_ARCO -> "Arma con freccia e arco";

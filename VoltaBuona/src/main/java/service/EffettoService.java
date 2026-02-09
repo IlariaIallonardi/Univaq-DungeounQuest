@@ -1,13 +1,15 @@
 package service;
 
-import java.util.concurrent.ThreadLocalRandom;
+ 
 
 import domain.Arma;
+import domain.Arma.TipoArma;
 import domain.Effetto;
 import domain.Personaggio;
-import domain.Arma.TipoArma;
+import service.impl.RandomSingleton;
 
 public class EffettoService {
+    private RandomSingleton randomGenerale = RandomSingleton.getInstance();
 
     public void applicaEffetto(Personaggio personaggio, Effetto effetto) {
         if (personaggio != null && effetto != null) {
@@ -94,7 +96,7 @@ public class EffettoService {
         }
 
         //  Random tra 3 e 10
-        int rubati = ThreadLocalRandom.current().nextInt(3, 11);
+        int rubati = randomGenerale.prossimoNumero(3, 10);
 
         // non può rubare più di quanto hai
         personaggio.setPortafoglioPersonaggio(soldiAttuali - rubati);

@@ -3,7 +3,6 @@ package service.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
 
 import domain.Arciere;
 import domain.Combattimento;
@@ -19,6 +18,7 @@ import util.ANSI;
 public class ArciereServiceImpl implements PersonaggioService {
 
     private static final int BONUS_ATTACCO_ARCIERE = 10;
+    private RandomSingleton randomGenerale = RandomSingleton.getInstance();
     
     private Turno turno;
 
@@ -46,9 +46,7 @@ public class ArciereServiceImpl implements PersonaggioService {
      */
     public int attaccoArciere(Arciere arciere, Mostro mostro) {
 
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-
-        int tiro = random.nextInt(1, 21); //dado di 20 facce per il tiro 
+        int tiro = randomGenerale.prossimoNumero(1, 20); //dado di 20 facce per il tiro 
 
         int bonusAttacco = arciere.getAttacco() + (arciere.getLivello() / 2);
         int totale = tiro + bonusAttacco;
@@ -64,12 +62,12 @@ public class ArciereServiceImpl implements PersonaggioService {
 
         if (lancioMigliore ||totale >= difesaMostro) {
 
-            int dadoDanno = random.nextInt(1, 9); // danno con un dado da 8 facce.
+            int dadoDanno = randomGenerale.prossimoNumero(1, 8); // danno con un dado da 8 facce.
 
             int danniTotali = dadoDanno + BONUS_ATTACCO_ARCIERE;
             // Se il lancio è 20 (il massimo),aggiungiamo dei danni in più.
             if (lancioMigliore) {
-                int dadoExtra = random.nextInt(1, 9);
+                int dadoExtra = randomGenerale.prossimoNumero(1, 8);
                 danniTotali += dadoExtra;
                 System.out.println(ANSI.BRIGHT_RED + ANSI.BOLD + "COLPO CRITICO! Dadi raddoppiati!" + ANSI.RESET);
             }

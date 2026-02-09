@@ -13,6 +13,8 @@ import service.EventoService;
 public class PassaggioSegretoServiceImpl implements EventoService {
 
     private static final AtomicInteger ID_CONTATORE = new AtomicInteger(1);
+    private RandomSingleton randomGenerale = RandomSingleton.getInstance();
+    private ScannerSingleton scannerGenerale= ScannerSingleton.getInstance();
 
     @Override
     public boolean attivaEvento(Personaggio personaggio, Evento evento) {
@@ -40,9 +42,9 @@ public class PassaggioSegretoServiceImpl implements EventoService {
                         return false;
                     }
                 } else {
-                    java.util.Scanner scanner = new java.util.Scanner(System.in);
+                
                     System.out.print("Inserisci la soluzione: ");
-                    String risposta = scanner.nextLine().trim();
+                    String risposta = scannerGenerale.leggiLinea().trim();
                     if (risposta.equalsIgnoreCase(passaggioSegreto.getRispostaRebus().trim())) {
             
                         System.out.println("Hai risolto il rebus: il passaggio segreto si apre!");
@@ -57,22 +59,7 @@ public class PassaggioSegretoServiceImpl implements EventoService {
 
             if (stanzaCorrente != null && stanzaCorrente.getStanzaAdiacente() != null && !stanzaCorrente.getStanzaAdiacente().isEmpty()) {
 
-               /*  List<Map.Entry<String, Stanza>> entries = new ArrayList<>(stanzaCorrente.getStanzaAdiacente().entrySet());
-                entries.removeIf(en -> en.getValue() == null || en.getValue().getId() == stanzaCorrente.getId());
-                   
-                if (!entries.isEmpty()) {
-                    if (personaggio instanceof domain.Computer) {
-                    
-                        if (Math.random() < 0.5) {
-                            var rnd = java.util.concurrent.ThreadLocalRandom.current();
-                            var en = entries.get(rnd.nextInt(entries.size()));
-                            personaggio.setPosizioneCorrente(en.getValue());
-                            System.out.println(personaggio.getNomePersonaggio() + " (bot) si sposta verso " + en.getKey() + " (stanza id=" + en.getValue().getId() + ") e la esplora.");
-                            new TurnoServiceImpl((service.PersonaggioService) null).esploraStanza(personaggio);
-                        } else {
-                            System.out.println(personaggio.getNomePersonaggio() + " (bot) rimane nella stanza corrente.");
-                        }
-                    } else {*/
+               
                      if(personaggio instanceof domain.Personaggio) {
                         System.out.println("\nVuoi muoverti in una delle stanze adiacenti adesso?");
                         System.out.println("0) Annulla");
@@ -84,9 +71,9 @@ public class PassaggioSegretoServiceImpl implements EventoService {
 
                         });
 
-                        java.util.Scanner scanner = new java.util.Scanner(System.in);
+                    
                         System.out.print("Scegli (direzione): ");
-                        String sceltaKey = scanner.nextLine().trim().toUpperCase();
+                        String sceltaKey = scannerGenerale.leggiLinea().trim().toUpperCase();
 
                         if ("0".equals(sceltaKey)) {
                             System.out.println("Hai annullato lo spostamento.");
@@ -148,8 +135,9 @@ public class PassaggioSegretoServiceImpl implements EventoService {
                 new String[]{"Quanti giorni ci sono in una settimana?", "7"},
                 new String[]{"Qual è il contrario di 'caldo'?", "Freddo"}
         );
-        var random = java.util.concurrent.ThreadLocalRandom.current();
-       var risposta = domandaRisposta.get(random.nextInt(domandaRisposta.size()));
+       var risposta = randomGenerale.scegliRandomicamente(domandaRisposta);
+
+
         /// Primo indice dell'array è la domanda.
         passaggioSegreto.setRebusApertura(risposta[0]);
         //Secondo indice dell' array è la risposta.

@@ -1,7 +1,7 @@
 package service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,6 +19,8 @@ public class NPCServiceImpl implements PersonaIncontrataService {
 
     private static final AtomicInteger ID_CONTATORE = new AtomicInteger(300);
     private final ScannerSingleton scanner = ScannerSingleton.getInstance();
+    private RandomSingleton randomGenerale = RandomSingleton.getInstance();
+
 
     public boolean nomeVenditore(String nome) {
         if (nome == null) {
@@ -34,9 +36,9 @@ public class NPCServiceImpl implements PersonaIncontrataService {
     public void popolaArticoliVenditore(NPC venditore) {
 
         if (venditore.getArticoli().isEmpty()) {
-            int numeroCasualeOggetti = ThreadLocalRandom.current().nextInt(1, 4);
+            int numeroCasualeOggetti = randomGenerale.prossimoNumero(1, 4);
             for (int i = 0; i < numeroCasualeOggetti; i++) {
-                int tipoOggetto = ThreadLocalRandom.current().nextInt(3);
+                int tipoOggetto = randomGenerale.prossimoNumero(0, 3);
                 Oggetto oggettoVenditore;
                 switch (tipoOggetto) {
                     case 0 ->
@@ -247,9 +249,8 @@ public class NPCServiceImpl implements PersonaIncontrataService {
     @Override
     public Evento aggiungiEventoCasuale() {
         int id = ID_CONTATORE.getAndIncrement();
-        String[] nomiBot = {"Il confuso", "Nonno Rebus", "L'indeciso", "Borin", "La Saggia"};
-        Random rngBot = new Random();
-        String nomeNPC = nomiBot[rngBot.nextInt(nomiBot.length)];
+        List <String> nomiBot= new ArrayList<>(List.of("Il confuso", "Nonno Rebus", "L'indeciso", "Borin", "La Saggia"));
+        String nomeNPC = randomGenerale.scegliRandomicamente(nomiBot);
 
         List<DomandaRisposta> domande = List.of(
                 new DomandaRisposta("Qual è la capitale d'Italia?", "Roma"),

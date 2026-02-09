@@ -1,8 +1,10 @@
 package domain;
+import service.impl.RandomSingleton;
 
 public class Trappola extends Evento {
 
     private Effetto effetto;
+    private RandomSingleton randomGenerale= RandomSingleton.getInstance();
 
     public Trappola(Effetto effetto, int id, boolean inizioEvento, boolean fineEvento, String descrizione, String nomeEvento, Stanza posizioneCorrente) {
         super(id, inizioEvento, fineEvento, descrizione, nomeEvento, posizioneCorrente);
@@ -111,7 +113,7 @@ public class Trappola extends Evento {
     
         int difficolta = 4; 
 
-        int dado = (int) (Math.random() * 6) + 1;
+        int dado = randomGenerale.prossimoNumero(1, 6);
 
         System.out.println("Tiro per disinnescare: " + dado + " (Difficoltà = " + difficolta + ")");
 

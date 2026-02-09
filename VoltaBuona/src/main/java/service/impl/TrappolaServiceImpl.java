@@ -15,7 +15,7 @@ import service.EventoService;
 public class TrappolaServiceImpl implements EventoService {
 
     private static final AtomicInteger ID_CONTATORE= new AtomicInteger(600);
-    private final RandomSingleton random = RandomSingleton.getInstance();
+    private final RandomSingleton randomGenerale = RandomSingleton.getInstance();
 
     @Override
     public boolean attivaEvento(Personaggio personaggio, Evento e) {
@@ -58,7 +58,7 @@ public class TrappolaServiceImpl implements EventoService {
     
 
     public Effetto.TipoEffetto tiraDado() {
-        int dado = random.prossimoNumero(1, 6);
+        int dado = randomGenerale.prossimoNumero(1, 6);
 
         return switch (dado) {
             case 1 ->
@@ -94,7 +94,7 @@ public class TrappolaServiceImpl implements EventoService {
         }
 
         // Si sceglie una trappola a caso tra quelle presenti nella lista creata.
-        Trappola scelta = random.scegliRandomicamente(trappole);
+        Trappola scelta = randomGenerale.scegliRandomicamente(trappole);
         attivaEvento(personaggio, scelta);
 
     }
@@ -105,7 +105,7 @@ public class TrappolaServiceImpl implements EventoService {
         
         // scegli un effetto casuale
         Effetto.TipoEffetto[] tipiEffetto = Effetto.TipoEffetto.values();
-        Effetto.TipoEffetto tipoEffetto = tipiEffetto[random.prossimoNumero(0, tipiEffetto.length - 1)];
+        Effetto.TipoEffetto tipoEffetto = tipiEffetto[randomGenerale.prossimoNumero(0, tipiEffetto.length - 1)];
 
         String descrizione = switch (tipoEffetto) {
             case DISARMA ->
