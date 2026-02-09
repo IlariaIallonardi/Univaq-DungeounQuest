@@ -24,15 +24,12 @@ import util.ANSI;
 
 public class TurnoServiceImpl implements TurnoService {
 
-    
     private GiocoService giocoService;
     private PersonaggioService personaggioService;
     private EventoService eventoService;
     private List<Personaggio> ordineTurno = new ArrayList<>();
     private final RandomSingleton random = RandomSingleton.getInstance();
     private final ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
-
-
 
     public TurnoServiceImpl(GiocoService giocoService,
             PersonaggioService personaggioService,
@@ -49,8 +46,11 @@ public class TurnoServiceImpl implements TurnoService {
     public TurnoServiceImpl() {
         return;
     }
-    /***
-     * Calcola l'ordine di iniziativa dei giocatori in base ad un tiro randomico.
+
+    /**
+     * *
+     * Calcola l'ordine di iniziativa dei giocatori in base ad un tiro
+     * randomico.
      */
     @Override
     public List<Personaggio> calcolaOrdineIniziativa(List<Personaggio> partecipanti) {
@@ -62,7 +62,7 @@ public class TurnoServiceImpl implements TurnoService {
 
         // 1 Ogni personaggio tira il dado
         for (Personaggio personaggio : partecipanti) {
-           
+
             int tiro = random.prossimoNumero(1, 20); // dado d20
             tiri.put(personaggio, tiro);
         }
@@ -71,7 +71,7 @@ public class TurnoServiceImpl implements TurnoService {
         while (!tiri.isEmpty()) {
 
             Personaggio migliore = null;
-            int massimo = 1;
+            int massimo = Integer.MIN_VALUE;
 
             // 3 Cerchiamo il tiro più alto rimasto
             for (Map.Entry<Personaggio, Integer> entry : tiri.entrySet()) {
@@ -81,19 +81,28 @@ public class TurnoServiceImpl implements TurnoService {
                 }
             }
 
-            //L' aggiungiamo all'ordine
-            ordineTurno.add(migliore);
+            // Se per qualche motivo non è stato trovato il migliore (es. tutti i tiri <= massimo iniziale),
+            // selezioniamo comunque il primo elemento presente per evitare ciclo infinito.
+            if (migliore == null && !tiri.isEmpty()) {
+                Map.Entry<Personaggio, Integer> any = tiri.entrySet().iterator().next();
+                migliore = any.getKey();
+            }
 
-            // rimuoviamo dalla mappa il personaggio che ha fatto il tiro più alto
-            tiri.remove(migliore);
+            // Aggiungiamo all'ordine e rimuoviamo dalla mappa il personaggio scelto
+            if (migliore != null) {
+                ordineTurno.add(migliore);
+                tiri.remove(migliore);
+            } else {
+                break; // niente da aggiungere
+            }
         }
 
         return new ArrayList<>(ordineTurno);
     }
 
     /**
-     * @param partecipanti 
-     * 
+     * @param partecipanti
+     *
      */
     @Override
     public void iniziaNuovoTurno(List<Personaggio> partecipanti) {
@@ -103,7 +112,6 @@ public class TurnoServiceImpl implements TurnoService {
         }
 
         List<Personaggio> ordine = calcolaOrdineIniziativa(partecipanti);
-        
 
         for (Personaggio personaggio : ordine) {
             if (personaggio == null) {
@@ -111,7 +119,7 @@ public class TurnoServiceImpl implements TurnoService {
             }
             if (personaggio.èMorto(personaggio)) {
                 System.out.println(personaggio.getNomePersonaggio() + " è morto. Rimosso dalla partita.");
-            
+
                 partecipanti.remove(personaggio);
                 ordineTurno.remove(personaggio);
                 continue;
@@ -123,12 +131,12 @@ public class TurnoServiceImpl implements TurnoService {
                 continue;
             }
 
-             ///testare
+            ///testare
             personaggio.calcolaProtezione();
 
             // Stampa informazioni dello stato all'inizio del turno
-    System.out.println("\nTurno di: " + personaggio.getNomePersonaggio());
-    System.out.println("Punti vita: " + personaggio.getPuntiVita() + " | Difesa: " + personaggio.getPuntiDifesa() + " | Punti Mana: " + personaggio.getPuntiMana() + " | Attacco: " + personaggio.getAttacco() + " | Stato: " + personaggio.getStatoPersonaggio() +"\n"+ " | Turni avvelenato: " + personaggio.getTurniAvvelenato() + "Turni stordito: " + personaggio.getTurniStordito() + " | Salto turno rimanenti: " + personaggio.getTurniDaSaltare() + "\n" + " | Portafoglio: " + personaggio.getPortafoglioPersonaggio() + "\n"
+            System.out.println("\nTurno di: " + personaggio.getNomePersonaggio());
+            System.out.println("Punti vita: " + personaggio.getPuntiVita() + " | Difesa: " + personaggio.getPuntiDifesa() + " | Punti Mana: " + personaggio.getPuntiMana() + " | Attacco: " + personaggio.getAttacco() + " | Stato: " + personaggio.getStatoPersonaggio() + "\n" + " | Turni avvelenato: " + personaggio.getTurniAvvelenato() + "Turni stordito: " + personaggio.getTurniStordito() + " | Salto turno rimanenti: " + personaggio.getTurniDaSaltare() + "\n" + " | Portafoglio: " + personaggio.getPortafoglioPersonaggio() + "\n"
                     + "Livello: " + personaggio.getLivello() + " | Esperienza: " + personaggio.getEsperienza() + "\n");
 
             // Se il personaggio deve saltare il turno, consumiamo il turno e si passa al prossimo giocatore
@@ -145,9 +153,8 @@ public class TurnoServiceImpl implements TurnoService {
                 continue;
             }
 
-        
             gestisciMovimento(personaggio);
-        
+
             stanza.setStatoStanza(true);
             // 3) passo : scegliere azione da fare.
             scegliAzione(personaggio);
@@ -155,7 +162,7 @@ public class TurnoServiceImpl implements TurnoService {
 
         }
     }
-    
+
     @Override
     public void terminaTurnoCorrente(Personaggio personaggio) {
         if (personaggio == null) {
@@ -177,17 +184,15 @@ public class TurnoServiceImpl implements TurnoService {
             System.out.println(personaggio.getNomePersonaggio() + " non ha effetti attivi.");
             return;
         }
-        if (personaggio.getTurniAvvelenato() > 0|| personaggio.getTurniStordito() > 0) {
+        if (personaggio.getTurniAvvelenato() > 0 || personaggio.getTurniStordito() > 0) {
             EffettoService.applicaEffettiFineTurno(personaggio);
         }
 
     }
 
-
     @Override
     public void scegliAzione(Personaggio personaggio) {
 
-        
         Stanza stanzaCorrente = personaggio.getPosizioneCorrente();
         System.out.println("Ti trovi in: " + stanzaCorrente.getId());
         // 2 esplorazione: mostro eventi e oggetti
@@ -198,7 +203,6 @@ public class TurnoServiceImpl implements TurnoService {
         boolean ciSonoOggetti = oggetti != null && !oggetti.isEmpty();
 
         System.out.println("\nEsplorazione stanza:");
-    
 
         if (!stanzaCorrente.getOggettiPresenti().isEmpty()) {
             mostraOggetti(stanzaCorrente.getOggettiPresenti());
@@ -206,7 +210,7 @@ public class TurnoServiceImpl implements TurnoService {
             System.out.println("Nessun oggetto nella stanza.");
         }
 
-        if (!stanzaCorrente.getListaEventiAttivi().isEmpty()){
+        if (!stanzaCorrente.getListaEventiAttivi().isEmpty()) {
             mostraEventi(personaggio, eventi);
         } else {
             System.out.println("La stanza è tranquilla,non ci sono eventi!");
@@ -225,12 +229,9 @@ public class TurnoServiceImpl implements TurnoService {
             System.out.println("6) Sei un Arciere, puoi attaccare mostri in stanze adiacenti!");
         }
         System.out.println("0) Passa il turno");
-       
 
+        int scelta = scannerGenerale.leggiInteroIntervallo(0, 6);
 
-    
-        int scelta=scannerGenerale.leggiInteroIntervallo(0,6);
-       
         switch (scelta) {
             case 1:
                 if (ciSonoEventi) {
@@ -249,9 +250,8 @@ public class TurnoServiceImpl implements TurnoService {
                 if (ciSonoOggetti && ciSonoEventi) {
                     mostraOggetti(oggetti);
                     raccogliUnOggetto(personaggio, stanzaCorrente, oggetti);
-                    if (eseguiSingoloEvento(personaggio, stanzaCorrente, eventi))
-                    {
-                        return; 
+                    if (eseguiSingoloEvento(personaggio, stanzaCorrente, eventi)) {
+                        return;
                     }
                 }
                 break;
@@ -274,18 +274,17 @@ public class TurnoServiceImpl implements TurnoService {
                         List<String> chiavi = new ArrayList<>(mostriAdiacenti.keySet());
                         for (int i = 0; i < chiavi.size(); i++) {
                             Mostro mostro = mostriAdiacenti.get(chiavi.get(i));
-                            System.out.println(i + ") " + chiavi.get(i) + " -> " + mostro.getNomeMostro() + " (Punti vita mostro: " + mostro.getPuntiVitaMostro() + ")");
+                            System.out.println((i + 1) + ") " + chiavi.get(i) + " -> " + mostro.getNomeMostro() + " (Punti vita mostro: " + mostro.getPuntiVitaMostro() + ")");
                         }
                         System.out.print("Inserisci il numero del bersaglio: ");
-                        int sceltaB= scannerGenerale.leggiIntero();
-                        
+                        int sceltaB = scannerGenerale.leggiInteroIntervallo(1, chiavi.size());
+
                         Mostro bersaglio = mostriAdiacenti.get(chiavi.get(sceltaB - 1));
 
                         ArciereServiceImpl arciereService = new ArciereServiceImpl();
                         arciereService.attaccoDistanzaArciere(arciere, bersaglio);
                     }
 
-                    
                     terminaTurnoCorrente(personaggio);
                 }
                 break;
@@ -300,7 +299,6 @@ public class TurnoServiceImpl implements TurnoService {
         terminaTurnoCorrente(personaggio);
     }
 
-    
     // Restituisce il service corretto per il tipo di evento
     public EventoService servicePerEvento(Evento evento) {
         if (evento == null) {
@@ -320,88 +318,121 @@ public class TurnoServiceImpl implements TurnoService {
         }
         return eventoService = new PassaggioSegretoServiceImpl();
     }
-   /**
-    * @param personaggio
-    * @param stanza
-    * @param eventi
-    */
-    public boolean eseguiSingoloEvento(Personaggio personaggio, Stanza stanza, List<Evento> eventi) {
-        
+
+    /**
+     * @param personaggio
+     * @param stanza
+     * @param eventi
+     */
+    public boolean eseguiSingoloEvento(Personaggio personaggio,
+            Stanza stanza,
+            List<Evento> eventi) {
+
+        // 1)Eventi visibili (escluse le  trappole).
         List<Evento> eventiVisibili = new ArrayList<>();
+
         for (Evento evento : eventi) {
-            if (evento == null) {
-                continue;
-            }
-            if (evento instanceof domain.Trappola) {
+            if (evento == null||evento instanceof Trappola) {
                 continue;
             }
             eventiVisibili.add(evento);
         }
 
-        List<Evento> mostriPerArciere = new ArrayList<>();
-    
+        // 2)Mostri adiacenti per Arciere per l'attacco a distanza.
+        List<Evento> eventiArciere = new ArrayList<>();
+
         if (personaggio instanceof Arciere arciere) {
+
             Map<String, Mostro> adiacenti = new ArciereServiceImpl().trovaMostriAdiacenti(arciere.getPosizioneCorrente());
+
             for (Mostro mostro : adiacenti.values()) {
                 if (mostro != null) {
-                    mostriPerArciere.add(mostro);
+                    eventiArciere.add(mostro);
                 }
             }
         }
-        // aggiungo eventi visibili saltando eventuali mostri già inseriti (stesso id)
-        /*for (Evento ev : eventiVisibili) {
-            if (ev instanceof Mostro m) {
-                boolean found = false;
-                for (Evento d : mostriPerArciere) {
-                    if (d instanceof Mostro dm && dm.getId() == m.getId()) {
-                        found = true;
-                        break;
+
+        // 3. Uniamo 1 e 2 senza duplicati
+        List<Evento> risultatoEventi = new ArrayList<>();
+
+        for (Evento eventoArciere : eventiArciere) {
+            risultatoEventi.add(eventoArciere);
+        }
+
+        for (Evento eventoVisibile : eventiVisibili) {
+
+            boolean giàPresente = false;
+
+            if (eventoVisibile instanceof Mostro mostroVisibile) {
+                for (Evento presente : risultatoEventi) {
+                    if (presente instanceof Mostro mostroPresente) {
+                        if (mostroPresente.getId() == mostroVisibile.getId()) {
+                            giàPresente = true;
+                            break;
+                        }
                     }
                 }
-                if (found) {
+                if (giàPresente) {
                     continue;
                 }
             }
-            display.add(ev);
-        }*/
 
-        mostraEventi(personaggio, mostriPerArciere);
-        mostraEventi(personaggio,eventiVisibili);
+            risultatoEventi.add(eventoVisibile);
+        }
+
+        if (risultatoEventi.isEmpty()) {
+            System.out.println("Nessun evento disponibile.");
+            return false;
+        }
+
+        // 4. Mostra eventi
+        mostraEventi(personaggio, risultatoEventi);
 
         System.out.print("Scegli l'evento da eseguire (0 = annulla): ");
-        int indiceScelta = scannerGenerale.leggiInteroIntervallo(0, eventiVisibili.size())-1;
-        
 
-        Evento evento = mostriPerArciere.get(indiceScelta);
-        EventoService servicePerEvento = servicePerEvento(evento);
-        boolean termina = servicePerEvento.attivaEvento(personaggio, evento);
+        int scelta = scannerGenerale.leggiInteroIntervallo(0, risultatoEventi.size());
 
-      /*  try {
-            if (evento.isFineEvento() || !evento.èRiutilizzabile()) {
-                if (stanza != null) {
-                    if (evento instanceof Mostro mostro) {
-                        if (mostro.èMortoilMostro()) {
-                           // stanza.rimuoviEvento(evento);
-                        } else {
-                            evento.setFineEvento(false);
-                            evento.setInizioEvento(true);
-                        }
+        if (scelta == 0) {
+            return false;
+        }
+
+        Evento eventoScelto = risultatoEventi.get(scelta - 1);
+
+        // 5. Attiva evento
+        EventoService service = servicePerEvento(eventoScelto);
+        boolean terminaTurno= service.attivaEvento(personaggio, eventoScelto);
+
+        // 6. Gestione fine evento
+        if (stanza != null) {
+
+            if (eventoScelto.isFineEvento() || !eventoScelto.èRiutilizzabile()) {
+
+                if (eventoScelto instanceof Mostro mostro) {
+
+                    if (mostro.èMortoilMostro()) {
+                        stanza.rimuoviEvento(eventoScelto);
                     } else {
-                        if (evento.isFineEvento() || !evento.èRiutilizzabile()) {
-                            stanza.rimuoviEvento(evento);
-                        }
+                        eventoScelto.setFineEvento(false);
+                        eventoScelto.setInizioEvento(true);
                     }
+
+                } else {
+                    stanza.rimuoviEvento(eventoScelto);
                 }
             }
-        } catch (Exception ignored) {
-        }*/
-
-        if (termina) {
-            terminaTurnoCorrente(personaggio);
-            return true;
         }
-        return false;
+
+        if (terminaTurno) {
+            terminaTurnoCorrente(personaggio);
+        }
+
+        return terminaTurno;
     }
+
+
+
+
+
 
     /// mostra gli eventi nella stanza 
    public void mostraEventi(Personaggio personaggio, List<Evento> eventi) {
@@ -418,21 +449,21 @@ public class TurnoServiceImpl implements TurnoService {
                     continue;
                 }
                 System.out.println(sceltaIndex + ") Mostro avvistato in " + mappa.getKey()
-                        + " (stanza " + mostro.getPosizioneCorrente() +" " + mostro.getNomeMostro());
+                        + " (stanza " + mostro.getPosizioneCorrente() + " " + mostro.getNomeMostro());
                 mostriArciere.put(mostro.getNomeMostro(), mostro);
                 sceltaIndex++;
             }
         }
 
         for (Evento e : eventi) {
-            if(e == null) {
+            if (e == null) {
                 System.out.println(sceltaIndex + ") Evento null");
                 sceltaIndex++;
                 continue;
             }
             if (e instanceof Mostro mostro) {
                 if (mostriArciere.containsKey(mostro.getId())) {
-                    continue; 
+                    continue;
                 }
                 System.out.println(sceltaIndex + ") Hai incontrato un mostro: " + mostro.getNomeMostro());
                 mostriArciere.put(mostro.getNomeMostro(), mostro);
@@ -485,27 +516,25 @@ public class TurnoServiceImpl implements TurnoService {
         for (Map.Entry<String, Stanza> entry : adiacenti.entrySet()) {
             String direzione = entry.getKey();
             Stanza s = entry.getValue();
-            
-            System.out.println(direzione + " -> stanza id " +  s.getId());
+
+            System.out.println(direzione + " -> stanza id " + s.getId());
         }
 
         System.out.print("Scegli una direzione (nome direzione)");
 
         String input = scannerGenerale.leggiLinea();
 
-
         Direzione direzione = Direzione.fromString(input);
-        
 
         ///vedere variabile booleana mosso
         boolean mosso = false;
-        if (direzione != null ) {
+        if (direzione != null) {
             mosso = giocoService.muoviPersonaggio(personaggio, direzione);
             System.out.println("Hai scelto la direzione: " + direzione);
         } else {
-                System.out.println("Direzione non valida.");
-                return;
-            }
+            System.out.println("Direzione non valida.");
+            return;
+        }
     }
 
     //  Metodo: raccoglie UN oggetto scelto
@@ -514,7 +543,6 @@ public class TurnoServiceImpl implements TurnoService {
 
         System.out.println("Scegli l'oggetto da prendere:");
         int indice = scannerGenerale.leggiInteroIntervallo(1, oggetti.size()) - 1;
-
 
         Oggetto oggetto = oggetti.get(indice);
         boolean puoRaccogliere = personaggio.raccogliereOggetto(oggetto);
@@ -525,7 +553,7 @@ public class TurnoServiceImpl implements TurnoService {
 
     //metodo nuovo 
     public boolean gestisciUsoOggettoDaZaino(Personaggio personaggio) {
-        
+
         Zaino zaino = personaggio.getZaino();
         List<Oggetto> inventario = zaino.getListaOggetti();
         if (inventario == null || inventario.isEmpty()) {
@@ -533,7 +561,7 @@ public class TurnoServiceImpl implements TurnoService {
             return false;
         }
 
-   ////stampa zaino
+        ////stampa zaino
         System.out.println("\nZaino");
         for (int i = 0; i < inventario.size(); i++) {
             System.out.println((i + 1) + ") " + inventario.get(i).getNome());
@@ -542,7 +570,7 @@ public class TurnoServiceImpl implements TurnoService {
 
         System.out.print("Scegli un oggetto da usare: ");
         int scelta = scannerGenerale.leggiInteroIntervallo(0, inventario.size());
-        
+
         if (scelta == 0) {
             System.out.println("Hai annullato.");
             return false;
@@ -560,17 +588,5 @@ public class TurnoServiceImpl implements TurnoService {
         return true;
     }
 
-    public boolean esploraStanza(Personaggio personaggio) {
 
-        Stanza stanza = personaggio.getPosizioneCorrente();
-    
-
-        System.out.println("\n Stanza: " + stanza.getId());
-
-        // Segna la stanza come visitata
-        stanza.setStatoStanza(true);
-        return false;
-    }
-
-    
 }

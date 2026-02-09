@@ -48,7 +48,7 @@ public class Main {
         int maxTot = 6;
         int numReali = -1;
         while (numReali < 0 || numReali > maxTot) {
-            System.out.print("Quanti giocatori reali? (0 - " + maxTot + "): ");
+            System.out.print(ANSI.RESET + "Quanti giocatori reali? (0 - " + maxTot + "): ");
             String line = scanner.nextLine().trim();
             try {
                 numReali = Integer.parseInt(line);
@@ -60,7 +60,7 @@ public class Main {
         int numBot = -1;
         int botRimanenti = maxTot - numReali;
         while (numBot < 0 || (numReali + numBot) > maxTot || numBot > botRimanenti) {
-            System.out.print("Quanti BOT vuoi aggiungere? (0 - " + botRimanenti + "): ");
+            System.out.print(ANSI.RESET + "Quanti BOT vuoi aggiungere? (0 - " + botRimanenti + "): ");
             String line = scanner.nextLine().trim();
             try {
                 numBot = Integer.parseInt(line);
@@ -77,10 +77,10 @@ public class Main {
 
         // crea i giocatori reali chiedendo nome e classe
         for (int i = 1; i <= numReali; i++) {
-            System.out.print("Inserisci il nome del giocatore " + i + ": ");
+            System.out.print(ANSI.RESET + "Inserisci il nome del giocatore " + i + ": ");
             String nome = scanner.nextLine().trim();
             while (nome.isEmpty()) {
-                System.out.print("Nome vuoto. Inserisci il nome del giocatore " + i + ": ");
+                System.out.print(ANSI.RESET + "Nome vuoto. Inserisci il nome del giocatore " + i + ": ");
                 nome = scanner.nextLine().trim();
             }
 
@@ -202,7 +202,7 @@ public class Main {
                 turnoServiceImpl.iniziaNuovoTurno(java.util.List.of(p));
             }
 
-            System.out.print("Continuare altri turni? (S/N): ");
+            System.out.print(ANSI.RESET + "Continuare altri turni? (S/N): ");
             String c = scanner.nextLine().trim().toLowerCase();
             if (!c.equals("s") && !c.equals("si")) {
                 continua = false;
@@ -218,7 +218,7 @@ public class Main {
             System.out.println(" 2) Mago");
             System.out.println(" 3) Arciere");
             System.out.println(" 4) Paladino");
-            System.out.print("Quale eroe vuoi essere? (1-4): ");
+            System.out.print(ANSI.RESET + "Quale eroe vuoi essere? (1-4): ");
             String input = scanner.nextLine().trim();
             try {
                 sceltaClasse = Integer.parseInt(input);
