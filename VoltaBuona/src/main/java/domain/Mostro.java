@@ -22,11 +22,11 @@ public class Mostro extends PersonaIncontrata {
     }
 
     public enum TipoAttaccoMostro {
-        MORSO(30),
-        RUGGITO_DI_FUOCO(30),
-        URLO_ASSORDANTE(30),
-        RAGNATELA(30),
-        ARTIGLI_POSSENTI(30);
+        MORSO(5),
+        RUGGITO_DI_FUOCO(5),
+        URLO_ASSORDANTE(5),
+        RAGNATELA(5),
+        ARTIGLI_POSSENTI(5);
 
         public int dannoTipoMostro;
         public TipoAttaccoMostro tipoAttaccoMostro;
@@ -85,6 +85,7 @@ public class Mostro extends PersonaIncontrata {
 
     public boolean èMortoilMostro() {
         return this.puntiVitaMostro <= 0;
+        
 
     }
     public void setEsperienza(int esperienza) {
@@ -174,40 +175,40 @@ public class Mostro extends PersonaIncontrata {
             case "Spiritello" -> {
                 this.esperienza = 0;
                 this.livelloMostro = 0;
-                this.puntiVitaMostro = 50;
-                this.difesaMostro = 50;
+                this.puntiVitaMostro = 5;
+                this.difesaMostro = 5;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.MORSO;
                 return 1;
             }
             case "Drago" -> {
                 this.esperienza = 0;
                 this.livelloMostro = 0;
-                this.puntiVitaMostro = 50;
-                this.difesaMostro = 50;
+                this.puntiVitaMostro = 5;
+                this.difesaMostro = 5;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.RUGGITO_DI_FUOCO;
                 return 1;
             }
             case "Golem" -> {
                 this.esperienza = 0;
                 this.livelloMostro = 0;
-                this.puntiVitaMostro = 50;
-                this.difesaMostro = 50;
+                this.puntiVitaMostro = 5;
+                this.difesaMostro = 5;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.URLO_ASSORDANTE;
                 return 1;
             }
             case "Ragno Gigante" -> {
                 this.esperienza = 0;
                 this.livelloMostro = 0;
-                this.puntiVitaMostro = 50;
-                this.difesaMostro = 50;
+                this.puntiVitaMostro = 5;
+                this.difesaMostro = 5;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.RAGNATELA;
                 return 1;
             }
             case "Troll" -> {
                 this.esperienza = 0;
                 this.livelloMostro = 0;
-                this.puntiVitaMostro = 50;
-                this.difesaMostro = 50;
+                this.puntiVitaMostro = 5;
+                this.difesaMostro = 5;
                 this.tipoAttaccoMostro = TipoAttaccoMostro.ARTIGLI_POSSENTI;
                 return 1;
             }

@@ -90,6 +90,10 @@ public class ArciereServiceImpl implements PersonaggioService {
 
         int puntiVitaMostro = mostro.getPuntiVitaMostro();
         mostro.setPuntiVitaMostro(puntiVitaMostro - BONUS_ATTACCO_ARCIERE);
+        if(mostro.èMortoilMostro()){
+            Stanza stanza = mostro.getPosizioneCorrente();
+            stanza.rimuoviEvento(mostro);
+        }
         System.out.println(ANSI.BOLD + ANSI.BRIGHT_CYAN + "Attacco a distanza! Il mostro perde " + BONUS_ATTACCO_ARCIERE + " punti vita.Punti vita rimanenti del mostro: " + mostro.getPuntiVitaMostro()+ ANSI.RESET);
         return puntiVitaMostro - BONUS_ATTACCO_ARCIERE;
     }
