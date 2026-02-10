@@ -12,6 +12,7 @@ import domain.Stanza;
 import service.CombattimentoService;
 import service.EffettoService;
 import service.PersonaIncontrataService;
+import service.TurnoService;
 
 public class MostroServiceImpl implements PersonaIncontrataService {
 
@@ -39,7 +40,7 @@ public class MostroServiceImpl implements PersonaIncontrataService {
 
     public MostroServiceImpl() {
         // Crea un CombattimentoServiceImpl che usa questa istanza di MostroServiceImpl,per evitare che il combattimento sia null.
-        this.combattimentoService = new CombattimentoServiceImpl(this, null, new TurnoServiceImpl());
+        this.combattimentoService = new CombattimentoService(this, null, new TurnoService());
         this.effettoService = new EffettoService();
     }
 
@@ -210,7 +211,7 @@ public class MostroServiceImpl implements PersonaIncontrataService {
             return;
         }
         //prendiamo la difficoltà dal combattimento
-        int difficolta = ((CombattimentoServiceImpl) combattimentoService).getDifficoltaMostro();
+        int difficolta = combattimentoService.getDifficoltaMostro();
          System.out.println("Applicazione difficoltà al mostro:"+ difficolta);
         mostro.setPuntiVitaMostro(mostro.getPuntiVitaMostro() + difficolta * 2);
         mostro.setDifesaMostro(mostro.getDifesaMostro() +  difficolta * 2);

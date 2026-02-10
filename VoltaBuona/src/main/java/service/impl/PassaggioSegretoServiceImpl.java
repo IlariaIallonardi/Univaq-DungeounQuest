@@ -1,20 +1,25 @@
 package service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import domain.Computer;
 import domain.Evento;
 import domain.PassaggioSegreto;
 import domain.Personaggio;
 import domain.Stanza;
 import service.Direzione;
 import service.EventoService;
+import service.GiocoService;
+import service.TurnoService;
 
 public class PassaggioSegretoServiceImpl implements EventoService {
 
     private static final AtomicInteger ID_CONTATORE = new AtomicInteger(1);
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
-    private ScannerSingleton scannerGenerale= ScannerSingleton.getInstance();
+    private ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
 
     @Override
     public boolean attivaEvento(Personaggio personaggio, Evento evento) {
@@ -28,77 +33,82 @@ public class PassaggioSegretoServiceImpl implements EventoService {
             } else {
                 System.out.println("Hai trovato un possibile passaggio segreto...");
 
-              
-
                 System.out.println("Rebus: " + passaggioSegreto.getRebusApertura());
 
-                if (personaggio instanceof domain.Computer) {
-                    double possibilita = 0.75;
-                    if (Math.random() <= possibilita) {
+                if (personaggio instanceof Computer) {
+                    int difficolta = randomGenerale.prossimoNumero(1, 50);
+                    if (difficolta >= 25) {
                         passaggioSegreto.setScoperto(true);
-                        System.out.println(personaggio.getNomePersonaggio() + " (bot) risolve il rebus e apre il passaggio!");
+                        System.out.println(personaggio.getNomePersonaggio() + "Il numero" + difficolta + " apre il passaggio!");
                     } else {
-                        System.out.println(personaggio.getNomePersonaggio() + " (bot) non risolve il rebus.");
+                        System.out.println(personaggio.getNomePersonaggio() + "Il numero " + difficolta + "non apre il passaggio.)");
                         return false;
                     }
                 } else {
-                
+
                     System.out.print("Inserisci la soluzione: ");
                     String risposta = scannerGenerale.leggiLinea().trim();
                     if (risposta.equalsIgnoreCase(passaggioSegreto.getRispostaRebus().trim())) {
-            
+
                         System.out.println("Hai risolto il rebus: il passaggio segreto si apre!");
                     } else {
                         System.out.println("Risposta errata. Non riesci a risolvere il rebus ora.");
                         return false;
                     }
                     passaggioSegreto.setScoperto(true);
-                    
+
                 }
             }
 
             if (stanzaCorrente != null && stanzaCorrente.getStanzaAdiacente() != null && !stanzaCorrente.getStanzaAdiacente().isEmpty()) {
 
-               
-                     if(personaggio instanceof domain.Personaggio) {
-                        System.out.println("\nVuoi muoverti in una delle stanze adiacenti adesso?");
-                        System.out.println("0) Annulla");
-                        stanzaCorrente.getStanzaAdiacente().forEach((chiave, s) -> {
-                            if (s != null && s != stanzaCorrente) {
-                                String stato = (s.isBloccata() ? " Bloccata" : "");
-                                System.out.println(chiave + " " + s.getId() + stato);
-                            }
+                if (personaggio instanceof domain.Personaggio) {
 
-                        });
-
-                    
-                        System.out.print("Scegli (direzione): ");
-                        String sceltaKey = scannerGenerale.leggiLinea().trim().toUpperCase();
-
-                        if ("0".equals(sceltaKey)) {
-                            System.out.println("Hai annullato lo spostamento.");
-                            return false;
+                    System.out.println("\nVuoi muoverti in una delle stanze adiacenti adesso?");
+                    System.out.println("0) Annulla");
+                    Map<String, Stanza> adiacenti = stanzaCorrente.getStanzaAdiacente();
+                    List<String> direzioniValide = new ArrayList<>();
+                    adiacenti.forEach((chiave, s) -> {
+                        if (s != null && s != stanzaCorrente) {
+                            String stato = (s.isBloccata() ? " Bloccata" : "");
+                            System.out.println(chiave + " " + s.getId() + stato);
+                        if(!s.isBloccata()) {
+                            direzioniValide.add(chiave);
                         }
-
-                        Direzione direzione;
-                        try {
-                            direzione = Direzione.valueOf(sceltaKey);
-                        } catch (IllegalArgumentException ex) {
-                            System.out.println("Direzione non valida. Nessuno spostamento effettuato.");
-                            return false;
                         }
+                    });
 
-                        
-                        boolean mosso = new GiocoServiceImpl().muoviPersonaggio(personaggio, direzione);
-                        if (!mosso) {
-                            System.out.println("Non riesci a muoverti verso " + direzione.name() + ".");
+                    System.out.print("Scegli una direzione (nome direzione)");
+                    String input;
+                    if (personaggio instanceof Computer) {
+                        if(direzioniValide.isEmpty()){
+                            System.out.println("Non ci sono direzioni valide per muoverti.");
                             return false;
+                        }else{
+                        input = randomGenerale.scegliRandomicamente(direzioniValide);
+                        System.out.println(personaggio.getNomePersonaggio() + " sceglie di muoversi verso: " + input);
                         }
-
-                        System.out.println("Ti sei spostato. La stanza viene esplorata:");
-                        new TurnoServiceImpl((service.PersonaggioService) null).scegliAzione(personaggio);
+                    } else {
+                        input = scannerGenerale.leggiLinea();
                     }
-                
+
+                    if (input.equals("0")) {
+                        System.out.println("Hai annullato lo spostamento.");
+                        return false;
+                    }
+
+                    Direzione direzione = Direzione.fromString(input);
+
+                    boolean mosso = new GiocoService().muoviPersonaggio(personaggio, direzione);
+                    if (!mosso) {
+                        System.out.println("Non riesci a muoverti verso " + direzione.name() + ".");
+                        return false;
+                    }
+
+                    System.out.println("Ti sei spostato. La stanza viene esplorata:");
+                    new TurnoService((service.PersonaggioService) null).scegliAzione(personaggio);
+                }
+
                 return true;
             }
 
@@ -107,9 +117,8 @@ public class PassaggioSegretoServiceImpl implements EventoService {
         return false;
     }
 
-
     @Override
-    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza ) {
+    public void eseguiEventiInStanza(Personaggio personaggio, Stanza stanza) {
         for (Evento evento : stanza.getListaEventiAttivi()) {
             boolean termina = attivaEvento(personaggio, evento);
             if (termina) {
@@ -119,7 +128,7 @@ public class PassaggioSegretoServiceImpl implements EventoService {
         return;
     }
 
-        @Override
+    @Override
     public Evento aggiungiEventoCasuale() {
         int id = ID_CONTATORE.getAndIncrement();
         Stanza destinazione = null;
@@ -135,8 +144,7 @@ public class PassaggioSegretoServiceImpl implements EventoService {
                 new String[]{"Quanti giorni ci sono in una settimana?", "7"},
                 new String[]{"Qual è il contrario di 'caldo'?", "Freddo"}
         );
-       var risposta = randomGenerale.scegliRandomicamente(domandaRisposta);
-
+        var risposta = randomGenerale.scegliRandomicamente(domandaRisposta);
 
         /// Primo indice dell'array è la domanda.
         passaggioSegreto.setRebusApertura(risposta[0]);

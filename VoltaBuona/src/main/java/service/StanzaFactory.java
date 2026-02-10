@@ -12,9 +12,11 @@ import domain.Stanza;
 import service.impl.ArmaServiceImpl;
 import service.impl.ArmaturaServiceImpl;
 import service.impl.MostroServiceImpl;
+import service.impl.NPCServiceImpl;
 import service.impl.PassaggioSegretoServiceImpl;
 import service.impl.PozioneServiceImpl;
 import service.impl.TesoroServiceImpl;
+import service.impl.TrappolaServiceImpl;
 
 public class StanzaFactory {
 
@@ -88,7 +90,7 @@ public class StanzaFactory {
                     eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 1:
-                    eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 2:
                     eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
@@ -97,7 +99,7 @@ public class StanzaFactory {
                     eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
                     break;
                 default:
-                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new TrappolaServiceImpl().aggiungiEventoCasuale());
                     break;
             }
         }

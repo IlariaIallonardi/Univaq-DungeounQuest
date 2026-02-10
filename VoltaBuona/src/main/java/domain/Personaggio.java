@@ -97,6 +97,9 @@ public class Personaggio {
     }
 
     public Zaino getZaino() {
+        if (zaino == null) {
+            zaino = new Zaino();
+        }
         return zaino;
     }
 

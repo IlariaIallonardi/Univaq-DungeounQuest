@@ -74,9 +74,9 @@ public class Dungeon {
         for (int y = 0; y < righe; y++) {
             for (int x = 0; x < colonne; x++) {
                 Stanza s = getStanza(x, y);
-                System.out.print(s.getStatoStanza());
-            }
+               
         }
-        System.out.println();
+    
     }
+}
 }

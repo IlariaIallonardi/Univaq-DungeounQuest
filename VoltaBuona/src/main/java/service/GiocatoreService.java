@@ -1,21 +1,22 @@
 package service;
 
-import java.lang.reflect.Method;
-import java.util.Random;
-
+import domain.Combattimento;
 import domain.Computer;
+import domain.Mostro;
 import domain.Personaggio;
 import service.impl.ArciereServiceImpl;
 import service.impl.GuerrieroServiceImpl;
 import service.impl.MagoServiceImpl;
 import service.impl.PaladinoServiceImpl;
+import service.impl.RandomSingleton;
 
 public class GiocatoreService {
+    private RandomSingleton randomGenerale = RandomSingleton.getInstance();
 
     public Personaggio attribuisciPersonaggioAComputer(Personaggio personaggio) {
         // genera il personaggio "base" (classe scelta casuale)
-        Random rnd = new Random();
-        int scelta = rnd.nextInt(4);
+        int scelta = randomGenerale.prossimoNumero(0, 3);
+
 
         Personaggio botBase;
         switch (scelta) {
@@ -35,19 +36,51 @@ public class GiocatoreService {
                 botBase = new GuerrieroServiceImpl().creaPersonaggio(personaggio.getNomePersonaggio(), personaggio);
         }
 
-        // tenta di impostare un nome descrittivo se la classe lo supporta
+        
         try {
-            Method setter = botBase.getClass().getMethod("setNome", String.class);
-            setter.invoke(botBase, "Bot-" + botBase.getClass().getSimpleName());
+            
+            botBase.setNomePersonaggio("Bot-" + botBase.getClass().getSimpleName());
         } catch (Exception ignored) {
-            return null;
+        
         }
 
         // converte il Personaggio in una vera istanza domain.Computer
         domain.Computer c = new Computer(null, null, null, scelta, scelta, scelta, scelta, null, null, false, scelta, scelta, null, scelta, scelta, scelta, scelta, null, scelta);
 
-        System.out.println("🤖 Il computer giocherà come: " + botBase.getClass().getSimpleName() + " (nome: " + c.getNomePersonaggio() + ")");
+    
+        try {
+            c.setNomePersonaggio(botBase.getNomePersonaggio());
+        } catch (Exception ignored) {
+        }
+
+        System.out.println("Il computer giocherà come: " + botBase.getClass().getSimpleName() + " (nome: " + c.getNomePersonaggio() + ")");
 
         return c;
+    }
+
+    // Deleghe per comportamento: instradano alle implementazioni specifiche
+    public int attacca(Personaggio attacker, Mostro target, Combattimento combattimento) {
+        if (attacker == null || target == null) return 0;
+        if (attacker instanceof domain.Guerriero) {
+            return new GuerrieroServiceImpl().attacca(attacker, target, combattimento);
+        }
+        if (attacker instanceof domain.Mago) {
+            return new MagoServiceImpl().attacca(attacker, target, combattimento);
+        }
+        if (attacker instanceof domain.Arciere) {
+            return new ArciereServiceImpl().attacca(attacker, target, combattimento);
+        }
+        if (attacker instanceof domain.Paladino) {
+            return new PaladinoServiceImpl().attacca(attacker, target, combattimento);
+        }
+        // fallback generico
+        return 0;
+    }
+
+    
+    public boolean usaOggetto(Personaggio personaggio, domain.Oggetto oggetto) {
+        if (personaggio == null || oggetto == null) return false;
+        // la logica di uso oggetto è implementata in Personaggio. Manteniamo delega minimale.
+        return personaggio.usaOggetto(personaggio, oggetto);
     }
 }

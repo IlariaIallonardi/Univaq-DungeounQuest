@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import domain.Computer;
 import domain.Evento;
 import domain.NPC;
 import domain.Oggetto;
@@ -18,7 +19,7 @@ import service.ZainoService;
 public class NPCServiceImpl implements PersonaIncontrataService {
 
     private static final AtomicInteger ID_CONTATORE = new AtomicInteger(300);
-    private final ScannerSingleton scanner = ScannerSingleton.getInstance();
+    private final ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
 
 
@@ -59,10 +60,17 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             System.out.println("\nL'NPC " + npc.getNomeNPC() + " ti ha già parlato.");
             return null;
         }
+         System.out.println(npc.proponiRebus());
 
-        System.out.println(npc.proponiRebus());
         System.out.print("\nInserisci la tua risposta: ");
-        String risposta = scanner.leggiLinea();
+        String risposta;
+        if (personaggio instanceof Computer) {
+                    List<String> rispostePossibili = List.of("Roma", "4", "Blu", "7", "Freddo");
+                    risposta = randomGenerale.scegliRandomicamente(rispostePossibili);
+                    System.out.println("Il computer risponde: " + risposta);
+          } else {
+            risposta = scannerGenerale.leggiLinea();
+        }
 
         
         boolean rispostaCorretta = npc.verificaRisposta(risposta);
@@ -120,7 +128,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
                 System.out.println("Il venditore non ha nulla da vendere.");
                 System.out.println("0) Esci");
                 System.out.println("1) Visualizza saldo");
-                String lineaEmpty = scanner.leggiLinea().trim();
+                String lineaEmpty = scannerGenerale.leggiLinea().trim();
                 if ("1".equals(lineaEmpty)) {
                     System.out.println("Saldo: " + portafoglio + " monete.");
                     continue;
@@ -143,7 +151,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             System.out.println(indice + ") Visualizza saldo");
             System.out.println("0) Esci");
             System.out.print("Scegli il numero: ");
-            String linea = scanner.leggiLinea().trim();
+            String linea = scannerGenerale.leggiLinea().trim();
             int scelta;
             try {
                 scelta = Integer.parseInt(linea);

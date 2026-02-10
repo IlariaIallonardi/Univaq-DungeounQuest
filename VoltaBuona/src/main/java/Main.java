@@ -13,15 +13,15 @@ import domain.Personaggio;
 import domain.Stanza;
 import service.DungeonFactory;
 import service.GiocatoreService;
+import service.GiocoService;
 import service.PersonaggioService;
 import service.StanzaFactory;
+import service.TurnoService;
 import service.impl.ArciereServiceImpl;
-import service.impl.GiocoServiceImpl;
 import service.impl.GuerrieroServiceImpl;
 import service.impl.MagoServiceImpl;
 import service.impl.PaladinoServiceImpl;
 import service.impl.PassaggioSegretoServiceImpl;
-import service.impl.TurnoServiceImpl;
 import util.ANSI;
 
 public class Main {
@@ -173,7 +173,7 @@ public class Main {
         };
 
         Random rng = new Random();
-        TurnoServiceImpl turnoServiceImpl = new TurnoServiceImpl(new GiocoServiceImpl(), ps, new PassaggioSegretoServiceImpl());
+        TurnoService turnoService = new TurnoService(new GiocoService(), ps, new PassaggioSegretoServiceImpl());
 
 // calcola iniziativa UNA sola volta, prima del loop
         Map<Personaggio, Integer> iniziative = new HashMap<>();
@@ -191,6 +191,7 @@ public class Main {
             System.out.println(" - " + p.getNomePersonaggio() + " (iniz.: " + iniziative.get(p) + ")");
         }
         boolean continua = true;
+        boolean autoMode = (numReali == 0);
 
         while (continua) {
             // esegui i turni singoli nell'ordine calcolato
@@ -199,18 +200,27 @@ public class Main {
                     continue;
                 }
                 System.out.println("\nTurno di: " + p.getNomePersonaggio());
-                turnoServiceImpl.iniziaNuovoTurno(java.util.List.of(p));
+                turnoService.iniziaNuovoTurno(java.util.List.of(p));
             }
 
-            System.out.print(ANSI.RESET + "Continuare altri turni? (S/N): ");
-            String c = scanner.nextLine().trim().toLowerCase();
-            if (!c.equals("s") && !c.equals("si")) {
-                continua = false;
+            // chiedi se continuare solo se ci sono giocatori reali; altrimenti prosegui automaticamente finché c'è almeno un personaggio vivo
+            if (numReali > 0) {
+                System.out.print(ANSI.RESET + "Continuare altri turni? (S/N): ");
+                String c = scanner.nextLine().trim().toLowerCase();
+                if (!c.equals("s") && !c.equals("si")) {
+                    continua = false;
+                }
+            } else {
+                boolean almenoVivo = false;
+                for (Personaggio p : ordine) {
+                    if (p != null && !p.èMorto(p)) { almenoVivo = true; break; }
+                }
+                continua = almenoVivo;
             }
         }
     }
 
-    private static int scegliClasse(Scanner scanner, String who) {
+    public static int scegliClasse(Scanner scanner, String who) {
         int sceltaClasse = 0;
         while (sceltaClasse < 1 || sceltaClasse > 4) {
             System.out.println("Scegli la classe per " + who + ":");
