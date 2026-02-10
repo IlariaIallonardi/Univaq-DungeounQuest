@@ -1,4 +1,6 @@
 package service;
+import java.util.List;
+
 import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
@@ -52,21 +54,29 @@ public class ZainoService {
 
         
         System.out.print("Vuoi eliminare un oggetto per fare spazio? (si/no): ");
+        boolean isBot = personaggio.getNomePersonaggio() != null && (personaggio.getNomePersonaggio().startsWith("BOT_") || personaggio.getNomePersonaggio().startsWith("Bot-") || personaggio.getNomePersonaggio().toLowerCase().contains("bot"));
+
+        if(isBot){
+            String risposta = randomGenerale.scegliRandomicamente(List.of("si", "no"));
+            System.out.println("Il computer risponde: " + risposta);
+            if (risposta.equalsIgnoreCase("no")) {
+                return false;
+            }
+        } else {
         String risposta = scannerGenerale.leggiLinea().trim().toLowerCase();
 
         if (risposta.equals("no")) {
             System.out.println("Oggetto non raccolto.");
             return false;
         }
-
+    }
         System.out.print("Scegli il numero dell'oggetto da eliminare (0 annulla): ");
         int scelta;
 
-        try {
-            scelta = Integer.parseInt(scannerGenerale.leggiLinea());
-        } catch (NumberFormatException e) {
-            System.out.println("Input non valido.");
-            return false;
+        if(isBot){
+            scelta = randomGenerale.prossimoNumero(1, zaino.getCapienza())-1;
+        } else {
+            scelta = scannerGenerale.leggiIntero();
         }
 
         if (scelta <= 0 || scelta > zaino.getCapienza()) {
@@ -87,7 +97,7 @@ public class ZainoService {
         return true;
     }
 
-    
+ 
      
     
-}
+    }

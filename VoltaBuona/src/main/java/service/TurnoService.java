@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import domain.Arciere;
-import domain.Computer;
+
 import domain.Evento;
 import domain.Mostro;
 import domain.NPC;
@@ -126,6 +126,9 @@ public class TurnoService {
                 ordineTurno.remove(personaggio);
                 continue;
             }
+            System.out.println("DEBUG " + personaggio.getNomePersonaggio()
+    + " class=" + personaggio.getClass().getSimpleName()
+    + " stanza=" + (personaggio.getPosizioneCorrente() == null ? "NULL" : personaggio.getPosizioneCorrente().getId()));
 
             Stanza stanza = personaggio.getPosizioneCorrente();
             if (stanza == null) {
@@ -528,8 +531,11 @@ public class TurnoService {
 
         System.out.print("Scegli una direzione (nome direzione)");
         String input;
-        if(personaggio instanceof Computer) {
+        String nomePersonaggio = personaggio.getNomePersonaggio();
+        boolean isBot = nomePersonaggio != null && (nomePersonaggio.startsWith("BOT_") || nomePersonaggio.startsWith("Bot-") || nomePersonaggio.toLowerCase().contains("bot"));
+        if (isBot) {
             input = randomGenerale.scegliRandomicamente(new ArrayList<>(adiacenti.keySet()));
+            System.out.println(personaggio.getNomePersonaggio() + " (bot) sceglie direzione: " + input);
         } else {
             input = scannerGenerale.leggiLinea();
         }

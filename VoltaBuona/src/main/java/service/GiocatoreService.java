@@ -1,7 +1,6 @@
 package service;
 
 import domain.Combattimento;
-import domain.Computer;
 import domain.Mostro;
 import domain.Personaggio;
 import service.impl.ArciereServiceImpl;
@@ -44,18 +43,11 @@ public class GiocatoreService {
         
         }
 
-        // converte il Personaggio in una vera istanza domain.Computer
-        domain.Computer c = new Computer(null, null, null, scelta, scelta, scelta, scelta, null, null, false, scelta, scelta, null, scelta, scelta, scelta, scelta, null, scelta);
+        
 
-    
-        try {
-            c.setNomePersonaggio(botBase.getNomePersonaggio());
-        } catch (Exception ignored) {
-        }
+        System.out.println("Il computer giocherà come: " + botBase.getClass().getSimpleName() + " (nome: " + botBase.getNomePersonaggio() + ")");
 
-        System.out.println("Il computer giocherà come: " + botBase.getClass().getSimpleName() + " (nome: " + c.getNomePersonaggio() + ")");
-
-        return c;
+        return botBase;
     }
 
     // Deleghe per comportamento: instradano alle implementazioni specifiche

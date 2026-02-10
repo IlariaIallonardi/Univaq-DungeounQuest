@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import domain.Computer;
 import domain.Evento;
 import domain.NPC;
 import domain.Oggetto;
@@ -14,6 +13,7 @@ import domain.Stanza;
 import domain.Tesoro;
 import domain.Zaino;
 import service.PersonaIncontrataService;
+import service.TurnoService;
 import service.ZainoService;
 
 public class NPCServiceImpl implements PersonaIncontrataService {
@@ -21,7 +21,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
     private static final AtomicInteger ID_CONTATORE = new AtomicInteger(300);
     private final ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
-
+    private TurnoService turnoService;
 
     public boolean nomeVenditore(String nome) {
         if (nome == null) {
@@ -60,19 +60,19 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             System.out.println("\nL'NPC " + npc.getNomeNPC() + " ti ha già parlato.");
             return null;
         }
-         System.out.println(npc.proponiRebus());
+        System.out.println(npc.proponiRebus());
 
         System.out.print("\nInserisci la tua risposta: ");
         String risposta;
-        if (personaggio instanceof Computer) {
-                    List<String> rispostePossibili = List.of("Roma", "4", "Blu", "7", "Freddo");
-                    risposta = randomGenerale.scegliRandomicamente(rispostePossibili);
-                    System.out.println("Il computer risponde: " + risposta);
-          } else {
+        boolean isBot = personaggio.getNomePersonaggio() != null && (personaggio.getNomePersonaggio().startsWith("BOT_") || personaggio.getNomePersonaggio().startsWith("Bot-") || personaggio.getNomePersonaggio().toLowerCase().contains("bot"));
+        if (isBot) {
+            List<String> rispostePossibili = List.of("Roma", "4", "Blu", "7", "Freddo");
+            risposta = randomGenerale.scegliRandomicamente(rispostePossibili);
+            System.out.println("Il computer risponde: " + risposta);
+        } else {
             risposta = scannerGenerale.leggiLinea();
         }
 
-        
         boolean rispostaCorretta = npc.verificaRisposta(risposta);
 
         if (rispostaCorretta) {
@@ -111,9 +111,10 @@ public class NPCServiceImpl implements PersonaIncontrataService {
 
         return risposta;
     }
-/**
- * Gli NPC 'borin e 'il confuso' sono dei venditori di pozioni e armature.
- */
+
+    /**
+     * Gli NPC 'borin e 'il confuso' sono dei venditori di pozioni e armature.
+     */
     public void vendiConVenditore(Personaggio personaggio, NPC venditore) {
         if (personaggio == null || venditore == null) {
             return;
@@ -128,12 +129,17 @@ public class NPCServiceImpl implements PersonaIncontrataService {
                 System.out.println("Il venditore non ha nulla da vendere.");
                 System.out.println("0) Esci");
                 System.out.println("1) Visualizza saldo");
-                String lineaEmpty = scannerGenerale.leggiLinea().trim();
-                if ("1".equals(lineaEmpty)) {
-                    System.out.println("Saldo: " + portafoglio + " monete.");
-                    continue;
+                boolean isBot = personaggio.getNomePersonaggio() != null && (personaggio.getNomePersonaggio().startsWith("BOT_") || personaggio.getNomePersonaggio().startsWith("Bot-") || personaggio.getNomePersonaggio().toLowerCase().contains("bot"));
+                if (isBot) {
+                    turnoService.terminaTurnoCorrente(personaggio);
+                } else {
+                    String lineaEmpty = scannerGenerale.leggiLinea().trim();
+                    if ("1".equals(lineaEmpty)) {
+                        System.out.println("Saldo: " + portafoglio + " monete.");
+                        continue;
+                    }
+                    return;
                 }
-                return;
             }
 
             System.out.println("Il venditore offre:");
@@ -151,15 +157,15 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             System.out.println(indice + ") Visualizza saldo");
             System.out.println("0) Esci");
             System.out.print("Scegli il numero: ");
-            String linea = scannerGenerale.leggiLinea().trim();
             int scelta;
-            try {
-                scelta = Integer.parseInt(linea);
-            } catch (NumberFormatException ex) {
-                System.out.println("Scelta non valida.");
-                continue;
-            }
-       
+            boolean isBot = personaggio.getNomePersonaggio() != null && (personaggio.getNomePersonaggio().startsWith("BOT_") || personaggio.getNomePersonaggio().startsWith("Bot-") || personaggio.getNomePersonaggio().toLowerCase().contains("bot"));
+           if(isBot){
+            scelta = randomGenerale.prossimoNumero(0, indice);
+           }else{
+            scelta = scannerGenerale.leggiIntero();
+           }
+            
+
             if (scelta == 0) {
                 return;
             }
@@ -191,11 +197,10 @@ public class NPCServiceImpl implements PersonaIncontrataService {
         }
     }
 
-    
-
-/***
- * Per gli NPC che se rispondi ad una domanda giusta ti dona delle monete.
- */
+    /**
+     * *
+     * Per gli NPC che se rispondi ad una domanda giusta ti dona delle monete.
+     */
     public void donaTesoro(NPC npc, Personaggio personaggio, Oggetto oggetto) {
         if (npc == null || personaggio == null || oggetto == null) {
             System.out.println("Parametri non validi per donaTesoro.");
@@ -226,10 +231,8 @@ public class NPCServiceImpl implements PersonaIncontrataService {
 
         if ((evento instanceof NPC npc)) {
 
-        
             System.out.println("Incontri un NPC: " + npc.getNomeNPC());
 
-        
             if (npc.isVenditore() || nomeVenditore(npc.getNomeNPC())) {
                 System.out.println("Questo NPC è un venditore.");
                 vendiConVenditore(personaggio, npc);
@@ -257,7 +260,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
     @Override
     public Evento aggiungiEventoCasuale() {
         int id = ID_CONTATORE.getAndIncrement();
-        List <String> nomiBot= new ArrayList<>(List.of("Il confuso", "Nonno Rebus", "L'indeciso", "Borin", "La Saggia"));
+        List<String> nomiBot = new ArrayList<>(List.of("Il confuso", "Nonno Rebus", "L'indeciso", "Borin", "La Saggia"));
         String nomeNPC = randomGenerale.scegliRandomicamente(nomiBot);
 
         List<DomandaRisposta> domande = List.of(

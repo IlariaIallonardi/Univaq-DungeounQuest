@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import domain.Computer;
 import domain.Evento;
 import domain.PassaggioSegreto;
 import domain.Personaggio;
@@ -34,8 +33,8 @@ public class PassaggioSegretoServiceImpl implements EventoService {
                 System.out.println("Hai trovato un possibile passaggio segreto...");
 
                 System.out.println("Rebus: " + passaggioSegreto.getRebusApertura());
-
-                if (personaggio instanceof Computer) {
+                boolean isBot = personaggio.getNomePersonaggio() != null && (personaggio.getNomePersonaggio().startsWith("BOT_") || personaggio.getNomePersonaggio().startsWith("Bot-") || personaggio.getNomePersonaggio().toLowerCase().contains("bot"));
+                if (isBot) {
                     int difficolta = randomGenerale.prossimoNumero(1, 50);
                     if (difficolta >= 25) {
                         passaggioSegreto.setScoperto(true);
@@ -61,9 +60,9 @@ public class PassaggioSegretoServiceImpl implements EventoService {
             }
 
             if (stanzaCorrente != null && stanzaCorrente.getStanzaAdiacente() != null && !stanzaCorrente.getStanzaAdiacente().isEmpty()) {
-
-                if (personaggio instanceof domain.Personaggio) {
-
+                    boolean isBot = personaggio.getNomePersonaggio() != null && (personaggio.getNomePersonaggio().startsWith("BOT_") || personaggio.getNomePersonaggio().startsWith("Bot-") || personaggio.getNomePersonaggio().toLowerCase().contains("bot"));
+                if (isBot){
+                
                     System.out.println("\nVuoi muoverti in una delle stanze adiacenti adesso?");
                     System.out.println("0) Annulla");
                     Map<String, Stanza> adiacenti = stanzaCorrente.getStanzaAdiacente();
@@ -80,7 +79,8 @@ public class PassaggioSegretoServiceImpl implements EventoService {
 
                     System.out.print("Scegli una direzione (nome direzione)");
                     String input;
-                    if (personaggio instanceof Computer) {
+                     
+                if (isBot) {
                         if(direzioniValide.isEmpty()){
                             System.out.println("Non ci sono direzioni valide per muoverti.");
                             return false;
