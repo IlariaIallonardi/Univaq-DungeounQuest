@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import domain.Arciere;
-
 import domain.Evento;
 import domain.Mostro;
 import domain.NPC;
@@ -27,6 +26,7 @@ import util.ANSI;
 public class TurnoService {
 
     private GiocoService giocoService;
+    private DungeonFactory dungeonFactory=new DungeonFactory(new StanzaFactory());
     private PersonaggioService personaggioService;
     private EventoService eventoService;
     private List<Personaggio> ordineTurno = new ArrayList<>();
@@ -112,7 +112,7 @@ public class TurnoService {
             System.out.println("Nessun partecipante al turno.");
             return;
         }
-
+         dungeonFactory.stampaMappa();
         List<T> ordine = calcolaOrdineIniziativa(partecipanti);
 
         for (Personaggio personaggio : ordine) {

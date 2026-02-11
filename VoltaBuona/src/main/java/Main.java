@@ -37,12 +37,7 @@ public class Main {
         // SERVICE PRINCIPALE
         GiocatoreService giocatoreService = new GiocatoreService();
 
-        // *** 1 LETTURA CONFIGURAZIONE ***
-        int[] dimensioni = {6, 6}; // valori di esempio
-        int righe = dimensioni[0];
-        int colonne = dimensioni[1];
-
-        System.out.println(" Configurazione caricata: " + righe + "x" + colonne);
+       
 
         // *** 2 SCELTA NUMERO GIOCATORI REALI E BOT (somma <= 6) ***
         int maxTot = 6;
@@ -105,7 +100,7 @@ public class Main {
         System.out.println(" Totale personaggi in partita: " + giocatori.size());
 
         // *** 4 CREAZIONE DUNGEON ***
-        Dungeon dungeon = dungeonFactory.creaDungeon(righe, colonne);
+        Dungeon dungeon = dungeonFactory.creaDungeon();
         System.out.println("--- STANZE BLOCCATE E CHIAVI ---");
         for (Stanza s : dungeon.getMappaStanze().values()) {
             String chiaveInfo = (s.getChiaveRichiesta() != null) ? String.valueOf(s.getChiaveRichiesta().getId()) : "nessuna";
@@ -145,11 +140,9 @@ public class Main {
             }
         }
 
-        // *** 6 STAMPA MAPPA ***
-        dungeon.stampaMappa(righe, colonne);
 
         // *** 7 DEBUG ***
-        System.out.println("\n--- DEBUG PERSONAGGI ---");
+        System.out.println("\nPersonaggi");
         giocatori.forEach(p -> System.out.println(" - " + p.getNomePersonaggio() + " in " + p.getPosizioneCorrente()));
 
         System.out.println("\n Partita inizializzata correttamente!");

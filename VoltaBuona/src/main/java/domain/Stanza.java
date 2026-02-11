@@ -143,7 +143,10 @@ public class Stanza {
     public void rimuoviPersonaggio(Personaggio p) {
         listaPersonaggi.remove(p);
     }
-
+  /**
+   * Rimuove un evento dalla stanza. 
+   * Restituisce true se l'evento è stato rimosso con successo, false altrimenti.
+   */
     public boolean rimuoviEvento(Evento evento) {
     
         Iterator <Evento> iteratore = listaEventi.iterator();

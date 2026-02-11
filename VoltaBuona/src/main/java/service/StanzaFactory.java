@@ -2,8 +2,6 @@ package service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import domain.Chiave;
 import domain.Evento;
@@ -11,17 +9,19 @@ import domain.Oggetto;
 import domain.Stanza;
 import service.impl.ArmaServiceImpl;
 import service.impl.ArmaturaServiceImpl;
+import service.impl.MostroServiceImpl;
+import service.impl.NPCServiceImpl;
 import service.impl.PassaggioSegretoServiceImpl;
 import service.impl.PozioneServiceImpl;
+import service.impl.RandomSingleton;
 import service.impl.TesoroServiceImpl;
+import service.impl.TrappolaServiceImpl;
+
 
 public class StanzaFactory {
 
-    private static final AtomicInteger OBJ_ID_COUNTER = new AtomicInteger(1);
-    private static final AtomicInteger EVENTO_ID_COUNTER = new AtomicInteger(1);
-    private static final AtomicInteger KEY_ID_COUNTER = new AtomicInteger(1);
+    private RandomSingleton randomGenerale = RandomSingleton.getInstance();
 
-    private final Random rnd = new Random();
 
     public Stanza creaStanza(int id, int x, int y) {
 
@@ -31,7 +31,7 @@ public class StanzaFactory {
         List<Evento> eventi = generaEventiCasuali();
         Chiave chiave = null;
         boolean bloccata = generaRichiestaChiave(x, y);
-        String nomeStanza = "Stanza (" + x + "," + y + ")";
+    
 
         Stanza stanza = new Stanza(id, coord, stato, oggetti, eventi, chiave, bloccata);
         if (stanza.getListaEventiAttivi() != null) {
@@ -51,10 +51,10 @@ public class StanzaFactory {
             // stanza di partenza, nessuna chiave
             oggetti.removeIf(o -> o instanceof Chiave);
         }
-        int n = rnd.nextInt(1, 5); // 1..4 oggetti
+        int n = randomGenerale.prossimoNumero(1, 5); // 1..4 oggetti
 
         for (int i = 0; i < n; i++) {
-            int tipo = rnd.nextInt(1, 6); // 1..5  
+            int tipo = randomGenerale.prossimoNumero(1, 6); // 1..5  
             switch (tipo) {
                 case 1:
                     oggetti.add(new PozioneServiceImpl().creaOggettoCasuale());
@@ -78,22 +78,22 @@ public class StanzaFactory {
 
     private List<Evento> generaEventiCasuali() {
         List<Evento> eventi = new ArrayList<>();
-        int n = rnd.nextInt(1, 5); // 1..4 eventi
+        int n = randomGenerale.prossimoNumero(1, 5); // 1..4 eventi
         for (int i = 0; i < n; i++) {
-            int tipo = rnd.nextInt(5); // 0..4s
+            int tipo = randomGenerale.prossimoNumero(0, 5); // 0..4s
             //switch per tipi di evento da implementare
             switch (tipo) {
                 case 0:
-                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new MostroServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 1:
                     eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 2:
-                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new TrappolaServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 3:
-                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
                     break;
                 default:
                     eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
@@ -114,8 +114,8 @@ public class StanzaFactory {
         }
         // per le altre stanze random true/false
         //  return rnd.nextInt(2) == 1;
-        double probBlocco = 0.25;
-        return rnd.nextDouble() < probBlocco;
+     randomGenerale.prossimoNumero(0,1);
+     return true;
     }
 
     public Chiave creaChiavePerStanza(int stanzaId) {
