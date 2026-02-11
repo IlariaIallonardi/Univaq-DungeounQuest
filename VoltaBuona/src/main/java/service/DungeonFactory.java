@@ -42,8 +42,9 @@ public class DungeonFactory {
         List<Stanza> tutteStanze = new ArrayList<>(dungeon.getMappaStanze().values());
 
         for (Stanza stanzaBloccata : tutteStanze) {
-            if (!stanzaBloccata.isBloccata())
+            if (!stanzaBloccata.isBloccata()) {
                 continue;
+            }
 
             // Creiamo la chiave per la stanza bloccata.
             Chiave chiave = new service.impl.ChiaveServiceImpl().creaChiavePerStanza(stanzaBloccata.getId());
@@ -53,17 +54,20 @@ public class DungeonFactory {
             // Scegliamo una stanza diversa dove mettere la chiave.
             List<Stanza> stanzeSbloccate = new ArrayList<>();
             for (Stanza stanza : tutteStanze) {
-                if (stanza.getId() == stanzaBloccata.getId())
+                if (stanza.getId() == stanzaBloccata.getId()) {
                     continue;
+                }
 
                 // Escludiamo la stanza iniziale (coordinate 0,0).
                 int[][] coord = stanza.getCoordinate();
-                if (coord != null && coord.length > 0 && coord[0][0] == 0 && coord[0][1] == 0)
+                if (coord != null && coord.length > 0 && coord[0][0] == 0 && coord[0][1] == 0) {
                     continue;
+                }
 
                 // Escludiamo le stanze bloccate.
-                if (stanza.isBloccata())
+                if (stanza.isBloccata()) {
                     continue;
+                }
 
                 stanzeSbloccate.add(stanza);
             }
@@ -71,9 +75,11 @@ public class DungeonFactory {
             // Controllo ulteriore.
             if (stanzeSbloccate.isEmpty()) {
 
-                for (Stanza s : tutteStanze)
-                    if (s.getId() != stanzaBloccata.getId())
+                for (Stanza s : tutteStanze) {
+                    if (s.getId() != stanzaBloccata.getId()) {
                         stanzeSbloccate.add(s);
+                    }
+                }
             }
 
         }
@@ -86,29 +92,24 @@ public class DungeonFactory {
     public void stampaMappa() {
         System.out.println("Mappa del Dungeon:");
 
-        
         System.out.println("Dimensioni: " + righe + "x" + colonne);
         for (int y = 0; y < this.getRighe(); y++) {
             for (int x = 0; x < this.getColonne(); x++) {
-        
-                 Stanza s = dungeon.getStanza(x, y);
+
+                Stanza s = dungeon.getStanza(x, y);
                 if (s == null) {
                     System.out.print("   ");
                 } else {
                     System.out.print(s.getStatoStanza() == true ? " V " : " F ");
                 }
-            
+
             }
             System.out.println();
         }
         System.out.println("---------------------\n");
         System.out.println();
-                
-            }
-        
 
-
-    
+    }
 
     public int getRighe() {
         return righe;
