@@ -30,7 +30,6 @@ public class TurnoService {
     private PersonaggioService personaggioService;
     private EventoService eventoService;
     private List<String> ordineTurno = new ArrayList<>();
-    private List<Personaggio> ordineIniziativa = null;
     private final RandomSingleton randomGenerale = RandomSingleton.getInstance();
     private final ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
 
@@ -98,15 +97,11 @@ public class TurnoService {
             return;
         }
          dungeonFactory.stampaMappa();
+            
          //riga 116 cambiata ricontrollare
-        // Calcola l'ordine di iniziativa solo se non è già stato calcolato in partita
-        if (this.ordineIniziativa == null || this.ordineIniziativa.isEmpty()) {
-            this.ordineIniziativa = calcolaOrdineIniziativa((List<Personaggio>) partecipanti);
-        }
+       // List<T> ordine = (List<T>) calcolaOrdineIniziativa((List<Personaggio>) partecipanti);
 
-        List<T> ordine = (List<T>) new ArrayList<>(this.ordineIniziativa);
-
-        for (Personaggio personaggio : ordine) {
+        for (Personaggio personaggio : partecipanti) {
             if (personaggio == null) {
                 continue;
             }
@@ -115,7 +110,6 @@ public class TurnoService {
 
                 partecipanti.remove(personaggio);
                 ordineTurno.remove(personaggio);
-                if (this.ordineIniziativa != null) this.ordineIniziativa.remove(personaggio);
                 continue;
             }
             System.out.println("DEBUG " + personaggio.getNomePersonaggio()
