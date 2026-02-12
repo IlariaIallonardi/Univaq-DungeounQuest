@@ -24,11 +24,10 @@ public class Personaggio implements Serializable {
     private int turniStordito;
     private int turniDaSaltare;
     private Arma armaEquippaggiata;
-    private String abilitàSpeciale;
     private int portafoglioPersonaggio;
 
-    public Personaggio(String abilitàSpeciale, Arma armaEquippaggiata, int puntiDifesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, boolean protetto, int puntiMana, int puntiVita, String statoPersonaggio, int turniAvvelenato, int turniCongelato, int turniStordito, int turnoProtetto, Zaino zaino, int portafoglioPersonaggio) {
-        this.abilitàSpeciale = abilitàSpeciale;
+    public Personaggio(Arma armaEquippaggiata, int puntiDifesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, boolean protetto, int puntiMana, int puntiVita, String statoPersonaggio, int turniAvvelenato, int turniCongelato, int turniStordito, int turnoProtetto, Zaino zaino, int portafoglioPersonaggio) {
+
         this.armaEquippaggiata = armaEquippaggiata;
         this.puntiDifesa = puntiDifesa;
         this.esperienza = esperienza;
@@ -209,7 +208,8 @@ public class Personaggio implements Serializable {
     public boolean isProtetto() {
         return this.protettoProssimoTurno && this.turnoProtetto > 0;
     }
-   ///Protezione per il turno successivo
+
+    ///Protezione per il turno successivo
     public boolean prenotaProtezione() {
         if (this.turnoProtetto > 0 || this.protettoProssimoTurno) {
             return false;
@@ -217,8 +217,8 @@ public class Personaggio implements Serializable {
         this.protettoProssimoTurno = true;
         return true;
     }
-    
-  //Decrementare la protezione qundo finisce il turno.
+
+    //Decrementare la protezione qundo finisce il turno.
     public void calcolaProtezione() {
 
         if (this.protettoProssimoTurno) {
@@ -444,14 +444,6 @@ public class Personaggio implements Serializable {
 
     public void setTurnoProtetto(int turnoProtetto) {
         this.turnoProtetto = turnoProtetto;
-    }
-
-    public String getAbilitàSpeciale() {
-        return abilitàSpeciale;
-    }
-
-    public void setAbilitàSpeciale(String abilitàSpeciale) {
-        this.abilitàSpeciale = abilitàSpeciale;
     }
 
 }

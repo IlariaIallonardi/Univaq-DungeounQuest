@@ -25,8 +25,6 @@ public class MagoServiceImpl implements PersonaggioService {
      */
     public int lanciaIncantesimo(Mago mago, Mostro mostro, Mago.TipoMagiaSacra tipo) {
 
-        
-
         int costoMana = tipo.getCostoMana();
 
         // Controllo manna prima di lanciare la magia.
@@ -124,7 +122,7 @@ public class MagoServiceImpl implements PersonaggioService {
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
         Stanza stanza = null;
         Zaino zaino = new Zaino();
-        return new Mago("abilità", null,
+        return new Mago(null,
                 15,
                 90,
                 0,
@@ -142,11 +140,6 @@ public class MagoServiceImpl implements PersonaggioService {
                 zaino,
                 0,
                 null);
-    }
-
-    @Override
-    public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
-        // futura estensione (Strategia / Command)
     }
 
 }

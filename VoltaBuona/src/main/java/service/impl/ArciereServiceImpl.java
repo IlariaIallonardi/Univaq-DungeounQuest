@@ -19,7 +19,7 @@ public class ArciereServiceImpl implements PersonaggioService {
 
     private static final int BONUS_ATTACCO_ARCIERE = 10;
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
-    
+
     private Turno turno;
 
     @Override
@@ -60,7 +60,7 @@ public class ArciereServiceImpl implements PersonaggioService {
 
         boolean lancioMigliore = (tiro == 20);
 
-        if (lancioMigliore ||totale >= difesaMostro) {
+        if (lancioMigliore || totale >= difesaMostro) {
 
             int dadoDanno = randomGenerale.prossimoNumero(1, 8); // danno con un dado da 8 facce.
 
@@ -76,41 +76,41 @@ public class ArciereServiceImpl implements PersonaggioService {
         }
         return 1;
     }
-    
 
-    /** 
-     * L'arciere può attaccare un mostro in una qualsiasi stanza adiacente,però non fa un vero
-     * e proprio combattimento ma toglie solo dei punti vita al mostro per indebolirlo.
+    /**
+     * L'arciere può attaccare un mostro in una qualsiasi stanza adiacente,però
+     * non fa un vero e proprio combattimento ma toglie solo dei punti vita al
+     * mostro per indebolirlo.
+     *
      * @param arciere
      * @param mostro
-    */
+     */
     public int attaccoDistanzaArciere(Arciere arciere, Mostro mostro) {
 
         int puntiVitaMostro = mostro.getPuntiVitaMostro();
         mostro.setPuntiVitaMostro(puntiVitaMostro - BONUS_ATTACCO_ARCIERE);
-        if(mostro.èMortoilMostro()){
+        if (mostro.èMortoilMostro()) {
             Stanza stanza = mostro.getPosizioneCorrente();
             stanza.rimuoviEvento(mostro);
         }
-        System.out.println(ANSI.BOLD + ANSI.BRIGHT_CYAN + "Attacco a distanza! Il mostro perde " + BONUS_ATTACCO_ARCIERE + " punti vita.Punti vita rimanenti del mostro: " + mostro.getPuntiVitaMostro()+ ANSI.RESET);
+        System.out.println(ANSI.BOLD + ANSI.BRIGHT_CYAN + "Attacco a distanza! Il mostro perde " + BONUS_ATTACCO_ARCIERE + " punti vita.Punti vita rimanenti del mostro: " + mostro.getPuntiVitaMostro() + ANSI.RESET);
         return puntiVitaMostro - BONUS_ATTACCO_ARCIERE;
     }
 
-
     public Map<String, Mostro> trovaMostriAdiacenti(Stanza stanzaArciere) {
         Map<String, Mostro> mostriAdiacenti = new HashMap<>();
-       
+
         Map<String, Stanza> adiacenti = stanzaArciere.getStanzaAdiacente();
-        
+
         for (Map.Entry<String, Stanza> stanzaAggiunta : adiacenti.entrySet()) {
             Stanza stanza = stanzaAggiunta.getValue();
-            
+
             List<Evento> eventiStanza = stanza.getListaEventiAttivi();
-        
+
             for (Evento eventoMostro : eventiStanza) {
                 if (eventoMostro instanceof Mostro mostro) {
                     mostriAdiacenti.put(stanzaAggiunta.getKey(), mostro);
-                    
+
                 }
             }
         }
@@ -121,15 +121,10 @@ public class ArciereServiceImpl implements PersonaggioService {
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
         Stanza stanza = null;
         Zaino zaino = new Zaino();
-        return new Arciere("abilità", null, 15,
+        return new Arciere(null, 15,
                 300,
                 0, 2, nome, stanza, false, 100, 40,
                 "normale", 0, 0, 0, 0, zaino, 0);
-    }
-
-   @Override
-    public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
-
     }
 
 }

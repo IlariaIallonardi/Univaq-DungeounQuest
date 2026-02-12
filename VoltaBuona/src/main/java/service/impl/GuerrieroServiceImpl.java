@@ -22,8 +22,8 @@ public class GuerrieroServiceImpl implements PersonaggioService {
      * @param alleato
      */
     public boolean proteggiCompagno(Guerriero guerriero, Personaggio alleato) {
-         
-            if (guerriero.getPuntiVita() <= 10) {
+
+        if (guerriero.getPuntiVita() <= 10) {
             System.out.println("Il guerriero è troppo debole per proteggere qualcuno.");
             return false;
         }
@@ -31,12 +31,12 @@ public class GuerrieroServiceImpl implements PersonaggioService {
         if (alleato.prenotaProtezione()) {
             alleato.subisciDannoPuntiDifesa(0);
             alleato.prenotaProtezione();
-             System.out.println(
-                guerriero.getNomePersonaggio() + " protegge "
-                + alleato.getNomePersonaggio());
-            
-                   return false;
-        
+            System.out.println(
+                    guerriero.getNomePersonaggio() + " protegge "
+                    + alleato.getNomePersonaggio());
+
+            return false;
+
         }
 
         return true;
@@ -74,8 +74,6 @@ public class GuerrieroServiceImpl implements PersonaggioService {
     public int attaccoFisicoGuerriero(Guerriero guerriero, Mostro mostro) {
 
         int tiro = randomGenerale.prossimoNumero(1, 20); // dado da 20 facce 
-
-         
 
         int bonusAttacco = guerriero.getAttacco() + (guerriero.getLivello() / 2);
         int totale = tiro + bonusAttacco;
@@ -123,7 +121,6 @@ public class GuerrieroServiceImpl implements PersonaggioService {
     public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
 
         return new Guerriero(
-                "abilità",
                 null,
                 50,
                 0,
@@ -144,8 +141,4 @@ public class GuerrieroServiceImpl implements PersonaggioService {
         );
     }
 
-    @Override
-    public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
-        
-    }
 }

@@ -10,7 +10,4 @@ public interface PersonaggioService {
 
     int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento);
 
-    public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale);
-   
-
 }

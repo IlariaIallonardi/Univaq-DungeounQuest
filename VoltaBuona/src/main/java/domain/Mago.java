@@ -4,8 +4,8 @@ public class Mago extends Personaggio {
 
     private TipoMagiaSacra magiaSelezionata;
 
-    public Mago(String abilitàSpeciale, Arma armaEquippaggiata, int difesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, boolean protetto, int puntiMana, int puntiVita, String statoPersonaggio, int turniAvvelenato, int turniCongelato, int turniStordito, int turnoProtetto, Zaino zaino, int portafoglioPersonaggio, TipoMagiaSacra magiaSelezionata) {
-        super(abilitàSpeciale, armaEquippaggiata, difesa, esperienza, id, livello, nomePersonaggio, posizioneCorrente, protetto, puntiMana, puntiVita, statoPersonaggio, turniAvvelenato, turniCongelato, turniStordito, turnoProtetto, zaino, portafoglioPersonaggio);
+    public Mago(Arma armaEquippaggiata, int difesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, boolean protetto, int puntiMana, int puntiVita, String statoPersonaggio, int turniAvvelenato, int turniCongelato, int turniStordito, int turnoProtetto, Zaino zaino, int portafoglioPersonaggio, TipoMagiaSacra magiaSelezionata) {
+        super(armaEquippaggiata, difesa, esperienza, id, livello, nomePersonaggio, posizioneCorrente, protetto, puntiMana, puntiVita, statoPersonaggio, turniAvvelenato, turniCongelato, turniStordito, turnoProtetto, zaino, portafoglioPersonaggio);
         this.magiaSelezionata = magiaSelezionata;
     }
 
@@ -18,13 +18,7 @@ public class Mago extends Personaggio {
     }
 
     @Override
-    public void setAbilitàSpeciale(String abilitàSpeciale) {
-
-    }
-
-    @Override
     public boolean puoRaccogliere(Arma.TipoArma tipo) {
-
 
         return tipo == Arma.TipoArma.BACCHETTA_MAGICA;
     }
