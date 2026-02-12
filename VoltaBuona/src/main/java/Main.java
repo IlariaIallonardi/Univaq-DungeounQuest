@@ -69,7 +69,7 @@ public class Main {
                                 gioco = fileService.caricaGioco(fileName);
                                 System.out.println("Partita caricata con successo da " + fileName);
                                 loaded = true;
-                            } catch (exception.SaveLoadException e) {
+                            } catch (exception.InizializzaPartitaException e) {
                                 System.out.println("Errore durante il caricamento della partita: " + e.getMessage());
                                 System.out.println("Inizializzazione di una nuova partita.");
                             }
@@ -86,7 +86,7 @@ public class Main {
                                 gioco = fileService.caricaGioco(fileName);
                                 System.out.println("Partita caricata con successo da " + fileName);
                                 loaded = true;
-                            } catch (exception.SaveLoadException e) {
+                            } catch (exception.InizializzaPartitaException e) {
                                 System.out.println("Errore durante il caricamento della partita: " + e.getMessage());
                                 System.out.println("Inizializzazione di una nuova partita.");
                             }
@@ -329,7 +329,7 @@ public class Main {
                                 String nomeAuto = service.salvaGiocoConNomeUnico(gioco);
                                 System.out.println("Partita salvata come '" + nomeAuto + "'. Percorso: " + Paths.get("salvataggi/" + nomeAuto).toAbsolutePath());
                             }
-                        } catch (exception.SaveLoadException e) {
+                        } catch (exception.InizializzaPartitaException e) {
                             System.out.println("Errore durante il salvataggio: " + e.getMessage());
                         }
                     }
