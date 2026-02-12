@@ -1,9 +1,10 @@
 package domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Zaino {
+public class Zaino implements Serializable {
     private int id;
     private int capienza; 
     private List<Oggetto> listaOggetti = new ArrayList<>();

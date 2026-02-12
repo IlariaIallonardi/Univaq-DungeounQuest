@@ -31,14 +31,19 @@ public class PaladinoServiceImpl implements PersonaggioService {
         }
 
         if (alleato.prenotaProtezione()) {
-            System.out.println(paladino.getNomePersonaggio() + " protegge " + alleato.getNomePersonaggio());
-
-            return true;
-        } else {
-            System.out.println(alleato.getNomePersonaggio() + " è già protetto da un altro paladino.");
+            alleato.subisciDannoPuntiDifesa(0);
+            alleato.prenotaProtezione();
+             System.out.println(
+                paladino.getNomePersonaggio() + " protegge "
+                + alleato.getNomePersonaggio());
+            
+                   return true;
+        
+        }
             return false;
         }
-    }
+    
+    
 
     @Override
     public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {

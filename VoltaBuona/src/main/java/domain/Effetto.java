@@ -1,6 +1,8 @@
 package domain;
 
-public class Effetto {
+import java.io.Serializable;
+
+public class Effetto implements Serializable {
 
     /**
      * Tipi di effetto che una sorgente (es. Trappola, Pozione, Incantesimo) può

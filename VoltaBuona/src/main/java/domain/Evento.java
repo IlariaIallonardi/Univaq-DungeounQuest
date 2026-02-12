@@ -1,6 +1,8 @@
 package domain;
 
-public class Evento {
+import java.io.Serializable;
+
+public class Evento implements Serializable{
 
     private int id;
     private boolean inizioEvento;

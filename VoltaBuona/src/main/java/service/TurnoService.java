@@ -7,16 +7,21 @@ import java.util.Map;
 
 import domain.Arciere;
 import domain.Evento;
+import domain.Guerriero;
 import domain.Mostro;
 import domain.NPC;
 import domain.Oggetto;
+import domain.Paladino;
 import domain.Personaggio;
 import domain.Stanza;
 import domain.Trappola;
+import domain.Turno;
 import domain.Zaino;
 import service.impl.ArciereServiceImpl;
+import service.impl.GuerrieroServiceImpl;
 import service.impl.MostroServiceImpl;
 import service.impl.NPCServiceImpl;
+import service.impl.PaladinoServiceImpl;
 import service.impl.PassaggioSegretoServiceImpl;
 import service.impl.RandomSingleton;
 import service.impl.ScannerSingleton;
@@ -32,6 +37,7 @@ public class TurnoService {
     private List<String> ordineTurno = new ArrayList<>();
     private final RandomSingleton randomGenerale = RandomSingleton.getInstance();
     private final ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
+    private Turno turno=new Turno();
 
     public TurnoService(GiocoService giocoService,
             PersonaggioService personaggioService,
@@ -62,102 +68,173 @@ public class TurnoService {
     }
 
     /**
-     * Calcola l'ordine di iniziativa dei giocatori in base ad un tiro randomico (d20).
-     * Versione senza parametri: avvisa e restituisce lista vuota.
+     * Calcola l'ordine di iniziativa dei giocatori in base ad un tiro randomico
+     * 
      */
-  public List<Personaggio> calcolaOrdineIniziativa(List<Personaggio> partecipanti) {
-    Map<Personaggio, Integer> iniziative = new HashMap<>();
+    public List<Personaggio> calcolaOrdineIniziativa(List<Personaggio> partecipanti) {
+        Map<Personaggio, Integer> iniziative = new HashMap<>();
 
-    for (Personaggio p : partecipanti) {
-        iniziative.put(p, randomGenerale.prossimoNumero(1, 20));
+        for (Personaggio p : partecipanti) {
+            iniziative.put(p, randomGenerale.prossimoNumero(1, 20));
+        }
+
+        List<Personaggio> ordine = new ArrayList<>(partecipanti);
+        ordine.sort((a, b) -> Integer.compare(iniziative.get(b), iniziative.get(a)));
+
+        System.out.println("\nOrdine di iniziativa: Turno Service");
+        for (Personaggio p : ordine) {
+            System.out.println(" - " + p.getNomePersonaggio() + " (iniz.: " + iniziative.get(p) + ")");
+        }
+
+        return ordine;
     }
-
-    List<Personaggio> ordine = new ArrayList<>(partecipanti);
-    ordine.sort((a, b) -> Integer.compare(iniziative.get(b), iniziative.get(a)));
-
-    System.out.println("\nOrdine di iniziativa: Turno Service");
-    for (Personaggio p : ordine) {
-        System.out.println(" - " + p.getNomePersonaggio() + " (iniz.: " + iniziative.get(p) + ")");
-    }
-
-    return ordine;
-} 
-    
-
-
 
     /**
      * @param partecipanti
      *
      */
-
     public <T extends Personaggio> void iniziaNuovoTurno(List<T> partecipanti) {
-        if (partecipanti == null || partecipanti.isEmpty()) {
-            System.out.println("Nessun partecipante al turno.");
-            return;
+         if (partecipanti == null || partecipanti.isEmpty()) {
+        System.out.println("Nessun partecipante al turno.");
+        return;
+       }
+
+         // Stampa la mappa all'inizio del turno/round
+          if (dungeonFactory != null) {
+        dungeonFactory.stampaMappa();
         }
-         dungeonFactory.stampaMappa();
+
+       List<T> ordine = (List<T>) calcolaOrdineIniziativa((List<Personaggio>) partecipanti);
+
+    for (Personaggio personaggio : ordine) {
+        if (personaggio == null) continue;
+
+        if (personaggio.èMorto(personaggio)) {
+            System.out.println(personaggio.getNomePersonaggio() + " è morto. Rimosso dalla partita.");
+            partecipanti.remove(personaggio);
+            ordineTurno.remove(personaggio);
+            continue;
+        }
+    
+
+     /*    System.out.println("DEBUG " + personaggio.getNomePersonaggio()
+                + " class=" + personaggio.getClass().getSimpleName()
+                + " stanza=" + (personaggio.getPosizioneCorrente() == null ? "NULL" : personaggio.getPosizioneCorrente().getId()));*/
+
+        Stanza stanza = personaggio.getPosizioneCorrente();
+        if (stanza == null) {
+            System.out.println("Posizione del personaggio non definita.");
+            continue;
+        }
+
+    
+
+        // Stampa informazioni dello stato all'inizio del turno
+        System.out.println("\nTurno di: " + personaggio.getNomePersonaggio());
+        System.out.println("Punti vita: " + personaggio.getPuntiVita()
+                + " | Difesa: " + personaggio.getPuntiDifesa()
+                + " | Punti Mana: " + personaggio.getPuntiMana()
+                + " | Attacco: " + personaggio.getAttacco()
+                + " | Stato: " + personaggio.getStatoPersonaggio()
+                + "\n | Turni avvelenato: " + personaggio.getTurniAvvelenato()
+                + " Turni stordito: " + personaggio.getTurniStordito()
+                + " | Salto turno rimanenti: " + personaggio.getTurniDaSaltare()
+                + "\n | Portafoglio: " + personaggio.getPortafoglioPersonaggio()
+                + "\nLivello: " + personaggio.getLivello()
+                + " | Esperienza: " + personaggio.getEsperienza() + "\n");
+
+        // Protezione compagno per Guerriero/Paladino
+        if ((personaggio instanceof Guerriero) || (personaggio instanceof Paladino)) {
+            System.out.println("Vuoi proteggere un tuo compagno per il turno successivo? si o no?");
+            String risposta = scannerGenerale.leggiLinea().trim();
+            if (risposta.equalsIgnoreCase("si")) {
             
-         //riga 116 cambiata ricontrollare
-       // List<T> ordine = (List<T>) calcolaOrdineIniziativa((List<Personaggio>) partecipanti);
+                // Costruiamo la lista dei compagni: preferiamo i `partecipanti`,
+                // ma se quella lista contiene solo il giocatore corrente proviamo
+                // a ricavare i giocatori da `giocoService` come fallback.
+                List<Personaggio> compagni = new ArrayList<>();
+                if (partecipanti != null && partecipanti.size() > 1) {
+                    for (Personaggio p : partecipanti) {
+                        if (p == null) continue;
+                        if (p == personaggio) continue;
+                        if (p.èMorto(p)) continue;
+                        compagni.add(p);
+                    }
+                } else {
+                    // fallback: prendi i giocatori registrati in GiocoService
+                    if (giocoService != null && giocoService.getGiocatori() != null && !giocoService.getGiocatori().isEmpty()) {
+                        for (Personaggio p : giocoService.getGiocatori()) {
+                            if (p == null) continue;
+                            if (p == personaggio) continue;
+                            if (p.èMorto(p)) continue;
+                            compagni.add(p);
+                        }
+                    }
+                }
 
-        for (Personaggio personaggio : partecipanti) {
-            if (personaggio == null) {
-                continue;
+                if (compagni.isEmpty()) {
+                    System.out.println("Nessun compagno disponibile da proteggere.");
+                } else {
+                    // Stampa lista numerata e opzione annulla (0)
+                    System.out.println("Scegli il numero del compagno da proteggere (0 = annulla):");
+                    for (int i = 0; i < compagni.size(); i++) {
+                        System.out.println((i + 1) + ") " + compagni.get(i).getNomePersonaggio());
+                    }
+
+                    
+
+                    int sceltaIndex;
+                    
+                    sceltaIndex = scannerGenerale.leggiInteroIntervallo(0, compagni.size());
+                    
+
+                    if (sceltaIndex == 0) {
+                        System.out.println("Hai annullato la protezione.");
+                    } else if (sceltaIndex >= 1 && sceltaIndex <= compagni.size()) {
+                        Personaggio scelto = compagni.get(sceltaIndex - 1);
+                        if (personaggio instanceof Guerriero guerriero) {
+                            new GuerrieroServiceImpl().proteggiCompagno(guerriero, scelto);
+                        } else if (personaggio instanceof Paladino paladino) {
+                            new PaladinoServiceImpl().proteggiCompagno(paladino, scelto);
+                        }
+                        System.out.println("Protetto: " + scelto.getNomePersonaggio());
+                    } else {
+                        System.out.println("Scelta non valida, nessun compagno protetto.");
+                    }
+                }
+            } else {
+                System.out.println("Nessun compagno protetto.");
             }
-            if (personaggio.èMorto(personaggio)) {
-                System.out.println(personaggio.getNomePersonaggio() + " è morto. Rimosso dalla partita.");
+        }
 
-                partecipanti.remove(personaggio);
-                ordineTurno.remove(personaggio);
-                continue;
-            }
-            System.out.println("DEBUG " + personaggio.getNomePersonaggio()
-    + " class=" + personaggio.getClass().getSimpleName()
-    + " stanza=" + (personaggio.getPosizioneCorrente() == null ? "NULL" : personaggio.getPosizioneCorrente().getId()));
+        // Se il personaggio deve saltare il turno, consumiamo il turno e si passa al prossimo giocatore
+        if (personaggio.consumaSaltoTurno()) {
+            System.out.println(personaggio.getNomePersonaggio() + " salta questo turno.");
+            terminaTurnoCorrente(personaggio);
+            continue;
+        }
 
-            Stanza stanza = personaggio.getPosizioneCorrente();
-            if (stanza == null) {
-                System.out.println("Posizione del personaggio non definita.");
-                continue;
-            }
-
-            ///testare
-            personaggio.calcolaProtezione();
-
-            // Stampa informazioni dello stato all'inizio del turno
-            System.out.println("\nTurno di: " + personaggio.getNomePersonaggio());
-            System.out.println("Punti vita: " + personaggio.getPuntiVita() + " | Difesa: " + personaggio.getPuntiDifesa() + " | Punti Mana: " + personaggio.getPuntiMana() + " | Attacco: " + personaggio.getAttacco() + " | Stato: " + personaggio.getStatoPersonaggio() + "\n" + " | Turni avvelenato: " + personaggio.getTurniAvvelenato() + "Turni stordito: " + personaggio.getTurniStordito() + " | Salto turno rimanenti: " + personaggio.getTurniDaSaltare() + "\n" + " | Portafoglio: " + personaggio.getPortafoglioPersonaggio() + "\n"
-                    + "Livello: " + personaggio.getLivello() + " | Esperienza: " + personaggio.getEsperienza() + "\n");
-
-            // Se il personaggio deve saltare il turno, consumiamo il turno e si passa al prossimo giocatore
-            if (personaggio.consumaSaltoTurno()) {
-                System.out.println(personaggio.getNomePersonaggio() + " salta questo turno.");
-                terminaTurnoCorrente(personaggio);
-                continue;
-            }
-
-            String nome = personaggio.getNomePersonaggio();
-            if (nome != null && (nome.startsWith("BOT_") || nome.startsWith("Bot-") || nome.toLowerCase().contains("bot"))) {
-                gestisciMovimento(personaggio);
-                stanza.setStatoStanza(true);
-                scegliAzione(personaggio);
-                System.out.println("Fine turno di: " + personaggio.getNomePersonaggio());
-                continue;
-            }
-
-        
+        String nome = personaggio.getNomePersonaggio();
+        boolean isBot = nome != null && (nome.startsWith("BOT_") || nome.startsWith("Bot-") || nome.toLowerCase().contains("bot"));
+        if (isBot) {
             gestisciMovimento(personaggio);
-
             stanza.setStatoStanza(true);
-            // 3) passo : scegliere azione da fare.
             scegliAzione(personaggio);
             System.out.println("Fine turno di: " + personaggio.getNomePersonaggio());
-
+            continue;
         }
+
+        // giocatore umano: movimento e scelta azione
+        gestisciMovimento(personaggio);
+        stanza.setStatoStanza(true);
+        scegliAzione(personaggio);
+        System.out.println("Fine turno di: " + personaggio.getNomePersonaggio());
+    }
+
     }
 
     
+
     public void terminaTurnoCorrente(Personaggio personaggio) {
         if (personaggio == null) {
             return;
@@ -171,6 +248,7 @@ public class TurnoService {
 
         // Applica gli effetti di fine turno solo al personaggio passato
         aggiornaEffettiFineTurno(personaggio);
+        turno.terminaTurno();
     }
 
     public void aggiornaEffettiFineTurno(Personaggio personaggio) {
@@ -185,7 +263,6 @@ public class TurnoService {
 
     }
 
-    
     public void scegliAzione(Personaggio personaggio) {
         Stanza stanzaCorrente = personaggio.getPosizioneCorrente();
         System.out.println("Ti trovi in: " + stanzaCorrente.getId());
@@ -205,7 +282,7 @@ public class TurnoService {
         }
 
         if (!stanzaCorrente.getListaEventiAttivi().isEmpty()) {
-        
+
             mostraEventi(personaggio, eventi);
         } else {
             System.out.println("La stanza è tranquilla,non ci sono eventi!");
@@ -280,7 +357,6 @@ public class TurnoService {
         terminaTurnoCorrente(personaggio);
     }
 
-
     // Restituisce il service corretto per il tipo di evento
     public EventoService servicePerEvento(Evento evento) {
         if (evento == null) {
@@ -318,7 +394,6 @@ public class TurnoService {
                 eventiVisibili.add(evento);
             }
 
-         
             // 2) Mostri adiacenti per Arciere per l'attacco a distanza (opzionale)
             List<Evento> eventiArciere = new ArrayList<>();
             if (personaggio instanceof Arciere arciere) {
@@ -382,18 +457,21 @@ public class TurnoService {
             // 4) Mostra eventi
             System.out.print("Scegli l'evento da eseguire (0 = annulla): ");
             int scelta;
-        String nomePersonaggio = personaggio.getNomePersonaggio();
-        boolean isBot = nomePersonaggio != null && (nomePersonaggio.startsWith("BOT_") || nomePersonaggio.startsWith("Bot-") || nomePersonaggio.toLowerCase().contains("bot"));
-        if (isBot) {
-            scelta = randomGenerale.prossimoNumero(0, risultatoEventi.size())-1;
-            if(scelta==0){
-                terminaTurnoCorrente(personaggio);}
-            System.out.println(personaggio.getNomePersonaggio() + " (bot) sceglie: " + (scelta+1));
-        } else {
-            scelta = scannerGenerale.leggiInteroIntervallo(0, risultatoEventi.size())-1;
-        }
+            String nomePersonaggio = personaggio.getNomePersonaggio();
+            boolean isBot = nomePersonaggio != null && (nomePersonaggio.startsWith("BOT_") || nomePersonaggio.startsWith("Bot-") || nomePersonaggio.toLowerCase().contains("bot"));
+            if (isBot) {
+                scelta = randomGenerale.prossimoNumero(0, risultatoEventi.size()) - 1;
+                if (scelta == 0) {
+                    terminaTurnoCorrente(personaggio);
+                }
+                System.out.println(personaggio.getNomePersonaggio() + " (bot) sceglie: " + (scelta + 1));
+            } else {
+                scelta = scannerGenerale.leggiInteroIntervallo(0, risultatoEventi.size()) - 1;
+            }
 
-        if( scelta==0){terminaTurnoCorrente(personaggio);}
+            if (scelta == 0) {
+                terminaTurnoCorrente(personaggio);
+            }
 
             if (scelta == -1) {
                 return false;
@@ -528,7 +606,6 @@ public class TurnoService {
 
         Direzione direzione = Direzione.fromString(input);
 
-        
         boolean mosso = false;
         if (direzione != null) {
             mosso = giocoService.muoviPersonaggio(personaggio, direzione);
@@ -539,13 +616,11 @@ public class TurnoService {
         }
     }
 
-    
     //  Metodo: raccoglie UN oggetto scelto
-
     public void raccogliUnOggetto(Personaggio personaggio, Stanza stanza, List<Oggetto> oggetti) {
 
         System.out.println("Scegli l'oggetto da prendere:");
-             int indice;
+        int indice;
         String nomePersonaggio = personaggio.getNomePersonaggio();
         boolean isBot = nomePersonaggio != null && (nomePersonaggio.startsWith("BOT_") || nomePersonaggio.startsWith("Bot-") || nomePersonaggio.toLowerCase().contains("bot"));
         if (isBot) {
@@ -553,7 +628,7 @@ public class TurnoService {
             indice = randomGenerale.prossimoNumero(1, oggetti.size()) - 1;
             System.out.println(personaggio.getNomePersonaggio() + " (bot) sceglie: " + (indice + 1));
         } else {
-            indice = scannerGenerale.leggiInteroIntervallo(1, oggetti.size())-1;
+            indice = scannerGenerale.leggiInteroIntervallo(1, oggetti.size()) - 1;
         }
 
         Oggetto oggetto = oggetti.get(indice);
@@ -564,7 +639,7 @@ public class TurnoService {
     }
 
     //metodo nuovo 
-    public  boolean gestisciUsoOggettoDaZaino(Personaggio personaggio) {
+    public boolean gestisciUsoOggettoDaZaino(Personaggio personaggio) {
 
         Zaino zaino = personaggio.getZaino();
         if (zaino == null) {
@@ -585,17 +660,16 @@ public class TurnoService {
         System.out.println("0) Annulla");
 
         System.out.print("Scegli un oggetto da usare: ");
-             int scelta;
+        int scelta;
         String nomePersonaggio = personaggio.getNomePersonaggio();
         boolean isBot = nomePersonaggio != null && (nomePersonaggio.startsWith("BOT_") || nomePersonaggio.startsWith("Bot-") || nomePersonaggio.toLowerCase().contains("bot"));
         if (isBot) {
-            scelta = randomGenerale.prossimoNumero(1, inventario.size())-1;
+            scelta = randomGenerale.prossimoNumero(1, inventario.size()) - 1;
             System.out.println(personaggio.getNomePersonaggio() + " (bot) sceglie: " + (scelta + 1));
         } else {
-            scelta = scannerGenerale.leggiInteroIntervallo(1,inventario.size())-1;
+            scelta = scannerGenerale.leggiInteroIntervallo(1, inventario.size()) - 1;
         }
 
-        
         if (scelta == 0) {
             System.out.println("Hai annullato.");
             return false;
@@ -612,5 +686,5 @@ public class TurnoService {
         }
         return true;
     }
-
+    
 }

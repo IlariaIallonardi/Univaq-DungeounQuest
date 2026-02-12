@@ -1,2 +1,0 @@
-righe=5
-colonne=6

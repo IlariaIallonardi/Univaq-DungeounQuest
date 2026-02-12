@@ -1,8 +1,10 @@
 package domain;
 
+import java.io.Serializable;
+
 import service.ZainoService;
 
-public class Personaggio {
+public class Personaggio implements Serializable {
 
     private int id;
     private String nomePersonaggio;
@@ -46,7 +48,14 @@ public class Personaggio {
         this.portafoglioPersonaggio = portafoglioPersonaggio;
     }
 
-    private ZainoService zainoService = new ZainoService();
+    private transient ZainoService zainoService;
+
+    private ZainoService getZainoService() {
+        if (zainoService == null) {
+            zainoService = new ZainoService();
+        }
+        return zainoService;
+    }
 
     public int getId() {
         return id;
@@ -200,7 +209,7 @@ public class Personaggio {
     public boolean isProtetto() {
         return this.protettoProssimoTurno && this.turnoProtetto > 0;
     }
-
+   ///Protezione per il turno successivo
     public boolean prenotaProtezione() {
         if (this.turnoProtetto > 0 || this.protettoProssimoTurno) {
             return false;
@@ -208,7 +217,8 @@ public class Personaggio {
         this.protettoProssimoTurno = true;
         return true;
     }
-
+    
+  //Decrementare la protezione qundo finisce il turno.
     public void calcolaProtezione() {
 
         if (this.protettoProssimoTurno) {
@@ -313,7 +323,7 @@ public class Personaggio {
             System.out.println(personaggio.getNomePersonaggio() + " usa " + oggetto.getNome()
                     + " (Punti vita:" + personaggio.getPuntiVita() + ", Mana: " + personaggio.getPuntiMana() + ")");
             if (risultato) {
-                zainoService.rimuoviOggettoDaZaino(zaino, oggetto);
+                getZainoService().rimuoviOggettoDaZaino(zaino, oggetto);
 
             }
             return risultato;
@@ -329,7 +339,7 @@ public class Personaggio {
 
                 System.out.println(this.getNomePersonaggio() + " ha equipaggiato: " + oggetto.getNome() + " (attacco dopo: " + this.getAttacco() + ")");
 
-                zainoService.rimuoviOggettoDaZaino(zaino, oggetto);
+                getZainoService().rimuoviOggettoDaZaino(zaino, oggetto);
                 return true;
             }
             return false;
@@ -339,7 +349,7 @@ public class Personaggio {
 
             ((Armatura) oggetto).eseguiEffetto(personaggio);
 
-            zainoService.rimuoviOggettoDaZaino(zaino, oggetto);
+            getZainoService().rimuoviOggettoDaZaino(zaino, oggetto);
             return true;
         }
 

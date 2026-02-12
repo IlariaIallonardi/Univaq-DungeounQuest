@@ -22,22 +22,22 @@ public class GuerrieroServiceImpl implements PersonaggioService {
      * @param alleato
      */
     public boolean proteggiCompagno(Guerriero guerriero, Personaggio alleato) {
-
-        if (guerriero.getPuntiVita() <= 10) {
+         
+            if (guerriero.getPuntiVita() <= 10) {
             System.out.println("Il guerriero è troppo debole per proteggere qualcuno.");
             return false;
         }
 
-        if (!alleato.prenotaProtezione()) {
-
-            System.out.println(alleato.getNomePersonaggio() + " è già protetto.");
-            return false;
-        }
-
-        System.out.println(
+        if (alleato.prenotaProtezione()) {
+            alleato.subisciDannoPuntiDifesa(0);
+            alleato.prenotaProtezione();
+             System.out.println(
                 guerriero.getNomePersonaggio() + " protegge "
-                + alleato.getNomePersonaggio()
-        );
+                + alleato.getNomePersonaggio());
+            
+                   return false;
+        
+        }
 
         return true;
     }

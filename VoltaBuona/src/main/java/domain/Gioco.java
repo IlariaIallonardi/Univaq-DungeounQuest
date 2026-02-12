@@ -1,29 +1,35 @@
 package domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Gioco {
+public class Gioco implements Serializable {
+    private static final long serialVersionUID = -3528203625917821226L;
     private int id;
     private List<Stanza> listaStanze = new ArrayList<>();
-    private List<Giocatore> listaGiocatori = new ArrayList<>();
+    private List<Personaggio> listaPersonaggi = new ArrayList<>();
     private List<Evento> listaEventi = new ArrayList<>();
     private List<Oggetto> listaOggetti = new ArrayList<>();
     private int turnoCorrente = 0;
     private StatoGioco statoGioco;
+    private Dungeon dungeon;
+    private Turno turno;
+    
 
 
     
 
-    public Gioco(int id,List<Stanza> listaStanze,List<Giocatore> listaGiocatori,List<Evento> listaEventi,List<Oggetto> listaOggetti,int turnoCorrente,StatoGioco statoGioco) {
+    public Gioco(int id,List<Stanza> listaStanze,List<Personaggio> listaPersonaggi,List<Evento> listaEventi,List<Oggetto> listaOggetti,int turnoCorrente,StatoGioco statoGioco,Dungeon dungeon, Turno turno) {
         this.id = id;
         this.listaStanze = listaStanze; 
-        this.listaGiocatori = listaGiocatori; 
+        this.listaPersonaggi = listaPersonaggi; 
         this.listaEventi = listaEventi; 
         this.listaOggetti = listaOggetti; 
         this.turnoCorrente = turnoCorrente;
         this.statoGioco = statoGioco; 
-        
+        this.dungeon = dungeon;
+        this.turno = turno;
     }
 
     public int getId() {
@@ -34,7 +40,22 @@ public class Gioco {
         this.id = id;
     }
 
-   
+    public Dungeon getDungeon() {
+        return dungeon;
+    }
+    
+
+    public void setDungeon(Dungeon dungeon) {
+        this.dungeon = dungeon;
+    }
+
+    public Turno getTurno() {
+        return turno;
+    }
+
+    public void setTurno(Turno turno) {
+        this.turno = turno;
+    }
 
     public List<Stanza> getListaStanze() {
         return new ArrayList<>(listaStanze);
@@ -44,12 +65,12 @@ public class Gioco {
         this.listaStanze = new ArrayList<>(listaStanze);
     }
 
-    public List<Giocatore> getListaGiocatori() {
-        return new ArrayList<>(listaGiocatori);
+    public List<Personaggio> getListaPersonaggi() {
+        return new ArrayList<>(listaPersonaggi);
     }
 
-    public void setListaGiocatori(List<Giocatore> listaGiocatori) {
-        this.listaGiocatori = new ArrayList<>(listaGiocatori);
+    public void setListaPersonaggi(List<Personaggio> listaPersonaggi) {
+        this.listaPersonaggi = new ArrayList<>(listaPersonaggi);
     }
 
     public List<Evento> getListaEventi() {

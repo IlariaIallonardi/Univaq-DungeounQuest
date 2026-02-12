@@ -60,55 +60,53 @@ public class PassaggioSegretoServiceImpl implements EventoService {
             }
 
             if (stanzaCorrente != null && stanzaCorrente.getStanzaAdiacente() != null && !stanzaCorrente.getStanzaAdiacente().isEmpty()) {
-                    boolean isBot = personaggio.getNomePersonaggio() != null && (personaggio.getNomePersonaggio().startsWith("BOT_") || personaggio.getNomePersonaggio().startsWith("Bot-") || personaggio.getNomePersonaggio().toLowerCase().contains("bot"));
-                if (isBot){
-                
-                    System.out.println("\nVuoi muoverti in una delle stanze adiacenti adesso?");
-                    System.out.println("0) Annulla");
-                    Map<String, Stanza> adiacenti = stanzaCorrente.getStanzaAdiacente();
-                    List<String> direzioniValide = new ArrayList<>();
-                    adiacenti.forEach((chiave, s) -> {
-                        if (s != null && s != stanzaCorrente) {
-                            String stato = (s.isBloccata() ? " Bloccata" : "");
-                            System.out.println(chiave + " " + s.getId() + stato);
-                        if(!s.isBloccata()) {
+                System.out.println("\nVuoi muoverti in una delle stanze adiacenti adesso?");
+                System.out.println("0) Annulla");
+                Map<String, Stanza> adiacenti = stanzaCorrente.getStanzaAdiacente();
+                List<String> direzioniValide = new ArrayList<>();
+                adiacenti.forEach((chiave, s) -> {
+                    if (s != null && s != stanzaCorrente) {
+                        String stato = (s.isBloccata() ? " Bloccata" : "");
+                        System.out.println(chiave + " " + s.getId() + stato);
+                        if (!s.isBloccata()) {
                             direzioniValide.add(chiave);
                         }
-                        }
-                    });
+                    }
+                });
 
-                    System.out.print("Scegli una direzione (nome direzione)");
-                    String input;
-                     
+                System.out.print("Scegli una direzione (nome direzione): ");
+                String input;
+                boolean isBot = personaggio.getNomePersonaggio() != null && (personaggio.getNomePersonaggio().startsWith("BOT_") || personaggio.getNomePersonaggio().startsWith("Bot-") || personaggio.getNomePersonaggio().toLowerCase().contains("bot"));
                 if (isBot) {
-                        if(direzioniValide.isEmpty()){
-                            System.out.println("Non ci sono direzioni valide per muoverti.");
-                            return false;
-                        }else{
-                        input = randomGenerale.scegliRandomicamente(direzioniValide);
-                        System.out.println(personaggio.getNomePersonaggio() + " sceglie di muoversi verso: " + input);
-                        }
-                    } else {
-                        input = scannerGenerale.leggiLinea();
-                    }
-
-                    if (input.equals("0")) {
-                        System.out.println("Hai annullato lo spostamento.");
+                    if (direzioniValide.isEmpty()) {
+                        System.out.println("Non ci sono direzioni valide per muoverti.");
                         return false;
                     }
-
-                    Direzione direzione = Direzione.fromString(input);
-
-                    boolean mosso = new GiocoService().muoviPersonaggio(personaggio, direzione);
-                    if (!mosso) {
-                        System.out.println("Non riesci a muoverti verso " + direzione.name() + ".");
-                        return false;
-                    }
-
-                    System.out.println("Ti sei spostato. La stanza viene esplorata:");
-                    new TurnoService((service.PersonaggioService) null).scegliAzione(personaggio);
+                    input = randomGenerale.scegliRandomicamente(direzioniValide);
+                    System.out.println(personaggio.getNomePersonaggio() + " sceglie di muoversi verso: " + input);
+                } else {
+                    input = scannerGenerale.leggiLinea();
                 }
 
+                if (input == null || input.equals("0")) {
+                    System.out.println("Hai annullato lo spostamento.");
+                    return false;
+                }
+
+                Direzione direzione = Direzione.fromString(input);
+                if (direzione == null) {
+                    System.out.println("Direzione non valida: " + input);
+                    return false;
+                }
+
+                boolean mosso = new GiocoService().muoviPersonaggio(personaggio, direzione);
+                if (!mosso) {
+                    System.out.println("Non riesci a muoverti verso " + direzione.name() + ".");
+                    return false;
+                }
+
+                System.out.println("Ti sei spostato. La stanza viene esplorata:");
+                new TurnoService((service.PersonaggioService) null).scegliAzione(personaggio);
                 return true;
             }
 

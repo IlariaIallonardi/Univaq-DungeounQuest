@@ -1,9 +1,10 @@
 package domain;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Dungeon {
+public class Dungeon implements  Serializable{
 
     private int righe = 0;
     private int colonne = 0;

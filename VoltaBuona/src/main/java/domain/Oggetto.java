@@ -1,6 +1,8 @@
 package domain;
 
-public abstract class Oggetto {
+import java.io.Serializable;
+
+public abstract class Oggetto implements  Serializable {
 
     private int id;
     private String nome;

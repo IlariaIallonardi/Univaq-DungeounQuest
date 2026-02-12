@@ -1,19 +1,22 @@
 package domain;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Turno {
+public class Turno implements Serializable {
 
     private int id;
     private Giocatore giocatoreAttivo;
     private List<Giocatore> giocatori;
     private int indiceGiocatoreAttuale;
+    private int turnoCorrente;
 
-    public Turno(Giocatore giocatoreAttivo, List<Giocatore> giocatori, int id, int indiceGiocatoreAttuale) {
+    public Turno(Giocatore giocatoreAttivo, List<Giocatore> giocatori, int id, int indiceGiocatoreAttuale,int turnoCorrente) {
         this.giocatoreAttivo = giocatoreAttivo;
         this.giocatori = giocatori;
         this.id = id;
         this.indiceGiocatoreAttuale = indiceGiocatoreAttuale;
+        this.turnoCorrente = turnoCorrente;
     }
 
     public Turno() {
@@ -62,6 +65,7 @@ public class Turno {
         if (giocatoreAttivo != null) {
             giocatoreAttivo.setStatoPersonaggio("InAttesa");
             prossimoGiocatore();
+            turnoCorrente++;
         }
     }
 
@@ -96,6 +100,12 @@ public class Turno {
         if (giocatore != null) {
             giocatori.add(giocatore);
         }
+    }
+    public int getTurnoCorrente() {
+        return turnoCorrente;
+    }
+    public void setTurnoCorrente(int turnoCorrente) {
+        this.turnoCorrente = turnoCorrente;
     }
 
 }
