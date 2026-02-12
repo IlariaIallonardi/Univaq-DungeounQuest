@@ -1,8 +1,6 @@
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -21,7 +19,6 @@ import service.impl.ArciereServiceImpl;
 import service.impl.GuerrieroServiceImpl;
 import service.impl.MagoServiceImpl;
 import service.impl.PaladinoServiceImpl;
-import service.impl.PassaggioSegretoServiceImpl;
 import util.ANSI;
 
 public class Main {
@@ -33,6 +30,7 @@ public class Main {
         // FACTORY1
         StanzaFactory stanzaFactory = new StanzaFactory();
         DungeonFactory dungeonFactory = new DungeonFactory(stanzaFactory);
+        List<Personaggio> partecipanti = new ArrayList<>();
 
         // SERVICE PRINCIPALE
         GiocatoreService giocatoreService = new GiocatoreService();
@@ -166,25 +164,13 @@ public class Main {
         };
 
         Random rng = new Random();
-        TurnoService turnoService = new TurnoService(new GiocoService(), ps, new PassaggioSegretoServiceImpl());
-
-// calcola iniziativa UNA sola volta, prima del loop
-        Map<Personaggio, Integer> iniziative = new HashMap<>();
-        for (Personaggio p : giocatori) {
-            iniziative.put(p, rng.nextInt(20) + 1); // d20 semplice
-        }
-
-// ordina i giocatori per iniziativa (decrescente) una sola volta
-        List<Personaggio> ordine = new ArrayList<>(giocatori);
-        ordine.sort((a, b) -> Integer.compare(iniziative.get(b), iniziative.get(a)));
-
-// stampa ordine iniziale
-        System.out.println("\nOrdine di iniziativa:");
-        for (Personaggio p : ordine) {
-            System.out.println(" - " + p.getNomePersonaggio() + " (iniz.: " + iniziative.get(p) + ")");
-        }
+        TurnoService turnoService = new TurnoService(dungeonFactory);
+        GiocoService giocoService = new GiocoService(dungeonFactory);
+        turnoService.setGiocoService(giocoService);
+        List<Personaggio> ordine = turnoService.calcolaOrdineIniziativa(giocatori);
+    
         boolean continua = true;
-        boolean autoMode = (numReali == 0);
+      //  boolean autoMode = (numReali == 0);
 
         while (continua) {
             // esegui i turni singoli nell'ordine calcolato

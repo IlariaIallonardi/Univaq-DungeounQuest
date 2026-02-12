@@ -38,8 +38,10 @@ public class RandomSingleton {
 
     public <T> T scegliRandomicamente(List<T> lista) {
         if (lista == null || lista.isEmpty()) return null;
-        return lista.get(prossimoNumero(1, lista.size() - 1));
+        return lista.get(prossimoNumero(0, lista.size() - 1));
     }
+
+   
 
     
 

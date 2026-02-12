@@ -2,6 +2,7 @@ package service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import domain.Chiave;
 import domain.Evento;
@@ -20,6 +21,7 @@ import service.impl.TrappolaServiceImpl;
 
 public class StanzaFactory {
 
+    private Random random = new Random();
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
 
 
@@ -51,10 +53,10 @@ public class StanzaFactory {
             // stanza di partenza, nessuna chiave
             oggetti.removeIf(o -> o instanceof Chiave);
         }
-        int n = randomGenerale.prossimoNumero(1, 5); // 1..4 oggetti
+        int n = randomGenerale.prossimoNumero(1, 5); // 1..5 oggetti
 
         for (int i = 0; i < n; i++) {
-            int tipo = randomGenerale.prossimoNumero(1, 6); // 1..5  
+            int tipo = randomGenerale.prossimoNumero(1, 5); // 1..5  
             switch (tipo) {
                 case 1:
                     oggetti.add(new PozioneServiceImpl().creaOggettoCasuale());
@@ -80,7 +82,7 @@ public class StanzaFactory {
         List<Evento> eventi = new ArrayList<>();
         int n = randomGenerale.prossimoNumero(1, 5); // 1..4 eventi
         for (int i = 0; i < n; i++) {
-            int tipo = randomGenerale.prossimoNumero(0, 5); // 0..4s
+            int tipo = randomGenerale.prossimoNumero(0, 3); // 0..3
             //switch per tipi di evento da implementare
             switch (tipo) {
                 case 0:
@@ -106,16 +108,15 @@ public class StanzaFactory {
     // restituisce true se la stanza deve richiedere una chiave, false altrimenti
     private boolean generaRichiestaChiave(int x, int y) {
         // start (0,0) e le stanze adiacenti (distanza Manhattan = 1) NON devono essere bloccate
-        if (x == 0 && y == 0) {
+        if ((x == 0 && y == 0) || (x == 1 && y == 0) || (x == 0 && y == 1)) {
             return false;
         }
-        if (Math.abs(x - 0) + Math.abs(y - 0) == 1) {
-            return false;
-        }
+        
         // per le altre stanze random true/false
         //  return rnd.nextInt(2) == 1;
-     randomGenerale.prossimoNumero(0,1);
-     return true;
+        double probabilitaBloccata = 0.25;
+        return random.nextDouble() < probabilitaBloccata;
+    
     }
 
     public Chiave creaChiavePerStanza(int stanzaId) {

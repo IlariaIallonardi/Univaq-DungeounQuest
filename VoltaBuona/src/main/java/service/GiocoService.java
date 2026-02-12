@@ -11,38 +11,53 @@ import domain.Personaggio;
 import domain.Stanza;
 import domain.Trappola;
 import domain.Zaino;
+import service.impl.RandomSingleton;
 import service.impl.TrappolaServiceImpl;
 import util.ANSI;
 
 public class GiocoService {
 
     private List<Giocatore> giocatori;
-    private List<Stanza> dungeon;
+    private Dungeon dungeon;
+    private final DungeonFactory dungeonFactory;
     private TurnoService turnoService;
     private GiocatoreService giocatoreService;
+    private RandomSingleton randomGenerale = RandomSingleton.getInstance();
 
     private int turnoCorrente = 0;
 
-    public GiocoService(List<Giocatore> giocatori, GiocatoreService giocatoreService, int turnoCorrente) {
+    public GiocoService(List<Giocatore> giocatori, GiocatoreService giocatoreService, int turnoCorrente, DungeonFactory dungeonFactory) {
         this.giocatori = giocatori;
         this.giocatoreService = giocatoreService;
         this.turnoCorrente = turnoCorrente;
+        this.dungeonFactory = dungeonFactory;
     }
 
-    public GiocoService() {
+    public GiocoService(DungeonFactory dungeonFactory){
+        this.dungeonFactory = dungeonFactory;
+    } 
 
+  public <T extends Personaggio> void avviaPartita(List<T> personaggi) {
+      this.dungeon = dungeonFactory.creaDungeon(); 
+
+        Stanza start = dungeon.getStanza(0, 0);
+        if (start != null) start.setStatoStanza(true);
+
+        for (Personaggio p : personaggi) {
+            p.setPosizioneCorrente(start);
+        }
     }
 
+    
+    public Dungeon getDungeon() { return dungeon; }
+
+    
     public List<Giocatore> getGiocatori() {
         return giocatori;
     }
 
     public void setGiocatori(List<Giocatore> giocatori) {
         this.giocatori = giocatori;
-    }
-
-    public void setDungeon(List<Stanza> dungeon) {
-        this.dungeon = dungeon;
     }
 
     public TurnoService getTurnoService() {
@@ -69,7 +84,6 @@ public class GiocoService {
         this.turnoCorrente = turnoCorrente;
     }
 
-    
     public boolean muoviPersonaggio(Personaggio personaggio, Direzione direzione) {
         if (personaggio == null || direzione == null) {
             return false;
@@ -84,35 +98,33 @@ public class GiocoService {
         Stanza destinazione = corrente.getStanzaAdiacente().get(direzione.name());
 
         if (destinazione == null) {
-            System.out.println("Non esiste una direzione/varco chiamato: " + direzione.name());
+            System.out.println("Non esiste una direzione chiamata: " + direzione.name());
             return false;
         }
-        // controllo stanza bloccata come nel metodo esistente
+        // Controllo stanza bloccata.
         if (destinazione.isBloccata()) {
             domain.Chiave richiesta = destinazione.getChiaveRichiesta();
             if (richiesta == null) {
-                System.out.println("La stanza in " + direzione.name() + " è bloccata ma non ha chiave associata.");
+
                 return false;
             }
-            System.out.println("La stanza in " + direzione.name() + " è bloccata. Chiave richiesta: id="
-                    + richiesta.getId() + " nome=" + richiesta.getNome());
 
             Zaino zaino = personaggio.getZaino();
             boolean trovato = false;
             if (zaino != null && zaino.getListaOggetti() != null) {
-                for (Oggetto o : new ArrayList<>(zaino.getListaOggetti())) {
-                    if (o instanceof domain.Chiave && ((domain.Chiave) o).getId() == richiesta.getId()) {
-                        System.out.println("Hai la chiave richiesta (" + o.getNome() + "). Sblocco la stanza e consumo la chiave.");
+                for (Oggetto oggetto : new ArrayList<>(zaino.getListaOggetti())) {
+                    if (oggetto instanceof domain.Chiave && ((domain.Chiave) oggetto).getId() == richiesta.getId()) {
+                        System.out.println("Hai la chiave richiesta (" + oggetto.getNome() + "). Sblocco la stanza e consumo la chiave.");
                         destinazione.sblocca();
                         ZainoService zainoService = new ZainoService();
-                        zainoService.rimuoviOggettoDaZaino(zaino, o);
+                        zainoService.rimuoviOggettoDaZaino(zaino, oggetto);
                         trovato = true;
                         break;
                     }
                 }
             }
             if (!trovato) {
-                System.out.println("Non possiedi la chiave richiesta nello zaino. Impossibile entrare.");
+                System.out.println("La stanza è bloccata.Non possiedi la chiave richiesta nello zaino. Impossibile entrare." + " Chiave richiesta: " + richiesta.getId());
                 return false;
             }
         }
@@ -128,42 +140,29 @@ public class GiocoService {
 
         if (destinazione.getListaEventiAttivi() != null) {
             List<Trappola> trappole = new ArrayList<>();
-            for (Evento e : new ArrayList<>(destinazione.getListaEventiAttivi())) {
-                if (e instanceof Trappola t) {
-                    trappole.add(t);
+            for (Evento evento : new ArrayList<>(destinazione.getListaEventiAttivi())) {
+                if (evento instanceof Trappola trappola) {
+                    trappole.add(trappola);
                 }
             }
             if (!trappole.isEmpty()) {
-                // debug: elenco trappole trovate
-                StringBuilder sb = new StringBuilder();
-                for (Trappola t : trappole) {
-                    sb.append("[").append(t.getId()).append(":").append(t.getDescrizione()).append("]");
+                StringBuilder stringaTrappola = new StringBuilder();
+                for (Trappola trappola : trappole) {
+                    stringaTrappola.append("[").append(trappola.getDescrizione()).append("]");
                 }
-              //  System.out.println("[DEBUG] Entrata stanza: " + destinazione + " - Personaggio: " + (personaggio != null ? personaggio.getNomePersonaggio() : "<null>"));
-                // System.out.println("[DEBUG] Trappole presenti: " + trappole.size() + " -> " + sb.toString());
 
-               var rnd = java.util.concurrent.ThreadLocalRandom.current();
-               Trappola scelta = trappole.get(rnd.nextInt(trappole.size()));
-              System.out.println(ANSI.BRIGHT_RED + ANSI.BOLD + "Sei caduto in una trappola:" + scelta.getDescrizione() + ANSI.RESET);
-               boolean consumaTurno = new TrappolaServiceImpl().attivaEvento(personaggio, scelta);
-              System.out.println(" " + "Attivazione trappola" + " " + consumaTurno);
-               // System.out.println("[DEBUG] Stato personaggio dopo trappola: nome=" + (personaggio != null ? personaggio.getNomePersonaggio() : "<null>") + " | HP=" + (personaggio != null ? personaggio.getPuntiVita() : 0) + " | stato=" + (personaggio != null ? personaggio.getStatoPersonaggio() : "<null>"));
-              //  if (consumaTurno) {
-                //    System.out.println("La trappola ha attivato un effetto che consuma il turno.");
-                
+                int sceltaIndice = randomGenerale.prossimoNumero(0, trappole.size() - 1);
+                Trappola scelta = trappole.get(sceltaIndice);
+                System.out.println(ANSI.BRIGHT_RED + ANSI.BOLD + "Sei caduto in una trappola:" + scelta.getDescrizione() + ANSI.RESET);
+                boolean consumaTurno = new TrappolaServiceImpl().attivaEvento(personaggio, scelta);
+                System.out.println(" " + "Attivazione trappola" + " " + consumaTurno);
+
             }
 
         }
         return true;
     }
 
-
-    public Dungeon getDungeon() {
-        return null;
-    }
-
     
-    public Dungeon creaDungeon(int righe, int colonne) {
-        return null;
-    }
-;}
+
+}

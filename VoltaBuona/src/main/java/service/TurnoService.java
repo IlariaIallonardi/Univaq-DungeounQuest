@@ -26,10 +26,11 @@ import util.ANSI;
 public class TurnoService {
 
     private GiocoService giocoService;
-    private DungeonFactory dungeonFactory=new DungeonFactory(new StanzaFactory());
+    private DungeonFactory dungeonFactory;
     private PersonaggioService personaggioService;
     private EventoService eventoService;
-    private List<Personaggio> ordineTurno = new ArrayList<>();
+    private List<String> ordineTurno = new ArrayList<>();
+    private List<Personaggio> ordineIniziativa = null;
     private final RandomSingleton randomGenerale = RandomSingleton.getInstance();
     private final ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
 
@@ -41,8 +42,20 @@ public class TurnoService {
         this.eventoService = eventoService;
     }
 
+    public TurnoService(DungeonFactory dungeonFactory) {
+        this.dungeonFactory = dungeonFactory;
+    }
+
     public TurnoService(PersonaggioService personaggioService) {
         this.personaggioService = personaggioService;
+    }
+
+    public void setGiocoService(GiocoService giocoService) {
+        this.giocoService = giocoService;
+    }
+
+    public void setDungeonFactory(DungeonFactory dungeonFactory) {
+        this.dungeonFactory = dungeonFactory;
     }
 
     public TurnoService() {
@@ -50,57 +63,29 @@ public class TurnoService {
     }
 
     /**
-     * *
-     * Calcola l'ordine di iniziativa dei giocatori in base ad un tiro
-     * randomico.
+     * Calcola l'ordine di iniziativa dei giocatori in base ad un tiro randomico (d20).
+     * Versione senza parametri: avvisa e restituisce lista vuota.
      */
+  public List<Personaggio> calcolaOrdineIniziativa(List<Personaggio> partecipanti) {
+    Map<Personaggio, Integer> iniziative = new HashMap<>();
 
-    public <T extends Personaggio> List<T> calcolaOrdineIniziativa(List<T> partecipanti) {
-
-        ordineTurno.clear();
-
-        // Mappa: (Personaggio , tiro dado)
-        Map<T, Integer> tiri = new HashMap<>();
-
-        // 1 Ogni personaggio tira il dado
-        for (T personaggio : partecipanti) {
-        
-            int tiro = randomGenerale.prossimoNumero(1, 20); // dado d20
-            tiri.put(personaggio, tiro);
-        }
-
-        // 2 Scorriamo la mappa tiri per vedere chi ha fatto il tiro più alto.
-        while (!tiri.isEmpty()) {
-
-            T migliore = null;
-            int massimo = Integer.MIN_VALUE;
-
-            // 3 Cerchiamo il tiro più alto rimasto
-            for (Map.Entry<T, Integer> entry : tiri.entrySet()) {
-                if (entry.getValue() > massimo) {
-                    massimo = entry.getValue();
-                    migliore = entry.getKey();
-                }
-            }
-
-            // Se per qualche motivo non è stato trovato il migliore (es. tutti i tiri <= massimo iniziale),
-            // selezioniamo comunque il primo elemento presente per evitare ciclo infinito.
-            if (migliore == null && !tiri.isEmpty()) {
-                Map.Entry<T, Integer> any = tiri.entrySet().iterator().next();
-                migliore = any.getKey();
-            }
-
-            // Aggiungiamo all'ordine e rimuoviamo dalla mappa il personaggio scelto
-            if (migliore != null) {
-                ordineTurno.add(migliore);
-                tiri.remove(migliore);
-            } else {
-                break; // niente da aggiungere
-            }
-        }
-
-        return new ArrayList<>((List<T>) (List<?>) ordineTurno);
+    for (Personaggio p : partecipanti) {
+        iniziative.put(p, randomGenerale.prossimoNumero(1, 20));
     }
+
+    List<Personaggio> ordine = new ArrayList<>(partecipanti);
+    ordine.sort((a, b) -> Integer.compare(iniziative.get(b), iniziative.get(a)));
+
+    System.out.println("\nOrdine di iniziativa: Turno Service");
+    for (Personaggio p : ordine) {
+        System.out.println(" - " + p.getNomePersonaggio() + " (iniz.: " + iniziative.get(p) + ")");
+    }
+
+    return ordine;
+} 
+    
+
+
 
     /**
      * @param partecipanti
@@ -113,7 +98,13 @@ public class TurnoService {
             return;
         }
          dungeonFactory.stampaMappa();
-        List<T> ordine = calcolaOrdineIniziativa(partecipanti);
+         //riga 116 cambiata ricontrollare
+        // Calcola l'ordine di iniziativa solo se non è già stato calcolato in partita
+        if (this.ordineIniziativa == null || this.ordineIniziativa.isEmpty()) {
+            this.ordineIniziativa = calcolaOrdineIniziativa((List<Personaggio>) partecipanti);
+        }
+
+        List<T> ordine = (List<T>) new ArrayList<>(this.ordineIniziativa);
 
         for (Personaggio personaggio : ordine) {
             if (personaggio == null) {
@@ -124,6 +115,7 @@ public class TurnoService {
 
                 partecipanti.remove(personaggio);
                 ordineTurno.remove(personaggio);
+                if (this.ordineIniziativa != null) this.ordineIniziativa.remove(personaggio);
                 continue;
             }
             System.out.println("DEBUG " + personaggio.getNomePersonaggio()

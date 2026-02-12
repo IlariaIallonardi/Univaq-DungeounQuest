@@ -5,7 +5,6 @@ import java.util.List;
 
 public class Gioco {
     private int id;
-    private int dado;
     private List<Stanza> listaStanze = new ArrayList<>();
     private List<Giocatore> listaGiocatori = new ArrayList<>();
     private List<Evento> listaEventi = new ArrayList<>();
@@ -16,9 +15,8 @@ public class Gioco {
 
     
 
-    public Gioco(int id,int dado,List<Stanza> listaStanze,List<Giocatore> listaGiocatori,List<Evento> listaEventi,List<Oggetto> listaOggetti,int turnoCorrente,StatoGioco statoGioco) {
+    public Gioco(int id,List<Stanza> listaStanze,List<Giocatore> listaGiocatori,List<Evento> listaEventi,List<Oggetto> listaOggetti,int turnoCorrente,StatoGioco statoGioco) {
         this.id = id;
-        this.dado = dado;
         this.listaStanze = listaStanze; 
         this.listaGiocatori = listaGiocatori; 
         this.listaEventi = listaEventi; 
@@ -36,13 +34,7 @@ public class Gioco {
         this.id = id;
     }
 
-    public int getDado() {
-        return dado;
-    }
-
-    public void setDado(int dado) {
-        this.dado = dado;
-    }
+   
 
     public List<Stanza> getListaStanze() {
         return new ArrayList<>(listaStanze);
