@@ -39,6 +39,10 @@ public class TurnoService {
     private final ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
     private Turno turno=new Turno();
 
+    public void setTurno(Turno turno) {
+        this.turno = turno;
+    }
+
     public TurnoService(GiocoService giocoService,
             PersonaggioService personaggioService,
             EventoService eventoService) {
@@ -104,7 +108,16 @@ public class TurnoService {
         dungeonFactory.stampaMappa();
         }
 
-       List<T> ordine = (List<T>) calcolaOrdineIniziativa((List<Personaggio>) partecipanti);
+       List<T> ordine;
+       if (this.turno != null && this.turno.getGiocatori() != null && !this.turno.getGiocatori().isEmpty()) {
+           // usa l'ordine salvato nel Turno invece di ricalcolare
+           ordine = (List<T>) new ArrayList<>(this.turno.getGiocatori());
+       } else {
+           ordine = (List<T>) calcolaOrdineIniziativa((List<Personaggio>) partecipanti);
+           // salva l'ordine nel turno corrente per persistenza
+           if (this.turno == null) this.turno = new Turno();
+           this.turno.setGiocatori((List<Personaggio>) ordine);
+       }
 
     for (Personaggio personaggio : ordine) {
         if (personaggio == null) continue;

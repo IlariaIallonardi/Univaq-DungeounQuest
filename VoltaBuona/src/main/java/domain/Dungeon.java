@@ -75,5 +75,12 @@ public class Dungeon implements  Serializable{
         return stanzeMappa;
     }
 
+    public int getRighe() {
+        return righe;
+    }
+
+    public int getColonne() {
+        return colonne;
+    }
    
 }

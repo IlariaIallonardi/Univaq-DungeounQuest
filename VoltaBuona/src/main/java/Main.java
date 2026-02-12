@@ -69,7 +69,7 @@ public class Main {
                                 gioco = fileService.caricaGioco(fileName);
                                 System.out.println("Partita caricata con successo da " + fileName);
                                 loaded = true;
-                            } catch (IOException | ClassNotFoundException e) {
+                            } catch (exception.SaveLoadException e) {
                                 System.out.println("Errore durante il caricamento della partita: " + e.getMessage());
                                 System.out.println("Inizializzazione di una nuova partita.");
                             }
@@ -86,7 +86,7 @@ public class Main {
                                 gioco = fileService.caricaGioco(fileName);
                                 System.out.println("Partita caricata con successo da " + fileName);
                                 loaded = true;
-                            } catch (IOException | ClassNotFoundException e) {
+                            } catch (exception.SaveLoadException e) {
                                 System.out.println("Errore durante il caricamento della partita: " + e.getMessage());
                                 System.out.println("Inizializzazione di una nuova partita.");
                             }
@@ -217,9 +217,10 @@ public class Main {
         } else {
             // gioco caricato: riusa i personaggi salvati
             giocatori = gioco.getListaPersonaggi();
-            // se il gioco caricato contiene il dungeon, usiamolo
+            // se il gioco caricato contiene il dungeon, usiamolo e ripristiniamo nella factory
             if (gioco.getDungeon() != null) {
                 dungeon = gioco.getDungeon();
+                dungeonFactory.setDungeon(dungeon);
             }
             if (giocatori == null) giocatori = new ArrayList<>();
             for (Personaggio p : giocatori) {
@@ -255,7 +256,32 @@ public class Main {
         TurnoService turnoService = new TurnoService(dungeonFactory);
         GiocoService giocoService = new GiocoService(dungeonFactory);
         turnoService.setGiocoService(giocoService);
-        List<Personaggio> ordine = turnoService.calcolaOrdineIniziativa(giocatori);
+
+        // Se abbiamo caricato un gioco salvato con un turno già calcolato,
+        // riutilizziamo l'ordine salvato invece di ricalcolarlo.
+        List<Personaggio> ordine;
+        if (loaded && gioco.getTurno() != null && gioco.getTurno().getGiocatori() != null && !gioco.getTurno().getGiocatori().isEmpty()) {
+            ordine = new ArrayList<>();
+            for (domain.Personaggio g : gioco.getTurno().getGiocatori()) {
+                ordine.add(g);
+            }
+            System.out.println("Ordine di iniziativa: ripristinato dal salvataggio");
+            for (Personaggio p : ordine) {
+                System.out.println(" - " + p.getNomePersonaggio());
+            }
+        } else {
+            ordine = turnoService.calcolaOrdineIniziativa(giocatori);
+        }
+        // salva l'ordine appena calcolato nel gioco in modo che venga preservato al salvataggio
+        if (ordine != null && !ordine.isEmpty()) {
+            domain.Turno t = new domain.Turno();
+            t.setGiocatori(ordine);
+            gioco.setTurno(t);
+        }
+        // se abbiamo caricato un gioco con turno, comunichiamolo al TurnoService
+        if (loaded && gioco.getTurno() != null) {
+            turnoService.setTurno(gioco.getTurno());
+        }
     
         boolean continua = true;
       //  boolean autoMode = (numReali == 0);
@@ -273,8 +299,8 @@ public class Main {
                     String saveChoice = scanner.nextLine().trim().toLowerCase();
                     if (saveChoice.equals("s") || saveChoice.equals("si")) {
                         FileService service = new FileService();
-                        System.out.println("Opzioni salvataggio: 1) Inserisci nome file  2) Salva con nome automatico");
-                        System.out.print("Scelta (1-2): ");
+                        System.out.println("Opzioni salvataggio: 1) Inserisci nome file  2) Salva con nome automatico (o scrivi direttamente il nome file)");
+                        System.out.print("Scelta (1-2 o nome file): ");
                         String opt = scanner.nextLine().trim();
                         try {
                             // aggiorna l'oggetto gioco con lo stato corrente prima di salvare
@@ -283,17 +309,27 @@ public class Main {
                                 gioco.setDungeon(dungeon);
                                 gioco.setListaStanze(new java.util.ArrayList<>(dungeon.getMappaStanze().values()));
                             }
+                            String nomeDaUsare = null;
                             if (opt.equals("1")) {
                                 System.out.print("Inserisci nome file (es: slot1.sav): ");
-                                String nome = scanner.nextLine().trim();
-                                if (!nome.endsWith(".sav")) nome = nome + ".sav";
-                                service.salvaGioco(gioco, nome);
-                                System.out.println("Partita salvata come '" + nome + "'. Percorso: " + Paths.get("salvataggi/" + nome).toAbsolutePath());
+                                nomeDaUsare = scanner.nextLine().trim();
+                            } else if (opt.equals("2") || opt.isEmpty()) {
+                                // user chose automatic or left blank -> use automatic
+                                nomeDaUsare = null;
                             } else {
-                                String nome = service.salvaGiocoConNomeUnico(gioco);
-                                System.out.println("Partita salvata come '" + nome + "'. Percorso: " + Paths.get("salvataggi/" + nome).toAbsolutePath());
+                                // se l'utente ha inserito direttamente un nome (es. partita2.sav)
+                                nomeDaUsare = opt;
                             }
-                        } catch (IOException e) {
+
+                            if (nomeDaUsare != null) {
+                                if (!nomeDaUsare.endsWith(".sav")) nomeDaUsare = nomeDaUsare + ".sav";
+                                service.salvaGioco(gioco, nomeDaUsare);
+                                System.out.println("Partita salvata come '" + nomeDaUsare + "'. Percorso: " + Paths.get("salvataggi/" + nomeDaUsare).toAbsolutePath());
+                            } else {
+                                String nomeAuto = service.salvaGiocoConNomeUnico(gioco);
+                                System.out.println("Partita salvata come '" + nomeAuto + "'. Percorso: " + Paths.get("salvataggi/" + nomeAuto).toAbsolutePath());
+                            }
+                        } catch (exception.SaveLoadException e) {
                             System.out.println("Errore durante il salvataggio: " + e.getMessage());
                         }
                     }

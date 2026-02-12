@@ -88,6 +88,17 @@ public class DungeonFactory {
         return dungeon;
     }
 
+    /**
+     * Imposta un dungeon esistente (ad esempio dopo il caricamento da file).
+     */
+    public void setDungeon(Dungeon dungeon) {
+        this.dungeon = dungeon;
+        if (dungeon != null) {
+            this.righe = dungeon.getRighe();
+            this.colonne = dungeon.getColonne();
+        }
+    }
+
     // Stampiamo la mappa.
     public void stampaMappa() {
         System.out.println("Mappa del Dungeon:");
