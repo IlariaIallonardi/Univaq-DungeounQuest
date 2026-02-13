@@ -11,11 +11,13 @@ import domain.Stanza;
 import domain.Trappola;
 import service.EffettoService;
 import service.EventoService;
+import service.FileService;
 
 public class TrappolaServiceImpl implements EventoService {
 
     private static final AtomicInteger ID_CONTATORE= new AtomicInteger(600);
     private final RandomSingleton randomGenerale = RandomSingleton.getInstance();
+    private FileService fileService=new FileService();
 
     @Override
     public boolean attivaEvento(Personaggio personaggio, Evento e) {
@@ -36,6 +38,7 @@ public class TrappolaServiceImpl implements EventoService {
             }
 
              effettoService.applicaEffetto(personaggio, effettoTrappola);
+             fileService.writeLog(personaggio.getNomePersonaggio() + " è stato colpito da una trappola: " + effettoTrappola.getTipo() + " - Effetto applicato con successo.");
 
             System.out.println("Stato personaggio dopo trappola:"+" " 
                     + "\n Stato=" + personaggio.getStatoPersonaggio()

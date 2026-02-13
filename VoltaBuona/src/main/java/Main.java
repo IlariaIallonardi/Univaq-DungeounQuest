@@ -17,7 +17,6 @@ import service.DungeonFactory;
 import service.FileService;
 import service.GiocatoreService;
 import service.GiocoService;
-import service.PersonaggioService;
 import service.StanzaFactory;
 import service.TurnoService;
 import service.impl.ArciereServiceImpl;
@@ -145,8 +144,10 @@ public class Main {
                 }
 
                 int sceltaClasse = scegliClasse(scanner, nome);
-                Personaggio p = creaPersonaggioDaScelta(sceltaClasse, nome);
-                giocatori.add(p);
+
+                Personaggio personaggio = creaPersonaggioDaScelta(sceltaClasse, nome);
+                giocatori.add(personaggio);
+                fileService.writeLog("Personaggio " + personaggio.getNomePersonaggio().toUpperCase() + " ha scelto il tipo  "+sceltaClasse);
             }
 
             // crea i bot
@@ -154,8 +155,8 @@ public class Main {
             Random rngBot = new Random();
 
             for (int i = 1; i <= numBot; i++) {
-                String nome = "BOT_" + nomiBot[rngBot.nextInt(nomiBot.length)] + "_" + i;
-                int sceltaClasse = rngBot.nextInt(4) + 1;
+                 String nome = "BOT_" + nomiBot[rngBot.nextInt(nomiBot.length)] + "_" + i;
+                 int sceltaClasse = rngBot.nextInt(4) + 1;
                 Personaggio base = creaPersonaggioDaScelta(sceltaClasse, nome);
                 Personaggio bot = giocatoreService.attribuisciPersonaggioAComputer(base);
                 giocatori.add(bot);
@@ -165,11 +166,13 @@ public class Main {
 
             // *** 4 CREAZIONE DUNGEON ***
             dungeon = dungeonFactory.creaDungeon();
+
+            //stampa enorme
             System.out.println("--- STANZE BLOCCATE E CHIAVI ---");
             for (Stanza s : dungeon.getMappaStanze().values()) {
                 String chiaveInfo = (s.getChiaveRichiesta() != null) ? String.valueOf(s.getChiaveRichiesta().getId()) : "nessuna";
                 StringBuilder objs = new StringBuilder();
-                for (int i = 0; i < s.getOggettiPresenti().size(); i++) {
+                for ( int  i = 0; i < s.getOggettiPresenti().size(); i++) {
                     Object o = s.getOggettiPresenti().get(i);
                     objs.append(o == null ? "<null>" : ((Oggetto) o).getNome());
                     if (i < s.getOggettiPresenti().size() - 1) {
@@ -177,7 +180,7 @@ public class Main {
                     }
                 }
                 StringBuilder eventi = new StringBuilder();
-                for (int i = 0; i < s.getListaEventiAttivi().size(); i++) {
+                for ( int  i = 0; i < s.getListaEventiAttivi().size(); i++) {
                     Evento e = s.getListaEventiAttivi().get(i);
                     eventi.append(e == null ? "<null>" : e.getNomeEvento());
                     if (i < s.getListaEventiAttivi().size() - 1) {
@@ -210,11 +213,13 @@ public class Main {
             giocatori.forEach(p -> System.out.println(" - " + p.getNomePersonaggio() + " in " + p.getPosizioneCorrente()));
 
             System.out.println("\n Partita inizializzata correttamente!");
-            // aggiorna l'oggetto gioco con lo stato appena creato
+            fileService.writeLog("Partita inizializzata con " + numReali + " giocatori reali e " + numBot + " BOT. Totale personaggi: " + giocatori.size());
+            
             gioco.setListaPersonaggi(giocatori);
             gioco.setDungeon(dungeon);
             gioco.setListaStanze(new java.util.ArrayList<>(dungeon.getMappaStanze().values()));
         } else {
+            fileService.writeLog("Partita caricata con " + gioco.getListaPersonaggi().size() + " personaggi. Stato gioco: " + gioco.getStatoGioco());
             // gioco caricato: riusa i personaggi salvati
             giocatori = gioco.getListaPersonaggi();
             // se il gioco caricato contiene il dungeon, usiamolo e ripristiniamo nella factory
@@ -234,31 +239,16 @@ public class Main {
             System.out.println("\n Partita caricata correttamente! Totale personaggi: " + giocatori.size());
         }
 
-        // semplice loop di turni per scegliere azioni e continuare la partita
-        PersonaggioService ps = new PersonaggioService() {
-            @Override
-            public Personaggio creaPersonaggio(String nome, Personaggio personaggio) {
-                return personaggio;
-            }
+       
 
-            @Override
-            public int attacca(Personaggio personaggio, domain.Mostro mostro, domain.Combattimento combattimento) {
-                return 0;
-            }
-
-            @Override
-            public void usaAbilitàSpeciale(Personaggio personaggio, String abilitàSpeciale) {
-                throw new UnsupportedOperationException("Unimplemented method 'usaAbilitàSpeciale'");
-            }
-        };
-
-        Random rng = new Random();
+    
         TurnoService turnoService = new TurnoService(dungeonFactory);
         GiocoService giocoService = new GiocoService(dungeonFactory);
         turnoService.setGiocoService(giocoService);
 
         // Se abbiamo caricato un gioco salvato con un turno già calcolato,
         // riutilizziamo l'ordine salvato invece di ricalcolarlo.
+        //modificare turno service e poi concellare questo metodo
         List<Personaggio> ordine;
         if (loaded && gioco.getTurno() != null && gioco.getTurno().getGiocatori() != null && !gioco.getTurno().getGiocatori().isEmpty()) {
             ordine = new ArrayList<>();
@@ -325,10 +315,7 @@ public class Main {
                                 if (!nomeDaUsare.endsWith(".sav")) nomeDaUsare = nomeDaUsare + ".sav";
                                 service.salvaGioco(gioco, nomeDaUsare);
                                 System.out.println("Partita salvata come '" + nomeDaUsare + "'. Percorso: " + Paths.get("salvataggi/" + nomeDaUsare).toAbsolutePath());
-                            } else {
-                                String nomeAuto = service.salvaGiocoConNomeUnico(gioco);
-                                System.out.println("Partita salvata come '" + nomeAuto + "'. Percorso: " + Paths.get("salvataggi/" + nomeAuto).toAbsolutePath());
-                            }
+                            } 
                         } catch (exception.InizializzaPartitaException e) {
                             System.out.println("Errore durante il salvataggio: " + e.getMessage());
                         }

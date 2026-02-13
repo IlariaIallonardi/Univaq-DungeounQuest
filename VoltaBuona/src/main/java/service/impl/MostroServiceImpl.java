@@ -11,14 +11,15 @@ import domain.Personaggio;
 import domain.Stanza;
 import service.CombattimentoService;
 import service.EffettoService;
+import service.FileService;
 import service.PersonaIncontrataService;
 import service.TurnoService;
 
 public class MostroServiceImpl implements PersonaIncontrataService {
 
     private static final AtomicInteger ID_CONTATORE = new AtomicInteger(200);
-
     private final RandomSingleton random = RandomSingleton.getInstance();
+    private FileService fileService=new FileService();  
 
     private CombattimentoService combattimentoService;
 
@@ -93,6 +94,7 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         Effetto effetto = new Effetto(tipoEffetto, " ");
         System.out.println(mostro.getNomeMostro() + " applica " + tipoEffetto + " a " + personaggio.getNomePersonaggio());
         this.effettoService.applicaEffetto(personaggio, effetto);
+        fileService.writeLog(mostro.getNomeMostro() + " ha applicato l'effetto: " + tipoEffetto + " a " + personaggio.getNomePersonaggio());
     }
 
     /**

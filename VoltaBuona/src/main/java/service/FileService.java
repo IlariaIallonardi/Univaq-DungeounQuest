@@ -1,13 +1,17 @@
 package service;
 
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +25,12 @@ import exception.InizializzaPartitaException;
 public class FileService {
 
  private static final String SALVA_GIOCO = "salvataggi/";
+    private static final String CARTELLA_LOG = "logs/";
+
+    public static Object getInstance() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    private String logFileNome;
      /**
      * Salva lo stato del gioco su un file.
      * 
@@ -88,27 +98,34 @@ public class FileService {
             }
         }
 
-        /**
-         * Elimina un file di salvataggio esistente.
-         * @param fileName nome del file da eliminare
-         * @return true se eliminato, false se non esiste
-         * @throws IOException se si verifica un errore di I/O.
-         */
-        public boolean eliminaSalvataggio(String fileName) throws IOException {
-            Path path = Paths.get(SALVA_GIOCO + fileName);
-            return Files.deleteIfExists(path);
-        }
 
-        /**
-         * Salva il gioco con un nome univoco basato sul timestamp e restituisce il nome.
-         * @param gioco oggetto gioco
-         * @return nome del file creato
-         * @throws InizializzaPartitaException se si verifica un errore durante il salvataggio della partita.
-         */
-        public String salvaGiocoConNomeUnico(Gioco gioco) throws InizializzaPartitaException {
-            String fileName = "partita_" + System.currentTimeMillis() + ".sav";
-            salvaGioco(gioco, fileName);
-            return fileName;
+         /**
+     * Scrive un'entrata nel log corrente.
+     * 
+     * @param data i dati da scrivere nel log.
+     */
+
+    public void writeLog(String data) {
+        if (logFileNome == null) {
+            System.out.println("Errore: nessun file di log impostato per la scrittura.");
+            return;
         }
+        Path logFilePath = Paths.get(CARTELLA_LOG + logFileNome);
+        try (FileWriter writer = new FileWriter(logFilePath.toFile(), true);
+        BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
+
+            String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+            String[] lines = data.split("\\r?\\n");
+            for (String line : lines) {
+                bufferedWriter.write("[" + timeStamp + "] " + line);
+                bufferedWriter.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Errore durante la scrittura del file di log: " + e.getMessage());
+        }
+    }
+
+
     
 }

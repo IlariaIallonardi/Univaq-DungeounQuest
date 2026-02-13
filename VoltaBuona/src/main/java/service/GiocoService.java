@@ -26,6 +26,7 @@ public class GiocoService {
     private GiocatoreService giocatoreService;
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
     private Gioco gioco;
+    private FileService fileService;
 
     private int turnoCorrente = 0;
 
@@ -126,6 +127,7 @@ public class GiocoService {
                     if (oggetto instanceof domain.Chiave && ((domain.Chiave) oggetto).getId() == richiesta.getId()) {
                         System.out.println("Hai la chiave richiesta (" + oggetto.getNome() + "). Sblocco la stanza e consumo la chiave.");
                         destinazione.sblocca();
+                        fileService.writeLog(personaggio.getNomePersonaggio() + " ha usato la chiave: " + oggetto.getNome() + " per sbloccare la stanza: " + destinazione.getId());
                         ZainoService zainoService = new ZainoService();
                         zainoService.rimuoviOggettoDaZaino(zaino, oggetto);
                         trovato = true;

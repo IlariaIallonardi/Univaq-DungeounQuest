@@ -12,6 +12,7 @@ import domain.Personaggio;
 import domain.Stanza;
 import domain.Tesoro;
 import domain.Zaino;
+import service.FileService;
 import service.PersonaIncontrataService;
 import service.TurnoService;
 import service.ZainoService;
@@ -22,6 +23,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
     private final ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
     private TurnoService turnoService;
+    private FileService fileService=new FileService();
 
     public boolean nomeVenditore(String nome) {
         if (nome == null) {
@@ -105,6 +107,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             }
 
             npc.setHaInteragito(true);
+            fileService.writeLog(personaggio.getNomePersonaggio() + " ha risposto correttamente al rebus di " + npc.getNomeNPC() + " e ha ricevuto un dono.");
         } else {
             System.out.println("\nRisposta errata. L’NPC non ti dona nulla.");
         }
@@ -194,6 +197,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             } else {
                 System.out.println("Errore aggiunta oggetto allo zaino.");
             }
+                fileService.writeLog(personaggio.getNomePersonaggio() + " ha scelto di acquistare: " + oggettoScelto.getNome() + " per " + prezzo + " monete - Acquisto riuscito: " + aggiungi);
         }
     }
 

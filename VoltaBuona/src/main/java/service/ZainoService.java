@@ -11,6 +11,7 @@ import service.impl.ScannerSingleton;
 public class ZainoService {
         private RandomSingleton randomGenerale = RandomSingleton.getInstance();
         private ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
+        private FileService fileService = new FileService();
 
 
 
@@ -91,7 +92,7 @@ public class ZainoService {
 
         aggiungiOggettoAZaino(zaino, oggetto);
         stanza.rimuoviOggetto(oggetto);
-
+        fileService.writeLog(personaggio.getNomePersonaggio() + " ha rimosso " + daRimuovere.getNome() + " dallo zaino per fare spazio a " + oggetto.getNome());
         System.out.println(personaggio.getNomePersonaggio() + " lascia " + daRimuovere.getNome()  + " e raccoglie " + oggetto.getNome());
 
         return true;

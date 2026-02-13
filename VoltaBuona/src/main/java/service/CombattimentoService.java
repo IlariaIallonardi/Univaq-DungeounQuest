@@ -19,6 +19,7 @@ import service.impl.MostroServiceImpl;
 import service.impl.PaladinoServiceImpl;
 import service.impl.RandomSingleton;
 import service.impl.ScannerSingleton;
+import util.ANSI;
 
 public class CombattimentoService {
 
@@ -29,6 +30,7 @@ public class CombattimentoService {
     private ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
     private static final Scanner scanner = new Scanner(System.in);
     private static int difficoltaMostro = 0;
+    private FileService fileService;
 
     public CombattimentoService(MostroServiceImpl mostroService, PersonaggioService personaggioService, TurnoService turnoService) {
         this.mostroService = mostroService;
@@ -272,6 +274,7 @@ public class CombattimentoService {
             turnoService.gestisciUsoOggettoDaZaino(personaggio);
 
         }
+        fileService.writeLog(personaggio.getNomePersonaggio() + " ha scelto l'azione: " + scelta);
         return;
     }
 
@@ -286,7 +289,13 @@ public class CombattimentoService {
         if (evento != null) {
             evento.setFineEvento(true);
             evento.setInizioEvento(false);
-            System.out.println("HA VINTOOOO!! IL VINCITORE è:" + vincitore);
+            if(vincitore instanceof Personaggio personaggioVincitore) {
+                fileService.writeLog("HA VINTOOOO!! IL VINCITORE è:" + personaggioVincitore.getNomePersonaggio());
+                System.out.println(ANSI.RED + ANSI.BOLD+"Il vincitore è:" + personaggioVincitore.getNomePersonaggio()+ ANSI.RESET);
+            } else if (vincitore instanceof Mostro mostroVincitore) {
+                fileService.writeLog("Ha vinto il mostro: " + mostroVincitore.getNomeMostro());
+                System.out.println(ANSI.RED + ANSI.BOLD+"Il vincitore è:" + mostroVincitore.getNomeMostro()+ ANSI.RESET);
+            } 
         }
 
         return true;
