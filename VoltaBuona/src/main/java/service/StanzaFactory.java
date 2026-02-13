@@ -10,32 +10,27 @@ import domain.Oggetto;
 import domain.Stanza;
 import service.impl.ArmaServiceImpl;
 import service.impl.ArmaturaServiceImpl;
-import service.impl.MostroServiceImpl;
-import service.impl.NPCServiceImpl;
-import service.impl.PassaggioSegretoServiceImpl;
 import service.impl.PozioneServiceImpl;
 import service.impl.RandomSingleton;
 import service.impl.TesoroServiceImpl;
 import service.impl.TrappolaServiceImpl;
-
 
 public class StanzaFactory {
 
     private Random random = new Random();
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
 
-
     public Stanza creaStanza(int id, int x, int y) {
-
+        Stanza stanza = null;
         int[][] coord = {{x, y}};
         boolean stato = false; // false = non visitata, true = visitata
         List<Oggetto> oggetti = generaOggettiCasuali();
         List<Evento> eventi = generaEventiCasuali();
         Chiave chiave = null;
         boolean bloccata = generaRichiestaChiave(x, y);
-    
+        boolean uscitaVittoria = stanza.isUscitaVittoria();
 
-        Stanza stanza = new Stanza(id, coord, stato, oggetti, eventi, chiave, bloccata);
+        stanza = new Stanza(id, coord, stato, oggetti, eventi, chiave, bloccata, uscitaVittoria);
         if (stanza.getListaEventiAttivi() != null) {
             for (Evento evento : stanza.getListaEventiAttivi()) {
                 if (evento != null) {
@@ -111,12 +106,12 @@ public class StanzaFactory {
         if ((x == 0 && y == 0) || (x == 1 && y == 0) || (x == 0 && y == 1)) {
             return false;
         }
-        
+
         // per le altre stanze random true/false
         //  return rnd.nextInt(2) == 1;
         double probabilitaBloccata = 0.25;
         return random.nextDouble() < probabilitaBloccata;
-    
+
     }
 
     public Chiave creaChiavePerStanza(int stanzaId) {

@@ -37,6 +37,10 @@ public class DungeonFactory {
             }
         }
         dungeon.collegaAdiacenti();
+        Stanza stanzaVittoria = dungeon.getStanza(righe, colonne);
+        if (stanzaVittoria != null && stanzaVittoria.isUscitaVittoria()) {
+            stanzaVittoria.setUscitaVittoria(true);
+        }
 
         // Si posizionano le chiavi per le stanze bloccate in altre stanze casuali
         List<Stanza> tutteStanze = new ArrayList<>(dungeon.getMappaStanze().values());

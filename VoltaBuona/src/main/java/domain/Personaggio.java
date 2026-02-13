@@ -25,6 +25,7 @@ public class Personaggio implements Serializable {
     private int turniDaSaltare;
     private Arma armaEquippaggiata;
     private int portafoglioPersonaggio;
+    private boolean vincitore;
 
     public Personaggio(Arma armaEquippaggiata, int puntiDifesa, int esperienza, int id, int livello, String nomePersonaggio, Stanza posizioneCorrente, boolean protetto, int puntiMana, int puntiVita, String statoPersonaggio, int turniAvvelenato, int turniCongelato, int turniStordito, int turnoProtetto, Zaino zaino, int portafoglioPersonaggio) {
 
@@ -137,6 +138,14 @@ public class Personaggio implements Serializable {
 
     public void setEsperienza(int esperienza) {
         this.esperienza = esperienza;
+    }
+
+    public boolean isVincitore() {
+        return vincitore;
+    }
+
+    public void setVincitore(boolean vincitore) {
+        this.vincitore = vincitore;
     }
 
     /**

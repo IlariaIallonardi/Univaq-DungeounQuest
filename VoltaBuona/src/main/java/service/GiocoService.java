@@ -6,9 +6,11 @@ import java.util.List;
 import domain.Dungeon;
 import domain.Evento;
 import domain.Giocatore;
+import domain.Gioco;
 import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
+import domain.StatoGioco;
 import domain.Trappola;
 import domain.Zaino;
 import service.impl.RandomSingleton;
@@ -23,6 +25,7 @@ public class GiocoService {
     private TurnoService turnoService;
     private GiocatoreService giocatoreService;
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
+    private Gioco gioco;
 
     private int turnoCorrente = 0;
 
@@ -33,33 +36,32 @@ public class GiocoService {
         this.dungeonFactory = dungeonFactory;
     }
 
-    public GiocoService(DungeonFactory dungeonFactory){
+    public GiocoService(DungeonFactory dungeonFactory) {
         this.dungeonFactory = dungeonFactory;
-    } 
+    }
 
     // Costruttore per compatibilità PassaggioSegretoServiceImpl
     public GiocoService() {
         this.dungeonFactory = null;
     }
 
-
-
-
-  public <T extends Personaggio> void avviaPartita(List<T> personaggi) {
-      this.dungeon = dungeonFactory.creaDungeon(); 
+    public <T extends Personaggio> void avviaPartita(List<T> personaggi) {
+        this.dungeon = dungeonFactory.creaDungeon();
 
         Stanza start = dungeon.getStanza(0, 0);
-        if (start != null) start.setStatoStanza(true);
+        if (start != null) {
+            start.setStatoStanza(true);
+        }
 
         for (Personaggio p : personaggi) {
             p.setPosizioneCorrente(start);
         }
     }
 
-    
-    public Dungeon getDungeon() { return dungeon; }
+    public Dungeon getDungeon() {
+        return dungeon;
+    }
 
-    
     public List<Giocatore> getGiocatori() {
         return giocatori;
     }
@@ -166,11 +168,15 @@ public class GiocoService {
                 System.out.println(" " + "Attivazione trappola" + " " + consumaTurno);
 
             }
+            if (corrente != null && corrente.isUscitaVittoria()) {
+                System.out.println("Hai raggiunto l'uscita!" + personaggio.getNomePersonaggio() + "sei il vincitore!");
+                gioco.setStatoGioco(StatoGioco.CONCLUSO);
+                personaggio.setVincitore(true);
+
+            }
 
         }
         return true;
     }
-
-    
 
 }

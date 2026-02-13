@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 public class Stanza implements Serializable {
 
     private int id;
@@ -17,9 +18,10 @@ public class Stanza implements Serializable {
     private List<Evento> listaEventi = new ArrayList<>();
     private Chiave chiaveRichiesta;
     private boolean bloccata;
+    private boolean uscitaVittoria;
 
     public Stanza(int id, int[][] coordinate, boolean statoStanza, List<Oggetto> inventario,
-            List<Evento> listaEventi, Chiave chiaveRichiesta, boolean bloccata) {
+            List<Evento> listaEventi, Chiave chiaveRichiesta, boolean bloccata, boolean uscitaVittoria) {
         this.id = id;
         this.coordinate = coordinate;
         this.statoStanza = statoStanza;
@@ -28,6 +30,7 @@ public class Stanza implements Serializable {
         this.listaEventi = listaEventi;
         this.chiaveRichiesta = chiaveRichiesta;
         this.bloccata = bloccata;
+        this.uscitaVittoria = uscitaVittoria;
 
     }
 
@@ -131,6 +134,14 @@ public class Stanza implements Serializable {
         this.bloccata = bloccata;
     }
 
+    public boolean isUscitaVittoria() {
+        return uscitaVittoria;
+    }
+
+    public void setUscitaVittoria(boolean uscitaVittoria) {
+        this.uscitaVittoria = uscitaVittoria;
+    }
+
     @Override
     public String toString() {
         Stanza stanza = this;
@@ -144,28 +155,28 @@ public class Stanza implements Serializable {
     public void rimuoviPersonaggio(Personaggio p) {
         listaPersonaggi.remove(p);
     }
-  /**
-   * Rimuove un evento dalla stanza. 
-   * Restituisce true se l'evento è stato rimosso con successo, false altrimenti.
-   */
+
+    /**
+     * Rimuove un evento dalla stanza. Restituisce true se l'evento è stato
+     * rimosso con successo, false altrimenti.
+     */
     public boolean rimuoviEvento(Evento evento) {
-    
-        Iterator <Evento> iteratore = listaEventi.iterator();
+
+        Iterator<Evento> iteratore = listaEventi.iterator();
         while (iteratore.hasNext()) {
             Evento eventoCorrente = iteratore.next();
-           
+
             if (eventoCorrente == evento || eventoCorrente.getId() == evento.getId()) {
                 Stanza posizioneEvento = evento.getPosizioneCorrente();
                 if (posizioneEvento == null || posizioneEvento.getId() == this.id) {
                     iteratore.remove();
-                 
+
                     return true;
-            
-                  
+
                 }
             }
         }
 
-       return false;
+        return false;
     }
 }
