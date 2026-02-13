@@ -45,6 +45,10 @@ public class GiocoService {
     public GiocoService() {
         this.dungeonFactory = null;
     }
+    
+    
+
+  
 
     public <T extends Personaggio> void avviaPartita(List<T> personaggi) {
         this.dungeon = dungeonFactory.creaDungeon();

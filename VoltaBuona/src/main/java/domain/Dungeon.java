@@ -64,12 +64,12 @@ public class Dungeon implements  Serializable{
      * @param y coordinata y
      * @return la stanza presente nella posizione (x,y) o null se non esiste
     */
-    public Stanza getStanza(int x, int y) { 
+    public Stanza getStanza(int x, int y) {
         if (!esisteStanza(x, y)) {
             return null;
         }
         return stanzeMappa.get(scriviCoordinate(x, y));
-    }
+             }
 
     public Map<String, Stanza> getMappaStanze() {
         return stanzeMappa;
@@ -82,5 +82,5 @@ public class Dungeon implements  Serializable{
     public int getColonne() {
         return colonne;
     }
-   
+    
 }

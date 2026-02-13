@@ -23,7 +23,11 @@ public class NPCServiceImpl implements PersonaIncontrataService {
     private final ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
     private TurnoService turnoService;
-    private FileService fileService=new FileService();
+    private FileService fileService;
+
+    public NPCServiceImpl() { }
+
+  
 
     public boolean nomeVenditore(String nome) {
         if (nome == null) {
@@ -37,7 +41,9 @@ public class NPCServiceImpl implements PersonaIncontrataService {
      * Lista di oggetti che potrà vendere l'npc
      */
     public void popolaArticoliVenditore(NPC venditore) {
-
+        if (venditore == null) {
+            throw new exception.DungeonException("NPC venditore nullo passato a popolaArticoliVenditore.");
+        }
         if (venditore.getArticoli().isEmpty()) {
             int numeroCasualeOggetti = randomGenerale.prossimoNumero(1, 4);
             for (int i = 0; i < numeroCasualeOggetti; i++) {
@@ -51,15 +57,20 @@ public class NPCServiceImpl implements PersonaIncontrataService {
                     default ->
                         oggettoVenditore = new PozioneServiceImpl().creaOggettoCasuale();
                 }
+                if (oggettoVenditore == null) {
+                    throw new exception.DungeonException("Oggetto nullo generato per il venditore.");
+                }
                 venditore.getArticoli().add(oggettoVenditore);
             }
         }
     }
 
     public String parla(Personaggio personaggio, NPC npc) {
-
+        if (personaggio == null || npc == null) {
+            throw new exception.DungeonException("Personaggio o NPC nullo passato a parla().");
+        }
         if (npc.haInteragito()) {
-            System.out.println("\nL'NPC " + npc.getNomeNPC() + " ti ha già parlato.");
+            System.out.println("" + npc.getNomeNPC() + " ti ha già parlato.");
             return null;
         }
         System.out.println(npc.proponiRebus());
@@ -81,10 +92,12 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             System.out.println("\nRisposta corretta!");
             TesoroServiceImpl tesoroService = new TesoroServiceImpl();
             Oggetto oggetto = tesoroService.creaOggettoCasuale();
+            if (oggetto == null) {
+                throw new exception.DungeonException("Oggetto nullo generato come ricompensa dall'NPC.");
+            }
             System.out.println("L’NPC ti dona: " + oggetto.getNome());
 
             if (oggetto instanceof Tesoro tesoro) {
-
                 boolean applicato = tesoro.eseguiEffetto(personaggio);
                 if (applicato) {
                     System.out.println("Hai guadagnato " + tesoro.getValore() + " monete. Saldo ora: " + personaggio.getPortafoglioPersonaggio());
@@ -102,12 +115,12 @@ public class NPCServiceImpl implements PersonaIncontrataService {
                         zainoService.èPieno(zaino, stanza, oggetto, personaggio);
                     }
                 } else {
-                    System.out.println("Errore: zaino non disponibile per il personaggio.");
+                    throw new exception.DungeonException("Zaino non disponibile per il personaggio.");
                 }
             }
 
             npc.setHaInteragito(true);
-            fileService.writeLog(personaggio.getNomePersonaggio() + " ha risposto correttamente al rebus di " + npc.getNomeNPC() + " e ha ricevuto un dono.");
+            FileService.getInstance().writeLog(personaggio.getNomePersonaggio() + " ha risposto correttamente al rebus di " + npc.getNomeNPC() + " e ha ricevuto un dono.");
         } else {
             System.out.println("\nRisposta errata. L’NPC non ti dona nulla.");
         }
@@ -197,7 +210,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             } else {
                 System.out.println("Errore aggiunta oggetto allo zaino.");
             }
-                fileService.writeLog(personaggio.getNomePersonaggio() + " ha scelto di acquistare: " + oggettoScelto.getNome() + " per " + prezzo + " monete - Acquisto riuscito: " + aggiungi);
+                FileService.getInstance().writeLog(personaggio.getNomePersonaggio() + " ha scelto di acquistare: " + oggettoScelto.getNome() + " per " + prezzo + " monete - Acquisto riuscito: " + aggiungi);
         }
     }
 

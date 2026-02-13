@@ -5,6 +5,7 @@ import java.util.List;
 import domain.Chiave;
 import domain.Oggetto;
 import domain.Stanza;
+import exception.DungeonException;
 import service.OggettoService;
 
 public class ChiaveServiceImpl implements OggettoService {
@@ -34,10 +35,11 @@ public class ChiaveServiceImpl implements OggettoService {
         return creaOggettoCasualeinStanza(null);
     }
 
-    public Oggetto creaOggettoCasualeinStanza(Integer stanzaId) {
+    public Oggetto creaOggettoCasualeinStanza(Integer stanzaId) throws DungeonException {
         
         if (stanzaId == null) {
-            return new domain.Chiave(-1, "Chiave_generica", "Chiave generica", true, false, false, -1);
+            throw new DungeonException("Errore: La stanzaId è null.");
+
         } else {
             int chiaveId = stanzaId;
             String nome = "Chiave_" + chiaveId;

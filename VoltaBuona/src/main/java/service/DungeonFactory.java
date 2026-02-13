@@ -8,7 +8,9 @@ import java.util.Map;
 import domain.Chiave;
 import domain.Dungeon;
 import domain.Stanza;
+import exception.DungeonException;
 import service.impl.RandomSingleton;
+import util.ANSI;
 
 public class DungeonFactory {
 
@@ -24,7 +26,7 @@ public class DungeonFactory {
 
     public Map<String, Stanza> stanzeMappa = new HashMap<>();
 
-    public Dungeon creaDungeon() {
+    public Dungeon creaDungeon() throws DungeonException {
         righe = randomGenerale.prossimoNumero(4, 7);
         colonne = randomGenerale.prossimoNumero(4, 7);
         Dungeon dungeon = new Dungeon(righe, colonne);
@@ -33,6 +35,9 @@ public class DungeonFactory {
         for (int y = 0; y < righe; y++) {
             for (int x = 0; x < colonne; x++) {
                 Stanza stanza = stanzaFactory.creaStanza(contatoreStanza++, x, y);
+                if (stanza == null) {
+                    throw new exception.DungeonException("La stanza creata è nulla alle coordinate: (" + x + ", " + y + ")");
+                }
                 dungeon.setStanza(x, y, stanza);
             }
         }
@@ -77,15 +82,13 @@ public class DungeonFactory {
             }
 
             // Controllo ulteriore.
-            if (stanzeSbloccate.isEmpty()) {
-
-                for (Stanza s : tutteStanze) {
-                    if (s.getId() != stanzaBloccata.getId()) {
-                        stanzeSbloccate.add(s);
-                    }
-                }
+            if (!stanzeSbloccate.isEmpty()) {
+                int indice = randomGenerale.prossimoNumero(0, stanzeSbloccate.size() - 1);
+                Stanza stanzaPerChiave = stanzeSbloccate.get(indice);
+                stanzaPerChiave.aggiungiOggetto(chiave); 
+            } else {
+                System.out.println("Attenzione: nessuna stanza disponibile per posizionare la chiave di stanza " + stanzaBloccata.getId());
             }
-
         }
 
         this.dungeon = dungeon;
@@ -105,9 +108,7 @@ public class DungeonFactory {
 
     // Stampiamo la mappa.
     public void stampaMappa() {
-        System.out.println("Mappa del Dungeon:");
-
-        System.out.println("Dimensioni: " + righe + "x" + colonne);
+        System.out.println(ANSI.GREEN + ANSI.BOLD + "Mappa del Dungeon.Dimensioni: " + righe + "x" + colonne + ANSI.RESET);
         for (int y = 0; y < this.getRighe(); y++) {
             for (int x = 0; x < this.getColonne(); x++) {
 
@@ -115,13 +116,12 @@ public class DungeonFactory {
                 if (s == null) {
                     System.out.print("   ");
                 } else {
-                    System.out.print(s.getStatoStanza() == true ? " V " : " F ");
+                    System.out.print(s.getStatoStanza() == true ? ANSI.MAGENTA + " V " + ANSI.BLUE : " F " + ANSI.RESET);
                 }
 
             }
             System.out.println();
         }
-        System.out.println("---------------------\n");
         System.out.println();
 
     }

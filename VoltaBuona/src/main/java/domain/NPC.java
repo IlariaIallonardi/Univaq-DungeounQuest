@@ -65,7 +65,7 @@ public class NPC extends PersonaIncontrata {
     }
 
     public String proponiRebus() {
-        return "\nNPC " + getTipoPersonaIncontrata() + " ti chiede: \n " + rebus;
+        return   rebus;
     }
 
     public boolean verificaRisposta(String rispostaGiocatore) {

@@ -6,6 +6,7 @@ import domain.Paladino;
 import domain.Personaggio;
 import domain.Stanza;
 import domain.Zaino;
+import exception.DungeonException;
 import service.PersonaggioService;
 import util.ANSI;
 
@@ -43,9 +44,13 @@ public class PaladinoServiceImpl implements PersonaggioService {
     }
 
     @Override
-    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
+    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento)throws DungeonException {
 
         Paladino paladino = (Paladino) personaggio;
+
+        if (paladino.getPosizioneCorrente() == null || mostro.getPosizioneCorrente() == null) {
+            throw new DungeonException("Il paladino o il mostro non hanno una posizione valida.");
+        }
 
         if (paladino.getPosizioneCorrente().equals(mostro.getPosizioneCorrente())) {
 

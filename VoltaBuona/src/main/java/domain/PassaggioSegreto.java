@@ -24,6 +24,9 @@ public class PassaggioSegreto extends Evento {
     }
 
     public void setDestinazione(Stanza destinazione) {
+        if (destinazione == null) {
+            throw new exception.DungeonException("Destinazione nulla per il passaggio segreto.");
+        }
         this.destinazione = destinazione;
     }
 

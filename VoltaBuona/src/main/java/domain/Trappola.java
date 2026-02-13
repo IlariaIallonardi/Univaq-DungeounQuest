@@ -21,6 +21,9 @@ public class Trappola extends Evento {
     }
 
     public void setEffettoTrappola(Effetto effetto) {
+        if (effetto == null) {
+            throw new exception.DungeonException("Effetto nullo nella trappola.");
+        }
         this.effetto = effetto;
     }
 

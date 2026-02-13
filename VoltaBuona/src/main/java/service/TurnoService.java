@@ -29,6 +29,7 @@ import service.impl.TrappolaServiceImpl;
 import util.ANSI;
 
 public class TurnoService {
+    private boolean iniziativaCalcolata = false;
 
     private GiocoService giocoService;
     private DungeonFactory dungeonFactory;
@@ -37,27 +38,31 @@ public class TurnoService {
     private List<String> ordineTurno = new ArrayList<>();
     private final RandomSingleton randomGenerale = RandomSingleton.getInstance();
     private final ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
-    private final FileService fileService = new FileService();
-    private Turno turno=new Turno();
+    private FileService fileService;
+    private Turno turno = new Turno();
 
     public void setTurno(Turno turno) {
         this.turno = turno;
     }
 
     public TurnoService(GiocoService giocoService,
-            PersonaggioService personaggioService,
-            EventoService eventoService) {
+                        PersonaggioService personaggioService,
+                        EventoService eventoService,
+                        FileService fileService) {
         this.giocoService = giocoService;
         this.personaggioService = personaggioService;
         this.eventoService = eventoService;
+
     }
 
-    public TurnoService(DungeonFactory dungeonFactory) {
+    public TurnoService(DungeonFactory dungeonFactory, FileService fileService) {
         this.dungeonFactory = dungeonFactory;
+        this.fileService = fileService;
     }
 
     public TurnoService(PersonaggioService personaggioService) {
         this.personaggioService = personaggioService;
+
     }
 
     public void setGiocoService(GiocoService giocoService) {
@@ -68,9 +73,9 @@ public class TurnoService {
         this.dungeonFactory = dungeonFactory;
     }
 
-    public TurnoService() {
-        return;
-    }
+   
+    
+    public TurnoService(){}
 
     /**
      * Calcola l'ordine di iniziativa dei giocatori in base ad un tiro randomico
@@ -100,26 +105,27 @@ public class TurnoService {
      *
      */
     public <T extends Personaggio> void iniziaNuovoTurno(List<T> partecipanti) {
-         if (partecipanti == null || partecipanti.isEmpty()) {
-        System.out.println("Nessun partecipante al turno.");
-        return;
-       }
-
-         // Stampa la mappa all'inizio del turno/round
-          if (dungeonFactory != null) {
-        dungeonFactory.stampaMappa();
+        if (partecipanti == null || partecipanti.isEmpty()) {
+            System.out.println("Nessun partecipante al turno.");
+            return;
         }
 
-       List<T> ordine;
-       if (this.turno != null && this.turno.getGiocatori() != null && !this.turno.getGiocatori().isEmpty()) {
-           // usa l'ordine salvato nel Turno invece di ricalcolare
-           ordine = (List<T>) new ArrayList<>(this.turno.getGiocatori());
-       } else {
-           ordine = (List<T>) calcolaOrdineIniziativa((List<Personaggio>) partecipanti);
-           // salva l'ordine nel turno corrente per persistenza
-           if (this.turno == null) this.turno = new Turno();
-           this.turno.setGiocatori((List<Personaggio>) ordine);
-       }
+        // Stampa la mappa all'inizio del turno/round
+        if (dungeonFactory != null) {
+            dungeonFactory.stampaMappa();
+        }
+
+        List<T> ordine;
+        if (!iniziativaCalcolata) {
+            ordine = (List<T>) calcolaOrdineIniziativa((List<Personaggio>) partecipanti);
+            iniziativaCalcolata = true;
+            if (this.turno == null) this.turno = new Turno();
+            this.turno.setGiocatori((List<Personaggio>) ordine);
+        } else if (this.turno != null && this.turno.getGiocatori() != null && !this.turno.getGiocatori().isEmpty()) {
+            ordine = (List<T>) new ArrayList<>(this.turno.getGiocatori());
+        } else {
+            ordine = (List<T>) partecipanti;
+        }
 
     for (Personaggio personaggio : ordine) {
         if (personaggio == null) continue;
@@ -143,19 +149,13 @@ public class TurnoService {
     
 
         // Stampa informazioni dello stato all'inizio del turno
-        System.out.println("\nTurno di: " + personaggio.getNomePersonaggio());
-        System.out.println("Punti vita: " + personaggio.getPuntiVita()
-                + " | Difesa: " + personaggio.getPuntiDifesa()
-                + " | Punti Mana: " + personaggio.getPuntiMana()
-                + " | Attacco: " + personaggio.getAttacco()
-                + " | Stato: " + personaggio.getStatoPersonaggio()
-                + "\n | Turni avvelenato: " + personaggio.getTurniAvvelenato()
-                + " Turni stordito: " + personaggio.getTurniStordito()
+        System.out.println("\nTurno di " + personaggio.getNomePersonaggio() +": "+"Punti vita: " + personaggio.getPuntiVita()  + " | Difesa: " + personaggio.getPuntiDifesa() + " | Punti Mana: " + personaggio.getPuntiMana() + " | Attacco: " + personaggio.getAttacco()  + " | Stato: " + personaggio.getStatoPersonaggio()  + " | Turni avvelenato: " + personaggio.getTurniAvvelenato()
+                + "\n| Turni stordito: " + personaggio.getTurniStordito()
                 + " | Salto turno rimanenti: " + personaggio.getTurniDaSaltare()
-                + "\n | Portafoglio: " + personaggio.getPortafoglioPersonaggio()
-                + "\nLivello: " + personaggio.getLivello()
-                + " | Esperienza: " + personaggio.getEsperienza() + "\n"
-                + "Zaino: " +  personaggio.getZaino().getCapienza());
+                + " | Portafoglio: " + personaggio.getPortafoglioPersonaggio()
+                + " | Livello: " + personaggio.getLivello()
+                + " | Esperienza: " + personaggio.getEsperienza() 
+                + " |Zaino: " +  personaggio.getZaino().getCapienza());
 
         // Protezione compagno per Guerriero/Paladino
         if ((personaggio instanceof Guerriero) || (personaggio instanceof Paladino)) {
@@ -309,9 +309,7 @@ public class TurnoService {
         }
         System.out.println("4) Usare un oggetto dallo zaino");
         System.out.println("5) Controlla il portafoglio");
-        if (personaggio instanceof Arciere) {
-            System.out.println("6) Sei un Arciere, puoi attaccare mostri in stanze adiacenti!");
-        }
+      
         System.out.println("0) Passa il turno");
 
         int scelta;
@@ -376,7 +374,9 @@ public class TurnoService {
             return eventoService;
         }
         if (evento instanceof domain.Mostro) {
-            return new MostroServiceImpl();
+            MostroServiceImpl mostroService = new MostroServiceImpl();
+            mostroService.setCombattimentoService(new CombattimentoService(mostroService, null, this));
+            return mostroService;
         }
         if (evento instanceof domain.Trappola) {
             return new TrappolaServiceImpl();
@@ -681,10 +681,10 @@ public class TurnoService {
         String nomePersonaggio = personaggio.getNomePersonaggio();
         boolean isBot = nomePersonaggio != null && (nomePersonaggio.startsWith("BOT_") || nomePersonaggio.startsWith("Bot-") || nomePersonaggio.toLowerCase().contains("bot"));
         if (isBot) {
-            scelta = randomGenerale.prossimoNumero(1, inventario.size()) - 1;
+            scelta = randomGenerale.prossimoNumero(0, inventario.size());
             System.out.println(personaggio.getNomePersonaggio() + " (bot) sceglie: " + (scelta + 1));
         } else {
-            scelta = scannerGenerale.leggiInteroIntervallo(1, inventario.size()) - 1;
+            scelta = scannerGenerale.leggiInteroIntervallo(0, inventario.size()) ;
         }
 
         if (scelta == 0) {

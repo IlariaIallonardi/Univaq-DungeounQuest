@@ -9,10 +9,16 @@ import service.impl.RandomSingleton;
 import service.impl.ScannerSingleton;
 
 public class ZainoService {
-        private RandomSingleton randomGenerale = RandomSingleton.getInstance();
-        private ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
-        private FileService fileService = new FileService();
+    private RandomSingleton randomGenerale = RandomSingleton.getInstance();
+    private ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
+    private FileService fileService;
 
+
+
+    public ZainoService() {
+    
+ }
+    
 
 
       public boolean aggiungiOggettoAZaino(Zaino zaino, Oggetto oggetto) {
@@ -98,7 +104,12 @@ public class ZainoService {
         return true;
     }
 
+ public ZainoService(FileService fileService) {
+            this.fileService = fileService;
+        }
+
+
  
-     
     
     }
+        

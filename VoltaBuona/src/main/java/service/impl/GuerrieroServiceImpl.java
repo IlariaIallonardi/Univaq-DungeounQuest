@@ -5,6 +5,7 @@ import domain.Guerriero;
 import domain.Mostro;
 import domain.Personaggio;
 import domain.Zaino;
+import exception.DungeonException;
 import service.PersonaggioService;
 import util.ANSI;
 
@@ -48,13 +49,13 @@ public class GuerrieroServiceImpl implements PersonaggioService {
      * @param combattimento
      */
     @Override
-    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
+    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) throws DungeonException {
 
         Guerriero guerriero = (Guerriero) personaggio;
         if (guerriero.getPosizioneCorrente() == null
                 || mostro.getPosizioneCorrente() == null) {
-            System.out.println("Il guerriero o il mostro non hanno una posizione valida.");
-            return 0;
+            throw new DungeonException("Il guerriero o il mostro non hanno una posizione valida.");
+            
         }
 
         if (guerriero.getPosizioneCorrente().equals(mostro.getPosizioneCorrente())) {

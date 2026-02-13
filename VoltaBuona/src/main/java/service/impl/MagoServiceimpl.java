@@ -7,6 +7,7 @@ import domain.Mostro;
 import domain.Personaggio;
 import domain.Stanza;
 import domain.Zaino;
+import exception.DungeonException;
 import service.PersonaggioService;
 import util.ANSI;
 
@@ -101,9 +102,13 @@ public class MagoServiceImpl implements PersonaggioService {
      * @return il danno inflitto al mostro
      */
     @Override
-    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
+    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) throws DungeonException {
 
         Mago mago = (Mago) personaggio;
+
+        if (mago.getPosizioneCorrente() == null || mostro.getPosizioneCorrente() == null) {
+            throw new DungeonException("Il mago o il mostro non hanno una posizione valida.");
+        }
 
         if (mago.getPosizioneCorrente().equals(mostro.getPosizioneCorrente())) {
 

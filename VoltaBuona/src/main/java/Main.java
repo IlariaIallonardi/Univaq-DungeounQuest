@@ -31,8 +31,10 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         Scanner scanner = new Scanner(System.in);
-
+        FileService fileService = new FileService();
+        fileService.setLogFileNome("partita.log");
         // FACTORY1
+
         StanzaFactory stanzaFactory = new StanzaFactory();
         DungeonFactory dungeonFactory = new DungeonFactory(stanzaFactory);
         List<Personaggio> partecipanti = new ArrayList<>();
@@ -40,7 +42,8 @@ public class Main {
         // SERVICE PRINCIPALE
         Gioco gioco = new Gioco(1, new ArrayList<>(), partecipanti, new ArrayList<>(), new ArrayList<>(), 0, StatoGioco.INIZIO, null, null);
         GiocatoreService giocatoreService= new GiocatoreService();
-        FileService fileService = new FileService();
+        // Imposta il file di log (puoi cambiare il nome se vuoi log separati per partita)
+        fileService.setLogFileNome("partita.log");
 
         boolean loaded = false;
         System.out.println("--- Gestione salvataggi ---");
@@ -49,53 +52,49 @@ public class Main {
         System.out.print("Scelta (1-2): ");
         String startChoice = scanner.nextLine().trim();
         if (startChoice.equals("1")) {
-            try {
-                java.util.List<String> salvataggi = fileService.listaSalvataggi();
-                if (salvataggi.isEmpty()) {
-                    System.out.println("Nessun salvataggio trovato. Inizializzo nuova partita.");
-                } else {
-                    System.out.println("Salvataggi disponibili:");
-                    for (int i = 0; i < salvataggi.size(); i++) {
-                        System.out.println(" " + (i + 1) + ") " + salvataggi.get(i));
-                    }
-                    System.out.print("Seleziona il numero del salvataggio da caricare (0 per annullare): ");
-                    String sel = scanner.nextLine().trim();
-                    try {
-                        int idx = Integer.parseInt(sel);
-                        if (idx > 0 && idx <= salvataggi.size()) {
-                            String fileName = salvataggi.get(idx - 1);
-                            try {
-                                gioco = fileService.caricaGioco(fileName);
-                                System.out.println("Partita caricata con successo da " + fileName);
-                                loaded = true;
-                            } catch (exception.InizializzaPartitaException e) {
-                                System.out.println("Errore durante il caricamento della partita: " + e.getMessage());
-                                System.out.println("Inizializzazione di una nuova partita.");
-                            }
-                        } else {
-                            System.out.println("Nessuna azione eseguita. Inizializzo nuova partita.");
-                        }
-                    } catch (NumberFormatException nfe) {
-                        System.out.print("Vuoi inserire il nome del file manualmente? (S/N): ");
-                        String yn = scanner.nextLine().trim().toLowerCase();
-                        if (yn.equals("s") || yn.equals("si")) {
-                            System.out.print("Inserisci il nome del file da caricare (es. 'partita_salvata.sav'): ");
-                            String fileName = scanner.nextLine().trim();
-                            try {
-                                gioco = fileService.caricaGioco(fileName);
-                                System.out.println("Partita caricata con successo da " + fileName);
-                                loaded = true;
-                            } catch (exception.InizializzaPartitaException e) {
-                                System.out.println("Errore durante il caricamento della partita: " + e.getMessage());
-                                System.out.println("Inizializzazione di una nuova partita.");
-                            }
-                        } else {
+            java.util.List<String> salvataggi = fileService.listaSalvataggi();
+            if (salvataggi.isEmpty()) {
+                System.out.println("Nessun salvataggio trovato. Inizializzo nuova partita.");
+            } else {
+                System.out.println("Salvataggi disponibili:");
+                for (int i = 0; i < salvataggi.size(); i++) {
+                    System.out.println(" " + (i + 1) + ") " + salvataggi.get(i));
+                }
+                System.out.print("Seleziona il numero del salvataggio da caricare (0 per annullare): ");
+                String sel = scanner.nextLine().trim();
+                try {
+                    int idx = Integer.parseInt(sel);
+                    if (idx > 0 && idx <= salvataggi.size()) {
+                        String fileName = salvataggi.get(idx - 1);
+                        try {
+                            gioco = fileService.caricaGioco(fileName);
+                            System.out.println("Partita caricata con successo da " + fileName);
+                            loaded = true;
+                        } catch (exception.InizializzaPartitaException e) {
+                            System.out.println("Errore durante il caricamento della partita: " + e.getMessage());
                             System.out.println("Inizializzazione di una nuova partita.");
                         }
+                    } else {
+                        System.out.println("Nessuna azione eseguita. Inizializzo nuova partita.");
+                    }
+                } catch (NumberFormatException nfe) {
+                    System.out.print("Vuoi inserire il nome del file manualmente? (S/N): ");
+                    String yn = scanner.nextLine().trim().toLowerCase();
+                    if (yn.equals("s") || yn.equals("si")) {
+                        System.out.print("Inserisci il nome del file da caricare (es. 'partita_salvata.sav'): ");
+                        String fileName = scanner.nextLine().trim();
+                        try {
+                            gioco = fileService.caricaGioco(fileName);
+                            System.out.println("Partita caricata con successo da " + fileName);
+                            loaded = true;
+                        } catch (exception.InizializzaPartitaException e) {
+                            System.out.println("Errore durante il caricamento della partita: " + e.getMessage());
+                            System.out.println("Inizializzazione di una nuova partita.");
+                        }
+                    } else {
+                        System.out.println("Inizializzazione di una nuova partita.");
                     }
                 }
-            } catch (IOException e) {
-                System.out.println("Impossibile leggere la cartella dei salvataggi: " + e.getMessage());
             }
         }
 
@@ -242,7 +241,7 @@ public class Main {
        
 
     
-        TurnoService turnoService = new TurnoService(dungeonFactory);
+        TurnoService turnoService = new TurnoService(dungeonFactory,fileService);
         GiocoService giocoService = new GiocoService(dungeonFactory);
         turnoService.setGiocoService(giocoService);
 
@@ -260,14 +259,15 @@ public class Main {
                 System.out.println(" - " + p.getNomePersonaggio());
             }
         } else {
-            ordine = turnoService.calcolaOrdineIniziativa(giocatori);
+
+            //ordine = turnoService.calcolaOrdineIniziativa(giocatori);
         }
         // salva l'ordine appena calcolato nel gioco in modo che venga preservato al salvataggio
-        if (ordine != null && !ordine.isEmpty()) {
+       /*  if (ordine != null && !ordine.isEmpty()) {
             domain.Turno t = new domain.Turno();
             t.setGiocatori(ordine);
             gioco.setTurno(t);
-        }
+        }*/
         // se abbiamo caricato un gioco con turno, comunichiamolo al TurnoService
         if (loaded && gioco.getTurno() != null) {
             turnoService.setTurno(gioco.getTurno());
@@ -288,7 +288,7 @@ public class Main {
                     System.out.print("Vuoi salvare la partita prima di uscire? (S/N): ");
                     String saveChoice = scanner.nextLine().trim().toLowerCase();
                     if (saveChoice.equals("s") || saveChoice.equals("si")) {
-                        FileService service = new FileService();
+                    
                         System.out.println("Opzioni salvataggio: 1) Inserisci nome file  2) Salva con nome automatico (o scrivi direttamente il nome file)");
                         System.out.print("Scelta (1-2 o nome file): ");
                         String opt = scanner.nextLine().trim();
@@ -313,7 +313,7 @@ public class Main {
 
                             if (nomeDaUsare != null) {
                                 if (!nomeDaUsare.endsWith(".sav")) nomeDaUsare = nomeDaUsare + ".sav";
-                                service.salvaGioco(gioco, nomeDaUsare);
+                                fileService.salvaGioco(gioco, nomeDaUsare);
                                 System.out.println("Partita salvata come '" + nomeDaUsare + "'. Percorso: " + Paths.get("salvataggi/" + nomeDaUsare).toAbsolutePath());
                             } 
                         } catch (exception.InizializzaPartitaException e) {
@@ -324,9 +324,9 @@ public class Main {
                 }
             } else {
                 boolean almenoVivo = false;
-                for (Personaggio p : ordine) {
+               /*  for (Personaggio p : ordine) {
                     if (p != null && !p.èMorto(p)) { almenoVivo = true; break; }
-                }
+                }*/
                 continua = almenoVivo;
             }
         }

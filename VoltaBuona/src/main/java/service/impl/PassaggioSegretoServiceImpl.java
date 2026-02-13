@@ -11,6 +11,7 @@ import domain.Personaggio;
 import domain.Stanza;
 import service.Direzione;
 import service.EventoService;
+import service.FileService;
 import service.GiocoService;
 import service.TurnoService;
 
@@ -19,7 +20,7 @@ public class PassaggioSegretoServiceImpl implements EventoService {
     private static final AtomicInteger ID_CONTATORE = new AtomicInteger(1);
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
     private ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
-
+   private FileService fileService;
     @Override
     public boolean attivaEvento(Personaggio personaggio, Evento evento) {
 
@@ -106,7 +107,7 @@ public class PassaggioSegretoServiceImpl implements EventoService {
                 }
 
                 System.out.println("Ti sei spostato. La stanza viene esplorata:");
-                new TurnoService((service.PersonaggioService) null).scegliAzione(personaggio);
+                new TurnoService().scegliAzione(personaggio);
                 return true;
             }
 

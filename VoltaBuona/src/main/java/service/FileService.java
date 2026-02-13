@@ -26,11 +26,36 @@ public class FileService {
 
  private static final String SALVA_GIOCO = "salvataggi/";
     private static final String CARTELLA_LOG = "logs/";
+     private static FileService instance;
 
-    public static Object getInstance() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public static FileService getInstance() {
+        if (instance == null) {
+            synchronized (FileService.class) {
+                if (instance == null) {
+                    instance = new FileService();
+                }
+            }
+        }
+        return instance;
     }
     private String logFileNome;
+
+    /**
+     * Imposta il nome del file di log.
+     * @param nomeFileLog nome del file di log (es. "partita.log")
+     */
+    public void setLogFileNome(String nomeFileLog) {
+        this.logFileNome = nomeFileLog;
+        // Crea la cartella dei log se non esiste
+        Path logDir = Paths.get(CARTELLA_LOG);
+        if (!Files.exists(logDir)) {
+            try {
+                Files.createDirectories(logDir);
+            } catch (IOException e) {
+                System.out.println("Errore durante la creazione della cartella dei log: " + e.getMessage());
+            }
+        }
+    }
      /**
      * Salva lo stato del gioco su un file.
      * 
@@ -86,7 +111,7 @@ public class FileService {
          * @return lista di nomi file (es. partita_salvata.sav)
          * @throws IOException se si verifica un errore di I/O.
          */
-        public List<String> listaSalvataggi() throws IOException {
+        public List<String> listaSalvataggi() {
             Path dir = Paths.get(SALVA_GIOCO);
             if (!Files.exists(dir)) {
                 return Collections.emptyList();
@@ -95,6 +120,8 @@ public class FileService {
                 return stream.filter(Files::isRegularFile)
                         .map(p -> p.getFileName().toString())
                         .collect(Collectors.toList());
+            } catch (IOException e) {
+                throw new exception.DungeonException("Errore durante la lettura dei file di salvataggio", e);
             }
         }
 
@@ -125,6 +152,11 @@ public class FileService {
             System.out.println("Errore durante la scrittura del file di log: " + e.getMessage());
         }
     }
+
+   
+  public FileService() {
+    setLogFileNome("partita.log");
+}
 
 
     

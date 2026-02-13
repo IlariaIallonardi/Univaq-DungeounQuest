@@ -10,6 +10,9 @@ import domain.Oggetto;
 import domain.Stanza;
 import service.impl.ArmaServiceImpl;
 import service.impl.ArmaturaServiceImpl;
+import service.impl.MostroServiceImpl;
+import service.impl.NPCServiceImpl;
+import service.impl.PassaggioSegretoServiceImpl;
 import service.impl.PozioneServiceImpl;
 import service.impl.RandomSingleton;
 import service.impl.TesoroServiceImpl;
@@ -19,9 +22,16 @@ public class StanzaFactory {
 
     private Random random = new Random();
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
+    private FileService fileService;
+
+    public StanzaFactory(FileService fileService) {
+        this.fileService = fileService;
+    }
+    public StanzaFactory() {
+    }
 
     public Stanza creaStanza(int id, int x, int y) {
-        Stanza stanza = null;
+        Stanza stanza = new Stanza();
         int[][] coord = {{x, y}};
         boolean stato = false; // false = non visitata, true = visitata
         List<Oggetto> oggetti = generaOggettiCasuali();
@@ -84,16 +94,18 @@ public class StanzaFactory {
                     eventi.add(new TrappolaServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 1:
-                    eventi.add(new TrappolaServiceImpl().aggiungiEventoCasuale());
+                    MostroServiceImpl mostroService = new MostroServiceImpl();
+                    mostroService.setCombattimentoService(new CombattimentoService(mostroService, null, null));
+                    eventi.add(mostroService.aggiungiEventoCasuale());
                     break;
                 case 2:
-                    eventi.add(new TrappolaServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 3:
-                    eventi.add(new TrappolaServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
                     break;
                 default:
-                    eventi.add(new TrappolaServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
                     break;
             }
         }

@@ -1,7 +1,6 @@
 package service;
 
 import java.util.Map;
-import java.util.Scanner;
 
 import domain.Arciere;
 import domain.Combattimento;
@@ -28,9 +27,8 @@ public class CombattimentoService {
     TurnoService turnoService;
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
     private ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
-    private static final Scanner scanner = new Scanner(System.in);
     private static int difficoltaMostro = 0;
-    private FileService fileService;
+    private FileService fileService= FileService.getInstance();
 
     public CombattimentoService(MostroServiceImpl mostroService, PersonaggioService personaggioService, TurnoService turnoService) {
         this.mostroService = mostroService;
@@ -55,9 +53,11 @@ public class CombattimentoService {
     }
 
     public Object iniziaCombattimento(Personaggio personaggio, Mostro mostro, Stanza stanza) {
-        if (personaggio == null || mostro == null) {
-            System.out.println("Combattimento non valido.");
-            return false;
+        if (personaggio == null) {
+            throw new exception.DungeonException("Personaggio nullo passato a iniziaCombattimento.");
+        }
+        if (mostro == null) {
+            throw new exception.DungeonException("Mostro nullo passato a iniziaCombattimento.");
         }
 
         System.out.println("\nInizia il combattimento: " + personaggio.getNomePersonaggio() + " VS " + mostro.getNomeMostro());
@@ -181,12 +181,21 @@ public class CombattimentoService {
             scelta = scannerGenerale.leggiIntero();
         }
 
-        if (scelta == 0) {
-            System.out.println("Combattimento annullato.");
-            combattimento.setInCorso(false);
-            turnoService.terminaTurnoCorrente(personaggio);
-            return;
-        }
+     if (scelta == 0) {
+    Stanza stanza = personaggio.getPosizioneCorrente();
+    Evento evento = combattimento.getEventoMostro();
+
+    System.out.println("Combattimento annullato.");
+
+    if (evento != null) {
+        stanza.rimuoviEvento(evento); 
+    }
+
+    combattimento.setInCorso(false);
+    turnoService.terminaTurnoCorrente(personaggio);
+    return;
+}
+
 
         if (scelta == 1) {
             System.out.println("Hai scelto di attaccare.");
@@ -274,7 +283,11 @@ public class CombattimentoService {
             turnoService.gestisciUsoOggettoDaZaino(personaggio);
 
         }
-        fileService.writeLog(personaggio.getNomePersonaggio() + " ha scelto l'azione: " + scelta);
+        try {
+            fileService.writeLog(personaggio.getNomePersonaggio() + " ha scelto l'azione: " + scelta);
+        } catch (Exception e) {
+            throw new exception.DungeonException("Errore durante la scrittura del log azione combattimento", e);
+        }
         return;
     }
 
@@ -290,10 +303,18 @@ public class CombattimentoService {
             evento.setFineEvento(true);
             evento.setInizioEvento(false);
             if(vincitore instanceof Personaggio personaggioVincitore) {
-                fileService.writeLog("HA VINTOOOO!! IL VINCITORE è:" + personaggioVincitore.getNomePersonaggio());
+                try {
+                    fileService.writeLog("HA VINTOOOO!! IL VINCITORE è:" + personaggioVincitore.getNomePersonaggio());
+                } catch (Exception e) {
+                    throw new exception.DungeonException("Errore durante la scrittura del log del vincitore (personaggio)", e);
+                }
                 System.out.println(ANSI.RED + ANSI.BOLD+"Il vincitore è:" + personaggioVincitore.getNomePersonaggio()+ ANSI.RESET);
             } else if (vincitore instanceof Mostro mostroVincitore) {
-                fileService.writeLog("Ha vinto il mostro: " + mostroVincitore.getNomeMostro());
+                try {
+                    fileService.writeLog("Ha vinto il mostro: " + mostroVincitore.getNomeMostro());
+                } catch (Exception e) {
+                    throw new exception.DungeonException("Errore durante la scrittura del log del vincitore (mostro)", e);
+                }
                 System.out.println(ANSI.RED + ANSI.BOLD+"Il vincitore è:" + mostroVincitore.getNomeMostro()+ ANSI.RESET);
             } 
         }
@@ -356,7 +377,6 @@ public class CombattimentoService {
         if (this.personaggioService != null) {
             return this.personaggioService;
         }
-
         if (personaggio instanceof domain.Guerriero) {
             return new GuerrieroServiceImpl();
         }
@@ -369,7 +389,6 @@ public class CombattimentoService {
         if (personaggio instanceof domain.Paladino) {
             return new PaladinoServiceImpl();
         }
-
-        return new GuerrieroServiceImpl();
+        throw new exception.DungeonException("Tipo di personaggio non riconosciuto in getServicePerPersonaggio.");
     }
 }

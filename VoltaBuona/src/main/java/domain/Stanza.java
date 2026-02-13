@@ -33,6 +33,8 @@ public class Stanza implements Serializable {
         this.uscitaVittoria = uscitaVittoria;
 
     }
+    public Stanza() {
+    }
 
     public int getId() {
         return id;
@@ -99,15 +101,17 @@ public class Stanza implements Serializable {
     }
 
     public void rimuoviOggetto(Oggetto o) {
-        if (o != null) {
-            oggettiPresenti.remove(o);
+        if (o == null) {
+            throw new exception.DungeonException("Tentativo di rimuovere un oggetto nullo dalla stanza.");
         }
+        oggettiPresenti.remove(o);
     }
 
     public void aggiungiOggetto(Oggetto o) {
-        if (o != null) {
-            oggettiPresenti.add(o);
+        if (o == null) {
+            throw new exception.DungeonException("Tentativo di aggiungere un oggetto nullo alla stanza.");
         }
+        oggettiPresenti.add(o);
     }
 
     public void esploraStanza(Giocatore g) {

@@ -9,6 +9,7 @@ import domain.Mostro;
 import domain.Mostro.TipoAttaccoMostro;
 import domain.Personaggio;
 import domain.Stanza;
+import exception.DungeonException;
 import service.CombattimentoService;
 import service.EffettoService;
 import service.FileService;
@@ -19,29 +20,40 @@ public class MostroServiceImpl implements PersonaIncontrataService {
 
     private static final AtomicInteger ID_CONTATORE = new AtomicInteger(200);
     private final RandomSingleton random = RandomSingleton.getInstance();
-    private FileService fileService=new FileService();  
+    private FileService fileService= FileService.getInstance();
 
     private CombattimentoService combattimentoService;
+
+    public void setCombattimentoService(CombattimentoService combattimentoService) {
+        this.combattimentoService = combattimentoService;
+    }
+  public MostroServiceImpl(CombattimentoService combattimentoService, EffettoService effettoService) {
+        // Crea un CombattimentoServiceImpl che usa questa istanza di MostroServiceImpl,per evitare che il combattimento sia null.
+        this.combattimentoService = new CombattimentoService(this, null, new TurnoService());
+        this.effettoService = new EffettoService();
+    }
+   
 
     /**
      * Calcolo del danno che il mostro infligge al personaggio.
      */
     public static int dannoBase(Mostro mostro, Personaggio personaggio) {
-        if (mostro == null || personaggio == null) {
-            return 0;
+        if (mostro == null) {
+            throw new exception.DungeonException("Mostro nullo passato a dannoBase.");
+        }
+        if (personaggio == null) {
+            throw new exception.DungeonException("Personaggio nullo passato a dannoBase.");
         }
         int attaccoMostro = mostro.getTipoAttaccoMostro().getDannoTipoMostro();
-
         return attaccoMostro;
     }
 
     public EffettoService effettoService;
 
-    public MostroServiceImpl() {
-        // Crea un CombattimentoServiceImpl che usa questa istanza di MostroServiceImpl,per evitare che il combattimento sia null.
-        this.combattimentoService = new CombattimentoService(this, null, new TurnoService());
-        this.effettoService = new EffettoService();
-    }
+    
+    public MostroServiceImpl() {}
+
+   
 
     /**
      * Determina il tipo di effetto del mostro sul personaggio.
@@ -50,11 +62,13 @@ public class MostroServiceImpl implements PersonaIncontrataService {
      * @param personaggio Il personaggio bersaglio dell'attacco.
      *
      */
-    public void impostaTipoAttaccoEApplicaEffetto(Mostro mostro, Personaggio personaggio) {
+    public void impostaTipoAttaccoEApplicaEffetto(Mostro mostro, Personaggio personaggio)throws DungeonException {
         if (mostro == null) {
-            return;
+            throw new DungeonException("Mostro nullo passato a impostaTipoAttaccoEApplicaEffetto.");
         }
-
+        if (personaggio == null) {
+            throw new DungeonException("Personaggio nullo passato a impostaTipoAttaccoEApplicaEffetto.");
+        }
         String nome = mostro.getNomeMostro();
         Mostro.TipoAttaccoMostro tipo = null;
         if (nome != null) {
@@ -90,7 +104,9 @@ public class MostroServiceImpl implements PersonaIncontrataService {
                     tipoEffetto = null;
             }
         }
-
+        if (tipoEffetto == null) {
+            throw new exception.DungeonException("Tipo effetto nullo per l'attacco del mostro.");
+        }
         Effetto effetto = new Effetto(tipoEffetto, " ");
         System.out.println(mostro.getNomeMostro() + " applica " + tipoEffetto + " a " + personaggio.getNomePersonaggio());
         this.effettoService.applicaEffetto(personaggio, effetto);

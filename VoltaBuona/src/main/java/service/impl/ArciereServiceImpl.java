@@ -12,10 +12,11 @@ import domain.Personaggio;
 import domain.Stanza;
 import domain.Turno;
 import domain.Zaino;
+import exception.DungeonException;
 import service.PersonaggioService;
 import util.ANSI;
 
-public class ArciereServiceImpl implements PersonaggioService {
+public class ArciereServiceImpl implements PersonaggioService  {
 
     private static final int BONUS_ATTACCO_ARCIERE = 10;
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
@@ -23,19 +24,23 @@ public class ArciereServiceImpl implements PersonaggioService {
     private Turno turno;
 
     @Override
-    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) {
+    public int attacca(Personaggio personaggio, Mostro mostro, Combattimento combattimento) throws DungeonException {
 
         Arciere arciere = (Arciere) personaggio;
 
         Stanza stanzaArciere = arciere.getPosizioneCorrente();
         Stanza stanzaMostro = mostro.getPosizioneCorrente();
+        if(stanzaMostro == null || stanzaArciere == null) {
+            throw new DungeonException("La stanza del mostro o dell'arciere è null.");
+        }
 
         if (stanzaMostro == stanzaArciere) {
+            
             return attaccoArciere(arciere, mostro);
         } else {
-
             return attaccoDistanzaArciere(arciere, mostro);
         }
+
     }
 
     /**

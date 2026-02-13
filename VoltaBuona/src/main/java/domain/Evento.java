@@ -77,6 +77,9 @@ public class Evento implements Serializable{
         return posizioneCorrente;
     }
     public void setPosizioneCorrente(Stanza posizioneCorrente) {
+        if (posizioneCorrente == null) {
+            throw new exception.DungeonException("Posizione corrente nulla per l'evento.");
+        }
         this.posizioneCorrente = posizioneCorrente;
     }
 
