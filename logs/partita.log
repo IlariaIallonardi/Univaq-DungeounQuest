@@ -619,3 +619,37 @@
 [2026-02-14 11:07:05] b ha scelto l'azione: 0
 [2026-02-14 11:07:10] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: false
 [2026-02-14 11:07:12] a ha scelto l'azione: 0
+[2026-02-14 11:18:03] Personaggio A ha scelto il tipo  1
+[2026-02-14 11:18:08] Personaggio B ha scelto il tipo  2
+[2026-02-14 11:18:10] Personaggio C ha scelto il tipo  3
+[2026-02-14 11:18:10] Partita inizializzata con 3 giocatori reali e 0 BOT. Totale personaggi: 3
+[2026-02-14 11:18:10] Turno Service - a ha iniziativa: 11
+[2026-02-14 11:18:10] Turno Service - b ha iniziativa: 11
+[2026-02-14 11:18:10] Turno Service - c ha iniziativa: 2
+[2026-02-14 11:18:24] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 11:18:26] a ha scelto l'azione: 0
+[2026-02-14 11:18:28] b ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 11:18:29] b ha scelto l'azione: 0
+[2026-02-14 11:18:31] c ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 11:18:32] c ha scelto l'azione: 0
+[2026-02-14 11:18:40] a è stato colpito da una trappola: AVVELENAMENTO - Effetto applicato con successo.
+[2026-02-14 11:18:40] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 11:18:44] a ha scelto l'azione: 0
+[2026-02-14 11:18:47] b ha scelto di muoversi verso: ovest (direzione: OVEST) - Movimento riuscito: true
+[2026-02-14 11:18:50] b ha scelto l'azione: 0
+[2026-02-14 11:18:54] c ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 11:18:56] c ha scelto l'azione: 0
+[2026-02-14 11:20:02] Partita caricata con 3 personaggi. Stato gioco: INIZIO
+[2026-02-14 11:20:02] Turno Service - a ha iniziativa: 18
+[2026-02-14 11:20:02] Turno Service - b ha iniziativa: 13
+[2026-02-14 11:20:02] Turno Service - c ha iniziativa: 5
+[2026-02-14 11:20:14] a ha scelto di muoversi verso: ovest (direzione: OVEST) - Movimento riuscito: true
+[2026-02-14 11:20:16] a ha scelto l'azione: 0
+[2026-02-14 11:20:18] b ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 11:20:19] b ha scelto l'azione: 0
+[2026-02-14 11:20:23] c ha scelto di muoversi verso: ovest (direzione: OVEST) - Movimento riuscito: true
+[2026-02-14 11:20:24] c ha scelto l'azione: 0
+[2026-02-14 11:20:50] Partita caricata con 3 personaggi. Stato gioco: INIZIO
+[2026-02-14 11:20:50] Turno Service - a ha iniziativa: 5
+[2026-02-14 11:20:50] Turno Service - b ha iniziativa: 5
+[2026-02-14 11:20:50] Turno Service - c ha iniziativa: 4

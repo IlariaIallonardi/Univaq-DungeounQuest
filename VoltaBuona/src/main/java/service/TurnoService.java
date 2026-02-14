@@ -79,6 +79,13 @@ public class TurnoService {
 
     public TurnoService() {
     }
+    public void ripristinaTurnoSalvato(Turno turnoCaricato) {
+    if (turnoCaricato != null && turnoCaricato.getGiocatori() != null && !turnoCaricato.getGiocatori().isEmpty()) {
+        this.turno = turnoCaricato;
+        this.iniziativaCalcolata = true;
+    }
+}
+
 
     /**
      * Calcola l'ordine di iniziativa dei giocatori in base ad un tiro randomico

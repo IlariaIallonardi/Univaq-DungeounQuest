@@ -242,32 +242,10 @@ public class Main {
         GiocoService giocoService = new GiocoService(dungeonFactory, gioco);
         turnoService.setGiocoService(giocoService);
 
-        // Se abbiamo caricato un gioco salvato con un turno già calcolato,
-        // riutilizziamo l'ordine salvato invece di ricalcolarlo.
-        //modificare turno service e poi concellare questo metodo
-        List<Personaggio> ordine;
-        if (loaded && gioco.getTurno() != null && gioco.getTurno().getGiocatori() != null && !gioco.getTurno().getGiocatori().isEmpty()) {
-            ordine = new ArrayList<>();
-            for (domain.Personaggio g : gioco.getTurno().getGiocatori()) {
-                ordine.add(g);
-            }
-            System.out.println("Ordine di iniziativa: ripristinato dal salvataggio");
-            for (Personaggio p : ordine) {
-                System.out.println(" - " + p.getNomePersonaggio());
-            }
-        } else {
-
-            //ordine = turnoService.calcolaOrdineIniziativa(giocatori);
-        }
-        // salva l'ordine appena calcolato nel gioco in modo che venga preservato al salvataggio
-        /*  if (ordine != null && !ordine.isEmpty()) {
-            domain.Turno t = new domain.Turno();
-            t.setGiocatori(ordine);
-            gioco.setTurno(t);
-        }*/
+      
         // se abbiamo caricato un gioco con turno, comunichiamolo al TurnoService
         if (loaded && gioco.getTurno() != null) {
-            turnoService.setTurno(gioco.getTurno());
+            turnoService.ripristinaTurnoSalvato(gioco.getTurno());
         }
 
         boolean continua = true;
