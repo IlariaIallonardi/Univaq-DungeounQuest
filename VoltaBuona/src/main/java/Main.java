@@ -338,8 +338,7 @@ public class Main {
                     sceltaClasse = 3;
                 } else if (s.startsWith("p")) {
                     sceltaClasse = 4;
-                } else {
-                    System.out.println("Scelta non valida, riprova.");
+                } else { System.out.println("Scelta non valida, riprova.");
                 }
             }
             if (sceltaClasse < 1 || sceltaClasse > 4) {

@@ -57,6 +57,7 @@ public class ArciereServiceImpl implements PersonaggioService  {
         int totale = tiro + bonusAttacco;
 
         int difesaMostro = mostro.getDifesaMostro();
+        System.out.println(ANSI.BRIGHT_CYAN + ANSI.BOLD + "Tiro dell'arciere totale: " + totale + " = tiro: " + tiro + " + bonus attacco: " + bonusAttacco + ANSI.RESET + "Difesa del mostro: " + difesaMostro);
 
         if (tiro == 1) {
             System.out.println("Il colpo fallisce!");

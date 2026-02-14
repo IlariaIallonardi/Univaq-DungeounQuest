@@ -653,3 +653,10 @@
 [2026-02-14 11:20:50] Turno Service - a ha iniziativa: 5
 [2026-02-14 11:20:50] Turno Service - b ha iniziativa: 5
 [2026-02-14 11:20:50] Turno Service - c ha iniziativa: 4
+[2026-02-14 11:45:35] Personaggio A ha scelto il tipo  1
+[2026-02-14 11:52:07] Personaggio A ha scelto il tipo  1
+[2026-02-14 11:52:13] Personaggio B ha scelto il tipo  1
+[2026-02-14 11:52:13] Partita inizializzata con 2 giocatori reali e 0 BOT. Totale personaggi: 2
+[2026-02-14 11:52:13] Turno Service - a ha iniziativa: 12
+[2026-02-14 11:52:13] Turno Service - b ha iniziativa: 1
+[2026-02-14 11:52:23] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
