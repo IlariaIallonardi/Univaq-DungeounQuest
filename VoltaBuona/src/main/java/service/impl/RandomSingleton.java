@@ -3,7 +3,7 @@ package service.impl;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Random;
+import java.util.Random;    
 
 public class RandomSingleton implements Serializable {
 

@@ -10,7 +10,7 @@ import domain.Gioco;
 import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
-import domain.StatoGioco;
+import domain.Stato.StatoGioco;
 import domain.Trappola;
 import domain.Zaino;
 import service.impl.RandomSingleton;
@@ -30,25 +30,23 @@ public class GiocoService {
 
     private int turnoCorrente = 0;
 
-    public GiocoService(List<Giocatore> giocatori, GiocatoreService giocatoreService, int turnoCorrente, DungeonFactory dungeonFactory) {
+    public GiocoService(List<Giocatore> giocatori, GiocatoreService giocatoreService, int turnoCorrente, DungeonFactory dungeonFactory, Gioco gioco) {
         this.giocatori = giocatori;
         this.giocatoreService = giocatoreService;
         this.turnoCorrente = turnoCorrente;
         this.dungeonFactory = dungeonFactory;
+        this.gioco = gioco;
     }
 
-    public GiocoService(DungeonFactory dungeonFactory) {
+    public GiocoService(DungeonFactory dungeonFactory, Gioco gioco) {
         this.dungeonFactory = dungeonFactory;
+        this.gioco = gioco;
     }
 
     // Costruttore per compatibilità PassaggioSegretoServiceImpl
     public GiocoService() {
         this.dungeonFactory = null;
     }
-    
-    
-
-  
 
     public <T extends Personaggio> void avviaPartita(List<T> personaggi) {
         this.dungeon = dungeonFactory.creaDungeon();
@@ -58,8 +56,8 @@ public class GiocoService {
             start.setStatoStanza(true);
         }
 
-        for (Personaggio p : personaggi) {
-            p.setPosizioneCorrente(start);
+        for (Personaggio personaggio : personaggi) {
+            personaggio.setPosizioneCorrente(start);
         }
     }
 
@@ -131,7 +129,7 @@ public class GiocoService {
                     if (oggetto instanceof domain.Chiave && ((domain.Chiave) oggetto).getId() == richiesta.getId()) {
                         System.out.println("Hai la chiave richiesta (" + oggetto.getNome() + "). Sblocco la stanza e consumo la chiave.");
                         destinazione.sblocca();
-                        fileService.writeLog(personaggio.getNomePersonaggio() + " ha usato la chiave: " + oggetto.getNome() + " per sbloccare la stanza: " + destinazione.getId());
+                        FileService.getInstance().writeLog(personaggio.getNomePersonaggio() + " ha usato la chiave: " + oggetto.getNome() + " per sbloccare la stanza: " + destinazione.getId());
                         ZainoService zainoService = new ZainoService();
                         zainoService.rimuoviOggettoDaZaino(zaino, oggetto);
                         trovato = true;
@@ -174,12 +172,13 @@ public class GiocoService {
                 System.out.println(" " + "Attivazione trappola" + " " + consumaTurno);
 
             }
-            if (corrente != null && corrente.isUscitaVittoria()) {
-                System.out.println("Hai raggiunto l'uscita!" + personaggio.getNomePersonaggio() + "sei il vincitore!");
-                gioco.setStatoGioco(StatoGioco.CONCLUSO);
-                personaggio.setVincitore(true);
 
-            }
+        }
+        if (destinazione != null && destinazione.isUscitaVittoria()) {
+            System.out.println("Hai raggiunto l'uscita! " + personaggio.getNomePersonaggio() + " sei il vincitore!");
+            gioco.setStatoGioco(StatoGioco.CONCLUSO);
+            personaggio.setVincitore(true);
+            return false;
 
         }
         return true;

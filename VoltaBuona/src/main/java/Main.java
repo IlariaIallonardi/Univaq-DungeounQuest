@@ -12,7 +12,7 @@ import domain.Gioco;
 import domain.Oggetto;
 import domain.Personaggio;
 import domain.Stanza;
-import domain.StatoGioco;
+import domain.Stato.StatoGioco;
 import service.DungeonFactory;
 import service.FileService;
 import service.GiocatoreService;
@@ -24,7 +24,6 @@ import service.impl.GuerrieroServiceImpl;
 import service.impl.MagoServiceImpl;
 import service.impl.PaladinoServiceImpl;
 import util.ANSI;
-
 
 public class Main {
 
@@ -38,10 +37,10 @@ public class Main {
         StanzaFactory stanzaFactory = new StanzaFactory();
         DungeonFactory dungeonFactory = new DungeonFactory(stanzaFactory);
         List<Personaggio> partecipanti = new ArrayList<>();
-        
+
         // SERVICE PRINCIPALE
         Gioco gioco = new Gioco(1, new ArrayList<>(), partecipanti, new ArrayList<>(), new ArrayList<>(), 0, StatoGioco.INIZIO, null, null);
-        GiocatoreService giocatoreService= new GiocatoreService();
+        GiocatoreService giocatoreService = new GiocatoreService();
         // Imposta il file di log (puoi cambiare il nome se vuoi log separati per partita)
         fileService.setLogFileNome("partita.log");
 
@@ -146,7 +145,7 @@ public class Main {
 
                 Personaggio personaggio = creaPersonaggioDaScelta(sceltaClasse, nome);
                 giocatori.add(personaggio);
-                fileService.writeLog("Personaggio " + personaggio.getNomePersonaggio().toUpperCase() + " ha scelto il tipo  "+sceltaClasse);
+                fileService.writeLog("Personaggio " + personaggio.getNomePersonaggio().toUpperCase() + " ha scelto il tipo  " + sceltaClasse);
             }
 
             // crea i bot
@@ -154,8 +153,8 @@ public class Main {
             Random rngBot = new Random();
 
             for (int i = 1; i <= numBot; i++) {
-                 String nome = "BOT_" + nomiBot[rngBot.nextInt(nomiBot.length)] + "_" + i;
-                 int sceltaClasse = rngBot.nextInt(4) + 1;
+                String nome = "BOT_" + nomiBot[rngBot.nextInt(nomiBot.length)] + "_" + i;
+                int sceltaClasse = rngBot.nextInt(4) + 1;
                 Personaggio base = creaPersonaggioDaScelta(sceltaClasse, nome);
                 Personaggio bot = giocatoreService.attribuisciPersonaggioAComputer(base);
                 giocatori.add(bot);
@@ -171,7 +170,7 @@ public class Main {
             for (Stanza s : dungeon.getMappaStanze().values()) {
                 String chiaveInfo = (s.getChiaveRichiesta() != null) ? String.valueOf(s.getChiaveRichiesta().getId()) : "nessuna";
                 StringBuilder objs = new StringBuilder();
-                for ( int  i = 0; i < s.getOggettiPresenti().size(); i++) {
+                for (int i = 0; i < s.getOggettiPresenti().size(); i++) {
                     Object o = s.getOggettiPresenti().get(i);
                     objs.append(o == null ? "<null>" : ((Oggetto) o).getNome());
                     if (i < s.getOggettiPresenti().size() - 1) {
@@ -179,7 +178,7 @@ public class Main {
                     }
                 }
                 StringBuilder eventi = new StringBuilder();
-                for ( int  i = 0; i < s.getListaEventiAttivi().size(); i++) {
+                for (int i = 0; i < s.getListaEventiAttivi().size(); i++) {
                     Evento e = s.getListaEventiAttivi().get(i);
                     eventi.append(e == null ? "<null>" : e.getNomeEvento());
                     if (i < s.getListaEventiAttivi().size() - 1) {
@@ -188,7 +187,7 @@ public class Main {
                 }
                 String idColorato = ANSI.BOLD + ANSI.BRIGHT_RED + s.getId() + ANSI.RESET;
                 String bloccataColorato = ANSI.BOLD + ANSI.BRIGHT_BLUE + s.isBloccata() + ANSI.RESET;
-                 String oggetti = ANSI.BOLD + ANSI.GREEN + objs + ANSI.RESET;
+                String oggetti = ANSI.BOLD + ANSI.GREEN + objs + ANSI.RESET;
                 System.out.println("Stanza id " + idColorato + " bloccata=" + bloccataColorato
                         + " chiaveId=" + chiaveInfo + "\n" + " oggetti=[" + oggetti + "]\n" + " eventi=[" + eventi + "]");
             }
@@ -206,14 +205,13 @@ public class Main {
                 }
             }
 
-
             // *** 7 DEBUG ***
             System.out.println("\nPersonaggi");
             giocatori.forEach(p -> System.out.println(" - " + p.getNomePersonaggio() + " in " + p.getPosizioneCorrente()));
 
             System.out.println("\n Partita inizializzata correttamente!");
             fileService.writeLog("Partita inizializzata con " + numReali + " giocatori reali e " + numBot + " BOT. Totale personaggi: " + giocatori.size());
-            
+
             gioco.setListaPersonaggi(giocatori);
             gioco.setDungeon(dungeon);
             gioco.setListaStanze(new java.util.ArrayList<>(dungeon.getMappaStanze().values()));
@@ -226,7 +224,9 @@ public class Main {
                 dungeon = gioco.getDungeon();
                 dungeonFactory.setDungeon(dungeon);
             }
-            if (giocatori == null) giocatori = new ArrayList<>();
+            if (giocatori == null) {
+                giocatori = new ArrayList<>();
+            }
             for (Personaggio p : giocatori) {
                 String nome = p.getNomePersonaggio() == null ? "" : p.getNomePersonaggio();
                 if (nome.startsWith("BOT_") || nome.toLowerCase().contains("bot")) {
@@ -238,11 +238,8 @@ public class Main {
             System.out.println("\n Partita caricata correttamente! Totale personaggi: " + giocatori.size());
         }
 
-       
-
-    
-        TurnoService turnoService = new TurnoService(dungeonFactory,fileService);
-        GiocoService giocoService = new GiocoService(dungeonFactory);
+        TurnoService turnoService = new TurnoService(dungeonFactory, fileService);
+        GiocoService giocoService = new GiocoService(dungeonFactory, gioco);
         turnoService.setGiocoService(giocoService);
 
         // Se abbiamo caricato un gioco salvato con un turno già calcolato,
@@ -263,7 +260,7 @@ public class Main {
             //ordine = turnoService.calcolaOrdineIniziativa(giocatori);
         }
         // salva l'ordine appena calcolato nel gioco in modo che venga preservato al salvataggio
-       /*  if (ordine != null && !ordine.isEmpty()) {
+        /*  if (ordine != null && !ordine.isEmpty()) {
             domain.Turno t = new domain.Turno();
             t.setGiocatori(ordine);
             gioco.setTurno(t);
@@ -272,14 +269,17 @@ public class Main {
         if (loaded && gioco.getTurno() != null) {
             turnoService.setTurno(gioco.getTurno());
         }
-    
+
         boolean continua = true;
-      //  boolean autoMode = (numReali == 0);
+        //  boolean autoMode = (numReali == 0);
 
         while (continua) {
+
             // esegui i turni per tutti i partecipanti (un turno per round)
             turnoService.iniziaNuovoTurno(giocatori);
-
+            if (gioco.getStatoGioco() == StatoGioco.CONCLUSO) {
+                continua = false;
+            }
             // chiedi se continuare solo se ci sono giocatori reali; altrimenti prosegui automaticamente finché c'è almeno un personaggio vivo
             if (numReali > 0) {
                 System.out.print(ANSI.RESET + "Continuare altri turni? (S/N): ");
@@ -288,7 +288,7 @@ public class Main {
                     System.out.print("Vuoi salvare la partita prima di uscire? (S/N): ");
                     String saveChoice = scanner.nextLine().trim().toLowerCase();
                     if (saveChoice.equals("s") || saveChoice.equals("si")) {
-                    
+
                         System.out.println("Opzioni salvataggio: 1) Inserisci nome file  2) Salva con nome automatico (o scrivi direttamente il nome file)");
                         System.out.print("Scelta (1-2 o nome file): ");
                         String opt = scanner.nextLine().trim();
@@ -312,10 +312,12 @@ public class Main {
                             }
 
                             if (nomeDaUsare != null) {
-                                if (!nomeDaUsare.endsWith(".sav")) nomeDaUsare = nomeDaUsare + ".sav";
+                                if (!nomeDaUsare.endsWith(".sav")) {
+                                    nomeDaUsare = nomeDaUsare + ".sav";
+                                }
                                 fileService.salvaGioco(gioco, nomeDaUsare);
                                 System.out.println("Partita salvata come '" + nomeDaUsare + "'. Percorso: " + Paths.get("salvataggi/" + nomeDaUsare).toAbsolutePath());
-                            } 
+                            }
                         } catch (exception.InizializzaPartitaException e) {
                             System.out.println("Errore durante il salvataggio: " + e.getMessage());
                         }
@@ -324,7 +326,7 @@ public class Main {
                 }
             } else {
                 boolean almenoVivo = false;
-               /*  for (Personaggio p : ordine) {
+                /*  for (Personaggio p : ordine) {
                     if (p != null && !p.èMorto(p)) { almenoVivo = true; break; }
                 }*/
                 continua = almenoVivo;

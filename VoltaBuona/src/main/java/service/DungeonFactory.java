@@ -27,8 +27,8 @@ public class DungeonFactory {
     public Map<String, Stanza> stanzeMappa = new HashMap<>();
 
     public Dungeon creaDungeon() throws DungeonException {
-        righe = randomGenerale.prossimoNumero(4, 7);
-        colonne = randomGenerale.prossimoNumero(4, 7);
+        righe = randomGenerale.prossimoNumero(2, 2);
+        colonne = randomGenerale.prossimoNumero(2, 2);
         Dungeon dungeon = new Dungeon(righe, colonne);
 
         int contatoreStanza = 0;
@@ -42,8 +42,8 @@ public class DungeonFactory {
             }
         }
         dungeon.collegaAdiacenti();
-        Stanza stanzaVittoria = dungeon.getStanza(righe, colonne);
-        if (stanzaVittoria != null && stanzaVittoria.isUscitaVittoria()) {
+        Stanza stanzaVittoria = dungeon.getStanza(righe - 1, colonne - 1);
+        if (stanzaVittoria != null) {
             stanzaVittoria.setUscitaVittoria(true);
         }
 
@@ -85,7 +85,7 @@ public class DungeonFactory {
             if (!stanzeSbloccate.isEmpty()) {
                 int indice = randomGenerale.prossimoNumero(0, stanzeSbloccate.size() - 1);
                 Stanza stanzaPerChiave = stanzeSbloccate.get(indice);
-                stanzaPerChiave.aggiungiOggetto(chiave); 
+                stanzaPerChiave.aggiungiOggetto(chiave);
             } else {
                 System.out.println("Attenzione: nessuna stanza disponibile per posizionare la chiave di stanza " + stanzaBloccata.getId());
             }

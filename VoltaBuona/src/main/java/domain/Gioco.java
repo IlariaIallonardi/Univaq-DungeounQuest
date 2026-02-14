@@ -4,7 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import domain.Stato.StatoGioco;
+
 public class Gioco implements Serializable {
+
     private static final long serialVersionUID = -3528203625917821226L;
     private int id;
     private List<Stanza> listaStanze = new ArrayList<>();
@@ -15,19 +18,15 @@ public class Gioco implements Serializable {
     private StatoGioco statoGioco;
     private Dungeon dungeon;
     private Turno turno;
-    
 
-
-    
-
-    public Gioco(int id,List<Stanza> listaStanze,List<Personaggio> listaPersonaggi,List<Evento> listaEventi,List<Oggetto> listaOggetti,int turnoCorrente,StatoGioco statoGioco,Dungeon dungeon, Turno turno) {
+    public Gioco(int id, List<Stanza> listaStanze, List<Personaggio> listaPersonaggi, List<Evento> listaEventi, List<Oggetto> listaOggetti, int turnoCorrente, StatoGioco statoGioco, Dungeon dungeon, Turno turno) {
         this.id = id;
-        this.listaStanze = listaStanze; 
-        this.listaPersonaggi = listaPersonaggi; 
-        this.listaEventi = listaEventi; 
-        this.listaOggetti = listaOggetti; 
+        this.listaStanze = listaStanze;
+        this.listaPersonaggi = listaPersonaggi;
+        this.listaEventi = listaEventi;
+        this.listaOggetti = listaOggetti;
         this.turnoCorrente = turnoCorrente;
-        this.statoGioco = statoGioco; 
+        this.statoGioco = statoGioco;
         this.dungeon = dungeon;
         this.turno = turno;
     }
@@ -43,7 +42,6 @@ public class Gioco implements Serializable {
     public Dungeon getDungeon() {
         return dungeon;
     }
-    
 
     public void setDungeon(Dungeon dungeon) {
         this.dungeon = dungeon;
@@ -105,12 +103,4 @@ public class Gioco implements Serializable {
         this.statoGioco = statoGioco;
     }
 
-   
-
-
-
-
-
-
-    
 }

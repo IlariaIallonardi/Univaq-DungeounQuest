@@ -27,6 +27,7 @@ public class StanzaFactory {
     public StanzaFactory(FileService fileService) {
         this.fileService = fileService;
     }
+
     public StanzaFactory() {
     }
 

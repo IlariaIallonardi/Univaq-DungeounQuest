@@ -367,3 +367,192 @@
 [2026-02-13 21:06:18] b ha scelto l'azione: 0
 [2026-02-13 21:06:22] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
 [2026-02-13 21:06:32] a Ã¨ stato colpito da una trappola: FURIA - Effetto applicato con successo.
+[2026-02-14 00:10:37] Personaggio A ha scelto il tipo  1
+[2026-02-14 00:10:40] Personaggio B ha scelto il tipo  2
+[2026-02-14 00:10:47] Personaggio C ha scelto il tipo  3
+[2026-02-14 00:10:47] Partita inizializzata con 3 giocatori reali e 0 BOT. Totale personaggi: 3
+[2026-02-14 00:10:47] Turno Service - b ha iniziativa: 13
+[2026-02-14 00:10:47] Turno Service - a ha iniziativa: 9
+[2026-02-14 00:10:47] Turno Service - c ha iniziativa: 6
+[2026-02-14 00:16:11] Personaggio A ha scelto il tipo  1
+[2026-02-14 00:16:15] Personaggio B ha scelto il tipo  2
+[2026-02-14 00:16:15] Partita inizializzata con 2 giocatori reali e 0 BOT. Totale personaggi: 2
+[2026-02-14 00:16:15] Turno Service - a ha iniziativa: 11
+[2026-02-14 00:16:15] Turno Service - b ha iniziativa: 11
+[2026-02-14 00:16:58] a è stato colpito da una trappola: FURTO - Effetto applicato con successo.
+[2026-02-14 00:16:58] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 00:23:15] Personaggio A ha scelto il tipo  1
+[2026-02-14 00:23:19] Personaggio B ha scelto il tipo  2
+[2026-02-14 00:23:19] Partita inizializzata con 2 giocatori reali e 0 BOT. Totale personaggi: 2
+[2026-02-14 00:23:19] Turno Service - a ha iniziativa: 18
+[2026-02-14 00:23:19] Turno Service - b ha iniziativa: 10
+[2026-02-14 00:23:31] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 00:23:42] a ha risposto correttamente al rebus di Nonno Rebus e ha ricevuto un dono.
+[2026-02-14 00:23:53] b ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 00:23:56] b ha scelto l'azione: 0
+[2026-02-14 00:24:13] a è stato colpito da una trappola: STORDIMENTO - Effetto applicato con successo.
+[2026-02-14 00:24:13] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 00:24:20] a ha scelto di raccogliere l'oggetto: Chiave_7 - Raccoglimento riuscito: true
+[2026-02-14 00:24:20] a ha scelto l'azione: 2
+[2026-02-14 00:24:29] b è stato colpito da una trappola: DISARMA - Effetto applicato con successo.
+[2026-02-14 00:24:29] b ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 00:24:39] b ha scelto di raccogliere l'oggetto: Pozione ANTIDOTO - Raccoglimento riuscito: true
+[2026-02-14 00:24:49] a ha scelto di proteggere un compagno questo turno.
+[2026-02-14 00:24:55] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 00:25:06] a ha scelto l'azione: 1
+[2026-02-14 00:25:06] a ha scelto l'azione: 1
+[2026-02-14 00:25:07] a ha scelto l'azione: 1
+[2026-02-14 00:25:07] a ha scelto l'azione: 1
+[2026-02-14 00:25:08] a ha scelto l'azione: 1
+[2026-02-14 00:25:08] a ha scelto l'azione: 11
+[2026-02-14 00:25:08] a ha scelto l'azione: 1
+[2026-02-14 00:25:09] a ha scelto l'azione: 1
+[2026-02-14 00:25:09] a ha scelto l'azione: 1
+[2026-02-14 00:25:09] a ha scelto l'azione: 1
+[2026-02-14 00:25:10] a ha scelto l'azione: 1
+[2026-02-14 00:25:18] b ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 00:25:41] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 00:25:47] a ha scelto l'azione: 0
+[2026-02-14 00:25:53] b ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 00:26:05] b ha scelto l'azione: 1
+[2026-02-14 00:26:56] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 00:27:14] a ha scelto l'azione: 0
+[2026-02-14 00:27:17] b ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 00:27:21] b ha scelto l'azione: 0
+[2026-02-14 00:27:27] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: false
+[2026-02-14 00:27:31] a ha scelto l'azione: 0
+[2026-02-14 00:27:34] b ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 00:27:40] b ha scelto l'azione: 0
+[2026-02-14 00:27:57] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 00:29:22] a ha scelto di raccogliere l'oggetto: Tesoro del valore di 166 - Raccoglimento riuscito: true
+[2026-02-14 00:29:27] a ha scelto l'azione: 1
+[2026-02-14 00:29:28] a ha scelto l'azione: 1
+[2026-02-14 00:29:29] a ha scelto l'azione: 1
+[2026-02-14 00:29:29] a ha scelto l'azione: 1
+[2026-02-14 00:29:47] b ha scelto l'azione: 0
+[2026-02-14 00:29:58] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 00:30:18] a ha risposto correttamente al rebus di La Saggia e ha ricevuto un dono.
+[2026-02-14 00:30:25] b ha scelto di muoversi verso: nord (direzione: NORD) - Movimento riuscito: true
+[2026-02-14 00:30:29] b ha scelto l'azione: 0
+[2026-02-14 00:30:42] a è stato colpito da una trappola: DISARMA - Effetto applicato con successo.
+[2026-02-14 00:30:42] a ha scelto di muoversi verso:  ovest (direzione: OVEST) - Movimento riuscito: true
+[2026-02-14 00:30:46] a ha scelto l'azione: 0
+[2026-02-14 00:30:55] b ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 00:30:58] b ha scelto l'azione: 0
+[2026-02-14 00:31:07] a ha scelto di muoversi verso: ovest (direzione: OVEST) - Movimento riuscito: false
+[2026-02-14 00:31:18] a ha scelto l'azione: 0
+[2026-02-14 00:31:21] b ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 00:31:23] b ha scelto l'azione: 0
+[2026-02-14 00:31:34] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 00:31:37] a ha scelto l'azione: 0
+[2026-02-14 00:31:44] b ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 00:31:48] b ha scelto l'azione: 0
+[2026-02-14 00:31:56] a ha scelto di muoversi verso: nord (direzione: NORD) - Movimento riuscito: true
+[2026-02-14 00:32:00] a ha scelto l'azione: 0
+[2026-02-14 00:41:19] Partita inizializzata con 0 giocatori reali e 0 BOT. Totale personaggi: 0
+[2026-02-14 00:42:07] Personaggio A ha scelto il tipo  1
+[2026-02-14 00:42:17] Personaggio S ha scelto il tipo  2
+[2026-02-14 00:42:17] Partita inizializzata con 2 giocatori reali e 0 BOT. Totale personaggi: 2
+[2026-02-14 00:42:17] Turno Service - a ha iniziativa: 18
+[2026-02-14 00:42:17] Turno Service - s ha iniziativa: 7
+[2026-02-14 00:42:30] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 00:42:34] a ha scelto l'azione: 0
+[2026-02-14 00:42:36] s ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 00:42:41] s ha scelto l'azione: 0
+[2026-02-14 00:42:54] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 00:43:05] a ha scelto l'azione: 0
+[2026-02-14 00:43:09] s ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 00:43:11] s ha scelto l'azione: 0
+[2026-02-14 00:52:45] Personaggio A ha scelto il tipo  1
+[2026-02-14 00:52:50] Personaggio B ha scelto il tipo  2
+[2026-02-14 00:52:50] Partita inizializzata con 2 giocatori reali e 0 BOT. Totale personaggi: 2
+[2026-02-14 00:52:50] Turno Service - a ha iniziativa: 13
+[2026-02-14 00:52:50] Turno Service - b ha iniziativa: 4
+[2026-02-14 00:52:55] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 00:53:00] a ha scelto l'azione: 0
+[2026-02-14 00:53:03] b ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 00:53:04] b ha scelto l'azione: 0
+[2026-02-14 00:56:40] Personaggio A ha scelto il tipo  1
+[2026-02-14 00:56:46] Personaggio B ha scelto il tipo  2
+[2026-02-14 00:56:46] Partita inizializzata con 2 giocatori reali e 0 BOT. Totale personaggi: 2
+[2026-02-14 00:56:46] Turno Service - b ha iniziativa: 18
+[2026-02-14 00:56:46] Turno Service - a ha iniziativa: 7
+[2026-02-14 00:56:50] b ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 00:56:54] b ha scelto l'azione: 0
+[2026-02-14 00:56:59] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 00:57:02] a ha scelto l'azione: 0
+[2026-02-14 01:08:27] Personaggio A ha scelto il tipo  1
+[2026-02-14 01:08:27] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 01:08:27] Turno Service - a ha iniziativa: 14
+[2026-02-14 01:09:21] Personaggio A ha scelto il tipo  1
+[2026-02-14 01:09:21] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 01:09:21] Turno Service - a ha iniziativa: 13
+[2026-02-14 01:09:45] Personaggio A ha scelto il tipo  1
+[2026-02-14 01:09:45] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 01:09:45] Turno Service - a ha iniziativa: 11
+[2026-02-14 09:34:47] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 09:34:51] a ha scelto l'azione: 0
+[2026-02-14 09:34:59] a è stato colpito da una trappola: SALTA_TURNO - Effetto applicato con successo.
+[2026-02-14 09:50:08] Personaggio A ha scelto il tipo  1
+[2026-02-14 09:50:13] Personaggio B ha scelto il tipo  2
+[2026-02-14 09:50:13] Partita inizializzata con 2 giocatori reali e 0 BOT. Totale personaggi: 2
+[2026-02-14 09:50:13] Turno Service - a ha iniziativa: 13
+[2026-02-14 09:50:13] Turno Service - b ha iniziativa: 9
+[2026-02-14 09:50:26] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 09:50:28] a ha scelto l'azione: 0
+[2026-02-14 09:50:34] b ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 09:50:42] b ha scelto l'azione: 0
+[2026-02-14 09:50:54] a è stato colpito da una trappola: AVVELENAMENTO - Effetto applicato con successo.
+[2026-02-14 09:52:29] Personaggio A ha scelto il tipo  1
+[2026-02-14 09:52:29] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 09:52:29] Turno Service - a ha iniziativa: 19
+[2026-02-14 09:52:34] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 09:52:36] a ha scelto l'azione: 0
+[2026-02-14 09:54:46] Personaggio A ha scelto il tipo  2
+[2026-02-14 09:54:46] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 09:54:46] Turno Service - a ha iniziativa: 8
+[2026-02-14 09:54:48] a è stato colpito da una trappola: SALTA_TURNO - Effetto applicato con successo.
+[2026-02-14 09:54:48] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 09:54:50] a ha scelto l'azione: 0
+[2026-02-14 09:54:58] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 09:56:07] Personaggio A ha scelto il tipo  2
+[2026-02-14 09:56:07] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 09:56:07] Turno Service - a ha iniziativa: 2
+[2026-02-14 09:56:10] a è stato colpito da una trappola: FURIA - Effetto applicato con successo.
+[2026-02-14 09:56:10] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 09:56:11] a ha scelto l'azione: 0
+[2026-02-14 09:56:14] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 09:59:55] Partita inizializzata con 0 giocatori reali e 0 BOT. Totale personaggi: 0
+[2026-02-14 10:00:35] Personaggio A ha scelto il tipo  2
+[2026-02-14 10:00:35] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 10:00:35] Turno Service - a ha iniziativa: 18
+[2026-02-14 10:00:37] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 10:00:39] a ha scelto l'azione: 0
+[2026-02-14 10:00:42] a è stato colpito da una trappola: AVVELENAMENTO - Effetto applicato con successo.
+[2026-02-14 10:07:11] Personaggio A ha scelto il tipo  2
+[2026-02-14 10:07:11] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 10:07:11] Turno Service - a ha iniziativa: 6
+[2026-02-14 10:07:24] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 10:07:26] a ha scelto l'azione: 0
+[2026-02-14 10:07:40] a è stato colpito da una trappola: FURIA - Effetto applicato con successo.
+[2026-02-14 10:07:40] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 10:07:45] a ha scelto l'azione: 0
+[2026-02-14 10:09:22] Personaggio A ha scelto il tipo  2
+[2026-02-14 10:09:22] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 10:09:22] Turno Service - a ha iniziativa: 10
+[2026-02-14 10:09:25] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 10:09:26] a ha scelto l'azione: 0
+[2026-02-14 10:09:28] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 10:12:03] Personaggio A ha scelto il tipo  2
+[2026-02-14 10:12:03] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 10:12:03] Turno Service - a ha iniziativa: 16
+[2026-02-14 10:12:07] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 10:12:08] a ha scelto l'azione: 0
+[2026-02-14 10:12:11] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 10:29:49] Personaggio A ha scelto il tipo  2
+[2026-02-14 10:29:49] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 10:29:49] Turno Service - a ha iniziativa: 8
+[2026-02-14 10:29:52] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 10:29:54] a ha scelto l'azione: 0
+[2026-02-14 10:29:56] a è stato colpito da una trappola: FURIA - Effetto applicato con successo.
+[2026-02-14 10:29:56] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false

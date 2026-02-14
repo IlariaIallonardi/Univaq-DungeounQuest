@@ -1,6 +1,7 @@
 package util;
 
 public final class ANSI {
+
     public static final String RESET = "\u001B[0m";
 
     public static final String BLACK = "\u001B[30m";
@@ -25,5 +26,6 @@ public final class ANSI {
     public static final String BOLD = "\u001B[1m";
     public static final String UNDERLINE = "\u001B[4m";
 
-    private ANSI() {}
+    private ANSI() {
+    }
 }
