@@ -1,6 +1,6 @@
 package domain;
 
-public enum TipoGiocatore {
+/**public enum TipoGiocatore {
     UMANO,
     COMPUTER
-}
+}*/
