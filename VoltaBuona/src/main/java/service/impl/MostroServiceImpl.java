@@ -21,7 +21,7 @@ public class MostroServiceImpl implements PersonaIncontrataService {
 
     private static final AtomicInteger ID_CONTATORE = new AtomicInteger(200);
     private final RandomSingleton random = RandomSingleton.getInstance();
-    private FileService fileService= FileService.getInstance();
+    private FileService fileService = FileService.getInstance();
     private GiocoService giocoService;
 
     private CombattimentoService combattimentoService;
@@ -29,18 +29,18 @@ public class MostroServiceImpl implements PersonaIncontrataService {
     public void setCombattimentoService(CombattimentoService combattimentoService) {
         this.combattimentoService = combattimentoService;
     }
-  public MostroServiceImpl(CombattimentoService combattimentoService, EffettoService effettoService) {
-        // Crea un CombattimentoServiceImpl che usa questa istanza di MostroServiceImpl,per evitare che il combattimento sia null.
+
+    public MostroServiceImpl(CombattimentoService combattimentoService, EffettoService effettoService) {
+        // Creiamo un CombattimentoServiceImpl che usa questa istanza di MostroServiceImpl,per evitare che il combattimento sia null.
         this.combattimentoService = new CombattimentoService(this, null, new TurnoService(giocoService));
         this.effettoService = new EffettoService();
     }
-   
 
     /**
      * Calcolo del danno che il mostro infligge al personaggio.
      */
     public static int dannoBase(Mostro mostro, Personaggio personaggio) throws DungeonException {
-         if (mostro == null) {
+        if (mostro == null) {
             throw new DungeonException("Mostro nullo passato a dannoBase.");
         }
         if (mostro == null) {
@@ -55,10 +55,8 @@ public class MostroServiceImpl implements PersonaIncontrataService {
 
     public EffettoService effettoService;
 
-    
-    public MostroServiceImpl() {}
-
-   
+    public MostroServiceImpl() {
+    }
 
     /**
      * Determina il tipo di effetto del mostro sul personaggio.
@@ -67,7 +65,7 @@ public class MostroServiceImpl implements PersonaIncontrataService {
      * @param personaggio Il personaggio bersaglio dell'attacco.
      *
      */
-    public void impostaTipoAttaccoEApplicaEffetto(Mostro mostro, Personaggio personaggio)throws DungeonException {
+    public void impostaTipoAttaccoEApplicaEffetto(Mostro mostro, Personaggio personaggio) throws DungeonException {
         if (mostro == null) {
             throw new DungeonException("Mostro nullo passato a impostaTipoAttaccoEApplicaEffetto.");
         }
@@ -174,8 +172,8 @@ public class MostroServiceImpl implements PersonaIncontrataService {
         if (evento instanceof Mostro mostro) {
             Stanza stanza = mostro.getPosizioneCorrente();
             mostro.setPosizioneCorrente(stanza);
-            ///forse da cancellare
-        System.out.println("Hai incontrato: " + mostro.getNomeMostro() + "\nPunti vita mostro:" + mostro.getPuntiVitaMostro()
+
+            System.out.println("Hai incontrato: " + mostro.getNomeMostro() + "\nPunti vita mostro:" + mostro.getPuntiVitaMostro()
                     + " difesa:" + mostro.getDifesaMostro()
                     + " danno:" + mostro.getTipoAttaccoMostro().getDannoTipoMostro()
                     + " esperienza:" + mostro.getEsperienzaMostro()

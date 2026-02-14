@@ -2,6 +2,7 @@ package service;
 
 import domain.Combattimento;
 import domain.Mostro;
+import domain.Oggetto;
 import domain.Personaggio;
 import service.impl.ArciereServiceImpl;
 import service.impl.GuerrieroServiceImpl;
@@ -10,12 +11,12 @@ import service.impl.PaladinoServiceImpl;
 import service.impl.RandomSingleton;
 
 public class GiocatoreService {
+
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
 
     public Personaggio attribuisciPersonaggioAComputer(Personaggio personaggio) {
         // genera il personaggio "base" (classe scelta casuale)
         int scelta = randomGenerale.prossimoNumero(0, 3);
-
 
         Personaggio botBase;
         switch (scelta) {
@@ -35,44 +36,44 @@ public class GiocatoreService {
                 botBase = new GuerrieroServiceImpl().creaPersonaggio(personaggio.getNomePersonaggio(), personaggio);
         }
 
-        
         try {
-            
+
             botBase.setNomePersonaggio("Bot-" + botBase.getClass().getSimpleName());
         } catch (Exception ignored) {
-        
-        }
 
-        
+        }
 
         System.out.println("Il computer giocherà come: " + botBase.getClass().getSimpleName() + " (nome: " + botBase.getNomePersonaggio() + ")");
 
         return botBase;
     }
 
-    // Deleghe per comportamento: instradano alle implementazioni specifiche
-    public int attacca(Personaggio attacker, Mostro target, Combattimento combattimento) {
-        if (attacker == null || target == null) return 0;
-        if (attacker instanceof domain.Guerriero) {
-            return new GuerrieroServiceImpl().attacca(attacker, target, combattimento);
+    // Deleghe per comportamento
+    public int attacca(Personaggio attaccante, Mostro bersaglio, Combattimento combattimento) {
+        if (attaccante == null || bersaglio == null) {
+            return 0;
         }
-        if (attacker instanceof domain.Mago) {
-            return new MagoServiceImpl().attacca(attacker, target, combattimento);
+        if (attaccante instanceof domain.Guerriero) {
+            return new GuerrieroServiceImpl().attacca(attaccante, bersaglio, combattimento);
         }
-        if (attacker instanceof domain.Arciere) {
-            return new ArciereServiceImpl().attacca(attacker, target, combattimento);
+        if (attaccante instanceof domain.Mago) {
+            return new MagoServiceImpl().attacca(attaccante, bersaglio, combattimento);
         }
-        if (attacker instanceof domain.Paladino) {
-            return new PaladinoServiceImpl().attacca(attacker, target, combattimento);
+        if (attaccante instanceof domain.Arciere) {
+            return new ArciereServiceImpl().attacca(attaccante, bersaglio, combattimento);
         }
-        // fallback generico
+        if (attaccante instanceof domain.Paladino) {
+            return new PaladinoServiceImpl().attacca(attaccante, bersaglio, combattimento);
+        }
+
         return 0;
     }
 
-    
-    public boolean usaOggetto(Personaggio personaggio, domain.Oggetto oggetto) {
-        if (personaggio == null || oggetto == null) return false;
-        // la logica di uso oggetto è implementata in Personaggio. Manteniamo delega minimale.
+    public boolean usaOggetto(Personaggio personaggio, Oggetto oggetto) {
+        if (personaggio == null || oggetto == null) {
+            return false;
+        }
+        // la logica di uso oggetto è implementata in Personaggio.
         return personaggio.usaOggetto(personaggio, oggetto);
     }
 }
