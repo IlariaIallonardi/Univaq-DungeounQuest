@@ -36,7 +36,7 @@ public class DungeonFactory {
             for (int x = 0; x < colonne; x++) {
                 Stanza stanza = stanzaFactory.creaStanza(contatoreStanza++, x, y);
                 if (stanza == null) {
-                    throw new exception.DungeonException("La stanza creata è nulla alle coordinate: (" + x + ", " + y + ")");
+                    throw new DungeonException("La stanza creata è nulla alle coordinate: (" + x + ", " + y + ")");
                 }
                 dungeon.setStanza(x, y, stanza);
             }

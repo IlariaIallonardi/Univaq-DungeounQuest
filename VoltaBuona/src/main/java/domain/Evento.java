@@ -2,6 +2,8 @@ package domain;
 
 import java.io.Serializable;
 
+import exception.DungeonException;
+
 public class Evento implements Serializable{
 
     private int id;
@@ -76,9 +78,9 @@ public class Evento implements Serializable{
     public Stanza getPosizioneCorrente() {
         return posizioneCorrente;
     }
-    public void setPosizioneCorrente(Stanza posizioneCorrente) {
+    public void setPosizioneCorrente(Stanza posizioneCorrente)throws DungeonException {
         if (posizioneCorrente == null) {
-            throw new exception.DungeonException("Posizione corrente nulla per l'evento.");
+            throw new DungeonException("Posizione corrente nulla per l'evento.");
         }
         this.posizioneCorrente = posizioneCorrente;
     }

@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import exception.DungeonException;
+
 public class Stanza implements Serializable {
 
     private int id;
@@ -100,16 +102,16 @@ public class Stanza implements Serializable {
         this.chiaveRichiesta = chiaveRichiesta;
     }
 
-    public void rimuoviOggetto(Oggetto o) {
+    public void rimuoviOggetto(Oggetto o)throws DungeonException {
         if (o == null) {
-            throw new exception.DungeonException("Tentativo di rimuovere un oggetto nullo dalla stanza.");
+            throw new DungeonException("Tentativo di rimuovere un oggetto nullo dalla stanza.");
         }
         oggettiPresenti.remove(o);
     }
 
-    public void aggiungiOggetto(Oggetto o) {
+    public void aggiungiOggetto(Oggetto o) throws DungeonException {
         if (o == null) {
-            throw new exception.DungeonException("Tentativo di aggiungere un oggetto nullo alla stanza.");
+            throw new DungeonException("Tentativo di aggiungere un oggetto nullo alla stanza.");
         }
         oggettiPresenti.add(o);
     }
@@ -164,7 +166,7 @@ public class Stanza implements Serializable {
      * Rimuove un evento dalla stanza. Restituisce true se l'evento è stato
      * rimosso con successo, false altrimenti.
      */
-    public boolean rimuoviEvento(Evento evento) {
+    public boolean rimuoviEvento(Evento evento)throws DungeonException {
 
         Iterator<Evento> iteratore = listaEventi.iterator();
         while (iteratore.hasNext()) {
@@ -174,8 +176,10 @@ public class Stanza implements Serializable {
                 Stanza posizioneEvento = evento.getPosizioneCorrente();
                 if (posizioneEvento == null || posizioneEvento.getId() == this.id) {
                     iteratore.remove();
-
                     return true;
+                } else {
+                    throw new DungeonException("Evento non rimosso dalla stanza.");
+                    
 
                 }
             }

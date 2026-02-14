@@ -12,6 +12,7 @@ import domain.Personaggio;
 import domain.Stanza;
 import domain.Tesoro;
 import domain.Zaino;
+import exception.DungeonException;
 import service.FileService;
 import service.PersonaIncontrataService;
 import service.TurnoService;
@@ -40,9 +41,9 @@ public class NPCServiceImpl implements PersonaIncontrataService {
     /**
      * Lista di oggetti che potrà vendere l'npc
      */
-    public void popolaArticoliVenditore(NPC venditore) {
+    public void popolaArticoliVenditore(NPC venditore)throws DungeonException {
         if (venditore == null) {
-            throw new exception.DungeonException("NPC venditore nullo passato a popolaArticoliVenditore.");
+            throw new DungeonException("NPC venditore nullo passato a popolaArticoliVenditore.");
         }
         if (venditore.getArticoli().isEmpty()) {
             int numeroCasualeOggetti = randomGenerale.prossimoNumero(1, 4);
@@ -58,16 +59,16 @@ public class NPCServiceImpl implements PersonaIncontrataService {
                         oggettoVenditore = new PozioneServiceImpl().creaOggettoCasuale();
                 }
                 if (oggettoVenditore == null) {
-                    throw new exception.DungeonException("Oggetto nullo generato per il venditore.");
+                    throw new DungeonException("Oggetto nullo generato per il venditore.");
                 }
                 venditore.getArticoli().add(oggettoVenditore);
             }
         }
     }
 
-    public String parla(Personaggio personaggio, NPC npc) {
+    public String parla(Personaggio personaggio, NPC npc) throws DungeonException {
         if (personaggio == null || npc == null) {
-            throw new exception.DungeonException("Personaggio o NPC nullo passato a parla().");
+            throw new DungeonException("Personaggio o NPC nullo passato a parla().");
         }
         if (npc.haInteragito()) {
             System.out.println("" + npc.getNomeNPC() + " ti ha già parlato.");
@@ -93,7 +94,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
             TesoroServiceImpl tesoroService = new TesoroServiceImpl();
             Oggetto oggetto = tesoroService.creaOggettoCasuale();
             if (oggetto == null) {
-                throw new exception.DungeonException("Oggetto nullo generato come ricompensa dall'NPC.");
+                throw new DungeonException("Oggetto nullo generato come ricompensa dall'NPC.");
             }
             System.out.println("L’NPC ti dona: " + oggetto.getNome());
 
@@ -115,7 +116,7 @@ public class NPCServiceImpl implements PersonaIncontrataService {
                         zainoService.èPieno(zaino, stanza, oggetto, personaggio);
                     }
                 } else {
-                    throw new exception.DungeonException("Zaino non disponibile per il personaggio.");
+                    throw new DungeonException("Zaino non disponibile per il personaggio.");
                 }
             }
 

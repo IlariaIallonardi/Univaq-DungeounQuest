@@ -1,4 +1,5 @@
 package domain;
+import exception.DungeonException;
 import service.impl.RandomSingleton;
 
 public class Trappola extends Evento {
@@ -20,9 +21,9 @@ public class Trappola extends Evento {
         return effetto;
     }
 
-    public void setEffettoTrappola(Effetto effetto) {
+    public void setEffettoTrappola(Effetto effetto) throws DungeonException {
         if (effetto == null) {
-            throw new exception.DungeonException("Effetto nullo nella trappola.");
+            throw new DungeonException("Effetto nullo nella trappola.");
         }
         this.effetto = effetto;
     }

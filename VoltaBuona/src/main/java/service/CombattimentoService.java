@@ -11,6 +11,7 @@ import domain.Paladino;
 import domain.Personaggio;
 import domain.Stanza;
 import domain.Zaino;
+import exception.DungeonException;
 import service.impl.ArciereServiceImpl;
 import service.impl.GuerrieroServiceImpl;
 import service.impl.MagoServiceImpl;
@@ -52,12 +53,12 @@ public class CombattimentoService {
         this.difficoltaMostro = difficoltaMostro;
     }
 
-    public Object iniziaCombattimento(Personaggio personaggio, Mostro mostro, Stanza stanza) {
+    public Object iniziaCombattimento(Personaggio personaggio, Mostro mostro, Stanza stanza) throws DungeonException {
         if (personaggio == null) {
-            throw new exception.DungeonException("Personaggio nullo passato a iniziaCombattimento.");
+            throw new DungeonException("Personaggio nullo passato a iniziaCombattimento.");
         }
         if (mostro == null) {
-            throw new exception.DungeonException("Mostro nullo passato a iniziaCombattimento.");
+            throw new  DungeonException("Mostro nullo passato a iniziaCombattimento.");
         }
 
         System.out.println("\nInizia il combattimento: " + personaggio.getNomePersonaggio() + " VS " + mostro.getNomeMostro());
@@ -284,9 +285,9 @@ public class CombattimentoService {
 
         }
         try {
-            fileService.writeLog(personaggio.getNomePersonaggio() + " ha scelto l'azione: " + scelta);
+            FileService.getInstance().writeLog(personaggio.getNomePersonaggio() + " ha scelto l'azione: " + scelta);
         } catch (Exception e) {
-            throw new exception.DungeonException("Errore durante la scrittura del log azione combattimento", e);
+            throw new DungeonException("Errore durante la scrittura del log azione combattimento", e);
         }
         return;
     }
@@ -304,16 +305,16 @@ public class CombattimentoService {
             evento.setInizioEvento(false);
             if(vincitore instanceof Personaggio personaggioVincitore) {
                 try {
-                    fileService.writeLog("HA VINTOOOO!! IL VINCITORE è:" + personaggioVincitore.getNomePersonaggio());
+                    FileService.getInstance().writeLog("HA VINTOOOO!! IL VINCITORE è:" + personaggioVincitore.getNomePersonaggio());
                 } catch (Exception e) {
-                    throw new exception.DungeonException("Errore durante la scrittura del log del vincitore (personaggio)", e);
+                    throw new DungeonException("Errore durante la scrittura del log del vincitore (personaggio)", e);
                 }
                 System.out.println(ANSI.RED + ANSI.BOLD+"Il vincitore è:" + personaggioVincitore.getNomePersonaggio()+ ANSI.RESET);
             } else if (vincitore instanceof Mostro mostroVincitore) {
                 try {
-                    fileService.writeLog("Ha vinto il mostro: " + mostroVincitore.getNomeMostro());
+                    FileService.getInstance().writeLog("Ha vinto il mostro: " + mostroVincitore.getNomeMostro());
                 } catch (Exception e) {
-                    throw new exception.DungeonException("Errore durante la scrittura del log del vincitore (mostro)", e);
+                    throw new DungeonException("Errore durante la scrittura del log del vincitore (mostro)", e);
                 }
                 System.out.println(ANSI.RED + ANSI.BOLD+"Il vincitore è:" + mostroVincitore.getNomeMostro()+ ANSI.RESET);
             } 
@@ -373,7 +374,7 @@ public class CombattimentoService {
     }
 
     //ritorna il service corretto in base al tipo di personaggio
-    public PersonaggioService getServicePerPersonaggio(Personaggio personaggio) {
+    public PersonaggioService getServicePerPersonaggio(Personaggio personaggio)throws DungeonException {
         if (this.personaggioService != null) {
             return this.personaggioService;
         }
@@ -389,6 +390,6 @@ public class CombattimentoService {
         if (personaggio instanceof domain.Paladino) {
             return new PaladinoServiceImpl();
         }
-        throw new exception.DungeonException("Tipo di personaggio non riconosciuto in getServicePerPersonaggio.");
+        throw new DungeonException("Tipo di personaggio non riconosciuto in getServicePerPersonaggio.");
     }
 }

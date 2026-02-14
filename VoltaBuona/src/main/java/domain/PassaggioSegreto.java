@@ -1,5 +1,7 @@
 package domain;
 
+import exception.DungeonException;
+
 public class PassaggioSegreto extends Evento {
     private Stanza destinazione;
     private String rebusApertura;
@@ -23,9 +25,9 @@ public class PassaggioSegreto extends Evento {
         return destinazione;
     }
 
-    public void setDestinazione(Stanza destinazione) {
+    public void setDestinazione(Stanza destinazione) throws DungeonException {
         if (destinazione == null) {
-            throw new exception.DungeonException("Destinazione nulla per il passaggio segreto.");
+            throw new DungeonException("Destinazione nulla per il passaggio segreto.");
         }
         this.destinazione = destinazione;
     }

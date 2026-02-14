@@ -37,12 +37,15 @@ public class MostroServiceImpl implements PersonaIncontrataService {
     /**
      * Calcolo del danno che il mostro infligge al personaggio.
      */
-    public static int dannoBase(Mostro mostro, Personaggio personaggio) {
+    public static int dannoBase(Mostro mostro, Personaggio personaggio) throws DungeonException {
+         if (mostro == null) {
+            throw new DungeonException("Mostro nullo passato a dannoBase.");
+        }
         if (mostro == null) {
-            throw new exception.DungeonException("Mostro nullo passato a dannoBase.");
+            throw new DungeonException("Mostro nullo passato a dannoBase.");
         }
         if (personaggio == null) {
-            throw new exception.DungeonException("Personaggio nullo passato a dannoBase.");
+            throw new DungeonException("Personaggio nullo passato a dannoBase.");
         }
         int attaccoMostro = mostro.getTipoAttaccoMostro().getDannoTipoMostro();
         return attaccoMostro;
@@ -105,12 +108,12 @@ public class MostroServiceImpl implements PersonaIncontrataService {
             }
         }
         if (tipoEffetto == null) {
-            throw new exception.DungeonException("Tipo effetto nullo per l'attacco del mostro.");
+            throw new DungeonException("Tipo effetto nullo per l'attacco del mostro.");
         }
         Effetto effetto = new Effetto(tipoEffetto, " ");
         System.out.println(mostro.getNomeMostro() + " applica " + tipoEffetto + " a " + personaggio.getNomePersonaggio());
         this.effettoService.applicaEffetto(personaggio, effetto);
-        fileService.writeLog(mostro.getNomeMostro() + " ha applicato l'effetto: " + tipoEffetto + " a " + personaggio.getNomePersonaggio());
+        FileService.getInstance().writeLog(mostro.getNomeMostro() + " ha applicato l'effetto: " + tipoEffetto + " a " + personaggio.getNomePersonaggio());
     }
 
     /**
