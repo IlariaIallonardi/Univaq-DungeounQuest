@@ -27,8 +27,8 @@ public class DungeonFactory {
     public Map<String, Stanza> stanzeMappa = new HashMap<>();
 
     public Dungeon creaDungeon() throws DungeonException {
-        righe = randomGenerale.prossimoNumero(2, 2);
-        colonne = randomGenerale.prossimoNumero(2, 2);
+        righe = randomGenerale.prossimoNumero(4, 7);
+        colonne = randomGenerale.prossimoNumero(4, 7);
         Dungeon dungeon = new Dungeon(righe, colonne);
 
         int contatoreStanza = 0;

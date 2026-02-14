@@ -7,6 +7,7 @@ import java.util.Map;
 
 import domain.Arciere;
 import domain.Evento;
+import domain.Gioco;
 import domain.Guerriero;
 import domain.Mostro;
 import domain.NPC;
@@ -14,6 +15,7 @@ import domain.Oggetto;
 import domain.Paladino;
 import domain.Personaggio;
 import domain.Stanza;
+import domain.Stato.StatoGioco;
 import domain.Trappola;
 import domain.Turno;
 import domain.Zaino;
@@ -31,7 +33,7 @@ import util.ANSI;
 public class TurnoService {
 
     private boolean iniziativaCalcolata = false;
-
+    private Gioco gioco;
     private GiocoService giocoService;
     private DungeonFactory dungeonFactory;
     private PersonaggioService personaggioService;
@@ -240,6 +242,11 @@ public class TurnoService {
             boolean isBot = nome != null && (nome.startsWith("BOT_") || nome.startsWith("Bot-") || nome.toLowerCase().contains("bot"));
             if (isBot) {
                 gestisciMovimento(personaggio);
+
+                if (giocoService.getGioco().getStatoGioco() == StatoGioco.CONCLUSO) {
+                    return;
+                }
+
                 stanza.setStatoStanza(true);
                 scegliAzione(personaggio);
                 System.out.println("Fine turno di: " + personaggio.getNomePersonaggio());
@@ -292,7 +299,10 @@ public class TurnoService {
 
         boolean ciSonoEventi = eventi != null && !eventi.isEmpty();
         boolean ciSonoOggetti = oggetti != null && !oggetti.isEmpty();
-
+          if (giocoService.getGioco().getStatoGioco() == StatoGioco.CONCLUSO) {
+                    return;
+                }
+       
         System.out.println("\nEsplorazione stanza:");
 
         if (!stanzaCorrente.getOggettiPresenti().isEmpty()) {
@@ -628,15 +638,20 @@ public class TurnoService {
 
         Direzione direzione = Direzione.fromString(input);
 
-        boolean mosso = false;
+        boolean mosso = giocoService.muoviPersonaggio(personaggio, direzione);;
         if (direzione != null) {
-            mosso = giocoService.muoviPersonaggio(personaggio, direzione);
             System.out.println("Hai scelto la direzione: " + direzione);
         } else {
             System.out.println("La stanza è bloccata,ti serve una chiave (con lo stesso id ) per aprirla");
             return;
         }
-        fileService.writeLog(personaggio.getNomePersonaggio() + " ha scelto di muoversi verso: " + input + " (direzione: " + direzione + ") - Movimento riuscito: " + mosso);
+        FileService.getInstance().writeLog(personaggio.getNomePersonaggio() + " ha scelto di muoversi verso: " + input + " (direzione: " + direzione + ") - Movimento riuscito: " + mosso);
+        if (gioco != null && gioco.getStatoGioco() == StatoGioco.CONCLUSO) {
+            return;
+        }
+        if (!mosso) {
+            return;
+        }
     }
 
     //  Metodo: raccoglie UN oggetto scelto

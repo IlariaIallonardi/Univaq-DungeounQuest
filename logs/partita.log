@@ -556,3 +556,66 @@
 [2026-02-14 10:29:54] a ha scelto l'azione: 0
 [2026-02-14 10:29:56] a � stato colpito da una trappola: FURIA - Effetto applicato con successo.
 [2026-02-14 10:29:56] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 10:44:20] Personaggio A ha scelto il tipo  1
+[2026-02-14 10:44:21] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 10:44:21] Turno Service - a ha iniziativa: 16
+[2026-02-14 10:44:26] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 10:44:28] a ha scelto l'azione: 0
+[2026-02-14 10:44:35] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 10:44:37] a ha scelto l'azione: 0
+[2026-02-14 10:49:13] Personaggio A ha scelto il tipo  1
+[2026-02-14 10:49:16] Personaggio C ha scelto il tipo  2
+[2026-02-14 10:49:16] Partita inizializzata con 2 giocatori reali e 0 BOT. Totale personaggi: 2
+[2026-02-14 10:49:16] Turno Service - c ha iniziativa: 14
+[2026-02-14 10:49:16] Turno Service - a ha iniziativa: 4
+[2026-02-14 10:49:19] c ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 10:49:20] c ha scelto l'azione: 0
+[2026-02-14 10:49:26] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 10:49:27] a ha scelto l'azione: 0
+[2026-02-14 10:49:32] c ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 10:54:40] Personaggio A ha scelto il tipo  1
+[2026-02-14 10:54:40] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 10:54:40] Turno Service - a ha iniziativa: 3
+[2026-02-14 10:54:44] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 10:54:45] a ha scelto l'azione: 0
+[2026-02-14 10:54:52] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: false
+[2026-02-14 10:54:53] a ha scelto l'azione: 0
+[2026-02-14 10:55:08] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: false
+[2026-02-14 10:55:37] a ha scelto di raccogliere l'oggetto: Chiave_3 - Raccoglimento riuscito: true
+[2026-02-14 10:55:37] a ha scelto l'azione: 2
+[2026-02-14 10:55:45] a ha usato la chiave: Chiave_3 per sbloccare la stanza: 3
+[2026-02-14 10:55:45] a è stato colpito da una trappola: STORDIMENTO - Effetto applicato con successo.
+[2026-02-14 10:55:45] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: false
+[2026-02-14 10:57:54] Personaggio A ha scelto il tipo  1
+[2026-02-14 10:57:54] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 10:57:54] Turno Service - a ha iniziativa: 4
+[2026-02-14 10:58:08] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 10:58:11] a ha scelto l'azione: 0
+[2026-02-14 10:58:17] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 11:04:08] Personaggio A ha scelto il tipo  1
+[2026-02-14 11:04:10] Personaggio B ha scelto il tipo  2
+[2026-02-14 11:04:16] Personaggio C ha scelto il tipo  3
+[2026-02-14 11:04:16] Partita inizializzata con 3 giocatori reali e 0 BOT. Totale personaggi: 3
+[2026-02-14 11:04:16] Turno Service - b ha iniziativa: 8
+[2026-02-14 11:04:16] Turno Service - c ha iniziativa: 5
+[2026-02-14 11:04:16] Turno Service - a ha iniziativa: 2
+[2026-02-14 11:05:23] b è stato colpito da una trappola: STORDIMENTO - Effetto applicato con successo.
+[2026-02-14 11:05:23] b ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 11:05:30] b ha scelto di raccogliere l'oggetto: Pozione MANA - Raccoglimento riuscito: true
+[2026-02-14 11:05:30] b ha scelto l'azione: 2
+[2026-02-14 11:05:35] c è stato colpito da una trappola: FURIA - Effetto applicato con successo.
+[2026-02-14 11:05:35] c ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 11:05:41] c ha scelto di raccogliere l'oggetto: Armatura FORTE - Raccoglimento riuscito: true
+[2026-02-14 11:05:41] c ha scelto l'azione: 2
+[2026-02-14 11:05:46] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 11:05:57] a ha scelto di acquistare: Pozione ANTIDOTO per 15 monete - Acquisto riuscito: true
+[2026-02-14 11:06:30] Partita caricata con 3 personaggi. Stato gioco: INIZIO
+[2026-02-14 11:06:30] Turno Service - c ha iniziativa: 12
+[2026-02-14 11:06:30] Turno Service - b ha iniziativa: 9
+[2026-02-14 11:06:30] Turno Service - a ha iniziativa: 2
+[2026-02-14 11:06:57] c ha scelto di muoversi verso: ovest (direzione: OVEST) - Movimento riuscito: true
+[2026-02-14 11:06:59] c ha scelto l'azione: 0
+[2026-02-14 11:07:02] b ha scelto di muoversi verso: nord (direzione: NORD) - Movimento riuscito: true
+[2026-02-14 11:07:05] b ha scelto l'azione: 0
+[2026-02-14 11:07:10] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: false
+[2026-02-14 11:07:12] a ha scelto l'azione: 0

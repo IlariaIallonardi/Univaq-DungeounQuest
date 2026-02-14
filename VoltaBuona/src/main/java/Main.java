@@ -274,12 +274,16 @@ public class Main {
         //  boolean autoMode = (numReali == 0);
 
         while (continua) {
-
-            // esegui i turni per tutti i partecipanti (un turno per round)
-            turnoService.iniziaNuovoTurno(giocatori);
             if (gioco.getStatoGioco() == StatoGioco.CONCLUSO) {
                 continua = false;
+                break;
             }
+            turnoService.iniziaNuovoTurno(giocatori);
+
+             if (gioco.getStatoGioco() == StatoGioco.CONCLUSO) {
+        break;
+    }
+            
             // chiedi se continuare solo se ci sono giocatori reali; altrimenti prosegui automaticamente finché c'è almeno un personaggio vivo
             if (numReali > 0) {
                 System.out.print(ANSI.RESET + "Continuare altri turni? (S/N): ");

@@ -30,7 +30,10 @@ public class Gioco implements Serializable {
         this.dungeon = dungeon;
         this.turno = turno;
     }
-
+    public Gioco getGioco(){
+        return this;
+    }
+    
     public int getId() {
         return id;
     }

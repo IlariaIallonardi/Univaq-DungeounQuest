@@ -64,6 +64,9 @@ public class GiocoService {
     public Dungeon getDungeon() {
         return dungeon;
     }
+    public Gioco getGioco(){
+        return this.gioco;
+    }
 
     public List<Giocatore> getGiocatori() {
         return giocatori;
