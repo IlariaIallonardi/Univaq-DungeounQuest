@@ -21,6 +21,17 @@ public class PassaggioSegretoServiceImpl implements EventoService {
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
     private ScannerSingleton scannerGenerale = ScannerSingleton.getInstance();
    private FileService fileService;
+   private GiocoService giocoService;
+   private TurnoService turnoService=new TurnoService(giocoService);
+
+     public PassaggioSegretoServiceImpl(FileService fileService, GiocoService giocoService) {
+        this.fileService = fileService;
+        this.giocoService = giocoService;
+    }
+
+    
+
+   
     @Override
     public boolean attivaEvento(Personaggio personaggio, Evento evento) {
 
@@ -100,14 +111,14 @@ public class PassaggioSegretoServiceImpl implements EventoService {
                     return false;
                 }
 
-                boolean mosso = new GiocoService().muoviPersonaggio(personaggio, direzione);
+                boolean mosso = giocoService.muoviPersonaggio(personaggio, direzione);
                 if (!mosso) {
                     System.out.println("Non riesci a muoverti verso " + direzione.name() + ".");
                     return false;
                 }
 
                 System.out.println("Ti sei spostato. La stanza viene esplorata:");
-                new TurnoService().scegliAzione(personaggio);
+                turnoService.scegliAzione(personaggio);
                 return true;
             }
 

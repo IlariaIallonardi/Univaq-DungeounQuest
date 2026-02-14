@@ -33,7 +33,7 @@ public class Main {
         FileService fileService = new FileService();
         fileService.setLogFileNome("partita.log");
         // FACTORY1
-
+        
         StanzaFactory stanzaFactory = new StanzaFactory();
         DungeonFactory dungeonFactory = new DungeonFactory(stanzaFactory);
         List<Personaggio> partecipanti = new ArrayList<>();
@@ -238,10 +238,11 @@ public class Main {
             System.out.println("\n Partita caricata correttamente! Totale personaggi: " + giocatori.size());
         }
 
-        TurnoService turnoService = new TurnoService(dungeonFactory, fileService);
         GiocoService giocoService = new GiocoService(dungeonFactory, gioco);
-        turnoService.setGiocoService(giocoService);
-
+        TurnoService turnoService = new TurnoService(dungeonFactory, fileService,giocoService);
+        
+            turnoService.setGiocoService(giocoService);
+System.out.println("DEBUG TurnoService.giocoService null? " + (turnoService.getGiocoService() == null));
       
         // se abbiamo caricato un gioco con turno, comunichiamolo al TurnoService
         if (loaded && gioco.getTurno() != null) {

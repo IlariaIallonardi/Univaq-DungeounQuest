@@ -23,6 +23,7 @@ public class StanzaFactory {
     private Random random = new Random();
     private RandomSingleton randomGenerale = RandomSingleton.getInstance();
     private FileService fileService;
+    private GiocoService giocoService;
 
     public StanzaFactory(FileService fileService) {
         this.fileService = fileService;
@@ -103,10 +104,10 @@ public class StanzaFactory {
                     eventi.add(new NPCServiceImpl().aggiungiEventoCasuale());
                     break;
                 case 3:
-                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new PassaggioSegretoServiceImpl(fileService,giocoService).aggiungiEventoCasuale());
                     break;
                 default:
-                    eventi.add(new PassaggioSegretoServiceImpl().aggiungiEventoCasuale());
+                    eventi.add(new PassaggioSegretoServiceImpl(fileService, giocoService).aggiungiEventoCasuale());
                     break;
             }
         }

@@ -660,3 +660,73 @@
 [2026-02-14 11:52:13] Turno Service - a ha iniziativa: 12
 [2026-02-14 11:52:13] Turno Service - b ha iniziativa: 1
 [2026-02-14 11:52:23] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 13:06:57] Personaggio A ha scelto il tipo  1
+[2026-02-14 13:06:57] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 13:06:57] Turno Service - a ha iniziativa: 3
+[2026-02-14 13:07:01] a è stato colpito da una trappola: DISARMA - Effetto applicato con successo.
+[2026-02-14 13:07:01] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 13:12:59] Personaggio A ha scelto il tipo  1
+[2026-02-14 13:12:59] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 13:13:00] Turno Service - a ha iniziativa: 15
+[2026-02-14 13:13:08] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 13:14:29] Personaggio A ha scelto il tipo  2
+[2026-02-14 13:14:30] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 13:14:30] Turno Service - a ha iniziativa: 10
+[2026-02-14 13:14:32] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 13:14:35] a ha scelto l'azione: 0
+[2026-02-14 13:14:40] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 13:14:44] a ha scelto l'azione: 0
+[2026-02-14 13:14:48] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 13:15:01] a ha scelto l'azione: 0
+[2026-02-14 13:15:06] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 13:28:05] Personaggio A ha scelto il tipo  2
+[2026-02-14 13:28:05] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 13:28:05] Turno Service - a ha iniziativa: 12
+[2026-02-14 13:28:07] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 13:28:21] a è stato colpito da una trappola: STORDIMENTO - Effetto applicato con successo.
+[2026-02-14 13:30:05] Personaggio A ha scelto il tipo  1
+[2026-02-14 13:30:05] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 13:30:05] Turno Service - a ha iniziativa: 17
+[2026-02-14 13:30:12] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 13:30:16] a ha scelto l'azione: 0
+[2026-02-14 13:30:23] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 13:30:26] a ha scelto l'azione: 0
+[2026-02-14 13:35:00] Personaggio A ha scelto il tipo  2
+[2026-02-14 13:35:00] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 13:35:00] Turno Service - a ha iniziativa: 8
+[2026-02-14 13:35:02] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 13:36:55] Personaggio A ha scelto il tipo  1
+[2026-02-14 13:36:55] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 13:36:55] Turno Service - a ha iniziativa: 1
+[2026-02-14 13:37:00] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 13:37:01] a ha scelto l'azione: 0
+[2026-02-14 13:37:08] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 13:37:11] a ha scelto l'azione: 0
+[2026-02-14 13:37:44] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 13:37:47] a ha scelto l'azione: 0
+[2026-02-14 13:38:17] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 13:38:22] a ha scelto l'azione: 0
+[2026-02-14 13:38:57] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: true
+[2026-02-14 13:39:09] a è stato colpito da una trappola: SALTA_TURNO - Effetto applicato con successo.
+[2026-02-14 13:42:28] Personaggio A ha scelto il tipo  2
+[2026-02-14 13:43:22] Personaggio A ha scelto il tipo  2
+[2026-02-14 13:43:23] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 13:43:23] Turno Service - a ha iniziativa: 15
+[2026-02-14 13:43:39] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 13:45:26] Personaggio A ha scelto il tipo  2
+[2026-02-14 13:45:26] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 13:45:26] Turno Service - A ha iniziativa: 1
+[2026-02-14 13:45:28] A è stato colpito da una trappola: STORDIMENTO - Effetto applicato con successo.
+[2026-02-14 13:45:28] A ha scelto di muoversi verso: SUD (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 13:45:57] A è stato colpito da una trappola: SALTA_TURNO - Effetto applicato con successo.
+[2026-02-14 13:45:57] A ha scelto l'azione: 1
+[2026-02-14 13:47:43] Personaggio A ha scelto il tipo  2
+[2026-02-14 13:47:43] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 13:47:43] Turno Service - a ha iniziativa: 20
+[2026-02-14 13:47:45] a ha scelto di muoversi verso: sud (direzione: SUD) - Movimento riuscito: true
+[2026-02-14 13:47:49] a ha scelto l'azione: 0
+[2026-02-14 13:47:52] a ha scelto di muoversi verso: est (direzione: EST) - Movimento riuscito: false
+[2026-02-14 13:51:31] Personaggio A ha scelto il tipo  2
+[2026-02-14 13:51:31] Partita inizializzata con 1 giocatori reali e 0 BOT. Totale personaggi: 1
+[2026-02-14 13:51:31] Turno Service - A ha iniziativa: 8
+[2026-02-14 13:51:42] A ha scelto di muoversi verso: SUD (direzione: SUD) - Movimento riuscito: true

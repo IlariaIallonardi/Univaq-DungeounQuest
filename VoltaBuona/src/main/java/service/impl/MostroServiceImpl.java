@@ -13,6 +13,7 @@ import exception.DungeonException;
 import service.CombattimentoService;
 import service.EffettoService;
 import service.FileService;
+import service.GiocoService;
 import service.PersonaIncontrataService;
 import service.TurnoService;
 
@@ -21,6 +22,7 @@ public class MostroServiceImpl implements PersonaIncontrataService {
     private static final AtomicInteger ID_CONTATORE = new AtomicInteger(200);
     private final RandomSingleton random = RandomSingleton.getInstance();
     private FileService fileService= FileService.getInstance();
+    private GiocoService giocoService;
 
     private CombattimentoService combattimentoService;
 
@@ -29,7 +31,7 @@ public class MostroServiceImpl implements PersonaIncontrataService {
     }
   public MostroServiceImpl(CombattimentoService combattimentoService, EffettoService effettoService) {
         // Crea un CombattimentoServiceImpl che usa questa istanza di MostroServiceImpl,per evitare che il combattimento sia null.
-        this.combattimentoService = new CombattimentoService(this, null, new TurnoService());
+        this.combattimentoService = new CombattimentoService(this, null, new TurnoService(giocoService));
         this.effettoService = new EffettoService();
     }
    

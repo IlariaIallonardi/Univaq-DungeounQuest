@@ -59,26 +59,33 @@ public class TurnoService {
 
     }
 
-    public TurnoService(DungeonFactory dungeonFactory, FileService fileService) {
+    public TurnoService(DungeonFactory dungeonFactory, FileService fileService,GiocoService giocoService) {
         this.dungeonFactory = dungeonFactory;
         this.fileService = fileService;
+        this.giocoService = giocoService;
     }
 
-    public TurnoService(PersonaggioService personaggioService) {
+    public TurnoService(PersonaggioService personaggioService, GiocoService giocoService) {
         this.personaggioService = personaggioService;
-
+        this.giocoService = giocoService;
     }
 
     public void setGiocoService(GiocoService giocoService) {
         this.giocoService = giocoService;
+    }
+    public GiocoService getGiocoService() {
+        return giocoService;
     }
 
     public void setDungeonFactory(DungeonFactory dungeonFactory) {
         this.dungeonFactory = dungeonFactory;
     }
 
-    public TurnoService() {
+    public TurnoService(GiocoService giocoService) {
+        this.giocoService = giocoService;
     }
+
+
     public void ripristinaTurnoSalvato(Turno turnoCaricato) {
     if (turnoCaricato != null && turnoCaricato.getGiocatori() != null && !turnoCaricato.getGiocatori().isEmpty()) {
         this.turno = turnoCaricato;
@@ -298,6 +305,9 @@ public class TurnoService {
     }
 
     public void scegliAzione(Personaggio personaggio) {
+        /*if (giocoService.getGioco().getStatoGioco() == StatoGioco.CONCLUSO) {
+                    return;
+                }*/
         Stanza stanzaCorrente = personaggio.getPosizioneCorrente();
         System.out.println("Ti trovi in: " + stanzaCorrente.getId());
         // 2 esplorazione: mostro eventi e oggetti
@@ -306,10 +316,12 @@ public class TurnoService {
 
         boolean ciSonoEventi = eventi != null && !eventi.isEmpty();
         boolean ciSonoOggetti = oggetti != null && !oggetti.isEmpty();
-          if (giocoService.getGioco().getStatoGioco() == StatoGioco.CONCLUSO) {
-                    return;
-                }
-       
+         
+       if(stanzaCorrente.isUscitaVittoria()){
+            System.out.println(ANSI.GREEN + ANSI.BOLD+ "Hai trovato l'uscita di questo dungeon! Complimenti, hai vinto!" + ANSI.RESET);
+            giocoService.getGioco().setStatoGioco(StatoGioco.CONCLUSO);
+            
+       }else{
         System.out.println("\nEsplorazione stanza:");
 
         if (!stanzaCorrente.getOggettiPresenti().isEmpty()) {
@@ -389,9 +401,9 @@ public class TurnoService {
                 break;
 
         }
-        fileService.writeLog(personaggio.getNomePersonaggio() + " ha scelto l'azione: " + scelta);
+        FileService.getInstance().writeLog(personaggio.getNomePersonaggio() + " ha scelto l'azione: " + scelta);
         terminaTurnoCorrente(personaggio);
-    }
+    }}
 
     // Restituisce il service corretto per il tipo di evento
     public EventoService servicePerEvento(Evento evento) {
@@ -407,12 +419,12 @@ public class TurnoService {
             return new TrappolaServiceImpl();
         }
         if (evento instanceof domain.PassaggioSegreto) {
-            return new PassaggioSegretoServiceImpl();
+            return new PassaggioSegretoServiceImpl(fileService,giocoService);
         }
         if (evento instanceof domain.PersonaIncontrata) {
             return new NPCServiceImpl();
         }
-        return eventoService = new PassaggioSegretoServiceImpl();
+        return eventoService = new PassaggioSegretoServiceImpl(fileService,giocoService);
     }
 
     /**
@@ -645,8 +657,9 @@ public class TurnoService {
 
         Direzione direzione = Direzione.fromString(input);
 
-        boolean mosso = giocoService.muoviPersonaggio(personaggio, direzione);;
+        boolean mosso = false;
         if (direzione != null) {
+             mosso = giocoService.muoviPersonaggio(personaggio, direzione);
             System.out.println("Hai scelto la direzione: " + direzione);
         } else {
             System.out.println("La stanza è bloccata,ti serve una chiave (con lo stesso id ) per aprirla");

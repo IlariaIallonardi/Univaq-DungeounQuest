@@ -178,7 +178,7 @@ public class GiocoService {
 
         }
         if (destinazione != null && destinazione.isUscitaVittoria()) {
-            System.out.println("Hai raggiunto l'uscita! " + personaggio.getNomePersonaggio() + " sei il vincitore!");
+            System.out.println(ANSI.GREEN + ANSI.BOLD + "Hai raggiunto l'uscita! " + personaggio.getNomePersonaggio() + " sei il vincitore!" + ANSI.RESET);
             gioco.setStatoGioco(StatoGioco.CONCLUSO);
             personaggio.setVincitore(true);
             return false;
